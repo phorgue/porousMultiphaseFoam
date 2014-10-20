@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  | =========                 |                                                 |
+  | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+  |  \\    /   O peration     | Version:  1.7.0                                 |
+  |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+  |    \\/     M anipulation  |                                                 |
+  \*---------------------------------------------------------------------------*/
+FoamFile
+{
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant";
+  object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+activateCapillarity	1;
+
+eps		eps [0  0  0 0 0 0 0]	0.5;	
+Smin		Smin [0  0  0 0 0 0 0]	1e-3;
+Smax		Smax [0  0  0 0 0 0 0]	0.999;
+
+phasea
+{
+  rho	rho [1 -3 0 0 0 0 0] 	1e0;
+  mu	mu [1 -1 -1 0 0 0 0]	1.76e-5;
+}
+	
+phaseb
+{
+  rho	rho [1 -3 0 0 0 0 0] 	1e3;
+  mu	mu [1 -1 -1 0 0 0 0]	1e-3;
+}
+
+
+relativePermeabilityModel  BrooksAndCorey;
+
+BrooksAndCoreyCoeffs
+{
+    n 3; 
+   Sminpc Sminpc [0 0 0 0 0 0 0] 0;
+    Smaxpc Smaxpc [0 0 0 0 0 0 0] 0.999;
+    pc0 pc0 [1 -1 -2 0 0 0 0] 1000;
+    alpha 0.5;
+}
+
+capillarityModel	linear;
+
+linearCoeffs
+{
+    Sminpc Sminpc [0 0 0 0 0 0 0] 0.001;
+    Smaxpc Smaxpc [0 0 0 0 0 0 0] 0.999;
+    pc0 pc0 [1 -1 -2 0 0 0 0] 0;
+    pcMax pcMax [1 -1 -2 0 0 0 0] 19620;
+}
+
+// ************************************************************************* //

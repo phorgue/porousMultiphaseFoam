@@ -1,0 +1,12 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+set -x
+
+# cleaning solvers 
+
+wclean impesFoam
+rm ${FOAM_USER_APPBIN}/impesFoam
+wclean porousBoundaryConditions
+rm ${FOAM_USER_LIBBIN}/libporousBoundaryConditions.so
+wclean porousModels
+rm ${FOAM_USER_LIBBIN}/libporousModels.so

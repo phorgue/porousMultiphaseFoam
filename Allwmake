@@ -1,0 +1,10 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+set -x
+
+# Compiling solvers 
+
+wmake libso porousBoundaryConditions
+wmake libso porousModels
+wmake impesFoam
+wmake anisoImpesFoam
