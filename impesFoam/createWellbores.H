@@ -25,10 +25,11 @@ volScalarField Winj
         "Winj",
         runTime.timeName(),
         mesh,
-        IOobject::MUST_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
     ),
-    mesh
+    mesh,
+    dimensionedScalar("",dimensionSet(0,0,0,0,0),0)
 );
 
 dimensionedScalar Vinj(sum(Winj*mesh.V()));
@@ -56,10 +57,11 @@ volScalarField Wext
         "Wext",
         runTime.timeName(),
         mesh,
-        IOobject::MUST_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
     ),
-    mesh
+    mesh,
+    dimensionedScalar("",dimensionSet(0,0,0,0,0),0)
 );
 
 dimensionedScalar Vext(sum(Wext*mesh.V()));
