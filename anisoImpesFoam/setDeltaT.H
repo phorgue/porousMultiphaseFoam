@@ -31,14 +31,12 @@ scalar dSdTmax = max(mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext)*activateWellb
 scalar dtForS = dSmax/(dSdTmax+SMALL);
 
 //- Choose between Coats and Courant number as driving number
-bool CFL =  runTime.controlDict().lookupOrDefault<bool>("CFL", true);
+CFL =  runTime.controlDict().lookupOrDefault<bool>("CFL", true);
 scalar CFLUse = CFL ? TMP0 : CoNum;
 
 //- Caracteristic number
 scalar maxDeltaTFact = maxCo/(CFLUse + SMALL);
 scalar deltaTFact = min(min(maxDeltaTFact, 1.0 + 0.1*maxDeltaTFact), 1.2);
-
-
 
 //- Computing timestep 
 runTime.setDeltaT

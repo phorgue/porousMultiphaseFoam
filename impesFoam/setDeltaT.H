@@ -31,7 +31,7 @@ scalar dSdTmax = max(mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext)*activateWellb
 scalar dtForS = dSmax/(dSdTmax+SMALL);
 
 //- Choose between Coats and Courant number as driving number
-bool CFL =  runTime.controlDict().lookupOrDefault<bool>("CFL", true);
+CFL =  runTime.controlDict().lookupOrDefault<bool>("CFL", true);
 scalar CFLUse = CFL ? max(CFLCoats).value() : CoNum;
 
 //- Caracteristic number

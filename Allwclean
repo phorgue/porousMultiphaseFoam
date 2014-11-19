@@ -6,6 +6,8 @@ set -x
 
 wclean impesFoam
 rm ${FOAM_USER_APPBIN}/impesFoam
+wclean anisoImpesFoam
+rm ${FOAM_USER_APPBIN}/anisoImpesFoam
 wclean porousBoundaryConditions
 rm ${FOAM_USER_LIBBIN}/libporousBoundaryConditions.so
 wclean porousModels

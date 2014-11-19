@@ -2,6 +2,8 @@
 ////////////////////// PRESSURE SATURATION ///////////////////////
 //////////////////////////////////////////////////////////////////
 
+bool CFL =  runTime.controlDict().lookupOrDefault<bool>("CFL", true);
+
 Info<< "Reading field p\n" << endl;
 volScalarField p
 (

@@ -52,7 +52,9 @@ if (mesh.nInternalFaces())
         0.5*(gSum(sumPhib)/gSum(mesh.V().field()))*runTime.deltaTValue();
 }
 
-Info<< "Courant Number mean: " << meanCoNuma <<","<<meanCoNumb
-    << " max: " << CoNum << endl;
+if (!CFL)
+{
+    Info<< "Courant Number mean: " << meanCoNuma << "," <<meanCoNumb << " max: " << CoNum << endl;
+}
 
 // ************************************************************************* //

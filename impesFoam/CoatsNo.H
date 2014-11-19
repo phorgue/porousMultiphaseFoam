@@ -19,5 +19,7 @@ if(activateCapillarity)
     CFLCoats += (runTime.deltaT()/eps/cellVolume)*2*mag(dpc)*fvc::surfaceSum(Kf*mesh.magSf()/mag(mesh.delta()))*(kra*krb/(mub*kra+mua*krb));  
   }
 
-
-Info<< "Coats CFL Number mean: " << gAverage(CFLCoats) << " max: " << max(CFLCoats).value() << endl;
+if (CFL)
+{
+    Info<< "Coats CFL Number mean: " << gAverage(CFLCoats) << " max: " << max(CFLCoats).value() << endl;
+}

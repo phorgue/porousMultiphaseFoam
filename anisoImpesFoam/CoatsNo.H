@@ -39,4 +39,7 @@ forAll(mesh.C(),celli)
 
 }
 
-Info<< "Coats CFL Number max: " << TMP0 << endl;
+if (CFL)
+{
+    Info<< "Coats CFL Number max: " << TMP0 << endl;
+}
