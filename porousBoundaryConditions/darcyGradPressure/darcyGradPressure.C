@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "darcyGradPressure.H"
-
 #include "addToRunTimeSelectionTable.H"
 #include "linear.H"
 
@@ -139,7 +138,7 @@ void Foam::darcyGradPressure::updateCoeffs()
 void Foam::darcyGradPressure::write(Ostream& os) const
 {
   fixedGradientFvPatchScalarField::write(os);
-  writeEntryIfDifferent<word>(os, "Mbf", "Mbf", MfName_);
+  writeEntryIfDifferent<word>(os, "Mf", "Mf", MfName_);
   writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
   writeEntryIfDifferent<word>(os, "phiG", "phiG", phiGfName_);
   writeEntryIfDifferent<word>(os, "phiPc", "phiPc", phiPcName_);

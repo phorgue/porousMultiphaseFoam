@@ -53,12 +53,11 @@ class darcyGradPressure
 {
     // Private data
 
-        //- Name of the velocity and permeability fields used to calculate the tensorial wall BC in darcy's law
-  
-       word MfName_;
-       word phiName_;
-       word phiGfName_;		
-       word phiPcName_;
+    //- Name of the velocity and permeability fields used to calculate the wall BC in darcy's law
+    word MfName_;
+    word phiName_;
+    word phiGfName_;		
+    word phiPcName_;
   
 public:
 
@@ -136,7 +135,6 @@ public:
         //- Write
         virtual void write(Ostream&) const;
 };
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
