@@ -27,17 +27,16 @@ Description
 \*---------------------------------------------------------------------------*/
 
 //- Timestep Saturation equation
-scalar dSdTmax = max(mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext)*activateWellbores)).value()/eps.value();
+scalar dSdTmax = gMax(mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext)*activateWellbores)().internalField())/eps.value();
 scalar dtForS = dSmax/(dSdTmax+SMALL);
 
 //- Choose between Coats and Courant number as driving number
 CFL =  runTime.controlDict().lookupOrDefault<bool>("CFL", true);
-scalar CFLUse = CFL ? max(CFLCoats).value() : CoNum;
+scalar CFLUse = CFL ? gMax(CFLCoats) : CoNum;
 
 //- Caracteristic number
 scalar maxDeltaTFact = maxCo/(CFLUse + SMALL);
 scalar deltaTFact = min(min(maxDeltaTFact, 1.0 + 0.1*maxDeltaTFact), 1.2);
-
 
 //- Computing timestep 
 runTime.setDeltaT
@@ -52,8 +51,5 @@ runTime.setDeltaT
 );
 
 Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
-
-
-      
 
 // ************************************************************************* //

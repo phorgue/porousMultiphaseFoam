@@ -11,7 +11,6 @@ dfw -= K*(rhoa-rhob)*fvc::surfaceSum(mag(mesh.Sf() & g))/fvc::surfaceSum(mag(phi
 
 volScalarField CFLCoats((runTime.deltaT()/eps/cellVolume)*dfw*fvc::surfaceSum(mag(phi)));
 
-
 // - capillarity part
 volScalarField dpc(myCapModel->dpcdS());
 if(activateCapillarity)
@@ -21,5 +20,5 @@ if(activateCapillarity)
 
 if (CFL)
 {
-    Info<< "Coats CFL Number mean: " << gAverage(CFLCoats) << " max: " << max(CFLCoats).value() << endl;
+    Info<< "Coats CFL Number mean: " << gAverage(CFLCoats) << " max: " << gMax(CFLCoats) << endl;
 }

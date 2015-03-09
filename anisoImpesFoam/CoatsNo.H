@@ -25,7 +25,7 @@ if(activateCapillarity)
   }
 
 
-scalar TMP0( CFLCoats[0].component(0) );
+scalar CFLCoatsmax( CFLCoats[0].component(0) );
 
 forAll(mesh.C(),celli)
 {
@@ -35,11 +35,11 @@ forAll(mesh.C(),celli)
       {
 	if(CFLCoats[celli].component(i)>tmp0) tmp0 = CFLCoats[celli].component(i);
       }
-  if(TMP0<tmp0) TMP0 = tmp0;
+  if(CFLCoatsmax<tmp0) CFLCoatsmax = tmp0;
 
 }
 
 if (CFL)
 {
-    Info<< "Coats CFL Number max: " << TMP0 << endl;
+    Info<< "Coats CFL Number max: " << CFLCoatsmax << endl;
 }

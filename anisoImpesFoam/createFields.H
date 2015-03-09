@@ -79,7 +79,7 @@ dimensionedScalar Smin(transportProperties.lookup("Smin"));
 dimensionedScalar Smax(transportProperties.lookup("Smax"));
 	
 // Test  the initial Saturation if inferior to Smin or superior to Smax.
-  if (min(Sb).value() < Smin.value()) 
+  if (gMin(Sb) < Smin.value()) 
     {
       FatalErrorIn
   	(
@@ -88,7 +88,7 @@ dimensionedScalar Smax(transportProperties.lookup("Smax"));
   	<< "Saturation equal or inferior to minimal saturation " 
   	<< exit(FatalError);
     }
-  if ( max(Sb).value() > Smax.value()) 
+  if ( gMax(Sb) > Smax.value()) 
     {  
        FatalErrorIn
   	(

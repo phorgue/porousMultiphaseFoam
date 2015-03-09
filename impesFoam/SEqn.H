@@ -9,6 +9,6 @@
 
     SbEqn.solve();
 
-    Info << "Saturation b " << " Min(Sb) = " << min(Sb).value() << " Max(Sb) = " << max(Sb).value() <<  endl;
+    Info << "Saturation b " << " Min(Sb) = " << min(Sb).value() << " Max(Sb) = " << gMax(Sb) <<  endl;
 
 }
