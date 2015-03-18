@@ -150,14 +150,13 @@ bool Foam::relativePermeabilityModels::krBrooksAndCorey::read
 {
   relativePermeabilityProperties_ = relativePermeabilityProperties;
 
-  Smin_=relativePermeabilityProperties.lookup("Smin");
-  Smax_=relativePermeabilityProperties.lookup("Smax");
-  
+  dimensionedScalar Smin_(relativePermeabilityProperties.lookup("Smin"));
+  dimensionedScalar Smax_(relativePermeabilityProperties.lookup("Smax"));
 
   krBrooksAndCoreyCoeffs_ = relativePermeabilityProperties.subDict(typeName + "Coeffs");
   n_=krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0);
   kramax_ = krBrooksAndCoreyCoeffs_.lookupOrDefault("kramax",1.0);
-  krbmax_ =  krBrooksAndCoreyCoeffs_.lookupOrDefault("krbmax",1.0);
+  krbmax_ = krBrooksAndCoreyCoeffs_.lookupOrDefault("krbmax",1.0);
 
   if (n_ <= 0)
     {

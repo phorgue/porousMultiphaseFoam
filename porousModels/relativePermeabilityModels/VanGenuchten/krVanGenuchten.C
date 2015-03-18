@@ -146,8 +146,8 @@ bool Foam::relativePermeabilityModels::krVanGenuchten::read
 {
   relativePermeabilityProperties_ = relativePermeabilityProperties;
 
-  Smin_=relativePermeabilityProperties.lookup("Smin");
-  Smax_=relativePermeabilityProperties.lookup("Smax");
+  dimensionedScalar Smin_(relativePermeabilityProperties.lookup("Smin"));
+  dimensionedScalar Smax_(relativePermeabilityProperties.lookup("Smax"));
 
   krVanGenuchtenCoeffs_ = relativePermeabilityProperties.subDict(typeName + "Coeffs");
   m_ = krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0) ;

@@ -1,0 +1,5 @@
+*.o
+*.dep
+linux64GccDPOpt/
+*~
+lnInclude/
