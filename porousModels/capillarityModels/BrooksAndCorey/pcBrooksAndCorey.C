@@ -59,6 +59,18 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
   Smaxpc_(pcBrooksAndCoreyCoeffs_.lookup("Smaxpc")),
   pc0_(pcBrooksAndCoreyCoeffs_.lookup("pc0")),
   alpha_(pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0)),
+  Se_
+  (
+   IOobject
+   (
+    name,
+    Sb_.time().timeName(),
+    Sb_.db(),
+    IOobject::NO_READ,
+    IOobject::NO_WRITE
+    ),       
+   Sb_
+   ),
   pc_
   (
    IOobject

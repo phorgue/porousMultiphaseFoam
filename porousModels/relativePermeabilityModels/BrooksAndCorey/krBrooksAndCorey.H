@@ -119,7 +119,7 @@ namespace Foam
       //- Correct the relative permeabilities
       void correct()
       {
-	Se_=(Sb_-Smin_)/(Smax_-Smin_);
+	Se_==(Sb_-Smin_)/(Smax_-Smin_);
 	kra_ = kramax_* pow((scalar(1)-Se_),n_);
 	krb_ = krbmax_ * pow(Se_,n_);
 

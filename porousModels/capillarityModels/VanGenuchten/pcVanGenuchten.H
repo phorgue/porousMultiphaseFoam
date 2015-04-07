@@ -58,8 +58,11 @@ namespace Foam
       dictionary pcVanGenuchtenCoeffs_;
       dimensionedScalar Sminpc_;    
       dimensionedScalar Smaxpc_;    
-        scalar m_,n_;
+      scalar m_,n_;
       dimensionedScalar pc0_;
+
+      //- effective saturation of phase b
+      volScalarField Se_;
 
       // capillary pressure and derivative
       volScalarField pc_;
@@ -101,7 +104,7 @@ namespace Foam
       //- Correct the capillarity
       void correct()
       {
-	volScalarField Se_ = (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
+	Se_ == (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
         pc_ = pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
 	dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smaxpc_-Sminpc_)) * pow(pow(Se_,-1/m_)-1,(1/n_)-1) * pow(Se_,-(1+m_)/m_);
       }

@@ -58,6 +58,18 @@ Foam::capillarityModels::pcLinear::pcLinear
   Smaxpc_(pcLinearCoeffs_.lookup("Smaxpc")),
   pc0_(pcLinearCoeffs_.lookup("pc0")),
   pcMax_(pcLinearCoeffs_.lookup("pcMax")),
+  Se_
+  (
+   IOobject
+   (
+    name,
+    Sb_.time().timeName(),
+    Sb_.db(),
+    IOobject::NO_READ,
+    IOobject::NO_WRITE
+    ),       
+   Sb_
+   ),
   pc_
   (
    IOobject

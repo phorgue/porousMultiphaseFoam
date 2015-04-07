@@ -59,8 +59,20 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
   m_(pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)),
   n_(pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("n",1/(1-m_))),
   pc0_(pcVanGenuchtenCoeffs_.lookup("pc0")),
-  pc_
+  Se_
   (
+   IOobject
+   (
+    name,
+    Sb.time().timeName(),
+    Sb.db(),
+    IOobject::NO_READ,
+    IOobject::NO_WRITE
+    ),       
+   Sb_
+  ),
+  pc_
+    (
    IOobject
    (
     name,
