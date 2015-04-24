@@ -54,8 +54,8 @@ Foam::capillarityModels::pcLinear::pcLinear
     :
   capillarityModel(name, capillarityProperties,Sb),
   pcLinearCoeffs_(capillarityProperties.subDict(typeName + "Coeffs")),
-  Sminpc_(pcLinearCoeffs_.lookup("Sminpc")),
-  Smaxpc_(pcLinearCoeffs_.lookup("Smaxpc")),
+  Sminpc_(pcLinearCoeffs_.lookup(Sb_.name()+"minpc")),
+  Smaxpc_(pcLinearCoeffs_.lookup(Sb_.name()+"maxpc")),
   pc0_(pcLinearCoeffs_.lookup("pc0")),
   pcMax_(pcLinearCoeffs_.lookup("pcMax")),
   Se_
@@ -111,8 +111,8 @@ bool Foam::capillarityModels::pcLinear::read
   capillarityProperties_ = capillarityProperties;
 
   pcLinearCoeffs_ = capillarityProperties.subDict(typeName + "Coeffs");
-  pcLinearCoeffs_.lookup("Sminpc") >> Sminpc_;
-  pcLinearCoeffs_.lookup("Smaxpc") >> Smaxpc_;
+  pcLinearCoeffs_.lookup(Sb_.name()+"minpc") >> Sminpc_;
+  pcLinearCoeffs_.lookup(Sb_.name()+"maxpc") >> Smaxpc_;
   pcLinearCoeffs_.lookup("pc0") >> pc0_;
   pcLinearCoeffs_.lookup("pcMax") >> pcMax_;
   return true;

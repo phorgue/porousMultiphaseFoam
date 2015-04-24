@@ -53,8 +53,8 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
  )
   :
   relativePermeabilityModel(name, relativePermeabilityProperties,Sb),
-  Smin_(relativePermeabilityProperties.lookup("Smin")),
-  Smax_(relativePermeabilityProperties.lookup("Smax")),
+  Smin_(relativePermeabilityProperties.lookup(Sb_.name()+"min")),
+  Smax_(relativePermeabilityProperties.lookup(Sb_.name()+"max")),
   krVanGenuchtenCoeffs_(relativePermeabilityProperties.subDict(typeName + "Coeffs")),
   m_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)),  
   Se_
@@ -121,8 +121,8 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
    Sb.mesh(),
    dimensionSet(0,0,0,0,0)
    ),
- kramax_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kramax",1.0)),
- krbmax_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("krbmax",1.0))
+kramax_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)),
+krbmax_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
 {
   if (m_ <= 0)
     {
@@ -146,8 +146,8 @@ bool Foam::relativePermeabilityModels::krVanGenuchten::read
 {
   relativePermeabilityProperties_ = relativePermeabilityProperties;
 
-  dimensionedScalar Smin_(relativePermeabilityProperties.lookup("Smin"));
-  dimensionedScalar Smax_(relativePermeabilityProperties.lookup("Smax"));
+  Smin_=relativePermeabilityProperties.lookup(Sb_.name()+"min");
+  Smax_=relativePermeabilityProperties.lookup(Sb_.name()+"max");
 
   krVanGenuchtenCoeffs_ = relativePermeabilityProperties.subDict(typeName + "Coeffs");
   m_ = krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0) ;

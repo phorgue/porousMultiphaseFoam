@@ -25,7 +25,6 @@ License
 
 #include "pcBrooksAndCorey.H"
 #include "addToRunTimeSelectionTable.H"
-//#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -55,8 +54,8 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
     :
   capillarityModel(name, capillarityProperties,Sb),	
   pcBrooksAndCoreyCoeffs_(capillarityProperties.subDict(typeName + "Coeffs")),
-  Sminpc_(pcBrooksAndCoreyCoeffs_.lookup("Sminpc")),
-  Smaxpc_(pcBrooksAndCoreyCoeffs_.lookup("Smaxpc")),
+  Sminpc_(pcBrooksAndCoreyCoeffs_.lookup(Sb_.name()+"minpc")),
+  Smaxpc_(pcBrooksAndCoreyCoeffs_.lookup(Sb_.name()+"maxpc")),
   pc0_(pcBrooksAndCoreyCoeffs_.lookup("pc0")),
   alpha_(pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0)),
   Se_
@@ -112,8 +111,8 @@ bool Foam::capillarityModels::pcBrooksAndCorey::read
   capillarityProperties_ = capillarityProperties;
 
   pcBrooksAndCoreyCoeffs_ = capillarityProperties.subDict(typeName + "Coeffs");
-  pcBrooksAndCoreyCoeffs_.lookup("Sminpc") >> Sminpc_;
-  pcBrooksAndCoreyCoeffs_.lookup("Smaxpc") >> Smaxpc_;
+  pcBrooksAndCoreyCoeffs_.lookup(Sb_.name()+"minpc") >> Sminpc_;
+  pcBrooksAndCoreyCoeffs_.lookup(Sb_.name()+"maxpc") >> Smaxpc_;
   pcBrooksAndCoreyCoeffs_.lookup("pc0") >> pc0_;
   alpha_ = pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0);    
 

@@ -56,8 +56,8 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
  )
   :
   relativePermeabilityModel(name, relativePermeabilityProperties,Sb),
-  Smin_(relativePermeabilityProperties.lookup("Smin")),
-  Smax_(relativePermeabilityProperties.lookup("Smax")),
+  Smin_(relativePermeabilityProperties.lookup(Sb_.name()+"min")),
+  Smax_(relativePermeabilityProperties.lookup(Sb_.name()+"max")),
   krBrooksAndCoreyCoeffs_(relativePermeabilityProperties.subDict(typeName + "Coeffs")),
   n_(krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0)),  
   Se_
@@ -124,8 +124,8 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
    Sb.mesh(),
    dimensionSet(0,0,0,0,0)
    ),
-  kramax_(krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kramax",1.0)),
-  krbmax_(krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("krbmax",1.0))
+   kramax_(krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)),
+   krbmax_(krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
 {
   if (n_ <= 0)
     {
@@ -150,13 +150,14 @@ bool Foam::relativePermeabilityModels::krBrooksAndCorey::read
 {
   relativePermeabilityProperties_ = relativePermeabilityProperties;
 
-  dimensionedScalar Smin_(relativePermeabilityProperties.lookup("Smin"));
-  dimensionedScalar Smax_(relativePermeabilityProperties.lookup("Smax"));
+  Smin_=relativePermeabilityProperties.lookup(Sb_.name()+"min");
+  Smax_=relativePermeabilityProperties.lookup(Sb_.name()+"max");
+  
 
   krBrooksAndCoreyCoeffs_ = relativePermeabilityProperties.subDict(typeName + "Coeffs");
   n_=krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0);
-  kramax_ = krBrooksAndCoreyCoeffs_.lookupOrDefault("kramax",1.0);
-  krbmax_ = krBrooksAndCoreyCoeffs_.lookupOrDefault("krbmax",1.0);
+  kramax_ = krBrooksAndCoreyCoeffs_.lookupOrDefault("kr"+Sb_.name()+"max",1.0);
+  krbmax_ =  krBrooksAndCoreyCoeffs_.lookupOrDefault("kr"+Sb_.name()+"max",1.0);
 
   if (n_ <= 0)
     {

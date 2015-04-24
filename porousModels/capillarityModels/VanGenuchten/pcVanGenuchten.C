@@ -54,8 +54,8 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     :
   capillarityModel(name, capillarityProperties,Sb),
   pcVanGenuchtenCoeffs_(capillarityProperties.subDict(typeName + "Coeffs")),
-  Sminpc_(pcVanGenuchtenCoeffs_.lookup("Sminpc")),
-  Smaxpc_(pcVanGenuchtenCoeffs_.lookup("Smaxpc")),
+  Sminpc_(pcVanGenuchtenCoeffs_.lookup(Sb_.name()+"minpc")),
+  Smaxpc_(pcVanGenuchtenCoeffs_.lookup(Sb_.name()+"maxpc")),
   m_(pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)),
   n_(pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("n",1/(1-m_))),
   pc0_(pcVanGenuchtenCoeffs_.lookup("pc0")),
@@ -64,15 +64,15 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
    IOobject
    (
     name,
-    Sb.time().timeName(),
-    Sb.db(),
+    Sb_.time().timeName(),
+    Sb_.db(),
     IOobject::NO_READ,
     IOobject::NO_WRITE
     ),       
    Sb_
-  ),
+   ),
   pc_
-    (
+  (
    IOobject
    (
     name,
@@ -112,8 +112,8 @@ bool Foam::capillarityModels::pcVanGenuchten::read
   capillarityProperties_ = capillarityProperties;
 
   pcVanGenuchtenCoeffs_ = capillarityProperties.subDict(typeName + "Coeffs");
-  pcVanGenuchtenCoeffs_.lookup("Sminpc") >> Sminpc_;
-  pcVanGenuchtenCoeffs_.lookup("Smaxpc") >> Smaxpc_;
+  pcVanGenuchtenCoeffs_.lookup(Sb_.name()+"minpc") >> Sminpc_;
+  pcVanGenuchtenCoeffs_.lookup(Sb_.name()+"maxpc") >> Smaxpc_;
   pcVanGenuchtenCoeffs_.lookup("pc0") >> pc0_;
   m_ = pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0);
   n_ = pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("n",0);
