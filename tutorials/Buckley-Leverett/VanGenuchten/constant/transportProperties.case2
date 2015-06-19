@@ -18,8 +18,8 @@ FoamFile
 activateCapillarity	0.;
 
 eps		eps [0  0  0 0 0 0 0]	0.5;	
-Smin		Smin [0  0  0 0 0 0 0]	1e-4;
-Smax		Smax [0  0  0 0 0 0 0]	0.9999;
+Sbmin		Sbmin [0  0  0 0 0 0 0]	1e-4;
+Sbmax		Sbmax [0  0  0 0 0 0 0]	0.9999;
 
 phasea
 {
@@ -39,8 +39,8 @@ capillarityModel	VanGenuchten;
 
 VanGenuchtenCoeffs
 {
-    Sminpc Sminpc [0 0 0 0 0 0 0] 0;
-    Smaxpc Smaxpc [0 0 0 0 0 0 0] 1;
+    Sbminpc Sbminpc [0 0 0 0 0 0 0] 0;
+    Sbmaxpc Sbmaxpc [0 0 0 0 0 0 0] 1;
     pc0 pc0 [1 -1 -2 0 0 0 0] 5;
     m	0.5;
 }

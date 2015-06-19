@@ -75,8 +75,8 @@ dimensionedScalar Mmu(mub/mua);//viscosity ratio
 /////////////////////////////////////////////////////////////////////////////
 
 //Minimal and Maximal saturation (physical condition)
-dimensionedScalar Smin(transportProperties.lookup("Smin"));
-dimensionedScalar Smax(transportProperties.lookup("Smax"));
+dimensionedScalar Smin(transportProperties.lookup("Sbmin"));
+dimensionedScalar Smax(transportProperties.lookup("Sbmax"));
 	
 // Test  the initial Saturation if inferior to Smin or superior to Smax.
   if (gMin(Sb) < Smin.value()) 
