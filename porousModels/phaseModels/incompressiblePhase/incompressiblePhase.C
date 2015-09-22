@@ -38,7 +38,7 @@ Foam::incompressiblePhase::incompressiblePhase
 )
 :  
     name_(phaseName),
-    dict_(transportProperties.subDict("phase" + phaseName)),
+    dict_(transportProperties.subDict("phase." + phaseName)),
     mu_(dict_.lookup("mu")),
     rho_(dict_.lookup("rho")),
     U_

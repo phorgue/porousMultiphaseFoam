@@ -4,6 +4,6 @@
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
 foamClearPolyMesh
-rm -f log.*
+rm -f log.* *.eps
 rm -rf constant/g 1* 2* 3* 4* 5* 6* 7* 8* 9* 
 rm -rf postProcessing
