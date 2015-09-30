@@ -56,6 +56,7 @@ namespace Foam
     {
       // pcVan Genuchten coefficients
       dictionary pcLinearCoeffs_;
+
       dimensionedScalar Sminpc_;    
       dimensionedScalar Smaxpc_;    
       dimensionedScalar pc0_;
@@ -109,10 +110,26 @@ namespace Foam
 	dpcdS_ =  pc0_ - pcMax_; 
       }
 
+      //- Compute Moisture from head pressure (Richards' model)
+      volScalarField correctAndSb(volScalarField h) 
+      {
+        FatalErrorIn("volScalarField correctAndSb(volScalarField h) const")
+                   << "Not implemented in pcLinear.H " << abort(FatalError);
+        return Se_;
+      };
+
+      //- Capillary capacity (Richards' model)
+      tmp<volScalarField> Ch() const
+      {
+        FatalErrorIn("tmp<volScalarField> Ch() const")
+                  << "Not implemented in pcLinear.H " << abort(FatalError);
+        return Se_;
+      };
+
       //- Read transportProperties dictionary
       bool read(const dictionary& capillarityProperties);
-    };
 
+    };
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -54,11 +54,12 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     :
   capillarityModel(name, capillarityProperties,Sb),
   pcVanGenuchtenCoeffs_(capillarityProperties.subDict(typeName + "Coeffs")),
-  Sminpc_(pcVanGenuchtenCoeffs_.lookup(Sb_.name()+"minpc")),
-  Smaxpc_(pcVanGenuchtenCoeffs_.lookup(Sb_.name()+"maxpc")),
+  Sminpc_(pcVanGenuchtenCoeffs_.lookupOrDefault(Sb_.name()+"minpc",dimensionedScalar(Sb_.name()+"min",capillarityProperties.lookup(Sb_.name()+"min")+0))),
+  Smaxpc_(pcVanGenuchtenCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",dimensionedScalar(Sb_.name()+"max",capillarityProperties.lookup(Sb_.name()+"max")+0))),
   m_(pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)),
-  n_(pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("n",1/(1-m_))),
-  pc0_(pcVanGenuchtenCoeffs_.lookup("pc0")),
+  n_(1/(1-m_)),
+  alpha_(pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("alpha",0)), // necessary for Richards solver
+  pc0_(pcVanGenuchtenCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))),
   Se_
   (
    IOobject
@@ -96,11 +97,27 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     ),       
    Sb.mesh(),
    dimensionSet(1,-1,-2,0,0,0,0)
-   )
+  ),
+  Ch_
+  (
+   IOobject
+   (
+    name,
+    Sb.time().timeName(),
+    Sb.db(),
+    IOobject::NO_READ,
+    IOobject::NO_WRITE
+    ),       
+   Sb.mesh(),
+   dimensionSet(0,-1,0,0,0,0,0)
+  )
 {
-  correct();
+        Info << " Saturation min = " << Sminpc_.value()
+         << nl << " Saturation max = " << Smaxpc_.value() 
+         << nl << " m = " << m_
+         << nl << " pc0 = " << pc0_.value()
+         << nl << " alpha = " << alpha_ << nl <<  endl;
 }
-
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
@@ -119,6 +136,5 @@ bool Foam::capillarityModels::pcVanGenuchten::read
   n_ = pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("n",0);
   return true;
 }
-
 
 // ************************************************************************* //
