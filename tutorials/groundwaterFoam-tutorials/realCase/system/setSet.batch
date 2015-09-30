@@ -1,0 +1,42 @@
+
+faceSet X0 new boundaryToFace
+faceSet X0 delete normalToFace (1 0 0) 1e-10
+faceSet X0 delete normalToFace (0 -1 0) 1e-10
+faceSet X0 delete normalToFace (0 1 0) 1e-10
+faceSet X0 delete normalToFace (0 0 1) 1e-10
+faceSet X0 delete normalToFace (0 0 -1) 1e-10
+
+faceSet X1 new boundaryToFace
+faceSet X1 delete normalToFace (-1 0 0) 1e-10
+faceSet X1 delete normalToFace (0 -1 0) 1e-10
+faceSet X1 delete normalToFace (0 1 0) 1e-10
+faceSet X1 delete normalToFace (0 0 1) 1e-10
+faceSet X1 delete normalToFace (0 0 -1) 1e-10
+
+faceSet Y0 new boundaryToFace
+faceSet Y0 delete normalToFace (1 0 0) 1e-10
+faceSet Y0 delete normalToFace (-1 0 0) 1e-10
+faceSet Y0 delete normalToFace (0 1 0) 1e-10
+faceSet Y0 delete normalToFace (0 0 1) 1e-10
+faceSet Y0 delete normalToFace (0 0 -1) 1e-10
+
+faceSet Y1 new boundaryToFace
+faceSet Y1 delete normalToFace (1 0 0) 1e-10
+faceSet Y1 delete normalToFace (-1 0 0) 1e-10
+faceSet Y1 delete normalToFace (0 -1 0) 1e-10
+faceSet Y1 delete normalToFace (0 0 1) 1e-10
+faceSet Y1 delete normalToFace (0 0 -1) 1e-10
+
+faceSet Z0 new boundaryToFace
+faceSet Z0 delete normalToFace (1 0 0) 1e-1
+faceSet Z0 delete normalToFace (-1 0 0) 1e-1
+faceSet Z0 delete normalToFace (0 1 0) 1e-1
+faceSet Z0 delete normalToFace (0 -1 0) 1e-1
+faceSet Z0 delete normalToFace (0 0 -1) 5e-1
+
+faceSet Z1 new boundaryToFace
+faceSet Z1 delete normalToFace (1 0 0) 1e-1
+faceSet Z1 delete normalToFace (-1 0 0) 1e-1
+faceSet Z1 delete normalToFace (0 1 0) 1e-1
+faceSet Z1 delete normalToFace (0 -1 0) 1e-1
+faceSet Z1 delete normalToFace (0 0 1) 1e-1
