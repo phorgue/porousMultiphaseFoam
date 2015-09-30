@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
         #include "createFields.H"
         #include "createSbFields.H"
         #include "createWellbores.H"
-        #include "initContinuityErrs.H"
         #include "readTimeControls.H"
         #include "CourantNo.H"
         #include "setInitialDeltaT.H"

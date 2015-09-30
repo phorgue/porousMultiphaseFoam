@@ -54,8 +54,8 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
     :
   capillarityModel(name, capillarityProperties,Sb),	
   pcBrooksAndCoreyCoeffs_(capillarityProperties.subDict(typeName + "Coeffs")),
-  Sminpc_(pcBrooksAndCoreyCoeffs_.lookup(Sb_.name()+"minpc")),
-  Smaxpc_(pcBrooksAndCoreyCoeffs_.lookup(Sb_.name()+"maxpc")),
+  Sminpc_(pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"minpc",dimensionedScalar(Sb_.name()+"min",capillarityProperties.lookup(Sb_.name()+"min")+0))),
+  Smaxpc_(pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",dimensionedScalar(Sb_.name()+"max",capillarityProperties.lookup(Sb_.name()+"max")+0))),
   pc0_(pcBrooksAndCoreyCoeffs_.lookup("pc0")),
   alpha_(pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0)),
   Se_
@@ -100,7 +100,6 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
   correct();
 }
 
-
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 bool Foam::capillarityModels::pcBrooksAndCorey::read
@@ -118,6 +117,5 @@ bool Foam::capillarityModels::pcBrooksAndCorey::read
 
   return true;
 }
-
 
 // ************************************************************************* //

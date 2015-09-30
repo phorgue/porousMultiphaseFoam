@@ -73,7 +73,6 @@ protected:
     // reference to the saturation field 
     const volScalarField& Sb_;
 
-
     // Private Member Functions
 
     //- Disallow copy construct
@@ -146,10 +145,16 @@ public:
     //- Correct the capillary pressure
     virtual void correct() = 0; 
 
+    //- Compute Moisture from head pressure (Richards' model)
+    virtual volScalarField correctAndSb(volScalarField h) = 0;
+
+    //- Capillary capacity (Richards' model)
+    virtual tmp<volScalarField> Ch() const = 0;
+
     //- Read transportProperties dictionary
     virtual bool read(const dictionary& capillarityProperties) = 0;
-};
 
+};
 
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

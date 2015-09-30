@@ -55,18 +55,16 @@ namespace Foam
       public capillarityModel
     {
       // pcVan Genuchten coefficients
-      dictionary pcVanGenuchtenCoeffs_;
-      dimensionedScalar Sminpc_;    
-      dimensionedScalar Smaxpc_;    
-      scalar m_,n_;
+      dictionary pcVanGenuchtenCoeffs_;             
+      dimensionedScalar Sminpc_,Smaxpc_;    
+      scalar m_,n_,alpha_;
       dimensionedScalar pc0_;
 
-      //- effective saturation of phase b
+      // effective saturation of phase b 
       volScalarField Se_;
 
-      // capillary pressure and derivative
-      volScalarField pc_;
-      volScalarField dpcdS_;
+      // capillary pressure, derivative and capacity
+        volScalarField pc_, dpcdS_, Ch_;
         
     public:
 
@@ -101,18 +99,40 @@ namespace Foam
 	return dpcdS_;
       }
 
-      //- Correct the capillarity
+      //- Correct the capillary pressure
       void correct()
       {
 	Se_ == (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
-        pc_ = pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
+        pc_ == pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
 	dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smaxpc_-Sminpc_)) * pow(pow(Se_,-1/m_)-1,(1/n_)-1) * pow(Se_,-(1+m_)/m_);
+      }
+
+      //- Correct effective saturation and capillary capacity and return saturation (Richards' solver)
+      volScalarField correctAndSb(volScalarField h) 
+      {          
+        //- Compute Saturation from! head pressure
+        h.dimensions().reset(dimless);
+        volScalarField Stmp_ = neg(h) *(Sminpc_+(Smaxpc_-Sminpc_)*pow(1.0+pow(alpha_*mag(h),n_),-m_)) + pos(h)*(Smaxpc_-SMALL);
+        h.dimensions().reset(dimLength);  
+
+        //- Update effective saturation and capillary capacity
+	Se_ == (Stmp_- Sminpc_)/(Smaxpc_-Sminpc_);
+        Ch_.dimensions().reset(dimless);
+        Ch_ == alpha_*m_*(Smaxpc_-Sminpc_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
+        Ch_.dimensions().reset(dimless/dimLength);
+
+        return Stmp_;
+      }
+
+      //- Capillary capacity (Richards' model)
+      tmp<volScalarField> Ch() const
+      {
+        return Ch_;
       }
 
       //- Read transportProperties dictionary
       bool read(const dictionary& capillarityProperties);
     };
-
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
