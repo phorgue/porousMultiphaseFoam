@@ -1,8 +1,0 @@
-blockMesh
-cp *.org => *
-setFields
-
-decomposePar
-mpirun -np 2 impesFoam -parallel > log.impesFoam &
-reconstructPar
-
