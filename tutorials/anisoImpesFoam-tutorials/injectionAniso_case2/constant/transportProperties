@@ -17,7 +17,6 @@ FoamFile
 
 activateCapillarity	0.;
 
-eps		eps [0  0  0 0 0 0 0]	0.5;	
 Sbmin		Sbmin [0  0  0 0 0 0 0]	0.001;
 Sbmax		Sbmax [0  0  0 0 0 0 0]	0.999;
 
