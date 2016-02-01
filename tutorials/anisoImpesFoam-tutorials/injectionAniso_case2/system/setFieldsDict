@@ -21,6 +21,7 @@ defaultFieldValues
 	volScalarFieldValue Sb 0.002
 	volScalarFieldValue Winj 0
 	volScalarFieldValue Wext 0
+	volScalarFieldValue eps 0.75
 );
 
 
@@ -46,8 +47,16 @@ regions
            volScalarFieldValue Wext 1 
         );
    }   
-      
-     
+   
+   // extraction
+   boxToCell
+   {
+     box (0 0 0) (5 10 1);
+     fieldValues
+        (
+           volScalarFieldValue eps 0.25 
+        );
+   }  
 
 );
 
