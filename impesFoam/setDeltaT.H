@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 //- Timestep Saturation equation
-scalar dSdTmax = gMax(mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext)*activateWellbores)().internalField())/eps.value();
+scalar dSdTmax = gMax(mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext)*activateWellbores)().internalField()/eps.internalField());
 scalar dtForS = dSmax/(dSdTmax+SMALL);
 
 //- Choose between Coats and Courant number as driving number
