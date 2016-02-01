@@ -113,9 +113,24 @@ autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krM
 /////////////////////////////////////////////////////////////////////////////
 
 Info<< "Reading Porous Media Properties \n" << endl;
+
 // Porosity	
-dimensionedScalar eps(transportProperties.lookup("eps"));
+dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
    
+volScalarField eps
+(
+    IOobject
+    (
+        "eps",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    epsScalar
+);
+
 // Intrinsic permeability       
 Info<< "Reading field K\n" << endl;
 volScalarField K
