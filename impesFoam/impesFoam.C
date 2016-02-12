@@ -62,13 +62,15 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
 
-    while (runTime.loop())
+    while (runTime.run())
     {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
-
         #include "CourantNo.H"
         #include "CoatsNo.H"
         #include "setDeltaT.H"
+        
+        runTime++;
+
+        Info<< "Time = " << runTime.timeName() << nl << endl;
 
          //- Solve saturation equation (explicit)             
         #include "SEqn.H"
