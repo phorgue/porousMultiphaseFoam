@@ -56,14 +56,18 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
+    label iterPicard=0;
 
-    while (runTime.loop())
+    while (runTime.run())
     {
-        Info << "Time = " << runTime.timeName() << nl << endl;
-        Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
+        #include "setDeltaT.H"
 
-        label iterPicard=0;
+        runTime++;
+
+        Info << "Time = " << runTime.timeName() << nl << endl;
+
         scalar resPicard=1;
+        iterPicard = 0;
         while (resPicard > tolPicard)
         {
             #include "hEqn.H"
@@ -75,7 +79,6 @@ int main(int argc, char *argv[])
                 break;
             }
         }
-        #include "setDeltaT.H"
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta) << " Max(theta) = " << gMax(theta) <<  endl;
         Info << "Head pressure h  " << " Min(h) = " << gMin(h) << " Max(h) = " << gMax(h) <<  endl;
