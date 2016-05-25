@@ -53,10 +53,46 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
  )
   :
   relativePermeabilityModel(name, relativePermeabilityProperties,Sb),
-  Smin_(relativePermeabilityProperties.lookup(Sb_.name()+"min")),
-  Smax_(relativePermeabilityProperties.lookup(Sb_.name()+"max")),
+  Smin_
+  (
+      IOobject
+      (
+          Sb_.name()+"min",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      relativePermeabilityProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+  ),
+  Smax_
+  (
+      IOobject
+      (
+          Sb_.name()+"max",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      relativePermeabilityProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+  ),
   krVanGenuchtenCoeffs_(relativePermeabilityProperties.subDict(typeName + "Coeffs")),
-  m_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)),  
+  m_
+  (
+      IOobject
+      (
+          "m",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+      ),
+      Sb.mesh(),
+      krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)
+  ),
   Se_
   (
    IOobject
@@ -121,10 +157,34 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
    Sb.mesh(),
    dimensionSet(0,0,0,0,0)
    ),
-kramax_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)),
-krbmax_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
+  kramax_
+  (
+      IOobject
+      (
+          "kr"+Sb_.name()+"max",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+      ),
+      Sb.mesh(),
+      krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
+  ),
+  krbmax_
+  (
+      IOobject
+      (
+          "kr"+Sb_.name()+"max",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+      ),
+      Sb.mesh(),
+      krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
+  )
 {
-  if (m_ <= 0)
+  if (gMin(m_) <= 0)
     {
       FatalErrorIn
         (
@@ -133,37 +193,6 @@ krbmax_(krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
         << "Relative permeability coefficient m equal or less than 0" 
         << exit(FatalError);
     }
-  correct();
 }
-
-
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-bool Foam::relativePermeabilityModels::krVanGenuchten::read
-(
- const dictionary& relativePermeabilityProperties
- )
-{
-  relativePermeabilityProperties_ = relativePermeabilityProperties;
-
-  Smin_=relativePermeabilityProperties.lookup(Sb_.name()+"min");
-  Smax_=relativePermeabilityProperties.lookup(Sb_.name()+"max");
-
-  krVanGenuchtenCoeffs_ = relativePermeabilityProperties.subDict(typeName + "Coeffs");
-  m_ = krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0) ;
-
-  if (m_ <= 0)
-    {
-      FatalErrorIn
-	(
-	 "in krVanGenuchten.C"
-	 )
-	<< "Van Genuchten coefficient m equal or less than 0" 
-	<< exit(FatalError);
-    }
-
-  return true;
-}
-
 
 // ************************************************************************* //

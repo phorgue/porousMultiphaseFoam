@@ -56,15 +56,15 @@ namespace Foam
     {
       // pcVan Genuchten coefficients
       dictionary pcVanGenuchtenCoeffs_;             
-      dimensionedScalar Sminpc_,Smaxpc_;    
-      scalar m_,n_,alpha_;
-      dimensionedScalar pc0_;
+      volScalarField Sminpc_,Smaxpc_;    
+      volScalarField m_,n_,alpha_;
+      volScalarField pc0_;
 
       // effective saturation of phase b 
       volScalarField Se_;
 
       // capillary pressure, derivative and capacity
-        volScalarField pc_, dpcdS_, Ch_;
+      volScalarField pc_, dpcdS_, Ch_;
         
     public:
 
@@ -130,8 +130,6 @@ namespace Foam
         return Ch_;
       }
 
-      //- Read transportProperties dictionary
-      bool read(const dictionary& capillarityProperties);
     };
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

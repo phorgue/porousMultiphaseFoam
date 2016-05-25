@@ -2,21 +2,14 @@
 ****************** PorousMultiphaseFoam for OpenFOAM *********************
 **************************************************************************
 
-
-      "A open-source toolbox for multiphase flow in porous media"
-      P. Horgue, C. Soulaine, J. Franc, R. Guibert and G. Debenest.
-      Computer Physics Communications, In Press, Accepted Manuscript
-
-**************************************************************************
-
 * General Informations : 
 
 
-- This toolbox is compatible with OpenFOAM 2.2 and later.
+- This toolbox is compatible with OpenFOAM  and later.
 
 - This toolbox needs only a standard OpenFOAM installation (see www.openfoam.org)
 
-- Please cite the related paper (Horgue et al. 2014) if you are using this toolbox.
+- Please cite the related paper in the "doc" folder if you are using this toolbox.
 
 - Read the COPYING_OPENFOAM file for information about OpenFOAM and this toolbox Copyrights.
 
@@ -24,7 +17,7 @@
 
 
 - First, source the OpenFOAM configuration file, i.e. (example for ubuntu version) : 
-   source /opt/openfoam2xx/etc/bashrc
+   source /opt/openfoam3xx/etc/bashrc
 
 - then in the "porousMultiphaseFoam" directory, run :
 
@@ -45,65 +38,6 @@
 
 	./Allwclean
 
+- see the ReleaseNotes.txt file for detailed information about the toolbox.
 
-* Note for versions 2.0.x and 2.1.x :
-
-- The Coats CFL condition (in CoatsNo.H) use the "delta()" function from the mesh
-  structure that is not available in old versions. Consequently, you have
-  to remove this condition or compute manually the delta to use this toolbox for
-  old versions. 
-
-- The "sample" function has changed and now 1D profiles are in the directory
-  "postProcessing/sets" and not anymore in "sets". 
-  To plot 1D profiles in the Buckley-Leverett tutorials, after running the
-  simulation, run :
-
-     mkdir postProcessing
-     mv sets postProcessing/
-     gnuplot plot_caseGravity.gp (or plot_caseNoGravity.gp)
-
-****************************************************************************
-
-impesFoam
-
-IMPES method solving two-phase flow in porous media with several multiphase 
-models available in the provided libraries. Permeability field is isotropic
-and can be heterogeneous (K is a volScalarField).
-
-****************************************************************************
-
-anisoImpesFoam
-
-IMPES method solving two-phase flow in porous media with several multiphase 
-models available in the provided libraries. Permeability field is anisotropic
-and can be heterogeneous (K is a volTensorField).
-
-****************************************************************************
-
-porousModels 
-
-library containing several models for porous multiphase flows :
-
-- phase models : incompressible  
-- relative permeabilities : Brooks and Corey, Van Genuchten
-- capillary pressure : Brooks and Corey, Van Genuchten, linear
-
-*******************************************************************************
-
-porousBoundaryConditions 
-
-New boundary conditions necessary to impose phase velocities:
-    - 'darcyGradPressure' for impesFoam simulations
-    - 'darcyGradPressureAniso' for anisoImpesFoam simulations
-
-*******************************************************************************
-
-tutorials
-
-Containing validation cases : 
-
-- Buckley-Leverett for "kr" models.
-- Capillary pressure for "pc" models.
-- Injection-extraction of water in a storage (iso- and anisotropic simulations)
-
-*******************************************************************************
+**************************************************************************

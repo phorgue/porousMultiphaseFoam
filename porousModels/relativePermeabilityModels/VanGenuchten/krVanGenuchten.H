@@ -55,12 +55,12 @@ namespace Foam
       public relativePermeabilityModel
     {
       //- Private data
-      dimensionedScalar Smin_;
-      dimensionedScalar Smax_;
+      volScalarField Smin_;
+      volScalarField Smax_;
 
       //- Van Genuchten coefficients
       dictionary krVanGenuchtenCoeffs_;
-      scalar m_;
+      volScalarField m_;
 
       //- effective saturation of phase b
       volScalarField Se_;
@@ -73,8 +73,8 @@ namespace Foam
       volScalarField dkrbdS_;
 
       //- end points
-      scalar kramax_;
-      scalar krbmax_;
+      volScalarField kramax_;
+      volScalarField krbmax_;
 
 
     public:
@@ -139,9 +139,7 @@ namespace Foam
 	 dkrbdS_ *= krbmax_;
 
       }
-
-      //- Read transportProperties dictionary
-      bool read(const dictionary& relativePermeabilityProperties);
+        
     };
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -56,11 +56,11 @@ namespace Foam
     {
       // pcBrooks and Corey coefficients
       dictionary pcBrooksAndCoreyCoeffs_;
-        
-      dimensionedScalar Sminpc_;    
-      dimensionedScalar Smaxpc_;    
-      dimensionedScalar pc0_;
-      scalar alpha_;
+       
+      volScalarField Sminpc_;    
+      volScalarField Smaxpc_;    
+      volScalarField pc0_;
+      volScalarField alpha_;
 
       // effective saturation of phase b 
       volScalarField Se_;
@@ -102,7 +102,7 @@ namespace Foam
 	return dpcdS_;
       }
 
-      //- Correct the laminar capillarity
+      //- Correct the capillary pressure
       void correct()
       {
         Se_ == (Sb_-Sminpc_)/(Smaxpc_ - Sminpc_);
@@ -125,9 +125,6 @@ namespace Foam
                     << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
         return Se_;
       };
-
-      //- Read transportProperties dictionary
-      bool read(const dictionary& capillarityProperties);
 
     };
 

@@ -57,10 +57,10 @@ namespace Foam
       // pcVan Genuchten coefficients
       dictionary pcLinearCoeffs_;
 
-      dimensionedScalar Sminpc_;    
-      dimensionedScalar Smaxpc_;    
-      dimensionedScalar pc0_;
-      dimensionedScalar pcMax_;
+      volScalarField Sminpc_;    
+      volScalarField Smaxpc_;    
+      volScalarField pc0_;
+      volScalarField pcMax_;
 
       //- effective saturation of phase b
       volScalarField Se_;
@@ -125,9 +125,6 @@ namespace Foam
                   << "Not implemented in pcLinear.H " << abort(FatalError);
         return Se_;
       };
-
-      //- Read transportProperties dictionary
-      bool read(const dictionary& capillarityProperties);
 
     };
 

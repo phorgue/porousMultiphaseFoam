@@ -54,10 +54,58 @@ Foam::capillarityModels::pcLinear::pcLinear
     :
   capillarityModel(name, capillarityProperties,Sb),
   pcLinearCoeffs_(capillarityProperties.subDict(typeName + "Coeffs")),
-  Sminpc_(pcLinearCoeffs_.lookupOrDefault(Sb_.name()+"minpc",dimensionedScalar(Sb_.name()+"min",capillarityProperties.lookup(Sb_.name()+"min")+0))),
-  Smaxpc_(pcLinearCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",dimensionedScalar(Sb_.name()+"max",capillarityProperties.lookup(Sb_.name()+"max")+0))),
-  pc0_(pcLinearCoeffs_.lookup("pc0")),
-  pcMax_(pcLinearCoeffs_.lookup("pcMax")),
+  Sminpc_
+  (
+      IOobject
+      (
+          Sb_.name()+"minpc",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      pcLinearCoeffs_.lookupOrDefault(Sb_.name()+"minpc",capillarityProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0)))
+  ),
+  Smaxpc_
+  (
+      IOobject
+      (
+          Sb_.name()+"maxpc",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+      ),
+      Sb.mesh(),
+      pcLinearCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",capillarityProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0)))
+  ),
+  pc0_
+  (
+      IOobject
+      (
+          "pc0",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      pcLinearCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimless,0))
+  ),
+  pcMax_
+  (
+      IOobject
+      (
+          "pcMax",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      pcLinearCoeffs_.lookupOrDefault("pcMax",dimensionedScalar("pcMax",dimless,0))
+  ),
   Se_
   (
    IOobject
@@ -98,23 +146,6 @@ Foam::capillarityModels::pcLinear::pcLinear
    )
 {
   correct();
-}
-
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-bool Foam::capillarityModels::pcLinear::read
-(
- const dictionary& capillarityProperties
- )
-{
-  capillarityProperties_ = capillarityProperties;
-
-  pcLinearCoeffs_ = capillarityProperties.subDict(typeName + "Coeffs");
-  pcLinearCoeffs_.lookup(Sb_.name()+"minpc") >> Sminpc_;
-  pcLinearCoeffs_.lookup(Sb_.name()+"maxpc") >> Smaxpc_;
-  pcLinearCoeffs_.lookup("pc0") >> pc0_;
-  pcLinearCoeffs_.lookup("pcMax") >> pcMax_;
-  return true;
 }
 
 // ************************************************************************* //
