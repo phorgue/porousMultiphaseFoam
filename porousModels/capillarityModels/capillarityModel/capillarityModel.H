@@ -151,9 +151,6 @@ public:
     //- Capillary capacity (Richards' model)
     virtual tmp<volScalarField> Ch() const = 0;
 
-    //- Read transportProperties dictionary
-    virtual bool read(const dictionary& capillarityProperties) = 0;
-
 };
 
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

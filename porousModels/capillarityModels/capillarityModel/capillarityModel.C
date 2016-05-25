@@ -35,7 +35,6 @@ namespace Foam
     defineRunTimeSelectionTable(capillarityModel, dictionary);
 }
 
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::capillarityModel::capillarityModel

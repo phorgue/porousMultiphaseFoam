@@ -154,8 +154,6 @@ namespace Foam
     //- Correct the relative permeabilities
     virtual void correct() = 0; 
 
-    //- Read transportProperties dictionary
-    virtual bool read(const dictionary& relativePermeabilityProperties) = 0;
   };
 
 

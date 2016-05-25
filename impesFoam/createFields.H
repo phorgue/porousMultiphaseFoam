@@ -71,40 +71,6 @@ const dimensionedScalar& mub = phaseb->mu();
 
 dimensionedScalar Mmu(mub/mua);//viscosity ratio
 
-/////////////////////////////////////////////////////////////////////////////
-///////////////////////// SATURATION INITIALIZATION /////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-//Minimal and Maximal saturation (physical condition)
-dimensionedScalar Smin(transportProperties.lookup("Sbmin"));
-dimensionedScalar Smax(transportProperties.lookup("Sbmax"));
-	
-// Test  the initial Saturation if inferior to Smin or superior to Smax.
-if ( gMin(Sb) < Smin.value()) 
-{
-    FatalErrorIn
-        (
-            "in createFields.H"
-        )
-        << "Saturation equal or inferior to minimal saturation " 
-            << exit(FatalError);
-}
-if ( gMax(Sb) > Smax.value()) 
-{  
-    FatalErrorIn
-        (
-            "in createFields.H"
-        )
-        << "Saturation equal or superior to maximal saturation " 
-            << exit(FatalError);
-}
-
-forAll(Sb,celli)
-{
-    if(Sb[celli] == Smin.value()) Sb[celli] += SMALL;
-    if(Sb[celli] == Smax.value()) Sb[celli] -= SMALL;
-}
-
 // Relative permeability model 
 autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,Sb);
 
