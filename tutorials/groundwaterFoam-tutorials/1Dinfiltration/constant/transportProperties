@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-thetamin	thetamin [0  0  0 0 0 0 0]	0.102;
+// thetamin field in constant/porousModels
 thetamax	thetamax [0  0  0 0 0 0 0]	0.368;
 	
 phase.theta
@@ -29,9 +29,9 @@ relativePermeabilityModel  VanGenuchten;
 capillarityModel	VanGenuchten;
 
 VanGenuchtenCoeffs
-{   
-    m	0.5;
-    alpha 3.35;
+{
+    //- "m" field in constant/porousModels
+    alpha   3.35;
 }
 
 // ************************************************************************* //

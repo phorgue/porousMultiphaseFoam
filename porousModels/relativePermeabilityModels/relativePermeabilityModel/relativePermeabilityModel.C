@@ -50,9 +50,4 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     Sb_(Sb)
 {}
 
-
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-
-
 // ************************************************************************* //

@@ -61,9 +61,6 @@ surfaceScalarField phi
 /////////////////////////////////////////////////////////////////////////////
 
 //Minimal and Maximal saturation (physical condition)
-dimensionedScalar thetamin(transportProperties.lookup("thetamin"));
-dimensionedScalar thetamax(transportProperties.lookup("thetamax"));
-
 volScalarField theta
 (
     IOobject
@@ -77,7 +74,7 @@ volScalarField theta
     h
 );
 theta.dimensions().reset(dimless);
-theta == (thetamin+thetamax)/2; // temporary initialisation
+theta == 0; // temporary initialisation
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////// CAPILLARY MODEL /////////////////////////////////
