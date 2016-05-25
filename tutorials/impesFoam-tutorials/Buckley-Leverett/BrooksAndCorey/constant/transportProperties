@@ -18,7 +18,7 @@ FoamFile
 activateCapillarity	0.;
 
 eps		eps [0  0  0 0 0 0 0]	0.5;	
-Sbmin		Sbmin [0  0  0 0 0 0 0]	0.0001;
+//Sbmin	in constant/porousModels
 Sbmax		Sbmax [0  0  0 0 0 0 0]	0.9999;
 
 phase.a
@@ -40,12 +40,12 @@ capillarityModel	BrooksAndCorey;
 BrooksAndCoreyCoeffs
 {
     // kr 
-    n 3;
+    // n in constant/porousModels
 
     // pc 
     Sbminpc Sbminpc [0 0 0 0 0 0 0] 0;
     Sbmaxpc Sbmaxpc [0 0 0 0 0 0 0] 1;
-    pc0 pc0 [1 -1 -2 0 0 0 0] 5;
+    // pc0 in constant/porousModels
     alpha	0.2;	
 }
 
