@@ -54,22 +54,70 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
     :
   capillarityModel(name, capillarityProperties,Sb),	
   pcBrooksAndCoreyCoeffs_(capillarityProperties.subDict(typeName + "Coeffs")),
-  Sminpc_(pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"minpc",dimensionedScalar(Sb_.name()+"min",capillarityProperties.lookup(Sb_.name()+"min")+0))),
-  Smaxpc_(pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",dimensionedScalar(Sb_.name()+"max",capillarityProperties.lookup(Sb_.name()+"max")+0))),
-  pc0_(pcBrooksAndCoreyCoeffs_.lookup("pc0")),
-  alpha_(pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0)),
+  Sminpc_
+  (
+      IOobject
+      (
+          Sb_.name()+"minpc",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"minpc",capillarityProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0)))
+  ),
+  Smaxpc_
+  (
+      IOobject
+      (
+          Sb_.name()+"maxpc",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::AUTO_WRITE
+      ),
+      Sb.mesh(),
+      pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",capillarityProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0)))
+  ),
+  pc0_
+  (
+      IOobject
+      (
+          "pc0",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      pcBrooksAndCoreyCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimless,0))
+  ),
+  alpha_
+  (
+      IOobject
+      (
+          "alpha",
+          "constant/porousModels",
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0)
+  ),
   Se_
   (
-   IOobject
-   (
-    name,
-    Sb_.time().timeName(),
-    Sb_.db(),
-    IOobject::NO_READ,
+      IOobject
+      (
+          name,
+          Sb_.time().timeName(),
+          Sb_.db(),
+          IOobject::NO_READ,
     IOobject::NO_WRITE
-    ),       
-   Sb_
-   ),
+      ),       
+      Sb_
+  ),
   pc_
   (
    IOobject
@@ -97,25 +145,8 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
    dimensionSet(1,-1,-2,0,0,0,0)
    )
 {
-  correct();
-}
-
-// * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
-
-bool Foam::capillarityModels::pcBrooksAndCorey::read
-(
- const dictionary& capillarityProperties
- )
-{
-  capillarityProperties_ = capillarityProperties;
-
-  pcBrooksAndCoreyCoeffs_ = capillarityProperties.subDict(typeName + "Coeffs");
-  pcBrooksAndCoreyCoeffs_.lookup(Sb_.name()+"minpc") >> Sminpc_;
-  pcBrooksAndCoreyCoeffs_.lookup(Sb_.name()+"maxpc") >> Smaxpc_;
-  pcBrooksAndCoreyCoeffs_.lookup("pc0") >> pc0_;
-  alpha_ = pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0);    
-
-  return true;
+    if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
+    correct();
 }
 
 // ************************************************************************* //
