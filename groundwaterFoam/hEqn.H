@@ -1,5 +1,10 @@
 {
- 
+
+    forAll(phi.boundaryField(),patchi)
+    {
+        phi.boundaryField()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+    }
+    
     h.storePrevIter();
 
     fvScalarMatrix hEqn
@@ -14,7 +19,7 @@
     resPicard = gMax((mag(h-h.prevIter()))->internalField());
     Info << "Picard iteration : " << iterPicard+1 << " residual = " << resPicard << endl; 
 
-    phi = phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
+    phi == phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
     Utheta = fvc::reconstruct(phi);
 
 

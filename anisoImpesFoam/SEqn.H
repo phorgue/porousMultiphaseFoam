@@ -1,5 +1,11 @@
 {
-
+    
+    forAll(phib.boundaryField(),patchi)
+    {
+        phia.boundaryField()[patchi] = Ua.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+        phib.boundaryField()[patchi] = Ub.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+    }
+    
     fvScalarMatrix SbEqn
         (
             eps*fvm::ddt(Sb) + fvc::div(phib) 
