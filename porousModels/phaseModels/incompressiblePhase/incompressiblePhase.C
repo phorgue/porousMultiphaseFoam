@@ -90,14 +90,6 @@ Foam::incompressiblePhase::incompressiblePhase
             calculatedFvPatchScalarField::typeName
         );
 
-        for (label i=0; i<U_.boundaryField().size(); i++)
-        {
-            if (isA<fixedValueFvPatchVectorField>(U_.boundaryField()[i]))
-            {
-                phiTypes[i] = fixedValueFvPatchScalarField::typeName;
-            }
-        }
-
         phiPtr_.reset
         (
             new surfaceScalarField
