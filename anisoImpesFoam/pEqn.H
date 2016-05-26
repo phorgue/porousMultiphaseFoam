@@ -18,8 +18,8 @@
   U = fvc::reconstruct(phi);
   U.correctBoundaryConditions();
 
-  phib = Fbf*phi+(((Lbf-Fbf*Lf)&g) & mesh.Sf())+(1-Fbf)*phiPc*activateCapillarity;
-  phia = phi - phib;
+  phib == Fbf*phi+(((Lbf-Fbf*Lf)&g) & mesh.Sf())+(1-Fbf)*phiPc*activateCapillarity;
+  phia == phi - phib;
 
   Ub = fvc::reconstruct(phib);
   Ua = U-Ub;
