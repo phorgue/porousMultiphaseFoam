@@ -146,7 +146,6 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
    )
 {
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
-    correct();
 }
 
 // ************************************************************************* //

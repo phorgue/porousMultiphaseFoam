@@ -173,7 +173,6 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
   )
 {
       if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m = 0 in pcVanGenuchten" << abort(FatalError); 
-      correct();
 }
 
 // ************************************************************************* //
