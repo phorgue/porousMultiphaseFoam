@@ -21,6 +21,7 @@ defaultFieldValues
 	volScalarFieldValue Sb 0.002
 	volScalarFieldValue Winj 0
 	volScalarFieldValue Wext 0
+        volScalarFieldValue n 3
 );
 
 
@@ -45,9 +46,17 @@ regions
         (
            volScalarFieldValue Wext 1 
         );
-   }   
-      
-     
+   }
+
+   // to test heterogeneous BrooksAndCorey parameters
+    boxToCell
+   {
+     box (0 0 0) (5 10 1);
+     fieldValues
+        (
+           volScalarFieldValue n 4
+        );
+   }      
 
 );
 

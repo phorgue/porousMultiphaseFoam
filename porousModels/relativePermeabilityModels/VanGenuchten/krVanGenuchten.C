@@ -58,7 +58,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
       IOobject
       (
           Sb_.name()+"min",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
@@ -71,7 +71,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
       IOobject
       (
           Sb_.name()+"max",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
@@ -85,10 +85,10 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
       IOobject
       (
           "m",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
-          IOobject::AUTO_WRITE
+          IOobject::NO_WRITE
       ),
       Sb.mesh(),
       krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)
@@ -162,10 +162,10 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
       IOobject
       (
           "kr"+Sb_.name()+"max",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
-          IOobject::AUTO_WRITE
+          IOobject::NO_WRITE
       ),
       Sb.mesh(),
       krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
@@ -175,10 +175,10 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
       IOobject
       (
           "kr"+Sb_.name()+"max",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
-          IOobject::AUTO_WRITE
+          IOobject::NO_WRITE
       ),
       Sb.mesh(),
       krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)

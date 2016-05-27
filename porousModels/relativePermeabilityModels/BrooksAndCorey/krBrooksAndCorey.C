@@ -61,7 +61,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
       IOobject
       (
           Sb_.name()+"min",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
@@ -74,7 +74,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
       IOobject
       (
           Sb_.name()+"max",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
@@ -88,10 +88,10 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
       IOobject
       (
           "n",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
-          IOobject::AUTO_WRITE
+          IOobject::NO_WRITE
       ),
       Sb.mesh(),
       krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0)
@@ -165,10 +165,10 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
       IOobject
       (
           "kr"+Sb_.name()+"max",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
-          IOobject::AUTO_WRITE
+          IOobject::NO_WRITE
       ),
       Sb.mesh(),
       krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
@@ -178,10 +178,10 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
       IOobject
       (
           "kr"+Sb_.name()+"max",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
-          IOobject::AUTO_WRITE
+          IOobject::NO_WRITE
       ),
       Sb.mesh(),
       krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
