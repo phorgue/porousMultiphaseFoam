@@ -1,7 +1,8 @@
+
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.4.0                                 |
+|  \\    /   O peration     | Version:  2.1.0                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -9,31 +10,33 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    location    "constant/porousModels";
-    object      m;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 0 0 0 0];
-
-internalField   uniform 0.5;
-
-boundaryField
-{
-    inlet
-    {
-        type            zeroGradient;
-    }
-    outlet
-    {
-        type            zeroGradient;
-    }
-    frontAndBack
-    {
-        type            empty;
-    }
-}
+defaultFieldValues
+(
+        volScalarFieldValue m 0.5
+);
 
 
-// ************************************************************************* //
+
+regions
+(
+    
+   // boxToCell
+   // {
+   //     box (0 0 0) (0.1 0.3 0.1);
+   //     fieldValues
+   //         (
+   //             volScalarFieldValue m 0.25
+   //         );
+   // }
+     
+
+);
+
+
+
