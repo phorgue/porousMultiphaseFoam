@@ -59,7 +59,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       IOobject
       (
           Sb_.name()+"minpc",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
@@ -72,10 +72,10 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       IOobject
       (
           Sb_.name()+"maxpc",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
-          IOobject::AUTO_WRITE
+          IOobject::NO_WRITE
       ),
       Sb.mesh(),
       pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",capillarityProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0)))
@@ -85,7 +85,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       IOobject
       (
           "pc0",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
@@ -98,7 +98,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       IOobject
       (
           "alpha",
-          "constant/porousModels",
+          Sb_.time().timeName(),
           Sb_.db(),
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
