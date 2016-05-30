@@ -1,5 +1,6 @@
 {
 
+    Utheta.correctBoundaryConditions();
     forAll(phi.boundaryField(),patchi)
     {
         phi.boundaryField()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
