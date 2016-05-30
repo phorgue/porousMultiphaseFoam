@@ -1,5 +1,7 @@
 {
     
+    Ua.correctBoundaryConditions();
+    Ub.correctBoundaryConditions();
     forAll(phib.boundaryField(),patchi)
     {
         phia.boundaryField()[patchi] = Ua.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];

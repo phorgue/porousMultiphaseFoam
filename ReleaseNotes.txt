@@ -1,82 +1,100 @@
-##################### V1.2 (2016-05) - Relative permeability and capillary pressure laws can be heterogenous 
+**********************
+*** V1.2 (2016-05) *** Relative permeability and capillary pressure laws can be heterogenous 
+**********************
 
+### Libraries
 
-*** Libraries ***
+- capillarityModels
 
-capillarityModels
-	models now reads "constant/porousModels" folder to find parameters fields which can be heteroegenous. Switch to the transportProperties dictionary if file is not found.
+     - models now reads "constant/porousModels" folder to find parameters fields which can be heteroegenous. Switch to the transportProperties dictionary if file is not found.
 
-relativePermeabilityModels
-	similar to capillarityModels
+- relativePermeabilityModels
 
-*** Tutorials ***
+     -similar to capillarityModels
 
-impesFoam-tutorials
-	BuckleyLeverett/BrooksAndCorey case updated to use volScalarField parameters instead of transport properties
+### Tutorials
 
-groundwaterFoam-tutorials
-	1Dinfiltration case updated to use volScalarField parameters instead of transport properties
+- impesFoam-tutorials
+
+     - BuckleyLeverett/BrooksAndCorey case updated to use volScalarField parameters instead of transport properties
+
+- groundwaterFoam-tutorials
+
+     - 1Dinfiltration case updated to use volScalarField parameters instead of transport properties
 	
-*** Bug Fixes ***
+### Bug Fixes
 
-impesFoam/anisoImpesFoam/groundwaterFoam
-	error between timestep used and timestep displayed
+- impesFoam/anisoImpesFoam/groundwaterFoam
 
+     - error between timestep used and timestep displayed
 
-##################### V1.1 (2015-09) - New solver for groundwater flows (Richards' equation)
+     - velocity BC updated before SEqn.H (or hEqn.H) for time-dependent conditions
 
+- groundwaterFoam
 
-*** Solvers ***
+     - change writeOpt for phitheta (useless field, only phi is used)
 
-groundwaterFoam
-	new solver added for solving Richards' equation (unsaturated soils)
+**********************
+*** V1.1 (2015-09) *** New solver for groundwater flows (Richards' equation)
+**********************
 
-impesFoam/anisoImpesFoam
-	wellbore position are optional
-	displays only the CFL chosen (Coats / Courant Number)
+### Solvers
+
+- groundwaterFoam (new solver)
+
+     - solver added for solving Richards' equation (unsaturated soils)
+
+- impesFoam/anisoImpesFoam
+
+     - wellbore positions are optional
+     - displays only the CFL chosen (Coats / Courant Number)
 	
-*** Libraries ***
+### Libraries
 
-capillarityModels
-	new functions for groundwaterFoam added in the pcVanGenuchen class (pcLinear and pcBrooksAndCorey does not work with groundwaterFoam)
+- capillarityModels
 
-*** Tutorials ***
+   - new functions for groundwaterFoam added in the pcVanGenuchen class (pcLinear and pcBrooksAndCorey does not work with groundwaterFoam)
 
-groundWaterFoam-tutorials
-	validation case (1Dinfiltration) and example (realCase) added
+### Tutorials
 
-*** Bug Fixes ***
+- groundWaterFoam-tutorials
+ 
+     - validation case (1Dinfiltration) and example (realCase) added
 
-impesFoam/anisoImpesFoam
-	parallel computation of min/max added
+### Bug Fixes
 
-porousBoundaryConditions
-	effective saturation corrected for Dirichlet boundary conditions
+- impesFoam/anisoImpesFoam
 
+     - parallel computation of min/max added
 
-##################### V1.0 (2014-10) - First release of the toolbox, two IMPES-solvers for two-phase flow in porous media
+- porousBoundaryConditions
 
-*** Solvers *** 
+     - effective saturation corrected for Dirichlet boundary conditions
 
-impesFoam
-	new two-phase flow solvers for isotropic porous medium (permeability K is volScalarField)
+**********************
+*** V1.0 (2014-10) *** First release of the toolbox, two IMPES-solvers for two-phase flow in porous media
+**********************
 
-anisoImpesFoam
-	new two-phase flow solvers for anisotropic porous medium (permeability K is volTensorField) 
+### Solvers 
 
-*** Libraries ***
+- impesFoam
 
-capillarityModels
-	usual capillary models for impesFoam/anisoImpesFoam (Brooks and Corey, Van Genuchten, Linear)
+     - new two-phase flow solvers for isotropic porous medium (permeability K is volScalarField)
 
-phaseModels
-	incompressible phase model for poroous media flows (constant density and viscosity)
+- anisoImpesFoam
 
-relativePermeabilityModels
-	usual relative permeability laws for impesFoam/anisoImpesFoam (Brooks and Corey, Van Genuchten)
+     - new two-phase flow solvers for anisotropic porous medium (permeability K is volTensorField) 
 
-*** Tutorials ***
+### Libraries
 
-BuckleyLeverett
-	validation of two-phase flow solvers with 
-*** Bug fixes ***
+- capillarityModels
+
+     - usual capillary models for impesFoam/anisoImpesFoam (Brooks and Corey, Van Genuchten, Linear)
+
+- phaseModels
+
+     - incompressible phase model for poroous media flows (constant density and viscosity)
+
+- relativePermeabilityModels
+
+     - usual relative permeability laws for impesFoam/anisoImpesFoam (Brooks and Corey, Van Genuchten)

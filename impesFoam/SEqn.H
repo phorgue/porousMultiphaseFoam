@@ -1,5 +1,7 @@
 {
-    
+
+    Ua.correctBoundaryConditions();
+    Ub.correctBoundaryConditions();
     forAll(phib.boundaryField(),patchi)
     {
         phia.boundaryField()[patchi] = Ua.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
@@ -15,6 +17,6 @@
 
     SbEqn.solve();
 
-    Info << "Saturation b " << " Min(Sb) = " << min(Sb).value() << " Max(Sb) = " << gMax(Sb) <<  endl;
+    Info << "Saturation b " << " Min(Sb) = " << gMin(Sb) << " Max(Sb) = " << gMax(Sb) <<  endl;
 
 }
