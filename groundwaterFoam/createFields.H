@@ -42,6 +42,8 @@ autoPtr<incompressiblePhase> phasetheta = incompressiblePhase::New(mesh,transpor
 volVectorField& Utheta = phasetheta->U();
 const dimensionedScalar& rhotheta = phasetheta->rho();
 const dimensionedScalar& mutheta = phasetheta->mu();    
+phasetheta->phi().writeOpt()=IOobject::NO_WRITE;
+
 
 surfaceScalarField phi
 (
