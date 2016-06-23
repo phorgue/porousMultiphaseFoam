@@ -23,96 +23,66 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "incompressiblePhase.H"
+#include "fluidPhase.H"
 #include "fixedValueFvPatchFields.H"
 #include "linear.H"
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::incompressiblePhase::incompressiblePhase
+Foam::fluidPhase::fluidPhase
 (
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& phaseName
 )
-:
-    fluidPhase(mesh,transportProperties,phaseName),
-    mu_(dict_.lookup("mu")),
-    rho_(dict_.lookup("rho"))
-{   
-    const word phiName = "phi" + phaseName;
-
-    IOobject phiHeader
+    :  
+    phase(mesh,transportProperties,phaseName),
+    rho_
     (
-        phiName,
-        mesh.time().timeName(),
+        IOobject
+        (
+            "rho" + phaseName,
+            mesh.time().timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
         mesh,
-        IOobject::NO_READ
-    );
-
-    if (phiHeader.headerOk())
-    {
-        phiPtr_.reset
+        dimensionedScalar("",dimensionSet(1,-3,0,0,0,0,0),1)
+    ),
+    U_
+    (
+        IOobject
         (
-            new surfaceScalarField
-            (
-                IOobject
-                (
-                    phiName,
-                    mesh.time().timeName(),
-                    mesh,
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE
-                ),
-                mesh
-            )
-        );
-    }
-    else
-    {
-        wordList phiTypes
-        (
-            U_.boundaryField().size(),
-            calculatedFvPatchScalarField::typeName
-        );
-
-        phiPtr_.reset
-        (
-            new surfaceScalarField
-            (
-                IOobject
-                (
-                    phiName,
-                    mesh.time().timeName(),
-                    mesh,
-                    IOobject::NO_READ,
-                    IOobject::AUTO_WRITE
-                ),
-                Foam::linearInterpolate(U_) & mesh.Sf(),
-                phiTypes
-            )
-        );
-    }
+            "U" + phaseName,
+            mesh_.time().timeName(),
+            mesh_,
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh_
+    )
+{
 }
 
 
-Foam::autoPtr<Foam::incompressiblePhase> Foam::incompressiblePhase::New
+Foam::autoPtr<Foam::fluidPhase> Foam::fluidPhase::New
 (
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& phaseName
 )
 {
-    return autoPtr<incompressiblePhase>
+    return autoPtr<fluidPhase>
     (
-        new incompressiblePhase(mesh, transportProperties, phaseName)
+        new fluidPhase(mesh, transportProperties, phaseName)
     );
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::incompressiblePhase::~incompressiblePhase()
+Foam::fluidPhase::~fluidPhase()
 {}
 
 

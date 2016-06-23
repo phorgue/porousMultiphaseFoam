@@ -35,10 +35,7 @@ SourceFiles
     #ifndef incompressiblePhase_H
     #define incompressiblePhase_H
 
-    #include "dictionary.H"
-    #include "dimensionedScalar.H"
-    #include "volFields.H"
-    #include "surfaceFields.H"
+    #include "fluidPhase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,21 +47,15 @@ namespace Foam
     \*---------------------------------------------------------------------------*/
 
     class incompressiblePhase
+    :
+    public fluidPhase
     {
-        //- Name of phase
-        word name_;
-
-        // Private data
-        dictionary dict_;
 
         //- dynamic viscosity
         dimensionedScalar mu_;
 
         //- density
         dimensionedScalar rho_;
-
-        //- phase velocity
-        volVectorField U_;
 
         //- phase fluxes
         autoPtr<surfaceScalarField> phiPtr_;
@@ -80,7 +71,6 @@ namespace Foam
             const word& phaseName
         );
 
-
         // Selectors
 
         //- Return a reference to the selected turbulence model
@@ -95,40 +85,25 @@ namespace Foam
         virtual ~incompressiblePhase();
 
         // Member Functions
-        const word& name() const
-            {
-                return name_;
-            }
-
         const dimensionedScalar& mu() const
             {
                 return mu_;
             }
-
+        
         const dimensionedScalar& rho() const
             {
                 return rho_;
             }
-      
-        const volVectorField& U() const
-            {
-                return U_;
-            }
-
-        volVectorField& U()
-            {
-                return U_;
-            }
-
+        
         const surfaceScalarField& phi() const
-        {
-            return phiPtr_();
-        }
-
+            {
+                return phiPtr_();
+            }
+        
         surfaceScalarField& phi()
-        {
-            return phiPtr_();
-        }
+            {
+                return phiPtr_();
+            }
     };
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
