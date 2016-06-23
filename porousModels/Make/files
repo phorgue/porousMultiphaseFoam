@@ -9,6 +9,8 @@ capillarityModels/Linear/pcLinear.C
 capillarityModels/VanGenuchten/pcVanGenuchten.C
 capillarityModels/BrooksAndCorey/pcBrooksAndCorey.C
 
+phaseModels/phase/phase.C
+phaseModels/fluidPhase/fluidPhase.C
 phaseModels/incompressiblePhase/incompressiblePhase.C
 
 LIB = $(FOAM_USER_LIBBIN)/libporousModels
