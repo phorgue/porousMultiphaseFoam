@@ -4,8 +4,8 @@
     Ub.correctBoundaryConditions();
     forAll(phib.boundaryField(),patchi)
     {
-        phia.boundaryField()[patchi] = Ua.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
-        phib.boundaryField()[patchi] = Ub.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+        phia.boundaryFieldRef()[patchi] = Ua.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+        phib.boundaryFieldRef()[patchi] = Ub.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
     }
 
     fvScalarMatrix SbEqn
