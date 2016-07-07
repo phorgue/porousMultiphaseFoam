@@ -10,6 +10,6 @@ set label "t=25 000s" at 0.57,-7 rotate by 90
 
 set xtics nomirror
 set key at 1,0.90
-plot "postProcessing/sets/5000/acrossFlow_h.gplt" using (0.6-$1):2 every 10 w l title "", \
-     "postProcessing/sets/15000/acrossFlow_h.gplt" using (0.6-$1):2 every 10 w l  title "", \
-     "postProcessing/sets/25000/acrossFlow_h.gplt" using (0.6-$1):2 every 10 w l title "" 
+plot "postProcessing/sampleDict/5000/acrossFlow_h.gplt" using (0.6-$1):2 every 10 w l title "", \
+     "postProcessing/sampleDict/15000/acrossFlow_h.gplt" using (0.6-$1):2 every 10 w l  title "", \
+     "postProcessing/sampleDict/25000/acrossFlow_h.gplt" using (0.6-$1):2 every 10 w l title "" 
