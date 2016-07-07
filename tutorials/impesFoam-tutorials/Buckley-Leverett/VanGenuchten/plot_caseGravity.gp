@@ -8,9 +8,9 @@ set yrange [0:1]
 set ytics 0.2
 
 set key at 0.80,0.95
-plot "postProcessing/sets/10000/acrossFlow_Sb.gplt"  using (1-$1):2 every 15 title "t = 10000s " ps 0.75, \
+plot "postProcessing/sampleDict/10000/acrossFlow_Sb.gplt"  using (1-$1):2 every 15 title "t = 10000s " ps 0.75, \
      "analytical/case2/10000s"  using 1:2 with lines title "",\
-     "postProcessing/sets/20000/acrossFlow_Sb.gplt" using (1-$1):2 every 15 title "t = 20000s" ps 0.75, \
+     "postProcessing/sampleDict/20000/acrossFlow_Sb.gplt" using (1-$1):2 every 15 title "t = 20000s" ps 0.75, \
      "analytical/case2/20000s" using 1:2 with lines title "",\
-     "postProcessing/sets/30000/acrossFlow_Sb.gplt" using (1-$1):2 every 15 title "t = 30000s" ps 0.75, \
+     "postProcessing/sampleDict/30000/acrossFlow_Sb.gplt" using (1-$1):2 every 15 title "t = 30000s" ps 0.75, \
      "analytical/case2/30000s" using 1:2 with lines title ""

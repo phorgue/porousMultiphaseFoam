@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.7.0                                 |
+|  \\    /   O peration     | Version:  4.0                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -29,7 +29,7 @@ deltaT          1e-5;
 
 writeControl    adjustableRunTime;
 
-writeInterval   5e4;
+writeInterval   1000;
 
 purgeWrite      0;
 
@@ -47,8 +47,7 @@ runTimeModifiable yes;
 
 CFL            yes; // yes for CFL Coats - no for classic Courant No
 
-maxCo		0.75;
-//maxCo		  0.10;
+maxCo		5.00;
 
 dSmax           1;
 //dSmax           0.01;

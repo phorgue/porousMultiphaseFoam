@@ -8,8 +8,8 @@ set yrange [0:1]
 set ytics 0.2 nomirror
 set xtics nomirror
 set key at 1,0.9
-plot "postProcessing/sets/6000/acrossFlow_Sb.gplt"  using (1-$1):2 every 15 title "t = 6000s " ps 0.75, \
+plot "postProcessing/sampleDict/6000/acrossFlow_Sb.gplt"  using (1-$1):2 every 15 title "t = 6000s " ps 0.75, \
      "analytical/case1/6000s"  using 1:2 with lines title "",\
-     "postProcessing/sets/20000/acrossFlow_Sb.gplt" using (1-$1):2 every 15 title "t = 20000s" ps 0.75, \
+     "postProcessing/sampleDict/20000/acrossFlow_Sb.gplt" using (1-$1):2 every 15 title "t = 20000s" ps 0.75, \
      "analytical/case1/20000s" using 1:2 with lines title ""
 
