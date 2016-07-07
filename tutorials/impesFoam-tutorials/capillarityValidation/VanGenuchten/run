@@ -9,4 +9,4 @@ runApplication blockMesh
 cp 0/Sb.org 0/Sb
 runApplication setFields
 runApplication impesFoam
-runApplication sample
+runApplication postProcess -func sampleDict
