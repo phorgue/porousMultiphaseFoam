@@ -112,8 +112,12 @@ volTensorField K
  );
 
 // interpolated permeability
+Info << "la ???" ;
+
 surfaceTensorField Kf(fvc::interpolate(K,"K"));
 
+
+Info << "ou pas...." << endl;
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// VELOCITY - FLUXES ////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -155,4 +159,4 @@ volScalarField cellVolume
     mesh,
     dimensionedScalar("unite",dimVolume,1.0)//pour la division dans les termes sources
 );
-cellVolume.internalField() = mesh.V();
+cellVolume.ref() = mesh.V();
