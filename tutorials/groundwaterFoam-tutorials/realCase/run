@@ -3,4 +3,13 @@
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
+# create mesh
+runApplication vtkUnstructuredToFoam constant/monterey_mesh_121x61x10.vtk
+runApplication setSet -batch system/setSet.batch
+runApplication createPatch -overwrite 
+rm -rf VTK
+runApplication checkMesh
+
+# run simulation
+cp 0/h.org 0/h
 runApplication groundwaterFoam 
