@@ -45,7 +45,7 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
-CFL            yes; // yes for CFL Coats - no for classic Courant No
+CFL            Coats;
 
 maxCo           0.75;
 //maxCo           0.10;

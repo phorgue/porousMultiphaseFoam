@@ -55,8 +55,6 @@ int main(int argc, char *argv[])
     #include "createSbFields.H"
     #include "createWellbores.H"
     #include "readTimeControls.H"
-    #include "CourantNo.H"
-    #include "setInitialDeltaT.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,8 +62,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        #include "CoatsNo.H"
-        #include "CourantNo.H"
+
         #include "setDeltaT.H"
 
         runTime++;
