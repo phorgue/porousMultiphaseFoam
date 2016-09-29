@@ -2,7 +2,22 @@
 ////////////////////// PRESSURE SATURATION ///////////////////////
 //////////////////////////////////////////////////////////////////
 
-bool CFL =  runTime.controlDict().lookupOrDefault<bool>("CFL", true);
+word CFL =  runTime.controlDict().lookupOrDefault<word>("CFL", "Coats");
+if (adjustTimeStep) adjustTimeStep=true; // to remove warnings at compilation
+int CFLint = -1;
+if (CFL == "Coats") CFLint = 0;
+else if (CFL == "Todd") CFLint = 1;
+else if (CFL == "Courant") CFLint = 2; 
+else
+{
+        FatalErrorIn
+      (
+       "in createFields.H"
+       )
+      << "CFL condition unrecongnized : Coats, Todd and Courant available" 
+      << exit(FatalError);
+}
+  
 
 Info<< "Reading field p\n" << endl;
 volScalarField p
@@ -51,6 +66,8 @@ IOdictionary transportProperties
         IOobject::NO_WRITE
     )
 );
+
+dimensionedScalar Sbmin(transportProperties.lookupOrDefault("Sbmin",dimensionedScalar("Sbmin",dimless,0)));
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////// PHASE MODEL CREATION ////////////////////////////

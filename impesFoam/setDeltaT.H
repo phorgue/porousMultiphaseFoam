@@ -32,11 +32,21 @@ scalar dSdTmax = gMax(dSdt);
 scalar dtForS = dSmax/(dSdTmax+SMALL);
 
 //- Choose between Coats and Courant number as driving number
-CFL =  runTime.controlDict().lookupOrDefault<bool>("CFL", true);
-scalar CFLUse = CFL ? gMax(CFLCoats) : CoNum;
+scalar CFLUse = -1;
+scalar maxDeltaTFact = -1;
+switch(static_cast<int>(CFLint))
+{
+    case 0:
+#include "CoatsNo.H"
+        break;
+    case 1:
+#include "ToddNo.H"
+        break;
+    case 2:
+#include "CourantNo.H"
+        break;
+};
 
-//- Caracteristic number
-scalar maxDeltaTFact = maxCo/(CFLUse + SMALL);
 scalar deltaTFact = min(min(maxDeltaTFact, 1.0 + 0.1*maxDeltaTFact), 1.2);
 
 //- Computing timestep 
