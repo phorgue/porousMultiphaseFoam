@@ -23,7 +23,7 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         20000;
+endTime         5000;
 
 deltaT          1e-5;
 
@@ -45,13 +45,11 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
-CFL            yes; // yes for CFL Coats - no for classic Courant No
+CFL             Coats;
 
-maxCo           0.75;
-//maxCo           0.10;
+maxCo           1;
 
 dSmax           1;
-//dSmax           0.01;//needed with capillary effect
 
 maxDeltaT	100;
 

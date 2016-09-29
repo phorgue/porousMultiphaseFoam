@@ -1,6 +1,6 @@
 // --- Coats (2003) IMPES STABILITY: CFL LIMIT
 // - inertial part
-
+{
 
 volTensorField dfw (
 		    "dfw",
@@ -18,14 +18,13 @@ volTensorField CFLCoats((runTime.deltaT()/eps/cellVolume)*dfw*fvc::surfaceSum(ma
 
 
 // - capillarity part of CFL
-volScalarField dpc(myCapModel->dpcdS());
 if(activateCapillarity)
   {
-    CFLCoats += (runTime.deltaT()/eps/cellVolume)*2*mag(dpc)*fvc::surfaceSum(Kf*mesh.magSf()/mag(mesh.delta()))*(kra*krb/(mub*kra+mua*krb));  
+    CFLCoats += (runTime.deltaT()/eps/cellVolume)*2*mag(myCapModel->dpcdS())*fvc::surfaceSum(Kf*mesh.magSf()/mag(mesh.delta()))*(kra*krb/(mub*kra+mua*krb));  
   }
 
 
-scalar CFLCoatsmax( CFLCoats[0].component(0) );
+CFLUse = CFLCoats[0].component(0);
 
 forAll(mesh.C(),celli)
 {
@@ -35,11 +34,11 @@ forAll(mesh.C(),celli)
       {
 	if(CFLCoats[celli].component(i)>tmp0) tmp0 = CFLCoats[celli].component(i);
       }
-  if(CFLCoatsmax<tmp0) CFLCoatsmax = tmp0;
+  if(CFLUse<tmp0) CFLUse = tmp0;
 
 }
 
-if (CFL)
-{
-    Info<< "Coats CFL Number max: " << CFLCoatsmax << endl;
+    Info<< "Coats CFL Number max: " << CFLUse << endl;
+    maxDeltaTFact = maxCo/(CFLUse + SMALL);
+
 }
