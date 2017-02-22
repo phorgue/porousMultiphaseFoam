@@ -3,7 +3,10 @@
     Utheta.correctBoundaryConditions();
     forAll(phi.boundaryField(),patchi)
     {
-        phi.boundaryFieldRef()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+        if (!(isA<processorFvPatch>(mesh.boundary()[patchi])))
+        {
+            phi.boundaryFieldRef()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+        }
     }
     
     h.storePrevIter();
