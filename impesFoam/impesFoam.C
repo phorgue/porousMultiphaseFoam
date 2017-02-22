@@ -40,6 +40,7 @@ Developers
 #include "incompressiblePhase.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
+#include "processorFvPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
