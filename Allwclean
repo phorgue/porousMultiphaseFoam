@@ -4,13 +4,5 @@ set -x
 
 # cleaning solvers 
 
-wclean impesFoam
-rm ${FOAM_USER_APPBIN}/impesFoam
-wclean anisoImpesFoam
-rm ${FOAM_USER_APPBIN}/anisoImpesFoam
-wclean groundwaterFoam
-rm ${FOAM_USER_APPBIN}/groundwaterFoam
-wclean porousBoundaryConditions
-rm ${FOAM_USER_LIBBIN}/libporousBoundaryConditions.so
-wclean porousModels
-rm ${FOAM_USER_LIBBIN}/libporousModels.so
+wclean all solvers
+wclean all librairies
