@@ -1,0 +1,12 @@
+#!/bin/sh
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+solver=darcyFoam
+
+runApplication blockMesh
+
+cp 0/K.org 0/K
+#runApplication setFields
+
+runApplication $solver
