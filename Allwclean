@@ -5,4 +5,4 @@ set -x
 # cleaning solvers 
 
 wclean all solvers
-wclean all librairies
+wclean all libraries
