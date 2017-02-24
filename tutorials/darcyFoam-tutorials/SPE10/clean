@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+cleanCase
+rm -rf 0/K
+rm -rf constant/polyMesh/boundary
+rm -rf system/decomposeParDict
