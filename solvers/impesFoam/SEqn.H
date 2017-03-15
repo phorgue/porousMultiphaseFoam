@@ -2,11 +2,14 @@
 
     Ua.correctBoundaryConditions();
     Ub.correctBoundaryConditions();
-    forAll(phib.boundaryField(),patchi)
+    forAll(mesh.boundary(),patchi)
     {
-        if (!(isA<processorFvPatch>(mesh.boundary()[patchi])))
+        if (isA< fixedValueFvPatchField<vector> >(Ua.boundaryField()[patchi]))
         {
             phia.boundaryFieldRef()[patchi] = Ua.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+        }
+        if (isA< fixedValueFvPatchField<vector> >(Ub.boundaryField()[patchi]))
+        {
             phib.boundaryFieldRef()[patchi] = Ub.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
         }
     }

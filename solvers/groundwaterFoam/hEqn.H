@@ -1,9 +1,9 @@
 {
 
     Utheta.correctBoundaryConditions();
-    forAll(phi.boundaryField(),patchi)
+    forAll(mesh.boundary(),patchi)
     {
-        if (!(isA<processorFvPatch>(mesh.boundary()[patchi])))
+        if (!(isA< fixedValueFvPatchField<vector> >(Utheta.boundaryField()[patchi])))
         {
             phi.boundaryFieldRef()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
         }
