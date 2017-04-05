@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
             U = fvc::reconstruct(phi);
             U.correctBoundaryConditions();
-
+            Ua = U;
 	  }
 
         Info << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
