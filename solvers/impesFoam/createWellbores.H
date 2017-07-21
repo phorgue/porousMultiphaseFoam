@@ -34,14 +34,7 @@ volScalarField Winj
 
 dimensionedScalar Vinj(sum(Winj*mesh.V()));
 dimensionedScalar SrcInj("SrcInj",dimensionSet(0,0,-1,0,0),0.);
-if (Vinj.value() == 0.)
-{
-    Vinj=dimensionedScalar("Vinj",dimensionSet(0,3,0,0,0),1.);
-}
-else
-{
-    SrcInj = qInjection/Vinj;
-}
+SrcInj = qInjection/(Vinj+dimensionedScalar("",dimVol,SMALL));
 
 // Extraction Wellbore
 dimensionedScalar qExtraction
@@ -66,11 +59,4 @@ volScalarField Wext
 
 dimensionedScalar Vext(sum(Wext*mesh.V()));
 dimensionedScalar SrcExt("SrcExt",dimensionSet(0,0,-1,0,0),0.);
-if (Vext.value() == 0.)
-{
-    Vext=dimensionedScalar("Vext",dimensionSet(0,3,0,0,0),1.);
-}
-else
-{
-    SrcExt = qExtraction/Vext;
-}
+SrcExt = qExtraction/(Vinj+dimensionedScalar("",dimVol,SMALL));
