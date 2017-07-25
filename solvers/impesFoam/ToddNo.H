@@ -54,11 +54,11 @@
     dimensionedScalar smallqP("smallRate",dimVolume/dimTime/p.dimensions(), VSMALL);
     if(activateCapillarity)
     {
-        volScalarField Tpc = cellVolume/(mag(myCapModel->dpcdS())*fvc::surfaceSum(Fbf*Maf*mesh.magSf()/mag(mesh.delta())
+        scalarField Tpc = mesh.V()/(mag(myCapModel->dpcdS())*fvc::surfaceSum(Fbf*Maf*mesh.magSf()/mag(mesh.delta())
         + smallqP));
-        scalar Todd_factor_pc = gMin(Tpc.internalField());
+        scalar Todd_factor_pc = gMin(Tpc);
 
-        Info << " , pc = " << gMin(Tpc.internalField()) << endl;
+        Info << " , pc = " << gMin(Tpc) << endl;
         maxDeltaTFact = min(maxDeltaTFact,maxCo/Todd_factor_pc);
     }
     
