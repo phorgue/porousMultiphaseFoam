@@ -159,20 +159,3 @@ surfaceScalarField phiP = phi;
 
 scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
 autoPtr<capillarityModel> myCapModel = capillarityModel::New("pc",transportProperties,Sb);
-
-volScalarField cellVolume
-(
-    IOobject
-    (
-        "cellVolume",
-        runTime.timeName(),
-        mesh,
-        IOobject::NO_READ,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("unite",dimVolume,1.0)//pour la division dans les termes sources
-);
-
-cellVolume.ref() = mesh.V();
-
