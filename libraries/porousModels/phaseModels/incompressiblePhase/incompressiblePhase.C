@@ -43,41 +43,13 @@ Foam::incompressiblePhase::incompressiblePhase
 {   
     const word phiName = "phi" + phaseName;
 
-    IOobject phiHeader
-    (
-        phiName,
-        mesh.time().timeName(),
-        mesh,
-        IOobject::NO_READ
-    );
-
-    if (phiHeader.headerOk())
-    {
-        phiPtr_.reset
-        (
-            new surfaceScalarField
-            (
-                IOobject
-                (
-                    phiName,
-                    mesh.time().timeName(),
-                    mesh,
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE
-                ),
-                mesh
-            )
-        );
-    }
-    else
-    {
-        wordList phiTypes
+    wordList phiTypes
         (
             U_.boundaryField().size(),
             calculatedFvPatchScalarField::typeName
         );
 
-        phiPtr_.reset
+    phiPtr_.reset
         (
             new surfaceScalarField
             (
@@ -93,7 +65,6 @@ Foam::incompressiblePhase::incompressiblePhase
                 phiTypes
             )
         );
-    }
 }
 
 
