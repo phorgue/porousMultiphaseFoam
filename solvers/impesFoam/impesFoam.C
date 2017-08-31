@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
-         //- Solve saturation equation (explicit)             
+        //- Solve saturation equation (explicit)
         #include "SEqn.H"
         #include "updateSbProperties.H"
 
