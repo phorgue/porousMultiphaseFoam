@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-  \\    /   O peration     |
-  \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
-  \\/     M anipulation  |
+   \\    /   O peration     |
+    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+     \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -36,105 +36,88 @@ SourceFiles
 #define pcVanGenuchten_H
 
 #include "capillarityModel.H"
-#include "dimensionedScalar.H"
-#include "volFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-  namespace capillarityModels
-  {
+namespace capillarityModels
+{
 
-    /*---------------------------------------------------------------------------*\
-                        Class pcVanGenuchten Declaration
-    \*---------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*\
+                    Class pcVanGenuchten Declaration
+\*---------------------------------------------------------------------------*/
 
-    class pcVanGenuchten
-      :
-      public capillarityModel
-    {
-      // pcVan Genuchten coefficients
-      dictionary pcVanGenuchtenCoeffs_;             
-      volScalarField Sminpc_,Smaxpc_;    
-      volScalarField m_,n_,alpha_;
-      volScalarField pc0_;
+class pcVanGenuchten
+:
+    public capillarityModel
+{
+    // pcVan Genuchten coefficients
+    dictionary pcVanGenuchtenCoeffs_;
+    volScalarField Sminpc_,Smaxpc_;
+    volScalarField m_,n_,alpha_;
+    volScalarField pc0_;
 
-      // effective saturation of phase b 
-      volScalarField Se_;
-
-      // capillary pressure, derivative and capacity
-      volScalarField pc_, dpcdS_, Ch_;
+    // effective saturation of phase b
+    volScalarField Se_;
         
-    public:
+public:
 
-      //- Runtime type information
-      TypeName("VanGenuchten");
+    //- Runtime type information
+    TypeName("VanGenuchten");
 
-      // Constructors
+    // Constructors
 
-      //- Construct from components
-      pcVanGenuchten
-      (
-       const word& name,
-       const dictionary& capillarityProperties,
-       const volScalarField& Sb
-       );
+    //- Construct from components
+    pcVanGenuchten
+    (
+        const word& name,
+        const dictionary& capillarityProperties,
+        const volScalarField& Sb
+    );
 
-      //- Destructor
-      ~pcVanGenuchten()
-      {}
+    //- Destructor
+    ~pcVanGenuchten()
+        {}
 
-      // Member Functions
+    // Member Functions
 
-      //- Return the capillary pressure according to pcVanGenuchten correlation
-      tmp<volScalarField> pc() const
-      {
-	return pc_;
-      }
+    //- Correct the capillary pressure
+    void correct()
+        {
+            Se_ == (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
+            pc_ == pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
+            dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smaxpc_-Sminpc_)) * pow(pow(Se_,-1/m_)-1,(1/n_)-1) * pow(Se_,-(1+m_)/m_);
+        }
 
-      //- Return the capillary pressure derivative according to pcVanGenuchten correlation
-      tmp<volScalarField> dpcdS() const
-      {
-	return dpcdS_;
-      }
+    //- Correct effective saturation and capillary capacity and return saturation (Richards' solver)
+    volScalarField correctAndSb(volScalarField h)
+        {
+            //- Compute Saturation from! head pressure
+            h.dimensions().reset(dimless);
+            volScalarField Stmp_ = neg(h) *(Sminpc_+(Smaxpc_-Sminpc_)*pow(1.0+pow(alpha_*mag(h),n_),-m_)) + pos(h)*(Smaxpc_-SMALL);
+            h.dimensions().reset(dimLength);
 
-      //- Correct the capillary pressure
-      void correct()
-      {
-	Se_ == (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
-        pc_ == pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
-	dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smaxpc_-Sminpc_)) * pow(pow(Se_,-1/m_)-1,(1/n_)-1) * pow(Se_,-(1+m_)/m_);
-      }
+            //- Update effective saturation and capillary capacity
+            Se_ == (Stmp_- Sminpc_)/(Smaxpc_-Sminpc_);
+            Ch_.dimensions().reset(dimless);
+            Ch_ == alpha_*m_*(Smaxpc_-Sminpc_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
+            Ch_.dimensions().reset(dimless/dimLength);
 
-      //- Correct effective saturation and capillary capacity and return saturation (Richards' solver)
-      volScalarField correctAndSb(volScalarField h) 
-      {          
-        //- Compute Saturation from! head pressure
-        h.dimensions().reset(dimless);
-        volScalarField Stmp_ = neg(h) *(Sminpc_+(Smaxpc_-Sminpc_)*pow(1.0+pow(alpha_*mag(h),n_),-m_)) + pos(h)*(Smaxpc_-SMALL);
-        h.dimensions().reset(dimLength);  
+            return Stmp_;
+        }
 
-        //- Update effective saturation and capillary capacity
-	Se_ == (Stmp_- Sminpc_)/(Smaxpc_-Sminpc_);
-        Ch_.dimensions().reset(dimless);
-        Ch_ == alpha_*m_*(Smaxpc_-Sminpc_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
-        Ch_.dimensions().reset(dimless/dimLength);
+    //- Capillary capacity (Richards' model)
+    tmp<volScalarField> Ch() const
+        {
+            return Ch_;
+        }
 
-        return Stmp_;
-      }
+};
 
-      //- Capillary capacity (Richards' model)
-      tmp<volScalarField> Ch() const
-      {
-        return Ch_;
-      }
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    };
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-  } // End namespace capillarityModels
+} // End namespace capillarityModels
 
 } // End namespace Foam
 

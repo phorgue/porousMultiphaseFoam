@@ -24,8 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "relativePermeabilityModel.H"
-#include "volFields.H"
-#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,14 +44,14 @@ Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
         FatalErrorIn
-        (
-            "relativePermeabilityModel::New(const volVectorField&, "
-            "const surfaceScalarField&)"
-        )   << "Unknown relativePermeabilityModel type "
-            << modelType << nl << nl
-            << "Valid relativePermeabilityModels are : " << endl
-            << dictionaryConstructorTablePtr_->sortedToc()
-            << exit(FatalError);
+            (
+                "relativePermeabilityModel::New(const volVectorField&, "
+                "const surfaceScalarField&)"
+            )   << "Unknown relativePermeabilityModel type "
+                << modelType << nl << nl
+                << "Valid relativePermeabilityModels are : " << endl
+                << dictionaryConstructorTablePtr_->sortedToc()
+                << exit(FatalError);
     }
 
     return autoPtr<relativePermeabilityModel>

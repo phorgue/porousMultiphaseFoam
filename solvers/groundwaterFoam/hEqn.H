@@ -13,9 +13,9 @@
 
     fvScalarMatrix hEqn
         (
-           pcModel->Ch() * fvm::ddt(h)
-           - fvm::laplacian(Mf,h)
-           + fvc::div(phiG)
+            pcModel->Ch() * fvm::ddt(h)
+            - fvm::laplacian(Mf,h)
+            + fvc::div(phiG)
         );
 
     hEqn.solve();
@@ -25,6 +25,5 @@
 
     phi == phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
     Utheta = fvc::reconstruct(phi);
-
 
 }

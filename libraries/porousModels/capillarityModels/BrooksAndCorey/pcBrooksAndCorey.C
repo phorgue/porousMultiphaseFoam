@@ -106,44 +106,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       Sb.mesh(),
       pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0)
   ),
-  Se_
-  (
-      IOobject
-      (
-          name,
-          Sb_.time().timeName(),
-          Sb_.db(),
-          IOobject::NO_READ,
-    IOobject::NO_WRITE
-      ),       
-      Sb_
-  ),
-  pc_
-  (
-   IOobject
-   (
-    name,
-    Sb.time().timeName(),
-    Sb.db(),
-    IOobject::NO_READ,
-    IOobject::NO_WRITE
-    ),       
-   Sb.mesh(),
-   dimensionSet(1,-1,-2,0,0,0,0)
-   ),
-  dpcdS_
-  (
-   IOobject
-   (
-    name,
-    Sb.time().timeName(),
-    Sb.db(),
-    IOobject::NO_READ,
-    IOobject::NO_WRITE
-    ),       
-   Sb.mesh(),
-   dimensionSet(1,-1,-2,0,0,0,0)
-   )
+  Se_((Sb_- Sminpc_)/(Smaxpc_-Sminpc_))
 {
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
 }

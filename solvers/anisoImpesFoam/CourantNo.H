@@ -36,13 +36,13 @@ scalar meanCoNumb = 0.0;
 if (mesh.nInternalFaces())
 {
     scalarField sumPhia
-    (
-        fvc::surfaceSum(mag(phia))().internalField()
-    );
+        (
+            fvc::surfaceSum(mag(phia))().internalField()
+        );
     scalarField sumPhib
-    (
-        fvc::surfaceSum(mag(phib))().internalField()
-    );
+        (
+            fvc::surfaceSum(mag(phib))().internalField()
+        );
 
     CoNum = max(0.5*gMax(sumPhia/mesh.V().field())*runTime.deltaTValue(),0.5*gMax(sumPhib/mesh.V().field())*runTime.deltaTValue());
 

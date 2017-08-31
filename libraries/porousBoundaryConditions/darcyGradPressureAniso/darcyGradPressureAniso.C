@@ -27,7 +27,6 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
 #include "volFields.H"
-#include "fvPatch.H"
 #include "uniformDimensionedFields.H"
 
 #include "linear.H"
@@ -35,31 +34,28 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::darcyGradPressureAniso::
-darcyGradPressureAniso
+Foam::darcyGradPressureAniso::darcyGradPressureAniso
 (
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF
 )
-:
-  fixedGradientFvPatchScalarField(p, iF),
-  MfName_("Mf"),
-  MbfName_("Mbf"),
-  phiName_("phi"),
-  UName_("U"),
-  LfName_("Lf"),
-  gradpcName_("gradpc")
+    :
+    fixedGradientFvPatchScalarField(p, iF),
+    MfName_("Mf"),
+    MbfName_("Mbf"),
+    phiName_("phi"),
+    UName_("U"),
+    LfName_("Lf"),
+    gradpcName_("gradpc")
 {}
 
-
-Foam::darcyGradPressureAniso::
-darcyGradPressureAniso
+Foam::darcyGradPressureAniso::darcyGradPressureAniso
 (
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF,
     const dictionary& dict
 )
-:
+    :
     fixedGradientFvPatchScalarField(p, iF),
     MfName_(dict.lookupOrDefault<word>("Mf", "Mf")),
     MbfName_(dict.lookupOrDefault<word>("Mbf", "Mbf")),
@@ -72,16 +68,14 @@ darcyGradPressureAniso
     gradient() = 0.0;
 }
 
-
-Foam::darcyGradPressureAniso::
-darcyGradPressureAniso
+Foam::darcyGradPressureAniso::darcyGradPressureAniso
 (
     const darcyGradPressureAniso& ptf,
     const fvPatch& p,
     const DimensionedField<scalar, volMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
-:
+    :
     fixedGradientFvPatchScalarField(ptf, p, iF, mapper),
     MfName_(ptf.MfName_),
     MbfName_(ptf.MbfName_),
@@ -91,13 +85,11 @@ darcyGradPressureAniso
     gradpcName_(ptf.gradpcName_)
 {}
 
-
-Foam::darcyGradPressureAniso::
-darcyGradPressureAniso
+Foam::darcyGradPressureAniso::darcyGradPressureAniso
 (
     const darcyGradPressureAniso& ptf
 )
-:
+    :
     fixedGradientFvPatchScalarField(ptf),
     MfName_(ptf.MfName_),
     MbfName_(ptf.MbfName_),
@@ -107,23 +99,20 @@ darcyGradPressureAniso
     gradpcName_(ptf.gradpcName_)
 {}
 
-
-Foam::darcyGradPressureAniso::
-darcyGradPressureAniso
+Foam::darcyGradPressureAniso::darcyGradPressureAniso
 (
     const darcyGradPressureAniso& ptf,
     const DimensionedField<scalar, volMesh>& iF
 )
-:
-  fixedGradientFvPatchScalarField(ptf, iF),
-  MfName_(ptf.MfName_),
-  MbfName_(ptf.MbfName_),
-  phiName_(ptf.phiName_),
-  UName_(ptf.UName_),
-  LfName_(ptf.LfName_),
-  gradpcName_(ptf.gradpcName_)
+    :
+    fixedGradientFvPatchScalarField(ptf, iF),
+    MfName_(ptf.MfName_),
+    MbfName_(ptf.MbfName_),
+    phiName_(ptf.phiName_),
+    UName_(ptf.UName_),
+    LfName_(ptf.LfName_),
+    gradpcName_(ptf.gradpcName_)
 {}
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -133,45 +122,35 @@ void Foam::darcyGradPressureAniso::updateCoeffs()
     {
         return;
     }
-      
-   const fvsPatchField<tensor>& Mf=
+
+    const fvsPatchField<tensor>& Mf=
         patch().lookupPatchField<surfaceTensorField, tensor>(MfName_);
 
-   const fvsPatchField<tensor>& Mbf=
-     patch().lookupPatchField<surfaceTensorField, tensor>(MbfName_);
-            
-   const fvsPatchField<scalar>& phi=
-     patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
-	
-   const fvPatchField<vector>& U=
-     patch().lookupPatchField<volVectorField, vector>(UName_);
-        
-   const fvsPatchField<tensor>& Lf=
-     patch().lookupPatchField<surfaceTensorField, tensor>(LfName_);
-     
-   const fvsPatchField<vector>& gradpc=
-     patch().lookupPatchField<surfaceVectorField, vector>(gradpcName_);
-			
-   //Extract the dictionary from database
-   uniformDimensionedVectorField g(db().lookupObject<IOobject>("g"));
+    const fvsPatchField<tensor>& Mbf=
+        patch().lookupPatchField<surfaceTensorField, tensor>(MbfName_);
 
-   //Activateor not capillarity term
+    const fvsPatchField<scalar>& phi=
+        patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
+
+    const fvPatchField<vector>& U=
+        patch().lookupPatchField<volVectorField, vector>(UName_);
+
+    const fvsPatchField<tensor>& Lf=
+        patch().lookupPatchField<surfaceTensorField, tensor>(LfName_);
+
+    const fvsPatchField<vector>& gradpc=
+        patch().lookupPatchField<surfaceVectorField, vector>(gradpcName_);
+
+    //Extract the dictionary from database
+    uniformDimensionedVectorField g(db().lookupObject<IOobject>("g"));
+
+    //Activate or not capillarity term
     scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").lookupOrDefault<scalar>("activateCapillarity",0.));
 	
-    //check for zeroGradient BC in Sb for ensuring that gradpc is null on boundary where this Bc is applied 
-	
-	gradient() = 0.0;
-	gradient() = gradient() - (phi/patch().magSf()) * ( inv(Mf) & (-U/(mag(U)+1e-24)) & patch().nf());
-	gradient() = gradient() + (inv(Mf) & Lf & g.value() & patch().nf() );
-        gradient() = gradient() + activateCapillarity*(inv(Mf) & Mbf & gradpc & patch().nf() );
-
-
-	//Info << "pc term:" << (inv(Mf) & Mbf & gradpc & patch().nf() ) << endl;
-
-	/*gradient() = -((phi-phiGf)/patch().magSf())*(inv(Mf) & patch().nf() & patch().nf() );*/
-
-       
-	
+    gradient() = 0.0;
+    gradient() = gradient() - (phi/patch().magSf()) * ( inv(Mf) & (-U/(mag(U)+1e-24)) & patch().nf());
+    gradient() = gradient() + (inv(Mf) & Lf & g.value() & patch().nf() );
+    gradient() = gradient() + activateCapillarity*(inv(Mf) & Mbf & gradpc & patch().nf() );
 		
     fixedGradientFvPatchScalarField::updateCoeffs();
 }
@@ -194,11 +173,11 @@ void Foam::darcyGradPressureAniso::write(Ostream& os) const
 
 namespace Foam
 {
-    makePatchTypeField
-    (
-        fvPatchScalarField,
-        darcyGradPressureAniso
-    );
+makePatchTypeField
+(
+    fvPatchScalarField,
+    darcyGradPressureAniso
+);
 }
 
 

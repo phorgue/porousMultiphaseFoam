@@ -36,101 +36,83 @@ SourceFiles
 #define pcBrooksAndCorey_H
 
 #include "capillarityModel.H"
-#include "dimensionedScalar.H"
-#include "volFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-  namespace capillarityModels
-  {
+namespace capillarityModels
+{
 
-    /*---------------------------------------------------------------------------*\
-                          Class pcBrooksAndCorey Declaration
+/*---------------------------------------------------------------------------*\
+    Class pcBrooksAndCorey Declaration
     \*---------------------------------------------------------------------------*/
 
-    class pcBrooksAndCorey
-      :
-      public capillarityModel
-    {
-      // pcBrooks and Corey coefficients
-      dictionary pcBrooksAndCoreyCoeffs_;
+class pcBrooksAndCorey
+:
+    public capillarityModel
+{
+    // pcBrooks and Corey coefficients
+    dictionary pcBrooksAndCoreyCoeffs_;
        
-      volScalarField Sminpc_;    
-      volScalarField Smaxpc_;    
-      volScalarField pc0_;
-      volScalarField alpha_;
+    volScalarField Sminpc_;
+    volScalarField Smaxpc_;
+    volScalarField pc0_;
+    volScalarField alpha_;
 
-      // effective saturation of phase b 
-      volScalarField Se_;
-
-      // capillary pressure and derivative
-      volScalarField pc_;
-      volScalarField dpcdS_;
+    // effective saturation of phase b
+    volScalarField Se_;
         
-    public:
+public:
 
-      //- Runtime type information
-      TypeName("BrooksAndCorey");
+    //- Runtime type information
+    TypeName("BrooksAndCorey");
 
-      // Constructors
+    // Constructors
 
-      //- Construct from components
-      pcBrooksAndCorey
-      (
-       const word& name,
-       const dictionary& capillarityProperties,
-       const volScalarField& Sb
-       );
+    //- Construct from components
+    pcBrooksAndCorey
+    (
+        const word& name,
+        const dictionary& capillarityProperties,
+        const volScalarField& Sb
+    );
 
-      //- Destructor
-      ~pcBrooksAndCorey()
-      {}
+    //- Destructor
+    ~pcBrooksAndCorey()
+        {}
 
-      // Member Functions
+    // Member Functions
 
-      //- Return the capillary pressure derivative according to pcBrooks and Corey correlation
-      tmp<volScalarField> pc() const
-      {
-	return pc_;
-      }
+    //- Correct the capillary pressure
+    void correct()
+        {
+            Se_ == (Sb_-Sminpc_)/(Smaxpc_ - Sminpc_);
+            pc_ = pc0_ * pow(Se_,-alpha_);
+            dpcdS_= -alpha_*pc0_*(pow(Se_,-alpha_-1))/(Smaxpc_-Sminpc_);
+        }
 
-      //- Return the capillary pressure derivative according to pcBrooks and Corey correlation
-      tmp<volScalarField> dpcdS() const
-      {
-	return dpcdS_;
-      }
+    //- Compute Moisture from head pressure (Richards' model)
+    volScalarField correctAndSb(volScalarField h) 
+        {
+            FatalErrorIn("volScalarField MoistureFromHeadPressure(volScalarField h) const")
+                << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
+            return Se_;
+        };
 
-      //- Correct the capillary pressure
-      void correct()
-      {
-        Se_ == (Sb_-Sminpc_)/(Smaxpc_ - Sminpc_);
-        pc_ = pc0_ * pow(Se_,-alpha_);
-        dpcdS_= -alpha_*pc0_*(pow(Se_,-alpha_-1))/(Smaxpc_-Sminpc_);
-      }
+    //- Capillary capacity (Richards' model)
+    tmp<volScalarField> Ch() const
+        {
+            FatalErrorIn("tmp<volScalarField> Ch() const")
+                << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
+            return Se_;
+        };
 
-      //- Compute Moisture from head pressure (Richards' model)
-      volScalarField correctAndSb(volScalarField h) 
-      {
-        FatalErrorIn("volScalarField MoistureFromHeadPressure(volScalarField h) const")
-                       << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
-        return Se_;
-      };
+};
 
-      //- Capillary capacity (Richards' model)
-      tmp<volScalarField> Ch() const
-      {
-        FatalErrorIn("tmp<volScalarField> Ch() const")
-                    << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
-        return Se_;
-      };
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    };
-
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-  } // End namespace capillarityModels
+} // End namespace capillarityModels
 
 } // End namespace Foam
 
