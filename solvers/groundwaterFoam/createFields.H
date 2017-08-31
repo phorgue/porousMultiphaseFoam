@@ -84,7 +84,7 @@ theta == 0; // temporary initialisation
 
 // Relative permeability model 
 autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,theta);
-autoPtr<capillarityModel> pcModel = capillarityModel::New("pc",transportProperties,theta);
+autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,theta);
 
 Info<< "Computing field theta \n" << endl;
 theta == pcModel->correctAndSb(h);

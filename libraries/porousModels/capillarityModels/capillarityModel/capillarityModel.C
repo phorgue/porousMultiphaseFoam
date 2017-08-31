@@ -24,15 +24,13 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "capillarityModel.H"
-#include "volFields.H"
-#include "fvcGrad.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(capillarityModel, 0);
-    defineRunTimeSelectionTable(capillarityModel, dictionary);
+defineTypeNameAndDebug(capillarityModel, 0);
+defineRunTimeSelectionTable(capillarityModel, dictionary);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -43,10 +41,49 @@ Foam::capillarityModel::capillarityModel
     const dictionary& capillarityProperties,
     const volScalarField& Sb
 )
-:
+    :
     name_(name),
     capillarityProperties_(capillarityProperties),
-    Sb_(Sb)
+    Sb_(Sb),
+    pc_
+    (
+        IOobject
+        (
+            name,
+            Sb.time().timeName(),
+            Sb.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionSet(1,-1,-2,0,0,0,0)
+    ),
+    dpcdS_
+    (
+        IOobject
+        (
+            name,
+            Sb.time().timeName(),
+            Sb.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionSet(1,-1,-2,0,0,0,0)
+    ),
+    Ch_
+    (
+        IOobject
+        (
+            name,
+            Sb.time().timeName(),
+            Sb.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionSet(0,-1,0,0,0,0,0)
+    )
 {}
 
 // ************************************************************************* //
