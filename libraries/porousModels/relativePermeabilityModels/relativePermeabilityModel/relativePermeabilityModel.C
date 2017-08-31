@@ -24,15 +24,13 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "relativePermeabilityModel.H"
-#include "volFields.H"
-#include "fvcGrad.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    defineTypeNameAndDebug(relativePermeabilityModel, 0);
-    defineRunTimeSelectionTable(relativePermeabilityModel, dictionary);
+defineTypeNameAndDebug(relativePermeabilityModel, 0);
+defineRunTimeSelectionTable(relativePermeabilityModel, dictionary);
 }
 
 
@@ -44,10 +42,62 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     const dictionary& relativePermeabilityProperties,
     const volScalarField& Sb
 )
-:
+    :
     name_(name),
     relativePermeabilityProperties_(relativePermeabilityProperties),
-    Sb_(Sb)
+    Sb_(Sb),
+    kra_
+    (
+        IOobject
+        (
+            name,
+            Sb_.time().timeName(),
+            Sb_.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionSet(0,0,0,0,0)
+    ),
+    krb_
+    (
+        IOobject
+        (
+            name,
+            Sb_.time().timeName(),
+            Sb_.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionSet(0,0,0,0,0)
+    ),
+    dkradS_
+    (
+        IOobject
+        (
+            name,
+            Sb_.time().timeName(),
+            Sb_.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionSet(0,0,0,0,0)
+    ),
+    dkrbdS_
+    (
+        IOobject
+        (
+            name,
+            Sb_.time().timeName(),
+            Sb_.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionSet(0,0,0,0,0)
+    )
 {}
 
 // ************************************************************************* //

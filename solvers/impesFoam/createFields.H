@@ -10,12 +10,12 @@ else if (CFL == "Todd") CFLint = 1;
 else if (CFL == "Courant") CFLint = 2; 
 else
 {
-        FatalErrorIn
-      (
-       "in createFields.H"
-       )
-      << "CFL condition unrecongnized : Coats, Todd and Courant available" 
-      << exit(FatalError);
+    FatalErrorIn
+        (
+            "in createFields.H"
+        )
+        << "CFL condition unrecongnized : Coats, Todd and Courant available" 
+            << exit(FatalError);
 }
   
 
@@ -158,4 +158,4 @@ surfaceScalarField phiP = phi;
 /////////////////////////////////////////////////////////////////////////////
 
 scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
-autoPtr<capillarityModel> myCapModel = capillarityModel::New("pc",transportProperties,Sb);
+autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,Sb);

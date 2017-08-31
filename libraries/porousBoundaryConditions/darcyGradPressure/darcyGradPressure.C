@@ -29,79 +29,74 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::darcyGradPressure::
-darcyGradPressure
+Foam::darcyGradPressure::darcyGradPressure
 (
- const fvPatch& p,
- const DimensionedField<scalar, volMesh>& iF
- )
+    const fvPatch& p,
+    const DimensionedField<scalar, volMesh>& iF
+)
     :
-  fixedGradientFvPatchScalarField(p, iF),
-  MfName_("Mf"),
-  phiName_("phi"),
-  phiGfName_("phiG"),
-  phiPcName_("phiPc")
+    fixedGradientFvPatchScalarField(p, iF),
+    MfName_("Mf"),
+    phiName_("phi"),
+    phiGfName_("phiG"),
+    phiPcName_("phiPc")
 {}
 
-Foam::darcyGradPressure::
-darcyGradPressure
+Foam::darcyGradPressure::darcyGradPressure
 (
- const fvPatch& p,
- const DimensionedField<scalar, volMesh>& iF,
- const dictionary& dict
- )
+    const fvPatch& p,
+    const DimensionedField<scalar, volMesh>& iF,
+    const dictionary& dict
+)
     :
-  fixedGradientFvPatchScalarField(p, iF),
-  MfName_(dict.lookupOrDefault<word>("Mf", "Mf")),
-  phiName_(dict.lookupOrDefault<word>("phi", "phi")),
-  phiGfName_(dict.lookupOrDefault<word>("phiG","phiG")),
-  phiPcName_(dict.lookupOrDefault<word>("phiPc","phiPc"))
+    fixedGradientFvPatchScalarField(p, iF),
+    MfName_(dict.lookupOrDefault<word>("Mf", "Mf")),
+    phiName_(dict.lookupOrDefault<word>("phi", "phi")),
+    phiGfName_(dict.lookupOrDefault<word>("phiG","phiG")),
+    phiPcName_(dict.lookupOrDefault<word>("phiPc","phiPc"))
 {
-  fvPatchField<scalar>::operator=(patchInternalField());
-  gradient() = 0.0;
+    fvPatchField<scalar>::operator=(patchInternalField());
+    gradient() = 0.0;
 }
 
-Foam::darcyGradPressure::
-darcyGradPressure
+Foam::darcyGradPressure::darcyGradPressure
 (
- const darcyGradPressure& ptf,
- const fvPatch& p,
- const DimensionedField<scalar, volMesh>& iF,
- const fvPatchFieldMapper& mapper
- )
+    const darcyGradPressure& ptf,
+    const fvPatch& p,
+    const DimensionedField<scalar, volMesh>& iF,
+    const fvPatchFieldMapper& mapper
+)
     :
-  fixedGradientFvPatchScalarField(ptf, p, iF, mapper),
-  MfName_(ptf.MfName_),
-  phiName_(ptf.phiName_),
-  phiGfName_(ptf.phiGfName_),
-  phiPcName_(ptf.phiPcName_)
+    fixedGradientFvPatchScalarField(ptf, p, iF, mapper),
+    MfName_(ptf.MfName_),
+    phiName_(ptf.phiName_),
+    phiGfName_(ptf.phiGfName_),
+    phiPcName_(ptf.phiPcName_)
 {}
 
-Foam::darcyGradPressure::
-darcyGradPressure
+Foam::darcyGradPressure::darcyGradPressure
 (
- const darcyGradPressure& ptf
- )
+    const darcyGradPressure& ptf
+)
     :
-  fixedGradientFvPatchScalarField(ptf),
-  MfName_(ptf.MfName_),
-  phiName_(ptf.phiName_),
-  phiGfName_(ptf.phiGfName_),
-  phiPcName_(ptf.phiPcName_)
+    fixedGradientFvPatchScalarField(ptf),
+    MfName_(ptf.MfName_),
+    phiName_(ptf.phiName_),
+    phiGfName_(ptf.phiGfName_),
+    phiPcName_(ptf.phiPcName_)
 {}
 
-Foam::darcyGradPressure::
-darcyGradPressure
+Foam::darcyGradPressure::darcyGradPressure
 (
- const darcyGradPressure& ptf,
- const DimensionedField<scalar, volMesh>& iF
- )
+    const darcyGradPressure& ptf,
+    const DimensionedField<scalar, volMesh>& iF
+)
     :
-  fixedGradientFvPatchScalarField(ptf, iF),
-  MfName_(ptf.MfName_),
-  phiName_(ptf.phiName_),
-  phiGfName_(ptf.phiGfName_),
-  phiPcName_(ptf.phiPcName_)
+    fixedGradientFvPatchScalarField(ptf, iF),
+    MfName_(ptf.MfName_),
+    phiName_(ptf.phiName_),
+    phiGfName_(ptf.phiGfName_),
+    phiPcName_(ptf.phiPcName_)
 {}
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -109,52 +104,49 @@ darcyGradPressure
 void Foam::darcyGradPressure::updateCoeffs()
 {
     if (updated())
-      {
+    {
         return;
-      }
-      
+    }
+
     const fvsPatchField<scalar>& Mf=
-      patch().lookupPatchField<surfaceScalarField, scalar>(MfName_);
-      
-      
+        patch().lookupPatchField<surfaceScalarField, scalar>(MfName_);
+
     const fvsPatchField<scalar>& phi=
-      patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
-        
+        patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
+
     const fvsPatchField<scalar>& phiGf=
-      patch().lookupPatchField<surfaceScalarField, scalar>(phiGfName_);
+        patch().lookupPatchField<surfaceScalarField, scalar>(phiGfName_);
 
     const fvsPatchField<scalar>& phiPc=
-      patch().lookupPatchField<surfaceScalarField, scalar>(phiPcName_);
-       
+        patch().lookupPatchField<surfaceScalarField, scalar>(phiPcName_);
+
     //Extract the dictionary from database
     scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").lookupOrDefault<scalar>("activateCapillarity",0.));
-  
+
     gradient() = - (phi-phiGf-phiPc*activateCapillarity)/Mf/(patch().magSf());
-    
-				
+
     fixedGradientFvPatchScalarField::updateCoeffs();
 }
 
 void Foam::darcyGradPressure::write(Ostream& os) const
 {
-  fixedGradientFvPatchScalarField::write(os);
-  writeEntryIfDifferent<word>(os, "Mf", "Mf", MfName_);
-  writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
-  writeEntryIfDifferent<word>(os, "phiG", "phiG", phiGfName_);
-  writeEntryIfDifferent<word>(os, "phiPc", "phiPc", phiPcName_);
-  writeEntry("value", os);
+    fixedGradientFvPatchScalarField::write(os);
+    writeEntryIfDifferent<word>(os, "Mf", "Mf", MfName_);
+    writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
+    writeEntryIfDifferent<word>(os, "phiG", "phiG", phiGfName_);
+    writeEntryIfDifferent<word>(os, "phiPc", "phiPc", phiPcName_);
+    writeEntry("value", os);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-    makePatchTypeField
-    (
-        fvPatchScalarField,
-        darcyGradPressure
-    );
+makePatchTypeField
+(
+    fvPatchScalarField,
+    darcyGradPressure
+);
 }
-
 
 // ************************************************************************* //

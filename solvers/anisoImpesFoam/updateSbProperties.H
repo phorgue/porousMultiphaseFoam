@@ -23,8 +23,8 @@ Fbf = (krbf/mub) / ( (kraf/mua) + (krbf/mub) );
 Fb = (krb/mub) / ( (kra/mua) + (krb/mub) );
 
 //- capillarity computation
-myCapModel().correct();
-gradpc = fvc::interpolate(myCapModel().dpcdS()*fvc::grad(Sb),"pc");
+pcModel().correct();
+gradpc = fvc::interpolate(pcModel().dpcdS()*fvc::grad(Sb),"pc");
 
 //- compute fluxes 
 phiPc = (Mbf & gradpc) & mesh.Sf();

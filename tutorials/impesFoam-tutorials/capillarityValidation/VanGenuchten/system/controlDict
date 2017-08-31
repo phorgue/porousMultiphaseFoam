@@ -29,7 +29,7 @@ deltaT          1e-5;
 
 writeControl    adjustableRunTime;
 
-writeInterval   5e4;
+writeInterval   1000;
 
 purgeWrite      0;
 
@@ -45,7 +45,7 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
-CFL            Todd;
+CFL             Todd;
 
 maxCo		1;
 

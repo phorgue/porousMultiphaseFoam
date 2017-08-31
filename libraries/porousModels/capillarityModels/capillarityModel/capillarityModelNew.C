@@ -24,8 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "capillarityModel.H"
-#include "volFields.H"
-#include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

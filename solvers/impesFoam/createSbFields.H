@@ -21,10 +21,7 @@ surfaceScalarField Lf ("Lf",Laf+Lbf);
 surfaceScalarField Fbf ("Fbf",Mbf/Mf);
 volScalarField Fb ("Fb",(krb/mub) / ( (kra/mua) + (krb/mub) ));
 
-//- capillary pressure (pc)
-myCapModel().correct();
-surfaceVectorField gradpc("gradpc",fvc::interpolate(myCapModel().dpcdS()*fvc::grad(Sb),"pc"));
-
 //- fluxes depending on saturation
+pcModel().correct();
 surfaceScalarField phiG("phiG",(Lf * g) & mesh.Sf());
-surfaceScalarField phiPc("phiPc",Mbf*gradpc & mesh.Sf());
+surfaceScalarField phiPc("phiPc",Mbf * fvc::interpolate(pcModel().dpcdS(),"pc")* fvc::snGrad(Sb) * mesh.magSf());
