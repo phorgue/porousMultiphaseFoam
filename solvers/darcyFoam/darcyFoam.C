@@ -55,15 +55,15 @@ int main(int argc, char *argv[])
     Info<< "\nCalculating..\n" << endl;
 
     while (simple.loop())
-      {
+    {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
         while (simple.correctNonOrthogonal())
-	  {
+        {
 	    fvScalarMatrix pEqn
-	      (
-	       fvm::laplacian(-Mf,p) + fvc::div(phiG) + (SrcExt*Wext-SrcInj*Winj)*activateWellbores
-	       );
+                (
+                    fvm::laplacian(-Mf,p) + fvc::div(phiG) + (SrcExt*Wext-SrcInj*Winj)*activateWellbores
+                );
 
 	    pEqn.solve();
 
@@ -72,17 +72,16 @@ int main(int argc, char *argv[])
             U = fvc::reconstruct(phi);
             U.correctBoundaryConditions();
             Ua = U;
-	  }
+        }
 
         Info << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-             << nl << endl;
-      }
+            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
+            << nl << endl;
+    }
 
     Info<< "End\n" << endl;
 
     return 0;
 }
-
 
 // ************************************************************************* //

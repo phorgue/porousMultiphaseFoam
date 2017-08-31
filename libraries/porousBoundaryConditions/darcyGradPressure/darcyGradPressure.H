@@ -44,8 +44,8 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                  Class darcyGradPressureFvPatch Declaration
-\*---------------------------------------------------------------------------*/
+    Class darcyGradPressureFvPatch Declaration
+    \*---------------------------------------------------------------------------*/
 
 class darcyGradPressure
 :
@@ -67,73 +67,72 @@ public:
 
     // Constructors
 
-        //- Construct from patch and internal field
-        darcyGradPressure
-        (
-            const fvPatch&,
-            const DimensionedField<scalar, volMesh>&
-        );
+    //- Construct from patch and internal field
+    darcyGradPressure
+    (
+        const fvPatch&,
+        const DimensionedField<scalar, volMesh>&
+    );
 
-        //- Construct from patch, internal field and dictionary
-        darcyGradPressure
-        (
-            const fvPatch&,
-            const DimensionedField<scalar, volMesh>&,
-            const dictionary&
-        );
+    //- Construct from patch, internal field and dictionary
+    darcyGradPressure
+    (
+        const fvPatch&,
+        const DimensionedField<scalar, volMesh>&,
+        const dictionary&
+    );
 
-        //- Construct by mapping given
-        //  darcyGradPressure onto a new patch
-        darcyGradPressure
-        (
-            const darcyGradPressure&,
-            const fvPatch&,
-            const DimensionedField<scalar, volMesh>&,
-            const fvPatchFieldMapper&
-        );
+    //- Construct by mapping given
+    //  darcyGradPressure onto a new patch
+    darcyGradPressure
+    (
+        const darcyGradPressure&,
+        const fvPatch&,
+        const DimensionedField<scalar, volMesh>&,
+        const fvPatchFieldMapper&
+    );
 
-        //- Construct as copy
-        darcyGradPressure
-        (
-            const darcyGradPressure&
-        );
+    //- Construct as copy
+    darcyGradPressure
+    (
+        const darcyGradPressure&
+    );
 
-        //- Construct and return a clone
-        virtual tmp<fvPatchScalarField> clone() const
+    //- Construct and return a clone
+    virtual tmp<fvPatchScalarField> clone() const
         {
             return tmp<fvPatchScalarField>
-            (
-                new darcyGradPressure(*this)
-            );
+                (
+                    new darcyGradPressure(*this)
+                );
         }
 
-        //- Construct as copy setting internal field reference
-        darcyGradPressure
-        (
-            const darcyGradPressure&,
-            const DimensionedField<scalar, volMesh>&
-        );
+    //- Construct as copy setting internal field reference
+    darcyGradPressure
+    (
+        const darcyGradPressure&,
+        const DimensionedField<scalar, volMesh>&
+    );
 
-        //- Construct and return a clone setting internal field reference
-        virtual tmp<fvPatchScalarField> clone
-        (
-            const DimensionedField<scalar, volMesh>& iF
-        ) const
+    //- Construct and return a clone setting internal field reference
+    virtual tmp<fvPatchScalarField> clone
+    (
+        const DimensionedField<scalar, volMesh>& iF
+    ) const
         {
             return tmp<fvPatchScalarField>
-            (
-                new darcyGradPressure(*this, iF)
-            );
+                (
+                    new darcyGradPressure(*this, iF)
+                );
         }
-
 
     // Member functions
 
-        //- Update the coefficients associated with the patch field
-        virtual void updateCoeffs();
+    //- Update the coefficients associated with the patch field
+    virtual void updateCoeffs();
 
-        //- Write
-        virtual void write(Ostream&) const;
+    //- Write
+    virtual void write(Ostream&) const;
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

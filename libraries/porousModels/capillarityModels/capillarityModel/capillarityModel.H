@@ -37,19 +37,12 @@ SourceFiles
     capillarityModel.C
     capillarityModelNew.C
 
-    \*---------------------------------------------------------------------------*/
+\*---------------------------------------------------------------------------*/
 
 #ifndef capillarityModel_H
 #define capillarityModel_H
 
-#include "IOdictionary.H"
-#include "typeInfo.H"
-#include "runTimeSelectionTables.H"
-#include "volFieldsFwd.H"
-#include "surfaceFieldsFwd.H"
-#include "dimensionedScalar.H"
-#include "tmp.H"
-#include "autoPtr.H"
+#include "volFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,8 +50,8 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-    Class capillarityModel Declaration
-    \*---------------------------------------------------------------------------*/
+                  Class capillarityModel Declaration
+\*---------------------------------------------------------------------------*/
 
 class capillarityModel
 {
@@ -66,12 +59,14 @@ class capillarityModel
 protected:
 
     // Protected data
-
     word name_;
     dictionary capillarityProperties_;
 
     // reference to the saturation field 
     const volScalarField& Sb_;
+
+    // capillary pressure, derivative and capillary capacity
+    volScalarField pc_,dpcdS_,Ch_;
 
     // Private Member Functions
 
@@ -132,16 +127,22 @@ public:
 
     //- Return the phase transport properties dictionary
     const dictionary& capillarityProperties() const
-    {
-      return capillarityProperties_;
-    }
+        {
+            return capillarityProperties_;
+        }
       
     //- Return the capillary pressure as a function of Sb 
-    virtual tmp<volScalarField> pc() const = 0;
+    tmp<volScalarField> pc() const
+        {
+            return pc_;
+        }
 
     //- Return the derivative of capillary pressure as a function of Sb
-    virtual tmp<volScalarField> dpcdS() const = 0;
-        
+    tmp<volScalarField> dpcdS() const
+        {
+            return dpcdS_;
+        }
+
     //- Correct the capillary pressure
     virtual void correct() = 0; 
 
@@ -153,7 +154,7 @@ public:
 
 };
 
-  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
 

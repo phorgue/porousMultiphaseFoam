@@ -43,94 +43,79 @@ SourceFiles
 
 namespace Foam
 {
-  namespace capillarityModels
-  {
+namespace capillarityModels
+{
 
-    /*---------------------------------------------------------------------------*\
-                         Class pcLinear Declaration
+/*---------------------------------------------------------------------------*\
+    Class pcLinear Declaration
     \*---------------------------------------------------------------------------*/
 
-    class pcLinear
-      :
-      public capillarityModel
-    {
-      // pcVan Genuchten coefficients
-      dictionary pcLinearCoeffs_;
+class pcLinear
+:
+    public capillarityModel
+{
+    // pcVan Genuchten coefficients
+    dictionary pcLinearCoeffs_;
 
-      volScalarField Sminpc_;    
-      volScalarField Smaxpc_;    
-      volScalarField pc0_;
-      volScalarField pcMax_;
+    volScalarField Sminpc_;
+    volScalarField Smaxpc_;
+    volScalarField pc0_;
+    volScalarField pcMax_;
 
-      //- effective saturation of phase b
-      volScalarField Se_;
+    //- effective saturation of phase b
+    volScalarField Se_;
 
-      // capillary pressure and derivative
-      volScalarField pc_;
-      volScalarField dpcdS_;
-        
-    public:
 
-      //- Runtime type information
-      TypeName("linear");
+public:
 
-      // Constructors
+    //- Runtime type information
+    TypeName("linear");
 
-      //- Construct from components
-      pcLinear
-      (
-       const word& name,
-       const dictionary& capillarityProperties,
-       const volScalarField& Sb
-       );
+    // Constructors
 
-      //- Destructor
-      ~pcLinear()
-      {}
+    //- Construct from components
+    pcLinear
+    (
+        const word& name,
+        const dictionary& capillarityProperties,
+        const volScalarField& Sb
+    );
 
-      // Member Functions
+    //- Destructor
+    ~pcLinear()
+        {}
 
-      //- Return the capillary pressure according to pcLinear correlation
-      tmp<volScalarField> pc() const
-      {
-	return pc_;
-      }
+    // Member Functions
 
-      //- Return the capillary pressure derivative according to pcLinear correlation
-      tmp<volScalarField> dpcdS() const
-      {
-	return dpcdS_;
-      }
+    //- Correct the capillarity
+    void correct()
+        {
+            Se_ == (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
+            pc_ = pc0_ + (1 - Se_) * (pcMax_ - pc0_);
+            dpcdS_ =  pc0_ - pcMax_;
+        }
 
-      //- Correct the capillarity
-      void correct()
-      {
-	Se_ == (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
-        pc_ = pc0_ + (1 - Se_) * (pcMax_ - pc0_) ; 
-	dpcdS_ =  pc0_ - pcMax_; 
-      }
+    //- Compute Moisture from head pressure (Richards' model)
+    volScalarField correctAndSb(volScalarField h)
+        {
+            FatalErrorIn("volScalarField correctAndSb(volScalarField h) const")
+                << "Not implemented in pcLinear.H " << abort(FatalError);
+            return Se_;
+        };
 
-      //- Compute Moisture from head pressure (Richards' model)
-      volScalarField correctAndSb(volScalarField h) 
-      {
-        FatalErrorIn("volScalarField correctAndSb(volScalarField h) const")
-                   << "Not implemented in pcLinear.H " << abort(FatalError);
-        return Se_;
-      };
+    //- Capillary capacity (Richards' model)
+    tmp<volScalarField> Ch() const
+        {
+            FatalErrorIn("tmp<volScalarField> Ch() const")
+                << "Not implemented in pcLinear.H " << abort(FatalError);
+            return Se_;
+        };
 
-      //- Capillary capacity (Richards' model)
-      tmp<volScalarField> Ch() const
-      {
-        FatalErrorIn("tmp<volScalarField> Ch() const")
-                  << "Not implemented in pcLinear.H " << abort(FatalError);
-        return Se_;
-      };
+};
 
-    };
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-  } // End namespace capillarityModels
+} // End namespace capillarityModels
 
 } // End namespace Foam
 

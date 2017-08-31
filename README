@@ -5,7 +5,7 @@
 * General Informations : 
 
 
-- This toolbox is compatible with OpenFOAM 4.0 and later.
+- This toolbox is compatible with OpenFOAM 5.0.
 
 - This toolbox needs only a standard OpenFOAM installation (see www.openfoam.org)
 
@@ -17,7 +17,7 @@
 
 
 - First, source the OpenFOAM configuration file, i.e. (example for ubuntu version) : 
-   source /opt/openfoam4x/etc/bashrc
+   source /opt/openfoam5x/etc/bashrc
 
 - then in the "porousMultiphaseFoam" directory, run :
 

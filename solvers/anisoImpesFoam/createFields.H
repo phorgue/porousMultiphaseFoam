@@ -9,41 +9,41 @@ if (CFL == "Coats") CFLint = 0;
 else if (CFL == "Courant") CFLint = 1; 
 else
 {
-        FatalErrorIn
-      (
-       "in createFields.H"
-       )
-      << "CFL condition unrecongnized : Coats and Courant available" 
-      << exit(FatalError);
+    FatalErrorIn
+        (
+            "in createFields.H"
+        )
+        << "CFL condition unrecongnized : Coats and Courant available" 
+            << exit(FatalError);
 }
 
 Info<< "Reading field p\n" << endl;
 volScalarField p
 (
- IOobject
- (
-  "p",
-  runTime.timeName(),
-  mesh,
-  IOobject::MUST_READ,
-  IOobject::AUTO_WRITE
-  ),
- mesh
- );
+    IOobject
+    (
+        "p",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
 
 Info<< "Reading field Sb \n" << endl;
 volScalarField Sb
 (
- IOobject
- (
-  "Sb",
-  runTime.timeName(),
-  mesh,
-  IOobject::MUST_READ,
-  IOobject::AUTO_WRITE
-  ),
- mesh
- );
+    IOobject
+    (
+        "Sb",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
 
 scalar dSmax(runTime.controlDict().lookupOrDefault<scalar>("dSmax",0.));
 
@@ -55,15 +55,15 @@ Info<< "Reading transportProperties\n" << endl;
 
 IOdictionary transportProperties
 (
- IOobject
- (
-  "transportProperties",
-  runTime.constant(),
-  mesh,
-  IOobject::MUST_READ,
-  IOobject::NO_WRITE
-  )
- );
+    IOobject
+    (
+        "transportProperties",
+        runTime.constant(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::NO_WRITE
+    )
+);
 
 dimensionedScalar Sbmin(transportProperties.lookupOrDefault("Sbmin",dimensionedScalar("Sbmin",dimless,0)));
 
@@ -115,16 +115,16 @@ volScalarField eps
 Info<< "Reading field K\n" << endl;
 volTensorField K
 (
- IOobject
- (
-  "K",
-  runTime.timeName(),
-  mesh,
-  IOobject::MUST_READ,
-  IOobject::AUTO_WRITE
-  ),
- mesh
- );
+    IOobject
+    (
+        "K",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
 
 // interpolated permeability
 Info << "la ???" ;
@@ -140,16 +140,16 @@ Info << "ou pas...." << endl;
 Info<< "Reading field U\n" << endl;
 volVectorField U
 (
- IOobject
- (
-  "U",
-  runTime.timeName(),
-  mesh,
-  IOobject::NO_READ,
-  IOobject::NO_WRITE
-  ),
- Ua + Ub
- );
+    IOobject
+    (
+        "U",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    Ua + Ub
+);
 
 #include "createPhi.H"
 surfaceScalarField phiP = phi;
@@ -159,4 +159,4 @@ surfaceScalarField phiP = phi;
 /////////////////////////////////////////////////////////////////////////////
 
 scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
-autoPtr<capillarityModel> myCapModel = capillarityModel::New("pc",transportProperties,Sb);
+autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,Sb);

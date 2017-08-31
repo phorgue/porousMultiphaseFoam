@@ -22,10 +22,7 @@ Fbf = Mbf/Mf;
 //- for source term in saturation equation
 Fb = (krb/mub) / ( (kra/mua) + (krb/mub) );
 
-//- capillarity computation
-myCapModel().correct();
-gradpc = fvc::interpolate(myCapModel().dpcdS()*fvc::grad(Sb),"pc");
-
-//- compute fluxes 
-phiPc = Mbf*gradpc & mesh.Sf();
+//- compute fluxes
+pcModel().correct();
+phiPc = Mbf * fvc::interpolate(pcModel().dpcdS(),"pc")* fvc::snGrad(Sb) * mesh.magSf();
 phiG = (Lf * g) & mesh.Sf();
