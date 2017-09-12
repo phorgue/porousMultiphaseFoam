@@ -48,11 +48,11 @@ addToRunTimeSelectionTable
 Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
 (
     const word& name,
-    const dictionary& relativePermeabilityProperties,
+    const dictionary& transportProperties,
     const volScalarField& Sb
 )
     :
-    relativePermeabilityModel(name, relativePermeabilityProperties,Sb),
+    relativePermeabilityModel(name, transportProperties,Sb),
     Smin_
     (
         IOobject
@@ -64,7 +64,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        relativePermeabilityProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
     Smax_
     (
@@ -77,9 +77,9 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        relativePermeabilityProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+        transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
     ),
-    krBrooksAndCoreyCoeffs_(relativePermeabilityProperties.subDict(typeName + "Coeffs")),
+    krBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     n_
     (
         IOobject

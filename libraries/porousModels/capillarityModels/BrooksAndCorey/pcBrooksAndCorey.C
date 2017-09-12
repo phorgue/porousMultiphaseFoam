@@ -48,12 +48,12 @@ namespace Foam
 Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
 (
  const word& name,
- const dictionary& capillarityProperties,
+ const dictionary& transportProperties,
  const volScalarField& Sb
  )
     :
-  capillarityModel(name, capillarityProperties,Sb),	
-  pcBrooksAndCoreyCoeffs_(capillarityProperties.subDict(typeName + "Coeffs")),
+  capillarityModel(name, transportProperties,Sb),	
+  pcBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
   Sminpc_
   (
       IOobject
@@ -65,7 +65,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"minpc",capillarityProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0)))
+      pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"minpc",transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0)))
   ),
   Smaxpc_
   (
@@ -78,7 +78,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",capillarityProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0)))
+      pcBrooksAndCoreyCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0)))
   ),
   pc0_
   (

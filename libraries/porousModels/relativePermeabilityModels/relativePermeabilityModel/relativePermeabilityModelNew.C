@@ -30,11 +30,11 @@ License
 Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::New
 (
     const word& name,
-    const dictionary& relativePermeabilityProperties,
+    const dictionary& transportProperties,
     const volScalarField& Sb
 )
 {
-    const word modelType(relativePermeabilityProperties.lookup("relativePermeabilityModel"));
+    const word modelType(transportProperties.lookup("relativePermeabilityModel"));
 
     Info<< "Selecting relativePermeability model => " << modelType << "\n" << endl;
 
@@ -55,7 +55,7 @@ Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::
     }
 
     return autoPtr<relativePermeabilityModel>
-        (cstrIter()(name, relativePermeabilityProperties,Sb));
+        (cstrIter()(name, transportProperties,Sb));
 }
 
 
