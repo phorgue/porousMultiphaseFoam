@@ -59,7 +59,7 @@ protected:
 
     // Protected data
     word name_;
-    dictionary relativePermeabilityProperties_;
+    dictionary transportProperties_;
 
     //- reference to saturation field
     const volScalarField& Sb_;
@@ -90,10 +90,10 @@ public:
         dictionary,
         (
             const word& name,
-            const dictionary& relativePermeabilityProperties,
+            const dictionary& transportProperties,
             const volScalarField& Sb
         ),
-        (name, relativePermeabilityProperties, Sb)
+        (name, transportProperties, Sb)
     );
 
 
@@ -103,7 +103,7 @@ public:
     static autoPtr<relativePermeabilityModel> New
     (
         const word& name,
-        const dictionary& relativePermeabilityProperties,
+        const dictionary& transportProperties,
         const volScalarField& Sb
     );
 
@@ -114,7 +114,7 @@ public:
     relativePermeabilityModel
     (
         const word& name,
-        const dictionary& relativePermeabilityProperties,
+        const dictionary& transportProperties,
         const volScalarField& Sb
     );
 
@@ -127,9 +127,9 @@ public:
     // Member Functions
 
     //- Return the phase transport properties dictionary
-    const dictionary& relativePermeabilityProperties() const
+    const dictionary& transportProperties() const
         {
-            return relativePermeabilityProperties_;
+            return transportProperties_;
         }
 
     //- Return relative permeabilities according

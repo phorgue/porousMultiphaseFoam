@@ -39,12 +39,12 @@ defineRunTimeSelectionTable(relativePermeabilityModel, dictionary);
 Foam::relativePermeabilityModel::relativePermeabilityModel
 (
     const word& name,
-    const dictionary& relativePermeabilityProperties,
+    const dictionary& transportProperties,
     const volScalarField& Sb
 )
     :
     name_(name),
-    relativePermeabilityProperties_(relativePermeabilityProperties),
+    transportProperties_(transportProperties),
     Sb_(Sb),
     kra_
     (

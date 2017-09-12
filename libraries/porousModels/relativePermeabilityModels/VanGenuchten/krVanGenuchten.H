@@ -79,7 +79,7 @@ public:
     krVanGenuchten
     (
         const word& name,
-        const dictionary& relativePermeabilityProperties,
+        const dictionary& transportProperties,
         const volScalarField& Sb
     );
 
