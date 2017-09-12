@@ -72,7 +72,7 @@ public:
     pcVanGenuchten
     (
         const word& name,
-        const dictionary& capillarityProperties,
+        const dictionary& transportProperties,
         const volScalarField& Sb
     );
 
