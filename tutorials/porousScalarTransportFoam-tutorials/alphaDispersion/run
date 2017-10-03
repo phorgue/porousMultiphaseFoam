@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+runApplication blockMesh
+cp 0/C.org 0/C
+runApplication setFields
+runApplication porousScalarTransportFoam

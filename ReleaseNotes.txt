@@ -1,3 +1,23 @@
+**********************
+*** V1.5 (2017-09) *** Scalar transport with dispersion coefficients
+**********************
+
+### Solvers
+
+- porousScalarTransportFoam
+
+  - passive scalar transport solver in porous media with dispersion coefficient
+
+### Libraries
+
+- dispersionModels
+
+  - models to compute the effective diffusion (or dispersion) in porous media (model with alphaT and alphaL is available).
+
+### Bug fixes
+
+- OpenFOAM 5.0 compatibility fixed
+
 ************************
 *** V1.4.1 (2017-08) *** Bug fixes and toolbox cleaning
 ************************
@@ -26,7 +46,7 @@
 
 ### Solvers
 
-- darcyFoam
+- darcyFoam (new solver)
 
   - one phase flow solver similar to porousSimpleFoam but using the porousMultiphaseFoam toolbox's parameters.
 
@@ -154,13 +174,13 @@
 
 ### Solvers 
 
-- impesFoam
+- impesFoam (new solver)
 
-     - new two-phase flow solvers for isotropic porous medium (permeability K is volScalarField)
+     - two-phase flow solvers for isotropic porous medium (permeability K is volScalarField)
 
-- anisoImpesFoam
+- anisoImpesFoam (new solver)
 
-     - new two-phase flow solvers for anisotropic porous medium (permeability K is volTensorField) 
+     - two-phase flow solvers for anisotropic porous medium (permeability K is volTensorField) 
 
 ### Libraries
 
