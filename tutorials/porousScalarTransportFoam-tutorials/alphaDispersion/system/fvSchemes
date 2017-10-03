@@ -29,7 +29,7 @@ gradSchemes
 divSchemes
 {
   default none;
-  div(phi,C) Gauss VanLeer;
+  div(phi,C) Gauss vanLeer;
 }
 
 laplacianSchemes
