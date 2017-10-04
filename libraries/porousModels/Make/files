@@ -11,7 +11,7 @@ capillarityModels/BrooksAndCorey/pcBrooksAndCorey.C
 
 dispersionModels/dispersionModel/dispersionModel.C
 dispersionModels/dispersionModel/dispersionModelNew.C
-dispersionModels/PecletDispersion/alphaDispersion.C
+dispersionModels/alphaDispersion/alphaDispersion.C
 
 phaseModels/phase/phase.C
 phaseModels/fluidPhase/fluidPhase.C
