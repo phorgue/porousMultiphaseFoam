@@ -147,11 +147,10 @@ void Foam::darcyGradPressureAniso::updateCoeffs()
     //Activate or not capillarity term
     scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").lookupOrDefault<scalar>("activateCapillarity",0.));
 	
-    gradient() = 0.0;
-    gradient() = gradient() - (phi/patch().magSf()) * ( inv(Mf) & (-U/(mag(U)+1e-24)) & patch().nf());
+    gradient() = - (phi/patch().magSf()) * ( inv(Mf) & patch().nf() & patch().nf());
     gradient() = gradient() + (inv(Mf) & Lf & g.value() & patch().nf() );
     gradient() = gradient() + activateCapillarity*(inv(Mf) & Mbf & gradpc & patch().nf() );
-		
+
     fixedGradientFvPatchScalarField::updateCoeffs();
 }
 
