@@ -20,7 +20,7 @@ IOdictionary transportProperties
         "transportProperties",
         runTime.constant(),
         mesh,
-        IOobject::MUST_READ_IF_MODIFIED,
+        IOobject::MUST_READ,
         IOobject::NO_WRITE
     )
 );

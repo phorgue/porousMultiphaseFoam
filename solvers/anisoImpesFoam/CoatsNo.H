@@ -15,13 +15,13 @@
 
 
     volTensorField CFLCoats((runTime.deltaT()/eps)*dfw*fvc::surfaceSum(mag(phi)));
-    CFLCoats.ref() /= mesh.V();
+    CFLCoats.internalField() /= mesh.V();
 
     // - capillarity part of CFL
     if(activateCapillarity)
     {
-        CFLCoats += (runTime.deltaT()/eps)*2*mag(pcModel->dpcdS())*fvc::surfaceSum(Kf*mesh.magSf()/mag(mesh.delta()))*(kra*krb/(mub*kra+mua*krb));
-        CFLCoats.ref() /= mesh.V();
+        CFLCoats += (runTime.deltaT()/eps)*2*mag(pcModel->dpcdS())*fvc::surfaceSum(Kf*mesh.magSf()/mag(delta))*(kra*krb/(mub*kra+mua*krb));
+        CFLCoats.internalField() /= mesh.V();
     }
 
 

@@ -5,5 +5,5 @@
 
 runApplication blockMesh
 runApplication groundwaterFoam 
-runApplication postProcess -func sampleDict 
+runApplication sample 
 

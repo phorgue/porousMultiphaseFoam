@@ -5,7 +5,7 @@
     {
         if (!(isA< fixedValueFvPatchField<vector> >(Utheta.boundaryField()[patchi])))
         {
-            phi.boundaryFieldRef()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+            phi.boundaryField()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
         }
     }
     

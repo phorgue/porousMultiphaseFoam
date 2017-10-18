@@ -9,4 +9,4 @@ cp constant/transportProperties.case2 constant/transportProperties
 
 runApplication blockMesh
 runApplication impesFoam 
-runApplication postProcess -func sampleDict
+runApplication sample
