@@ -2,6 +2,6 @@
 
 . $WM_PROJECT_DIR/bin/tools/CleanFunctions
 
-
+foamClearPolyMesh
 rm -f 0/K log.*
-rm -rf constant/polyMesh 2
+rm -rf 2

@@ -6,11 +6,11 @@
     {
         if (isA< fixedValueFvPatchField<vector> >(Ua.boundaryField()[patchi]))
         {
-            phia.boundaryFieldRef()[patchi] = Ua.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+            phia.boundaryField()[patchi] = Ua.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
         }
         if (isA< fixedValueFvPatchField<vector> >(Ub.boundaryField()[patchi]))
         {
-            phib.boundaryFieldRef()[patchi] = Ub.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+            phib.boundaryField()[patchi] = Ub.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
         }
     }
 

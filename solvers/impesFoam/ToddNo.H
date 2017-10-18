@@ -54,7 +54,7 @@
     dimensionedScalar smallqP("smallRate",dimVolume/dimTime/p.dimensions(), VSMALL);
     if(activateCapillarity)
     {
-        scalarField Tpc = mesh.V()/(mag(pcModel->dpcdS())*fvc::surfaceSum(Fbf*Maf*mesh.magSf()/mag(mesh.delta())
+        scalarField Tpc = mesh.V()/(mag(pcModel->dpcdS())*fvc::surfaceSum(Fbf*Maf*mesh.magSf()/mag(delta)
         + smallqP));
         scalar Todd_factor_pc = gMin(Tpc);
 

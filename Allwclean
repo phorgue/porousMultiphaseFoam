@@ -4,5 +4,6 @@ set -x
 
 # cleaning solvers 
 
+wclean libso libraries/porousBoundaryConditions
+wclean libso libraries/porousModels
 wclean all solvers
-wclean all libraries

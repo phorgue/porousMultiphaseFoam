@@ -4,5 +4,6 @@ set -x
 
 # Compiling solvers 
 
-wmake all libraries
+wmake libso libraries/porousBoundaryConditions
+wmake libso libraries/porousModels
 wmake all solvers
