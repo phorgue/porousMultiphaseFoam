@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant";
+  object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+activateCapillarity	0;
+
+eps		eps [0  0  0 0 0 0 0]	0.5;
+
+Swr Swr [0 0 0 0 0 0 0] 1e-3;
+
+phase.a
+{
+    rho	rho [1 -3 0 0 0 0 0] 	1e0;
+    mu	mu [1 -1 -1 0 0 0 0]	1.76e-5;
+}
+
+phase.w
+{
+  rho	rho [1 -3 0 0 0 0 0] 	1e3;
+  mu	mu [1 -1 -1 0 0 0 0]	1e-3;
+}
+
+phase.o
+{
+  rho	rho [1 -3 0 0 0 0 0] 	800;
+  mu	mu [1 -1 -1 0 0 0 0]	1e-3;
+}
+
+triRelativePermeabilityModel BrooksAndCorey3p;
+
+BrooksAndCorey3pCoeffs
+{
+    n 2;
+}
+
+triCapillarityModel	ParkerAndLenhard;
+
+ParkerAndLenhardCoeffs
+{
+    
+    pc0 pc0 [1 -1 -2 0 0 0 0] 100;
+    m 0.5;
+    beta_ao 2;
+    beta_ow 2;
+}
+
+// ************************************************************************* //
