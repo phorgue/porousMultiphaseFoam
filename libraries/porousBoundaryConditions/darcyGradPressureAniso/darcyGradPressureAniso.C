@@ -132,9 +132,6 @@ void Foam::darcyGradPressureAniso::updateCoeffs()
     const fvsPatchField<scalar>& phi=
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
 
-    const fvPatchField<vector>& U=
-        patch().lookupPatchField<volVectorField, vector>(UName_);
-
     const fvsPatchField<tensor>& Lf=
         patch().lookupPatchField<surfaceTensorField, tensor>(LfName_);
 
