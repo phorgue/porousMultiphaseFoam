@@ -3,7 +3,6 @@
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
-foamCleanPolyMesh
 rm -f log.* 0/h 0/theta
 rm -rf 1* 2* 3* 4* 5* 6* 7* 8* 9* constant/polyMesh
 rm -rf VTK
