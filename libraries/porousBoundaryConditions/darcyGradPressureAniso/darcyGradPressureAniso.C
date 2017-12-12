@@ -44,7 +44,6 @@ Foam::darcyGradPressureAniso::darcyGradPressureAniso
     MfName_("Mf"),
     MbfName_("Mbf"),
     phiName_("phi"),
-    UName_("U"),
     LfName_("Lf"),
     gradpcName_("gradpc")
 {}
@@ -60,7 +59,6 @@ Foam::darcyGradPressureAniso::darcyGradPressureAniso
     MfName_(dict.lookupOrDefault<word>("Mf", "Mf")),
     MbfName_(dict.lookupOrDefault<word>("Mbf", "Mbf")),
     phiName_(dict.lookupOrDefault<word>("phi", "phi")),
-    UName_(dict.lookupOrDefault<word>("U", "U")),
     LfName_(dict.lookupOrDefault<word>("Lf","Lf")),
     gradpcName_(dict.lookupOrDefault<word>("gradpc","gradpc"))
 {
@@ -80,7 +78,6 @@ Foam::darcyGradPressureAniso::darcyGradPressureAniso
     MfName_(ptf.MfName_),
     MbfName_(ptf.MbfName_),
     phiName_(ptf.phiName_),
-    UName_(ptf.UName_),
     LfName_(ptf.LfName_),
     gradpcName_(ptf.gradpcName_)
 {}
@@ -94,7 +91,6 @@ Foam::darcyGradPressureAniso::darcyGradPressureAniso
     MfName_(ptf.MfName_),
     MbfName_(ptf.MbfName_),
     phiName_(ptf.phiName_),
-    UName_(ptf.UName_),
     LfName_(ptf.LfName_),
     gradpcName_(ptf.gradpcName_)
 {}
@@ -109,7 +105,6 @@ Foam::darcyGradPressureAniso::darcyGradPressureAniso
     MfName_(ptf.MfName_),
     MbfName_(ptf.MbfName_),
     phiName_(ptf.phiName_),
-    UName_(ptf.UName_),
     LfName_(ptf.LfName_),
     gradpcName_(ptf.gradpcName_)
 {}
@@ -131,9 +126,6 @@ void Foam::darcyGradPressureAniso::updateCoeffs()
 
     const fvsPatchField<scalar>& phi=
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
-
-    const fvPatchField<vector>& U=
-        patch().lookupPatchField<volVectorField, vector>(UName_);
 
     const fvsPatchField<tensor>& Lf=
         patch().lookupPatchField<surfaceTensorField, tensor>(LfName_);
@@ -161,7 +153,6 @@ void Foam::darcyGradPressureAniso::write(Ostream& os) const
     writeEntryIfDifferent<word>(os, "Mf", "Mf", MfName_);
     writeEntryIfDifferent<word>(os, "Mbf", "Mbf", MbfName_);
     writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
-    writeEntryIfDifferent<word>(os, "U", "U", UName_);
     writeEntryIfDifferent<word>(os, "Lf", "Lf", LfName_);  
     writeEntryIfDifferent<word>(os, "gradpc", "gradpc", gradpcName_);
     writeEntry("value", os);
