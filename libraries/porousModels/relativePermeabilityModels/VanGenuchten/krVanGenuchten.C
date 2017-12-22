@@ -130,6 +130,24 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             << "Relative permeability coefficient m equal or less than 0" 
                 << exit(FatalError);
     }
+    
+    Info << "Van Genuchten parameters for relative permeability model" << nl << "{" << endl;
+    Info << "    m ";
+    if (m_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(m_).value() << endl;}
+    Info << "    Smax ";
+    if (Smax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smax_).value() << endl;}
+    Info <<  "    Smin ";
+    if (Smin_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smin_).value() << endl;}
+    Info << "    kramax ";
+    if (kramax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(kramax_).value() << endl;}
+    Info << "    krbmax ";
+    if (krbmax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(krbmax_).value() << endl;}
+    Info << "} \n" << endl;   
 }
 
 // ************************************************************************* //
