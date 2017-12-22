@@ -108,6 +108,22 @@ Foam::capillarityModels::pcLinear::pcLinear
     ),
     Se_((Sb_- Sminpc_)/(Smaxpc_-Sminpc_))
 {
+
+    Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
+    Info << "    pc0 ";
+    if (pc0_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(pc0_).value() << endl;}
+    Info << "    pcMax ";
+    if (pcMax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(pcMax_).value() << endl;}
+    Info <<  "    Smaxpc ";
+    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smaxpc_).value() << endl;}
+    Info << "    Smaxpc ";
+    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smaxpc_).value() << endl;}
+    Info << "} \n" << endl;
+    
 }
 
 // ************************************************************************* //
