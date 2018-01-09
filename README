@@ -4,8 +4,14 @@
 
 * General Informations : 
 
+- The toolbox compatibility list:
 
-- This toolbox is compatible with OpenFOAM 5.0.
+       - OpenFOAM 5.0			OK (master and dev branches)
+       - OpenFOAM 4.0 and older	   	OK (less features, switch to dedicated branch)
+       - foam-extend 4.0		OK (foam-extend branch)
+       - OpenFOAM+ v1712 and older 	NO
+       - foam-extend 3.2 and older 	NO
+       
 
 - This toolbox needs only a standard OpenFOAM installation (see www.openfoam.org)
 
@@ -34,7 +40,9 @@
 - Each tutorial directory contains "run" and "clean" files to test installation
   and validate the solver.
 
-- To remove temporary files AND dynamic librairies AND executables, run :
+- A python script runTutorials.py can be used to test all components.
+
+- To remove compilation and temporary files, run :
 
 	./Allwclean
 
