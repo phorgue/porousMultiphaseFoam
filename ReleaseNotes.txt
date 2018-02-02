@@ -1,3 +1,22 @@
+************************
+*** V1.5.1 (2018-02) *** Bug fixes on groundwaterFoam
+************************
+
+### Libraries
+
+- capillarity and relative permeability models
+
+  - parameters for each model are now displayed in log file (the uniform value or "read file")
+
+### Bug Fixes
+
+- pcVanGenuchten
+
+  - initialisation no longer calls correct() function to avoid numerical issues using groundwaterFoam
+    (the functions correct() or correctAndSb() are directly called in the solvers)
+
+  - it is now possible to set up h=0 using groundwaterFoam
+
 **********************
 *** V1.5 (2017-09) *** Scalar transport with dispersion coefficients
 **********************
