@@ -123,8 +123,6 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     Se_((Sb_- Sminpc_)/(Smaxpc_-Sminpc_))
 {
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m = 0 in pcVanGenuchten" << abort(FatalError);
-    correct();
-
     Info << "Van Genuchten parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    m ";
     if (m_.headerOk()) { Info << "read file" << endl;}
