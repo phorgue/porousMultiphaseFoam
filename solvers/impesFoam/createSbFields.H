@@ -5,7 +5,6 @@ volScalarField krb = krModel->krb();
 volScalarField dkradS = krModel->dkradS();
 volScalarField dkrbdS = krModel->dkrbdS();
 
-
 surfaceScalarField kraf ("kraf",fvc::interpolate(kra,"kra"));
 surfaceScalarField krbf ("krbf",fvc::interpolate(krb,"krb"));
 surfaceScalarField dkrafdS ("dkrafdS",fvc::interpolate(dkradS,"kra"));
