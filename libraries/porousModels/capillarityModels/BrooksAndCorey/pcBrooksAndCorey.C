@@ -117,9 +117,9 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
     Info << "    alpha ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-    Info <<  "    Smaxpc ";
-    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smaxpc_).value() << endl;}
+    Info <<  "    Sminpc ";
+    if (Sminpc_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Sminpc_).value() << endl;}
     Info << "    Smaxpc ";
     if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smaxpc_).value() << endl;}
