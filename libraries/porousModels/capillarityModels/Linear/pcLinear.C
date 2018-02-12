@@ -116,9 +116,9 @@ Foam::capillarityModels::pcLinear::pcLinear
     Info << "    pcMax ";
     if (pcMax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pcMax_).value() << endl;}
-    Info <<  "    Smaxpc ";
-    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smaxpc_).value() << endl;}
+    Info <<  "    Sminpc ";
+    if (Sminpc_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Sminpc_).value() << endl;}
     Info << "    Smaxpc ";
     if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smaxpc_).value() << endl;}

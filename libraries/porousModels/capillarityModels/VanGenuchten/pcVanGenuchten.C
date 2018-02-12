@@ -130,9 +130,9 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     Info << "    pc0 ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pc0_).value() << endl;}
-    Info <<  "    Smaxpc ";
-    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smaxpc_).value() << endl;}
+    Info <<  "    Sminpc ";
+    if (Sminpc_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Sminpc_).value() << endl;}
     Info << "    Smaxpc ";
     if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smaxpc_).value() << endl;}
