@@ -109,6 +109,22 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
   Se_((Sb_- Sminpc_)/(Smaxpc_-Sminpc_))
 {
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
+
+    Info << "Brooks and Corey parameters for capillary pressure model" << nl << "{" << endl;
+    Info << "    pc0 ";
+    if (pc0_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(pc0_).value() << endl;}
+    Info << "    alpha ";
+    if (alpha_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(alpha_).value() << endl;}
+    Info <<  "    Smaxpc ";
+    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smaxpc_).value() << endl;}
+    Info << "    Smaxpc ";
+    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smaxpc_).value() << endl;}
+    Info << "} \n" << endl;
+
 }
 
 // ************************************************************************* //
