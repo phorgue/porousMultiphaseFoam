@@ -9,7 +9,7 @@
        - OpenFOAM 5.0			OK (master and dev branches)
        - OpenFOAM 4.0 and older	   	OK (less features, switch to dedicated branch)
        - foam-extend 4.0		OK (foam-extend branch)
-       - OpenFOAM+ v1712 and older 	NO
+       - OpenFOAM+ v1712 and older 	OK (esi-version branch)
        - foam-extend 3.2 and older 	NO
        
 
