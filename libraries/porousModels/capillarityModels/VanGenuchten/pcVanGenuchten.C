@@ -91,7 +91,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)
+        dimensionedScalar("m",dimless,pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0))
     ),
     n_(1/(1-m_)),
     alpha_ // necessary for Richards solver
@@ -105,7 +105,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("alpha",0)
+        dimensionedScalar("alpha",dimless,pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("alpha",0))
     ),
     pc0_
     (
