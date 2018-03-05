@@ -91,7 +91,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0)
+        dimensionedScalar("n",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0))
     ),
     Se_((Sb_-Smin_)/(Smax_-Smin_)),
     kramax_
@@ -105,7 +105,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     ),
     krbmax_
     (
@@ -118,7 +118,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     )
 {
 
