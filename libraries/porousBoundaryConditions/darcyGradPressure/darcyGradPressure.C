@@ -131,10 +131,10 @@ void Foam::darcyGradPressure::updateCoeffs()
 void Foam::darcyGradPressure::write(Ostream& os) const
 {
     fixedGradientFvPatchScalarField::write(os);
-    writeEntryIfDifferent<word>(os, "Mf", "Mf", MfName_);
-    writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
-    writeEntryIfDifferent<word>(os, "phiG", "phiG", phiGfName_);
-    writeEntryIfDifferent<word>(os, "phiPc", "phiPc", phiPcName_);
+    os.writeEntryIfDifferent<word>("Mf", "Mf", MfName_);
+    os.writeEntryIfDifferent<word>("phi", "phi", phiName_);
+    os.writeEntryIfDifferent<word>("phiG", "phiG", phiGfName_);
+    os.writeEntryIfDifferent<word>("phiPc", "phiPc", phiPcName_);
     writeEntry("value", os);
 }
 
