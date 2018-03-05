@@ -150,11 +150,11 @@ void Foam::darcyGradPressureAniso::updateCoeffs()
 void Foam::darcyGradPressureAniso::write(Ostream& os) const
 {
     fixedGradientFvPatchScalarField::write(os);
-    writeEntryIfDifferent<word>(os, "Mf", "Mf", MfName_);
-    writeEntryIfDifferent<word>(os, "Mbf", "Mbf", MbfName_);
-    writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
-    writeEntryIfDifferent<word>(os, "Lf", "Lf", LfName_);  
-    writeEntryIfDifferent<word>(os, "gradpc", "gradpc", gradpcName_);
+    os.writeEntryIfDifferent<word>("Mf", "Mf", MfName_);
+    os.writeEntryIfDifferent<word>("Mbf", "Mbf", MbfName_);
+    os.writeEntryIfDifferent<word>("phi", "phi", phiName_);
+    os.writeEntryIfDifferent<word>("Lf", "Lf", LfName_);  
+    os.writeEntryIfDifferent<word>("gradpc", "gradpc", gradpcName_);
     writeEntry("value", os);
 }
 
