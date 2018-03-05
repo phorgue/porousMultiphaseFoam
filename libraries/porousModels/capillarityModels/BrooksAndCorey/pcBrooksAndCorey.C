@@ -91,7 +91,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      pcBrooksAndCoreyCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimless,0))
+      pcBrooksAndCoreyCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
   ),
   alpha_
   (
@@ -104,7 +104,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0)
+      dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0))
   ),
   Se_((Sb_- Sminpc_)/(Smaxpc_-Sminpc_))
 {
