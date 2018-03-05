@@ -91,7 +91,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimless,0))
+        pcLinearCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
     ),
     pcMax_
     (
@@ -104,7 +104,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault("pcMax",dimensionedScalar("pcMax",dimless,0))
+        pcLinearCoeffs_.lookupOrDefault("pcMax",dimensionedScalar("pcMax",dimensionSet(1,-1,-2,0,0),0))
     ),
     Se_((Sb_- Sminpc_)/(Smaxpc_-Sminpc_))
 {
