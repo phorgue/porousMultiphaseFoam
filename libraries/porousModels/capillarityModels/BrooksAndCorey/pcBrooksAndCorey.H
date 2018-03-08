@@ -55,8 +55,8 @@ class pcBrooksAndCorey
     // pcBrooks and Corey coefficients
     dictionary pcBrooksAndCoreyCoeffs_;
        
-    volScalarField Sminpc_;
-    volScalarField Smaxpc_;
+    volScalarField Smin_;
+    volScalarField Smax_;
     volScalarField pc0_;
     volScalarField alpha_;
 
@@ -87,9 +87,9 @@ public:
     //- Correct the capillary pressure
     void correct()
         {
-            Se_ == (Sb_-Sminpc_)/(Smaxpc_ - Sminpc_);
+            Se_ == (Sb_+SMALL-Smin_)/(Smax_ - Smin_);
             pc_ = pc0_ * pow(Se_,-alpha_);
-            dpcdS_= -alpha_*pc0_*(pow(Se_,-alpha_-1))/(Smaxpc_-Sminpc_);
+            dpcdS_= -alpha_*pc0_*(pow(Se_,-alpha_-1))/(Smax_-Smin_);
         }
 
     //- Compute Moisture from head pressure (Richards' model)
