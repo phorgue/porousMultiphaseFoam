@@ -57,8 +57,8 @@ class pcLinear
     // pcVan Genuchten coefficients
     dictionary pcLinearCoeffs_;
 
-    volScalarField Sminpc_;
-    volScalarField Smaxpc_;
+    volScalarField Smin_;
+    volScalarField Smax_;
     volScalarField pc0_;
     volScalarField pcMax_;
 
@@ -90,7 +90,7 @@ public:
     //- Correct the capillarity
     void correct()
         {
-            Se_ == (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
+            Se_ == (Sb_- Smin_)/(Smax_-Smin_);
             pc_ = pc0_ + (1 - Se_) * (pcMax_ - pc0_);
             dpcdS_ =  pc0_ - pcMax_;
         }
