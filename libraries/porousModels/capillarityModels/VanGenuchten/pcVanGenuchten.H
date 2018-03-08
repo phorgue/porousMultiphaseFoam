@@ -54,7 +54,7 @@ class pcVanGenuchten
 {
     // pcVan Genuchten coefficients
     dictionary pcVanGenuchtenCoeffs_;
-    volScalarField Sminpc_,Smaxpc_;
+    volScalarField Smin_,Smax_;
     volScalarField m_,n_,alpha_;
     volScalarField pc0_;
 
@@ -85,9 +85,9 @@ public:
     //- Correct the capillary pressure
     void correct()
         {
-            Se_ == (Sb_- Sminpc_)/(Smaxpc_-Sminpc_);
+            Se_ == (Sb_+SMALL-Smin_)/(Smax_-Smin_);
             pc_ == pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
-            dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smaxpc_-Sminpc_)) * pow(pow(Se_,-1/m_)-1,(1/n_)-1) * pow(Se_,-(1+m_)/m_);
+            dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smax_-Smin_)) * pow(pow(Se_,-1/m_)-1,(1/n_)-1) * pow(Se_,-(1+m_)/m_);
         }
 
     //- Correct effective saturation and capillary capacity and return saturation (Richards' solver)
@@ -95,13 +95,13 @@ public:
         {
             //- Compute Saturation from! head pressure
             h.dimensions().reset(dimless);
-            volScalarField Stmp_ = neg(h) *(Sminpc_+(Smaxpc_-Sminpc_)*pow(1.0+pow(alpha_*mag(h),n_),-m_)) + pos(h+VSMALL)*(Smaxpc_-SMALL);
+            volScalarField Stmp_ = neg(h) *(Smin_+(Smax_-Smin_)*pow(1.0+pow(alpha_*mag(h),n_),-m_)) + pos(h+VSMALL)*(Smax_-SMALL);
             h.dimensions().reset(dimLength);
 
             //- Update effective saturation and capillary capacity
-            Se_ == (Stmp_- Sminpc_)/(Smaxpc_-Sminpc_);
+            Se_ == (Stmp_- Smin_)/(Smax_-Smin_);
             Ch_.dimensions().reset(dimless);
-            Ch_ == alpha_*m_*(Smaxpc_-Sminpc_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
+            Ch_ == alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
             Ch_.dimensions().reset(dimless/dimLength);
 
             return Stmp_;
