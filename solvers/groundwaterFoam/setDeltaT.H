@@ -22,38 +22,36 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Timestep for Richards solver (Picard loop) 
+    Timestep for Richards solver (based on h variation)
 
 \*---------------------------------------------------------------------------*/
 
 if(adjustTimeStep)
 {
+    scalar dtForh = dhmax / (dhdTmax+SMALL);
 
-    scalar deltaTFact=1;
-    if (iterPicard > maxIterPicard)
+    if (iterPicard >= maxIterPicard)
     {
-        deltaTFact = dTFactDecrease;
-        iterStability=0;
+        //- Decreasing timestep because of the non-convergence of Picard's loop
+        runTime.setDeltaT
+            (
+                dTFactDecrease*runTime.deltaTValue()
+            );
     }
-    else if (iterPicard < minIterPicard)
+    else
     {
-        iterStability++;
+        //- Timestep using h variation
+        runTime.setDeltaT
+            (
+                min(
+                    dtForh,
+                    min(
+                        1.2*runTime.deltaTValue(),
+                        maxDeltaT
+                    )
+                )
+            );
     }
-
-    if (iterStability == maxIterStability)
-    {
-        deltaTFact = dTFactIncrease;      
-        iterStability=0;
-    }
-        
-    //- Computing timestep 
-    runTime.setDeltaT
-        (
-            min(
-                deltaTFact*runTime.deltaTValue(),
-                maxDeltaT
-            )
-        );
 
     Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
 
