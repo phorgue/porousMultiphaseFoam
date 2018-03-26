@@ -29,28 +29,24 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+const bool adjustTimeStep =
+    runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
+
+const scalar dhmax = runTime.controlDict().lookupOrDefault("dhmax", 1e-2);
+scalar dhdTmax = dhmax/runTime.deltaTValue();
+
+const scalar dTFactDecrease
+(
+    readScalar(runTime.controlDict().lookup("dTFactDecrease"))
+);
+
+const dimensionedScalar hMinRef("hMinRef",dimLength,runTime.controlDict().lookupOrDefault<scalar>("hMinRef", 1e-4));
+
 const dictionary& PicardDict = mesh.solutionDict().subDict("Picard");
 
 const scalar tolPicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1.);
 
 const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
-
-const label minIterPicard = PicardDict.lookupOrDefault<label>("minIter",3);
-
-const label maxIterStability = PicardDict.lookupOrDefault<label>("maxIterStability",5);
-label iterStability=0;
-
-const bool adjustTimeStep =
-    runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
-
-const scalar dTFactIncrease
-(
-    readScalar(runTime.controlDict().lookup("dTFactIncrease"))
-);
-const scalar dTFactDecrease
-(
-    readScalar(runTime.controlDict().lookup("dTFactDecrease"))
-);
 
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);

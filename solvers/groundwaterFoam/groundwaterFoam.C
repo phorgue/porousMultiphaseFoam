@@ -74,15 +74,16 @@ int main(int argc, char *argv[])
             #include "hEqn.H"
             #include "updateProperties.H"
             iterPicard++;
-            if (iterPicard >= (2*maxIterPicard))
+            if (iterPicard >= (maxIterPicard))
             {
                 Warning() <<  " Max iteration reached in Picard loop" << endl;
                 break;
             }
         }
 
-        Info << "Saturation theta " << " Min(theta) = " << gMin(theta) << " Max(theta) = " << gMax(theta) <<  endl;
-        Info << "Head pressure h  " << " Min(h) = " << gMin(h) << " Max(h) = " << gMax(h) <<  endl;
+        Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
+        Info << "Head pressure h  " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
+        dhdTmax = gMax(mag((h-h.oldTime())/(h+hMinRef))());
 
         runTime.write();
 
