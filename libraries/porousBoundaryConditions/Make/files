@@ -1,4 +1,5 @@
 darcyGradPressure/darcyGradPressure.C
 darcyGradPressureAniso/darcyGradPressureAniso.C
+fixedHeadPressure/fixedHeadPressure.C
 
 LIB = $(FOAM_USER_LIBBIN)/libporousBoundaryConditions
