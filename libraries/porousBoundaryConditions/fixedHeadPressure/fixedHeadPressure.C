@@ -116,9 +116,7 @@ void Foam::fixedHeadPressure::updateCoeffs()
         results[facei] = pos(potential_-fp[facei].z()) * (potential_ - fp[facei].z()) + hUnsaturated_ * neg(potential_-fp[facei].z());    
     }
     
-    
     operator== (results);
-    Info << "OK"<< endl;
     fixedValueFvPatchScalarField::updateCoeffs();
 }
 
