@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "fixedHeadPressure.H"
+#include "fixedHeadPressureSTL.H"
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
 #include "volFields.H"
@@ -31,20 +31,20 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::fixedHeadPressure::
-fixedHeadPressure
+Foam::fixedHeadPressureSTL::
+fixedHeadPressureSTL
 (
     const fvPatch& h,
     const DimensionedField<scalar, volMesh>& iF
 )
 :
     fixedValueFvPatchScalarField(h, iF),
-    potential_(0.)
+    STLname_("")
 {}
 
 
-Foam::fixedHeadPressure::
-fixedHeadPressure
+Foam::fixedHeadPressureSTL::
+fixedHeadPressureSTL
 (
     const fvPatch& h,
     const DimensionedField<scalar, volMesh>& iF,
@@ -52,69 +52,91 @@ fixedHeadPressure
 )
 :
     fixedValueFvPatchScalarField(h, iF, dict, false),
-    potential_(dict.lookupOrDefault<scalar>("potential",0.))
+    STLname_(dict.lookup("STL"))
 {}
 
 
-Foam::fixedHeadPressure::
-fixedHeadPressure
+Foam::fixedHeadPressureSTL::
+fixedHeadPressureSTL
 (
-    const fixedHeadPressure& ptf,
+    const fixedHeadPressureSTL& ptf,
     const fvPatch& h,
     const DimensionedField<scalar, volMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
 :
     fixedValueFvPatchScalarField(ptf, h, iF, mapper),
-    potential_(ptf.potential_)
+    STLname_(ptf.STLname_)
 {}
 
 
-Foam::fixedHeadPressure::
-fixedHeadPressure
+Foam::fixedHeadPressureSTL::
+fixedHeadPressureSTL
 (
-    const fixedHeadPressure& ptf
+    const fixedHeadPressureSTL& ptf
 )
 :
     fixedValueFvPatchScalarField(ptf),
-    potential_(ptf.potential_)
+    STLname_(ptf.STLname_)
 {}
 
 
-Foam::fixedHeadPressure::
-fixedHeadPressure
+Foam::fixedHeadPressureSTL::
+fixedHeadPressureSTL
 (
-    const fixedHeadPressure& ptf,
+    const fixedHeadPressureSTL& ptf,
     const DimensionedField<scalar, volMesh>& iF
 )
 :
     fixedValueFvPatchScalarField(ptf, iF),
-    potential_(ptf.potential_)
+    STLname_(ptf.STLname_)
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::fixedHeadPressure::updateCoeffs()
+void Foam::fixedHeadPressureSTL::updateCoeffs()
 {
+    
     if (updated())
     {
         return;
     }
     
+   triSurfaceMesh potentialSTL(
+        IOobject(
+            STLname_,
+            this->db()
+        )
+        );
+    pointField pPoints = potentialSTL.points();
+
     const vectorField& fp = patch().patch().faceCentres();
     scalarField results(patch().patch().faceCentres().size());    
     forAll(fp,facei)
     {
-        results[facei] = (potential_ - fp[facei].z());
+        
+        
+        scalar xy_distance = GREAT;
+        label id_point = -1;
+        forAll(pPoints,pointi)
+        {
+            scalar tmp_dist = sqrt(pow(pPoints[pointi].x()-fp[facei].x(),2)+pow(pPoints[pointi].y()-fp[facei].y(),2));
+            if (xy_distance > tmp_dist)
+            {
+                xy_distance = tmp_dist;
+                id_point = pointi;
+            }
+        }
+        
+        results[facei] = pPoints[id_point].z() - fp[facei].z();
     }
     
     operator== (results);
     fixedValueFvPatchScalarField::updateCoeffs();
 }
 
-
-void Foam::fixedHeadPressure::write(Ostream& os) const
+void Foam::fixedHeadPressureSTL::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
     writeEntry("value", os);
@@ -128,7 +150,7 @@ namespace Foam
     makePatchTypeField
     (
         fvPatchScalarField,
-        fixedHeadPressure
+        fixedHeadPressureSTL
     );
 }
 
