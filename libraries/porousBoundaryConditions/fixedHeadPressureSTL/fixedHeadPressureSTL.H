@@ -22,42 +22,39 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fixedHeadPressure
+    Foam::fixedHeadPressureSTL
 
 Group
     grpGenericBoundaryConditions
 
 Description
     This boundary condition provides head pressure condition for h,
-    calculated as:
+    calculated as the distance between the face and the closest point
+    of the given surface :
 
         \f[
-            h = potential_ - z (if potential > z)
-            h = hUnstaturated (if potential < z)
+            h = zSurface - zFace
         \f]
 
     where
     \vartable
         h       | Head pressure [m]
-        hFace   | Height in the opposite direction to gravity
-        hRef    | Reference height in the opposite direction to gravity
-        \rho    | density
-        g       | acceleration due to gravity [m/s^2]
+        zSurface| Local height of the STL surface
+        zFace   | Height of the face center
     \endtable
 
 Usage
     \table
         Property     | Description                  | Required    | Default value
-        potential    | height of h=0                | no          | 0
+        STL          | pattern to the surface file  | yes          | 0
     \endtable
 
     Example of the boundary condition specification:
     \verbatim
     <patchName>
     {
-        type            fixedHeadPressure;
-        potential       50;
-        hUnsaturated    -0.87;
+        type            fixedHeadPressureSTL;
+        potential       constant/triSurface/example.stl;
         value           uniform 0; // optional initial value
     }
     \endverbatim
@@ -66,14 +63,16 @@ See also
     Foam::fixedValue
 
 SourceFiles
-    fixedHeadPressure.C
+    fixedHeadPressureSTL.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fixedHeadPressure_H
-#define fixedHeadPressure_H
+#ifndef fixedHeadPressureSTL_H
+#define fixedHeadPressureSTL_H
 
 #include "fixedValueFvPatchFields.H"
+ #include "triSurfaceMesh.H"
+#include "searchableSurface.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -81,10 +80,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-         Class fixedHeadPressure Declaration
+         Class fixedHeadPressureSTL Declaration
 \*---------------------------------------------------------------------------*/
 
-class fixedHeadPressure
+class fixedHeadPressureSTL
 :
     public fixedValueFvPatchScalarField
 {
@@ -92,27 +91,27 @@ class fixedHeadPressure
 protected:
 
     // Protected data
-    
-    //- Fixed potential
-    scalar potential_;
 
+    //- Name of phase-fraction field
+    word STLname_;
+    
 public:
 
     //- Runtime type information
-    TypeName("fixedHeadPressure");
+    TypeName("fixedHeadPressureSTL");
 
 
     // Constructors
 
         //- Construct from patch and internal field
-        fixedHeadPressure
+        fixedHeadPressureSTL
         (
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        fixedHeadPressure
+        fixedHeadPressureSTL
         (
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
@@ -120,19 +119,19 @@ public:
         );
 
         //- Construct by mapping given
-        //  fixedHeadPressure onto a new patch
-        fixedHeadPressure
+        //  fixedHeadPressureSTL onto a new patch
+        fixedHeadPressureSTL
         (
-            const fixedHeadPressure&,
+            const fixedHeadPressureSTL&,
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy
-        fixedHeadPressure
+        fixedHeadPressureSTL
         (
-            const fixedHeadPressure&
+            const fixedHeadPressureSTL&
         );
 
         //- Construct and return a clone
@@ -140,14 +139,14 @@ public:
         {
             return tmp<fvPatchScalarField >
             (
-                new fixedHeadPressure(*this)
+                new fixedHeadPressureSTL(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        fixedHeadPressure
+        fixedHeadPressureSTL
         (
-            const fixedHeadPressure&,
+            const fixedHeadPressureSTL&,
             const DimensionedField<scalar, volMesh>&
         );
 
@@ -159,7 +158,7 @@ public:
         {
             return tmp<fvPatchScalarField>
             (
-                new fixedHeadPressure(*this, iF)
+                new fixedHeadPressureSTL(*this, iF)
             );
         }
 
@@ -168,8 +167,9 @@ public:
 
         // Evaluation functions
 
-            //- Update the coefficients associated with the patch field
-            virtual void updateCoeffs();
+    
+        //- Update the coefficients associated with the patch field
+        virtual void updateCoeffs();
 
 
         //- Write
