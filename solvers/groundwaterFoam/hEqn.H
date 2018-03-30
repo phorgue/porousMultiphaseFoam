@@ -21,7 +21,7 @@
     hEqn.solve();
     
     resPicard = gMax((mag(h-h.prevIter()))->internalField());
-    Info << "Picard iteration : " << iterPicard+1 << " residual = " << resPicard << endl; 
+    Info << "Picard iteration : " << iterPicard << " residual = " << resPicard << endl; 
 
     phi == phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
     Utheta = fvc::reconstruct(phi);

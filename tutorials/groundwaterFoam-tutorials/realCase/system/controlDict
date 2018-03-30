@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     SbRichardsFoam;
+application     groundwaterFoam;
 
 startFrom       latestTime;
 
@@ -23,13 +23,13 @@ startTime       0.0;
 
 stopAt          endTime;
 
-endTime         86400;//86400000;
+endTime         864000;//86400000;
 
 deltaT          600;
 
 writeControl    adjustableRunTime;
 
-writeInterval   86400;//8640000;
+writeInterval   864000;//8640000;
 
 purgeWrite      0;
 
@@ -47,10 +47,16 @@ adjustTimeStep  yes;
 
 runTimeModifiable yes;
 
-dTFactIncrease  1.1;
-
-dTFactDecrease  0.9;
-
 maxDeltaT	1e9;
+
+//- for Picard time step control
+// timeStepControl Picard;
+// dTFactIncrease  1.1;
+// dTFactDecrease  0.9;
+
+//- for h variation time step control
+timeStepControl dhdT;
+hMinRef         1e-4;
+dhmax           0.05;
 
 // ************************************************************************* //
