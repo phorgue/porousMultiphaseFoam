@@ -67,14 +67,14 @@ int main(int argc, char *argv[])
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        scalar resPicard=1;
+        scalar resPicard=GREAT;
         iterPicard = 0;
         while (resPicard > tolPicard)
         {
+            iterPicard++;
             #include "hEqn.H"
             #include "updateProperties.H"
-            iterPicard++;
-            if (iterPicard >= (maxIterPicard))
+            if (iterPicard == maxIterPicard)
             {
                 Warning() <<  " Max iteration reached in Picard loop" << endl;
                 break;
@@ -83,7 +83,10 @@ int main(int argc, char *argv[])
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
         Info << "Head pressure h  " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
-        dhdTmax = gMax(mag((h-h.oldTime())/(h+hMinRef))());
+        dhdTmax_rel = gMax((
+            mag(h-h.oldTime()) /
+            (runTime.deltaTValue()*((mag(h)+hMinRef)))
+        )());
 
         runTime.write();
 

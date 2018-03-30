@@ -29,18 +29,17 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+//- Choose the method to compute time step
 const bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
 
-const scalar dhmax = runTime.controlDict().lookupOrDefault("dhmax", 1e-2);
-scalar dhdTmax = dhmax/runTime.deltaTValue();
+const word timeStepControl =
+    runTime.controlDict().lookupOrDefault<word>("timeStepControl", "Picard");
 
-const scalar dTFactDecrease
-(
-    readScalar(runTime.controlDict().lookup("dTFactDecrease"))
-);
 
-const dimensionedScalar hMinRef("hMinRef",dimLength,runTime.controlDict().lookupOrDefault<scalar>("hMinRef", 1e-4));
+//- Global parameters
+scalar maxDeltaT =
+    runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
 const dictionary& PicardDict = mesh.solutionDict().subDict("Picard");
 
@@ -48,7 +47,40 @@ const scalar tolPicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1.);
 
 const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
 
-scalar maxDeltaT =
-    runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+
+//- if dtFromPicard used
+const label nIterStability = PicardDict.lookupOrDefault<label>("nIterStability",5);
+const label minIterPicard = PicardDict.lookupOrDefault<label>("minIter",3);
+label iterStability = 0;
+const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",0);
+const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0);
+
+
+//- if dtFromh used
+const dimensionedScalar hMinRef("hMinRef",dimLength,runTime.controlDict().lookupOrDefault<scalar>("hMinRef", 1e-4));
+const scalar dhmax = runTime.controlDict().lookupOrDefault("dhmax", 1e-2);
+scalar dhdTmax_rel = dhmax/runTime.deltaTValue();
+
+if (timeStepControl == "Picard")
+{
+    Info << "Timestepping is based on Picard's iteration with :"
+        << nl << "{"
+        << nl << "    dTFactIncrease = " << dTFactIncrease
+        << nl << "    dTFactDecrease = " << dTFactDecrease
+        << nl << "    minIterPicard  = " <<  minIterPicard
+        << nl << "    nIterStability = " << nIterStability
+        << nl << "}"
+        << endl;
+}
+else if (timeStepControl == "dhdT")
+{
+    Info << "Timestepping is based on h variation with :"
+        << nl << "{"
+        << nl << "    dhmax   = " << dhmax
+        << nl << "    hMinRef = " << hMinRef
+        << nl << "}"
+        << endl;
+}
+
 
 // ************************************************************************* //
