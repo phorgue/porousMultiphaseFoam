@@ -22,25 +22,50 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Timestep for Richards solver (based on h variation)
+    Timestep for groundwaterFoam solver
 
-\*---------------------------------------------------------------------------*/
+    \*---------------------------------------------------------------------------*/
+
+//- compute dh from last time iteration
+scalar dh = dhdTmax_rel*runTime.deltaTValue();
 
 if(adjustTimeStep)
 {
-    scalar dtForh = dhmax / (dhdTmax+SMALL);
 
-    if (iterPicard >= maxIterPicard)
+    //- Timestep using number of Picard's iterations
+    if (timeStepControl == "Picard")
     {
-        //- Decreasing timestep because of the non-convergence of Picard's loop
+        scalar deltaTFact=1;
+        if(iterPicard == maxIterPicard)
+        {
+            deltaTFact = dTFactDecrease;
+            iterStability=0;
+        }
+        else if (iterPicard <= minIterPicard)
+        {
+            iterStability++;
+        }
+
+        if (iterStability == nIterStability)
+        {
+            deltaTFact = dTFactIncrease;
+            iterStability = 0;
+        }
+
         runTime.setDeltaT
             (
-                dTFactDecrease*runTime.deltaTValue()
+                min(
+                    deltaTFact*runTime.deltaTValue(),
+                    maxDeltaT
+                )
             );
     }
-    else
+
+    //- Timestep using h variation
+    else if(timeStepControl == "dhdT")
     {
-        //- Timestep using h variation
+        scalar dtForh = dhmax / (dhdTmax_rel+SMALL);
+
         runTime.setDeltaT
             (
                 min(
@@ -53,8 +78,8 @@ if(adjustTimeStep)
             );
     }
 
-    Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
-
 }
+
+Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dh = " << dh << endl;
 
 // ************************************************************************* //
