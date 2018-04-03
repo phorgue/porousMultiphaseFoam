@@ -56,10 +56,9 @@ const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTF
 const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0);
 
 
-//- if dtFromh used
-const dimensionedScalar hMinRef("hMinRef",dimLength,runTime.controlDict().lookupOrDefault<scalar>("hMinRef", 1e-4));
-const scalar dhmax = runTime.controlDict().lookupOrDefault("dhmax", 1e-2);
-scalar dhdTmax_rel = dhmax/runTime.deltaTValue();
+//- if dtFromtheta used
+const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
+scalar dthetadTmax = dthetamax/runTime.deltaTValue();
 
 if (timeStepControl == "Picard")
 {
@@ -72,12 +71,11 @@ if (timeStepControl == "Picard")
         << nl << "}"
         << endl;
 }
-else if (timeStepControl == "dhdT")
+else if (timeStepControl == "dthetadT")
 {
-    Info << "Timestepping is based on h variation with :"
+    Info << "Timestepping is based on theta variation with :"
         << nl << "{"
-        << nl << "    dhmax   = " << dhmax
-        << nl << "    hMinRef = " << hMinRef
+        << nl << "    dthetamax   = " << dthetamax
         << nl << "}"
         << endl;
 }

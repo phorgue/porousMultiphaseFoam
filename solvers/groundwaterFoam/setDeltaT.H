@@ -27,7 +27,7 @@ Description
     \*---------------------------------------------------------------------------*/
 
 //- compute dh from last time iteration
-scalar dh = dhdTmax_rel*runTime.deltaTValue();
+scalar dtheta = dthetadTmax*runTime.deltaTValue();
 
 if(adjustTimeStep)
 {
@@ -62,14 +62,14 @@ if(adjustTimeStep)
     }
 
     //- Timestep using h variation
-    else if(timeStepControl == "dhdT")
+    else if(timeStepControl == "dthetadT")
     {
-        scalar dtForh = dhmax / (dhdTmax_rel+SMALL);
+        scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
 
         runTime.setDeltaT
             (
                 min(
-                    dtForh,
+                    dtForTheta,
                     min(
                         1.2*runTime.deltaTValue(),
                         maxDeltaT
@@ -80,6 +80,6 @@ if(adjustTimeStep)
 
 }
 
-Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dh = " << dh << endl;
+Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta = " << dtheta << endl;
 
 // ************************************************************************* //
