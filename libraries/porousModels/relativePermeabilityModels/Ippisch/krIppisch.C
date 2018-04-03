@@ -118,7 +118,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("tau",dimless,krIppischCoeffs_.lookupOrDefault<scalar>("tau",1.))
+        dimensionedScalar("tau",dimless,krIppischCoeffs_.lookupOrDefault<scalar>("tau",0.5))
     ),
     he_
     (
@@ -131,10 +131,10 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("he",dimLength,krIppischCoeffs_.lookupOrDefault<scalar>("he",1.))
+        dimensionedScalar("he",dimless,krIppischCoeffs_.lookupOrDefault<scalar>("he",0.))
     ),
     Se_((Sb_-Smin_)/(Smax_-Smin_)),
-    Sc_(pow(1-pow(alpha_*he_,n_),-m_))
+    Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
     if (gMin(m_) <= 0)
     {
@@ -145,7 +145,6 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             << "Relative permeability coefficient m equal or less than 0" 
                 << exit(FatalError);
     }
-    
     Info << "Ippisch-Vogel-Bastian parameters for relative permeability model" << nl << "{" << endl;
     Info << "    m ";
     if (m_.headerOk()) { Info << "read file" << endl;}
