@@ -55,8 +55,7 @@ dTFactIncrease  1.2;
 dTFactDecrease  0.8;
 
 //- for h variation time step control
-// timeStepControl dhdT;
-// hMinRef         1e-4;
-// dhmax           0.05;
+// timeStepControl dthetadT;
+// dthetamax           0.01;
 
 // ************************************************************************* //
