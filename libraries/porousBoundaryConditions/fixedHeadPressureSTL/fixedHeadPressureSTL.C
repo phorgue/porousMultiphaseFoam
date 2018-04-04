@@ -52,7 +52,7 @@ fixedHeadPressureSTL
 )
 :
     fixedValueFvPatchScalarField(h, iF, dict, false),
-    STLname_(dict.lookup("STL"))
+    STLname_(dict.lookup("file"))
 {}
 
 
@@ -102,10 +102,11 @@ void Foam::fixedHeadPressureSTL::updateCoeffs()
     {
         return;
     }
+    word STLfile_ = "constant/triSurface/" + STLname_;
     
    triSurfaceMesh potentialSTL(
         IOobject(
-            STLname_,
+            STLfile_,
             this->db()
         )
         );
@@ -116,22 +117,19 @@ void Foam::fixedHeadPressureSTL::updateCoeffs()
     forAll(fp,facei)
     {
         
-        
         scalar xy_distance = GREAT;
         label id_point = -1;
         forAll(pPoints,pointi)
         {
             scalar tmp_dist = sqrt(pow(pPoints[pointi].x()-fp[facei].x(),2)+pow(pPoints[pointi].y()-fp[facei].y(),2));
-            if (xy_distance > tmp_dist)
+            if (tmp_dist < xy_distance)
             {
                 xy_distance = tmp_dist;
                 id_point = pointi;
             }
         }
-        
         results[facei] = pPoints[id_point].z() - fp[facei].z();
     }
-    
     operator== (results);
     fixedValueFvPatchScalarField::updateCoeffs();
 }
