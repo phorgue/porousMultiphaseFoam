@@ -6,3 +6,4 @@ set -x
 
 wclean all solvers
 wclean all libraries
+wclean all utilities
