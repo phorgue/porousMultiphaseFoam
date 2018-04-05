@@ -15,3 +15,4 @@ wmake solvers/porousScalarTransportFoam
 
 # Compiling utilities
 wmake utilities/setBoundaryHeadPressure
+wmake utilities/setPermeabilityFieldFromXY
