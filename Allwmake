@@ -12,3 +12,6 @@ wmake solvers/impesFoam
 wmake solvers/anisoImpesFoam
 wmake solvers/groundwaterFoam
 wmake solvers/porousScalarTransportFoam
+
+# Compiling utilities
+wmake utilities/setBoundaryHeadPressure
