@@ -60,25 +60,35 @@ const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTF
 const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
 scalar dthetadTmax = dthetamax/runTime.deltaTValue();
 
-if (timeStepControl == "Picard")
+if (adjustTimeStep)
 {
-    Info << "Timestepping is based on Picard's iteration with :"
-        << nl << "{"
-        << nl << "    dTFactIncrease = " << dTFactIncrease
-        << nl << "    dTFactDecrease = " << dTFactDecrease
-        << nl << "    minIterPicard  = " <<  minIterPicard
-        << nl << "    nIterStability = " << nIterStability
-        << nl << "}"
-        << endl;
+    if (timeStepControl == "Picard")
+    {
+        Info << "Timestepping is based on Picard's iteration with :"
+            << nl << "{"
+            << nl << "    dTFactIncrease = " << dTFactIncrease
+            << nl << "    dTFactDecrease = " << dTFactDecrease
+            << nl << "    minIterPicard  = " <<  minIterPicard
+            << nl << "    nIterStability = " << nIterStability
+            << nl << "}"
+            << endl;
+    }
+    else if (timeStepControl == "dthetamax")
+    {
+        Info << "Timestepping is based on theta variation with :"
+            << nl << "{"
+            << nl << "    dthetamax   = " << dthetamax
+            << nl << "}"
+            << endl;
+    }
+    else
+    {
+        FatalErrorIn("readPicardControls.H") << " timeStepControl is not defined => " << timeStepControl << abort(FatalError);
+    }       
 }
-else if (timeStepControl == "dthetadT")
+else
 {
-    Info << "Timestepping is based on theta variation with :"
-        << nl << "{"
-        << nl << "    dthetamax   = " << dthetamax
-        << nl << "}"
-        << endl;
+    Info << "Timestep is fixed";
 }
-
 
 // ************************************************************************* //

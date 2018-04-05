@@ -22,13 +22,18 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    setHeadPressureFoam
+    setBoundaryHeadPressure
 
 Description
     Utility to set up Head Pressure on a specified patch. Can be used to
     set up water level on lateral boundaries for groundwaterFoam
 
-    \*---------------------------------------------------------------------------*/
+Usage
+    setBoundaryHeadPressure -patch patchName -value 50.3
+    or 
+    setBoundaryHeadPressure -patch patchName -file stl_file
+
+\*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
 #include "triSurfaceMesh.H"
