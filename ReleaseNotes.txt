@@ -1,4 +1,40 @@
 ************************
+*** V1.6.0 (2018-04) *** New model kr/pc Ippisch-Vogel-Bastian
+************************
+
+### Solvers
+
+- groundwaterFoam
+
+  - new time step managing (timeStep in controlDict) :
+    - "Picard" is based on the number of Picard's iteration (old method)
+    - "dthetadT" is based on the saturation variation at the previous time step 
+
+### Libraries
+
+- capillary and relative permeability model
+
+  - new Ippisch model (example in the tutorials/groundwaterFoam/realCase)
+
+- boundary condtions for Head pressure (currently, gravity should be along the Z-axis)
+  computation are made at each time step, we recommend the use of the setBoundaryHeadPressure function
+
+  - fixedHeadPressure : potential can be fixed (h is computed as potential - z coordinate of the face)
+    if hUnsaturated is given, potential equal to this value in for all faces with z > potential.
+    else h is computed as for the saturated zone.
+
+  - fixedHeadPressureSTL : potential on the boundary is computed using an STL file. 
+
+### Utilities
+
+- new folder including utility function for the porousMultiphaseFoam toolbox
+
+  - setBoundaryHeadPressure : initialize head pressure boundary condition using fixed value (as
+    fixedHeadPressure BC) or STL file (as fixedHeadPressureSTL)
+
+  - setPermeabilityFieldFromXY : initialize a permeability from table (x | y | K)
+
+************************
 *** V1.5.1 (2018-02) *** Bug fixes on groundwaterFoam
 ************************
 

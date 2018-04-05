@@ -62,7 +62,7 @@ if(adjustTimeStep)
     }
 
     //- Timestep using h variation
-    else if(timeStepControl == "dthetadT")
+    else if(timeStepControl == "dthetamax")
     {
         scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
 
