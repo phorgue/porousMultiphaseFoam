@@ -55,7 +55,7 @@ maxDeltaT	1e9;
 // dTFactDecrease  0.9;
 
 //- for h variation time step control
-timeStepControl dthetadT;
+timeStepControl dthetamax;
 dthetamax           0.01;
 
 // ************************************************************************* //
