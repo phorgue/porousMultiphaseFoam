@@ -55,9 +55,6 @@ class fluidPhase
    
 protected:
 
-    //- phase density
-    volScalarField rho_;
-
     //- phase velocity
     volVectorField U_;
 
