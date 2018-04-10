@@ -38,19 +38,6 @@ Foam::fluidPhase::fluidPhase
 )
     :  
     phase(mesh,transportProperties,phaseName),
-    rho_
-    (
-        IOobject
-        (
-            "rho" + phaseName,
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::AUTO_WRITE
-        ),
-        mesh,
-        dimensionedScalar("",dimensionSet(1,-3,0,0,0,0,0),1)
-    ),
     U_
     (
         IOobject

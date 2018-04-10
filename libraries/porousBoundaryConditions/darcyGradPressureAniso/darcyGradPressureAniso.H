@@ -25,10 +25,8 @@ Class
     Foam::darcyGradPressureAniso
 
 Description
-    Set the pressure gradient boundary condition appropriately for buoyant flow.
-
-    If the variable name is "pd" assume it is p - rho*g.h and set the gradient
-    appropriately.  Otherwise assume the variable is the static pressure.
+    Set the pressure gradient boundary condition for a given Darcy total velocity
+    Permeability is anisotropic (K volTensorField)
 
 SourceFiles
     darcyGradPressureAniso.C
