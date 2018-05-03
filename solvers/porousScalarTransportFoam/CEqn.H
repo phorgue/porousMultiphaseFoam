@@ -5,7 +5,7 @@
         fvScalarMatrix CEqn
             (
                 eps*fvm::ddt(C)
-                + fvm::div(phi, C)
+                + fvm::div(phi, C, "div(phi,C)")
                 - fvm::laplacian(DeffModel->Deff(), C, "laplacian(Deff,C)")
             );
 
