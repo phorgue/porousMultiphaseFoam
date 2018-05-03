@@ -1,5 +1,5 @@
 ************************
-*** V1.6.0 (2018-04) *** New model kr/pc Ippisch-Vogel-Bastian
+*** V1.6.0 (2018-05) *** New model kr/pc Ippisch-Vogel-Bastian
 ************************
 
 ### Solvers
@@ -28,6 +28,10 @@
 ### Utilities
 
 - new folder including utility function for the porousMultiphaseFoam toolbox
+
+  - darcyFoam : now included in utility function. It compute pressure and flux field for a given
+    phase at a given time (overwriting the files in current time step).
+    phase used for the computation can be specified with the -phase option (a by default)
 
   - setBoundaryHeadPressure : initialize head pressure boundary condition using fixed value (as
     fixedHeadPressure BC) or STL file (as fixedHeadPressureSTL)
