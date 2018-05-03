@@ -34,50 +34,47 @@ Developers
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "simpleControl.H"
 #include "incompressiblePhase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+
+    argList::addOption("phase","a","specify the phase name");
+    Foam::argList args(argc,argv);
+     
+    //#include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createWellbores.H"
 
-    simpleControl simple(mesh);
-
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    Info<< "\nCalculating..\n" << endl;
+    Info << "\nCalculating for Time = " << runTime.timeName() << nl << endl;
 
-    while (simple.loop())
-    {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+    fvScalarMatrix pEqn
+        (
+            fvm::laplacian(-Mf,p) + fvc::div(phiG) + (SrcExt*Wext-SrcInj*Winj)*activateWellbores
+        );
 
-        while (simple.correctNonOrthogonal())
-        {
-	    fvScalarMatrix pEqn
-                (
-                    fvm::laplacian(-Mf,p) + fvc::div(phiG) + (SrcExt*Wext-SrcInj*Winj)*activateWellbores
-                );
+    pEqn.solve();
 
-	    pEqn.solve();
+    phi = pEqn.flux() + phiG;
 
-            phi = pEqn.flux() + phiG;
+    U = fvc::reconstruct(phi);
+    U.correctBoundaryConditions();
+    Ua = U;
 
-            U = fvc::reconstruct(phi);
-            U.correctBoundaryConditions();
-            Ua = U;
-        }
-
-        Info << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-            << nl << endl;
-    }
+    phi.write();
+    Ua.write();
+    p.write();
+    
+    Info << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
+        << "  ClockTime = " << runTime.elapsedClockTime() << " s"
+        << nl << endl;
 
     Info<< "End\n" << endl;
 
