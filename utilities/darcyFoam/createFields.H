@@ -1,4 +1,7 @@
-Info << "Reading field p\n" << endl;
+word phaseName("a");
+if (args.optionFound("phase")) phaseName = args.option("phase");
+
+Info << nl << "Reading field p\n" << endl;
 volScalarField p
 (
     IOobject
@@ -25,7 +28,7 @@ IOdictionary transportProperties
     )
 );
 
-autoPtr<incompressiblePhase> phase = incompressiblePhase::New(mesh,transportProperties,"a");
+autoPtr<incompressiblePhase> phase = incompressiblePhase::New(mesh,transportProperties,phaseName);
 volVectorField& Ua = phase->U();
 const dimensionedScalar& rho = phase->rho();
 const dimensionedScalar& mu = phase->mu();
