@@ -7,8 +7,12 @@ wmake libraries/porousModels
 wmake libraries/porousBoundaryConditions
 
 # Compiling solvers 
-wmake solvers/darcyFoam
 wmake solvers/impesFoam
 wmake solvers/anisoImpesFoam
 wmake solvers/groundwaterFoam
 wmake solvers/porousScalarTransportFoam
+
+# Compiling utilities
+wmake utilities/darcyFoam
+wmake utilities/setBoundaryHeadPressure
+wmake utilities/setPermeabilityFieldFromXY

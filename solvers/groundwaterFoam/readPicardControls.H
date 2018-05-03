@@ -29,30 +29,66 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+//- Choose the method to compute time step
+const bool adjustTimeStep =
+    runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
+
+const word timeStepControl =
+    runTime.controlDict().lookupOrDefault<word>("timeStepControl", "Picard");
+
+
+//- Global parameters
+scalar maxDeltaT =
+    runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+
 const dictionary& PicardDict = mesh.solutionDict().subDict("Picard");
 
 const scalar tolPicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1.);
 
 const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
 
+
+//- if dtFromPicard used
+const label nIterStability = PicardDict.lookupOrDefault<label>("nIterStability",5);
 const label minIterPicard = PicardDict.lookupOrDefault<label>("minIter",3);
+label iterStability = 0;
+const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",0);
+const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0);
 
-const label maxIterStability = PicardDict.lookupOrDefault<label>("maxIterStability",5);
-label iterStability=0;
 
-const bool adjustTimeStep =
-    runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
+//- if dtFromtheta used
+const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
+scalar dthetadTmax = dthetamax/runTime.deltaTValue();
 
-const scalar dTFactIncrease
-(
-    readScalar(runTime.controlDict().lookup("dTFactIncrease"))
-);
-const scalar dTFactDecrease
-(
-    readScalar(runTime.controlDict().lookup("dTFactDecrease"))
-);
-
-scalar maxDeltaT =
-    runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+if (adjustTimeStep)
+{
+    if (timeStepControl == "Picard")
+    {
+        Info << "Timestepping is based on Picard's iteration with :"
+            << nl << "{"
+            << nl << "    dTFactIncrease = " << dTFactIncrease
+            << nl << "    dTFactDecrease = " << dTFactDecrease
+            << nl << "    minIterPicard  = " <<  minIterPicard
+            << nl << "    nIterStability = " << nIterStability
+            << nl << "}"
+            << endl;
+    }
+    else if (timeStepControl == "dthetamax")
+    {
+        Info << "Timestepping is based on theta variation with :"
+            << nl << "{"
+            << nl << "    dthetamax   = " << dthetamax
+            << nl << "}"
+            << endl;
+    }
+    else
+    {
+        FatalErrorIn("readPicardControls.H") << " timeStepControl is not defined => " << timeStepControl << abort(FatalError);
+    }       
+}
+else
+{
+    Info << "Timestep is fixed";
+}
 
 // ************************************************************************* //
