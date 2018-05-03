@@ -43,8 +43,7 @@ int main(int argc, char *argv[])
 
     argList::addOption("phase","a","specify the phase name");
     Foam::argList args(argc,argv);
-     
-    //#include "setRootCase.H"
+
     #include "createTime.H"
     #include "createMesh.H"
     #include "readGravitationalAcceleration.H"
@@ -66,10 +65,11 @@ int main(int argc, char *argv[])
 
     U = fvc::reconstruct(phi);
     U.correctBoundaryConditions();
-    Ua = U;
+    UphaseName = U;
+    phiPhaseName = phi;
 
-    phi.write();
-    Ua.write();
+    phiPhaseName.write();
+    UphaseName.write();
     p.write();
     
     Info << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
