@@ -9,23 +9,37 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      fvSolution;
+    class       volVectorField;
+    location    "0";
+    object      Ua;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-solvers
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
 {
-
-    p
+    x0
     {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-12;
-        relTol          0;
+        type            fixedValue;
+        value           uniform (0.001 0.0001 0);
     }
-
+    x1
+    {
+        type            zeroGradient;
+    }
+    ydirection
+    {
+        type            fixedValue;
+        value           uniform (0.001 0.0001 0);
+    }
+    zdirection
+    {
+        type            empty;
+    }
 }
+
 
 // ************************************************************************* //
