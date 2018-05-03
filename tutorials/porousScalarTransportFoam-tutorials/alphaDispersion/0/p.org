@@ -1,39 +1,50 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.0                                  |
+|  \\    /   O peration     | Version:  5.0                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
-  version     2.0;
-  format      ascii;
-  class       dictionary;
-  location    "constant";
-  object      transportProperties;
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      p;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-thetamin	thetamin [0 0 0 0 0 0 0]	0.102;
-thetamax	thetamax [0 0 0 0 0 0 0]	0.368;
-	
-phase.theta
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
 {
-  rho	rho [1 -3 0 0 0 0 0] 	1e3;
-  mu	mu [1 -1 -1 0 0 0 0]	1e-3;
+
+    x0
+    {
+        type            darcyGradPressure;
+        value           uniform 0;
+    }
+
+    x1
+    {
+        type            fixedValue;
+        value           uniform 0;
+    }
+
+    ydirection
+    {
+        type            darcyGradPressure;
+        value           uniform 0;
+    }
+
+    zdirection
+    {
+        type            empty;
+    }
 }
 
-relativePermeabilityModel  Ippisch;
-
-capillarityModel	Ippisch;
-
-IppischCoeffs
-{   
-    m	0.5;
-    alpha 3.35;
-    tau     0.4;
-    he 0.0058;
-}
 
 // ************************************************************************* //

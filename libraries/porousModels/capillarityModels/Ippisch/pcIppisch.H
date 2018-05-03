@@ -25,7 +25,7 @@ Class
     Foam::capillarityModels::Ippisch
 
 Description
-    Ippisch-Vogel-Bastian capillary pressure model
+    Ippisch-Vogel-Bastian capillary pressure model (AWR 2006)
 
 SourceFiles
     pcIppisch.C
@@ -87,17 +87,16 @@ public:
     //- Correct the capillary pressure
     void correct()
         {
-            // -
-            FatalErrorIn("volScalarField correct()")
+            FatalErrorIn("void correct()")
                 << "Not implemented in pcIppish.H " << abort(FatalError);
         }
 
     //- Correct effective saturation and capillary capacity and return saturation (Richards' solver)
     volScalarField correctAndSb(volScalarField h)
         {
-            //- Compute Saturation from! head pressure
+            //- Compute Saturation from head pressure
             h.dimensions().reset(dimless);
-            Se_ = neg(h-he_) *(1/Sc_)*pow(1.0+pow(alpha_*mag(h),n_),-m_) + pos(h-he_+VSMALL);
+            Se_ = neg(h+he_) *(1/Sc_)*pow(1.0+pow(alpha_*mag(h),n_),-m_) + pos(h+he_+VSMALL) ;
             h.dimensions().reset(dimLength);
 
             //- Update capillary capacity
@@ -106,7 +105,7 @@ public:
             Ch_.dimensions().reset(dimless/dimLength);
 
             //- Update saturation
-            volScalarField Stmp_ = Smin_+(Smax_-Smin_)*Se_;
+            volScalarField Stmp_ = Smin_+(Smax_-Smin_)*(Se_-SMALL);
     
             return Stmp_;
         }

@@ -95,15 +95,17 @@ public:
         {
             //- Compute Saturation from! head pressure
             h.dimensions().reset(dimless);
-            volScalarField Stmp_ = neg(h) *(Smin_+(Smax_-Smin_)*pow(1.0+pow(alpha_*mag(h),n_),-m_)) + pos(h+VSMALL)*(Smax_-SMALL);
+            Se_ =  neg(h) *pow(1.0+pow(alpha_*mag(h),n_),-m_) + pos(h+VSMALL);
             h.dimensions().reset(dimLength);
 
             //- Update effective saturation and capillary capacity
-            Se_ == (Stmp_- Smin_)/(Smax_-Smin_);
             Ch_.dimensions().reset(dimless);
             Ch_ == alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
             Ch_.dimensions().reset(dimless/dimLength);
 
+            //- Update saturation
+            volScalarField Stmp_ = Smin_+(Smax_-Smin_)*(Se_-SMALL);
+            
             return Stmp_;
         }
 
