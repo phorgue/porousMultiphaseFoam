@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     SbRichardsFoam;
+application     groundwaterFoam;
 
 startFrom       startTime;
 
@@ -47,10 +47,15 @@ adjustTimeStep  yes;
 
 runTimeModifiable yes;
 
-dTFactIncrease  1.2;
+maxDeltaT	1000;
 
+//- for Picard time step control
+timeStepControl Picard;
+dTFactIncrease  1.2;
 dTFactDecrease  0.8;
 
-maxDeltaT	1000;
+//- for h variation time step control
+// timeStepControl dthetamax;
+// dthetamax           0.01;
 
 // ************************************************************************* //
