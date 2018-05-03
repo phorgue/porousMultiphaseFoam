@@ -10,6 +10,10 @@
     - "Picard" is based on the number of Picard's iteration (old method)
     - "dthetadT" is based on the saturation variation at the previous time step 
 
+- darcyFoam
+
+  - moved to utility folder (now compute pressure field in the time folder with time iteration)
+
 ### Libraries
 
 - capillary and relative permeability model
@@ -29,9 +33,9 @@
 
 - new folder including utility function for the porousMultiphaseFoam toolbox
 
-  - darcyFoam : now included in utility function. It compute pressure and flux field for a given
-    phase at a given time (overwriting the files in current time step).
-    phase used for the computation can be specified with the -phase option (a by default)
+  - darcyFoam : It compute pressure and flux field for a given phase at a given time (overwriting
+    the files in current time step).
+    phase used for the computation can be specified with the -phase option ("a" by default)
 
   - setBoundaryHeadPressure : initialize head pressure boundary condition using fixed value (as
     fixedHeadPressure BC) or STL file (as fixedHeadPressureSTL)

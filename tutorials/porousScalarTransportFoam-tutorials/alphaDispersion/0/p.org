@@ -2,58 +2,49 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "system";
-    object      fvSchemes;
+    class       volScalarField;
+    location    "0";
+    object      p;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-ddtSchemes
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
 {
-  default Euler;
+
+    x0
+    {
+        type            darcyGradPressure;
+        value           uniform 0;
+    }
+
+    x1
+    {
+        type            fixedValue;
+        value           uniform 0;
+    }
+
+    ydirection
+    {
+        type            darcyGradPressure;
+        value           uniform 0;
+    }
+
+    zdirection
+    {
+        type            empty;
+    }
 }
 
-gradSchemes
-{
-  default none;
-  grad(p) Gauss linear;
-  grad(C) Gauss linear;
-}
-
-divSchemes
-{
-  default none;
-  div(phi,C) Gauss vanLeer;
-}
-
-laplacianSchemes
-{
-  default none;
-  laplacian(Deff,C)  Gauss linear corrected;
-  laplacian(-Mf,p) Gauss linear corrected;
-}
-
-interpolationSchemes
-{
-  default linear;
-}
-
-snGradSchemes
-{
-  default corrected;
-}
-
-fluxRequired
-{
-  default no;
-  p;
-}
 
 // ************************************************************************* //
