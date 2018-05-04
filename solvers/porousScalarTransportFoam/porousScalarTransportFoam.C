@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         runTime++;
 
         #include "setDeltaT.H"
-        Info << "Time = " << runTime.timeName() << nl << endl;
+        Info << nl << "Time = " << runTime.timeName() << nl << endl;
 
         #include "CEqn.H"
         
