@@ -1,16 +1,6 @@
 Info<< "Reading wellboreProperties\n" << endl;
 
-IOdictionary wellboreProperties
-(
-    IOobject
-    (
-        "wellboreProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
-    )
-);
+dictionary wellboreProperties(transportProperties.subDict("wellboreProperties"));
 
 scalar activateWellbores(wellboreProperties.lookupOrDefault<scalar>("activateWellbores",0.)); 
 
@@ -34,7 +24,7 @@ volScalarField Winj
 
 dimensionedScalar Vinj(sum(Winj*mesh.V()));
 dimensionedScalar SrcInj("SrcInj",dimensionSet(0,0,-1,0,0),0.);
-SrcInj = qInjection/(Vinj+dimensionedScalar("",dimVol,SMALL));
+SrcInj = activateWellbores * qInjection/(Vinj+dimensionedScalar("",dimVol,SMALL));
 
 // Extraction Wellbore
 dimensionedScalar qExtraction
@@ -59,4 +49,4 @@ volScalarField Wext
 
 dimensionedScalar Vext(sum(Wext*mesh.V()));
 dimensionedScalar SrcExt("SrcExt",dimensionSet(0,0,-1,0,0),0.);
-SrcExt = qExtraction/(Vinj+dimensionedScalar("",dimVol,SMALL));
+SrcExt =  activateWellbores * qExtraction/(Vinj+dimensionedScalar("",dimVol,SMALL));

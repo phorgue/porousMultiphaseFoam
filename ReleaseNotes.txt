@@ -4,6 +4,24 @@
 
 ### Solvers
 
+- impesFoam/anisoImpesFoam
+
+  - wellboreProperies is a subDict of transportProperties
+
+
+### Tutorials
+
+- impesFoam/anisoImpesFoam
+
+  - updated (wellboreProperties removed)
+
+
+************************
+*** V1.6.0 (2018-05) *** New model kr/pc Ippisch-Vogel-Bastian
+************************
+
+### Solvers
+
 - groundwaterFoam
 
   - new time step managing (timeStep in controlDict) :
