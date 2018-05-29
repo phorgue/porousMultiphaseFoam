@@ -56,7 +56,7 @@ class alphaDispersion
 {
     //- Private data
     dictionary alphaDispersionCoeffs_;
-    const dimensionedScalar tau_,alphaL_,alphaT_;
+    const volScalarField tau_,alphaL_,alphaT_;
 
         
 public:

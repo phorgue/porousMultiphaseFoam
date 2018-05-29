@@ -54,9 +54,45 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
     :
     dispersionModel(name, transportProperties,U),
     alphaDispersionCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    tau_(alphaDispersionCoeffs_.lookup("tau")),
-    alphaL_(alphaDispersionCoeffs_.lookup("alphaL")),
-    alphaT_(alphaDispersionCoeffs_.lookup("alphaT"))
+    tau_
+    (
+        IOobject
+        (
+            "tau",
+            U.time().timeName(),
+            U.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        U.mesh(),
+        dimensionedScalar(alphaDispersionCoeffs_.lookup("tau"))
+    ),
+    alphaL_
+    (
+        IOobject
+        (
+            "alphaL",
+            U.time().timeName(),
+            U.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        U.mesh(),
+        dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaL"))
+    ),
+    alphaT_
+    (
+        IOobject
+        (
+            "alphaT",
+            U.time().timeName(),
+            U.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        U.mesh(),
+        dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaT"))
+    )
 {
 }
 
