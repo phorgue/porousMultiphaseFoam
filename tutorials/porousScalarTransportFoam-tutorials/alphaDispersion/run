@@ -10,5 +10,6 @@ cp 0/Ua.org 0/Ua
 runApplication darcyFoam -phase a 
 
 cp 0/C.org 0/C
+cp 0/alphaL.org 0/alphaL
 runApplication setFields
 runApplication porousScalarTransportFoam
