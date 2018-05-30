@@ -33,6 +33,8 @@
    
  if (adjustTimeStep)
  {
+     scalar dCmax = max(dCmax_rel*gMax(C),dCmax_abs);
+
      scalar dtForC =  dCmax/(dCdTmax+SMALL);
      scalar newDeltaT = min(dtForC, 1.2*runTime.deltaTValue());
  
@@ -45,7 +47,7 @@
          )
      );
  
-     Info<< nl << "deltaT = " <<  runTime.deltaTValue() << " avec " << dtForC << endl;
+     Info<< nl << "deltaT = " <<  runTime.deltaTValue() << " dCmax = " << dCmax << endl;
  }
  
  // ************************************************************************* //
