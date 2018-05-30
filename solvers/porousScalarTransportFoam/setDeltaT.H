@@ -45,7 +45,7 @@
          )
      );
  
-     Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
+     Info<< nl << "deltaT = " <<  runTime.deltaTValue() << " avec " << dtForC << endl;
  }
  
  // ************************************************************************* //
