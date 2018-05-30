@@ -1,3 +1,7 @@
+////////////////////////////////////////////////////////////////
+////////////////////// GENERAL PROPERTIES //////////////////////
+////////////////////////////////////////////////////////////////
+
 Info<< "Reading field C\n" << endl;
 volScalarField C
 (
@@ -27,7 +31,7 @@ IOdictionary transportProperties
 Info<< "Reading porosity eps\n" << endl;
 dimensionedScalar eps
 (
-    transportProperties.lookup("eps")
+    transportProperties.lookupOrDefault("eps",dimensionedScalar("eps_default",dimless,1))
 );
 
 Info<< "Reading porous transport properties" << endl;
@@ -46,6 +50,32 @@ Info << "    " << epsTotal.name() << " : " << epsTotal.value() << endl;
 Info << "    " << lambda.name() << " : " << lambda.value() << endl;
 Info << "} \n" << endl;
 
+//////////////////////////////////////////////////////////////
+////////////////////// PHASE PROPERTIES //////////////////////
+//////////////////////////////////////////////////////////////
+
+Info << "Reading Saturation Field (if present)... ";
+volScalarField Saturation
+(
+    IOobject
+    (
+        "S"+phaseName,
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("S"+phaseName,dimless,1)
+);
+if (Saturation.headerOk())
+{
+    Info << "Ok" << nl << endl;
+}
+else
+{
+    Info << "Saturation file not found (saturated flow)" << nl << endl;
+}
 
 Info<< "Reading field U" << phaseName << nl << endl;
 volVectorField U
@@ -79,4 +109,11 @@ surfaceScalarField phi
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U);
 
 Info << "Computing retard coefficient R" << endl;
-scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
+scalar R =  1 ;//+ (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
+
+//////////////////////////////////////////////////////////////
+//////////////////// INJECTION PROPERTIES ////////////////////
+//////////////////////////////////////////////////////////////
+
+#include "createWellbores.H"
+dimensionedScalar Cin(wellboreProperties.lookup("Cin"));
