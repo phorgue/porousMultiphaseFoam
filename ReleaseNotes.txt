@@ -1,5 +1,6 @@
 ************************
-*** V1.6.0 (2018-05) *** New model kr/pc Ippisch-Vogel-Bastian
+***
+***
 ************************
 
 ### Solvers
@@ -8,6 +9,16 @@
 
   - wellboreProperies is a subDict of transportProperties
 
+- porousScalarTransportFoam
+
+  - retard coefficient "R" added
+  - new time-stepping (using dCmax absolute and relative)
+
+### Libraries
+
+- dispersionModels
+
+  - alphaL/alphaT can be heterogeneous (volScalarField) in the
 
 ### Tutorials
 
@@ -17,7 +28,8 @@
 
 
 ************************
-*** V1.6.0 (2018-05) *** New model kr/pc Ippisch-Vogel-Bastian
+*** V1.6.0 (2018-05)
+*** New model kr/pc Ippisch-Vogel-Bastian
 ************************
 
 ### Solvers
@@ -30,7 +42,8 @@
 
 - darcyFoam
 
-  - moved to utility folder (now compute pressure field in the time folder with time iteration)
+  - moved to utility folder (now compute pressure field in the time folder with
+  time iteration)
 
 ### Libraries
 
@@ -38,49 +51,60 @@
 
   - new Ippisch model (example in the tutorials/groundwaterFoam/realCase)
 
-- boundary condtions for Head pressure (currently, gravity should be along the Z-axis)
-  computation are made at each time step, we recommend the use of the setBoundaryHeadPressure function
+- boundary condtions for Head pressure (currently, gravity should be along the
+  Z-axis). Computation are made at each time step, we recommend the use of the
+  setBoundaryHeadPressure function
 
-  - fixedHeadPressure : potential can be fixed (h is computed as potential - z coordinate of the face)
-    if hUnsaturated is given, potential equal to this value in for all faces with z > potential.
+  - fixedHeadPressure : potential can be fixed (h is computed as potential - z
+    coordinate of the face)
+    if hUnsaturated is given, potential equal to this value in for all faces
+    with z > potential.
     else h is computed as for the saturated zone.
 
-  - fixedHeadPressureSTL : potential on the boundary is computed using an STL file. 
+  - fixedHeadPressureSTL : potential on the boundary is computed using an STL
+  file.
 
 ### Utilities
 
 - new folder including utility function for the porousMultiphaseFoam toolbox
 
-  - darcyFoam : It compute pressure and flux field for a given phase at a given time (overwriting
+  - darcyFoam : It compute pressure and flux field for a given phase at a given
+    time (overwriting
     the files in current time step).
-    phase used for the computation can be specified with the -phase option ("a" by default)
+    phase used for the computation can be specified with the -phase option ("a"
+    by default)
 
-  - setBoundaryHeadPressure : initialize head pressure boundary condition using fixed value (as
-    fixedHeadPressure BC) or STL file (as fixedHeadPressureSTL)
+  - setBoundaryHeadPressure : initialize head pressure boundary condition using
+  fixed value (as fixedHeadPressure BC) or STL file (as fixedHeadPressureSTL)
 
-  - setPermeabilityFieldFromXY : initialize a permeability from table (x | y | K)
+  - setPermeabilityFieldFromXY : initialize a permeability from table
+  (x | y | K)
 
 ************************
-*** V1.5.1 (2018-02) *** Bug fixes on groundwaterFoam
+*** V1.5.1 (2018-02)
+*** Bug fixes on groundwaterFoam
 ************************
 
 ### Libraries
 
 - capillarity and relative permeability models
 
-  - parameters for each model are now displayed in log file (the uniform value or "read file")
+  - parameters for each model are now displayed in log file (the uniform value
+    or "read file")
 
 ### Bug Fixes
 
 - pcVanGenuchten
 
-  - initialisation no longer calls correct() function to avoid numerical issues using groundwaterFoam
-    (the functions correct() or correctAndSb() are directly called in the solvers)
+  - initialisation no longer calls correct() function to avoid numerical issues
+    using groundwaterFoam (the functions correct() or correctAndSb() are
+    directly called in the solvers)
 
   - it is now possible to set up h=0 using groundwaterFoam
 
 **********************
-*** V1.5 (2017-09) *** Scalar transport with dispersion coefficients
+*** V1.5 (2017-09)
+*** Scalar transport with dispersion coefficients
 **********************
 
 ### Solvers
@@ -93,14 +117,16 @@
 
 - dispersionModels
 
-  - models to compute the effective diffusion (or dispersion) in porous media (model with alphaT and alphaL is available).
+  - models to compute the effective diffusion (or dispersion) in porous media
+  (model with alphaT and alphaL is available).
 
 ### Bug fixes
 
 - OpenFOAM 5.0 compatibility fixed
 
 ************************
-*** V1.4.1 (2017-08) *** Bug fixes and toolbox cleaning
+*** V1.4.1 (2017-08)
+*** Bug fixes and toolbox cleaning
 ************************
 
 ### Toolbox cleaning (indent fixed)
@@ -113,14 +139,17 @@
 
 - impesFoam
 
-  - capillary term correctly computed ("fvc::interpolate(fvc:grad(Sb))" ==> "fvc:snGrad(Sb)")
+  - capillary term correctly computed
+    ("fvc::interpolate(fvc:grad(Sb))" ==> "fvc:snGrad(Sb)")
 
 - incompressiblePhase
 
-  - test on phi header has been removed (useless and incompatibility with OpenFOAM 5.0)
+  - test on phi header has been removed (useless and incompatibility with
+    OpenFOAM 5.0)
 
 **********************
-*** V1.4 (2017-02) *** New solver for one-phase flow : darcyFoam
+*** V1.4 (2017-02)
+*** New solver for one-phase flow : darcyFoam
 **********************
 
 ### Toolbox re-organization
@@ -129,27 +158,33 @@
 
 - darcyFoam (new solver)
 
-  - one phase flow solver similar to porousSimpleFoam but using the porousMultiphaseFoam toolbox's parameters.
+  - one phase flow solver similar to porousSimpleFoam but using the
+    porousMultiphaseFoam toolbox's parameters.
 
 ### Bug Fixes
 
 - anisoImpesFoam/impesFoam/groundwaterFoam
 
-  - solver now update  phia or phib in SEqn.H only if Ua or Ub are fixedValue boundary conditions to avoid numerical instabilities (bug partially fixed in V1.3.1).
+  - solver now update  phia or phib in SEqn.H only if Ua or Ub are fixedValue
+    boundary conditions to avoid numerical instabilities (bug partially fixed
+    in V1.3.1).
 
 
 ************************
-*** V1.3.1 (2017-02) *** Parallel computation fixed
+*** V1.3.1 (2017-02)
+*** Parallel computation fixed
 ************************
 
 ### Bug Fixes
 
 - anisoImpesFoam/impesFoam/groundwaterFoam
 
-  - solvers does not update phia/phib in SEqn.H if boundary is a processor patch in order to avoid numerical instabilities.
+  - solvers does not update phia/phib in SEqn.H if boundary is a processor
+    patch in order to avoid numerical instabilities.
 
 **********************
-*** V1.3 (2016-09) *** Introducing new Stability numbers and python script for tutorials execution 
+*** V1.3 (2016-09)
+*** New Stability numbers and python script for tutorials execution 
 **********************
 
 ### Compatibility fixed for OpenFOAM 4.0
@@ -158,121 +193,136 @@
 
 - impesFoam
 
-     - three stability numbers are now available : Coats, Todd and Courant (see doc for more informations)
+  - three stability numbers are now available : Coats, Todd and Courant
+    (see doc for more informations)
 
 - anisoImpesFoam
 
-     - still two stability numbers (Coats and Courant) but minor changes to respect coding style (with impesFoam)
+  - still two stability numbers (Coats and Courant) but minor changes to respect
+    coding style (with impesFoam)
 
 ### Tutorials
 
 - impesFoam
 
-     - capillary cases modified to use the new Todd's number condition
+  - capillary cases modified to use the new Todd's number condition
     
 - python scripts
 
-     - runTutorials.py runs each tutorials from with end signal to check backward compatibility. Messages are [ OK ] or [ Error OpenFOAM ] or [ Error C++ ]
+  - runTutorials.py runs each tutorials from with end signal to check backward
+    compatibility. Messages are [ OK ] or [ Error OpenFOAM ] or [ Error C++ ]
 
-     - cleanTutorials.py cleans test cases from tutorialsList.py
+  - cleanTutorials.py cleans test cases from tutorialsList.py
 
 **********************
-*** V1.2 (2016-05) *** Relative permeability and capillary pressure laws can be heterogenous 
+*** V1.2 (2016-05)
+*** Relative permeability and capillary pressure laws can be heterogenous
 **********************
 
 ### Libraries
 
 - capillarityModels
 
-     - models now reads "constant/porousModels" folder to find parameters fields which can be heteroegenous. Switch to the transportProperties dictionary if file is not found.
+  - models now reads "constant/porousModels" folder to find parameters fields
+    which can be heteroegenous. Switch to the transportProperties dictionary if
+    file is not found.
 
 - relativePermeabilityModels
 
-     -similar to capillarityModels
+  - similar to capillarityModels
 
 ### Tutorials
 
 - impesFoam-tutorials
 
-     - BuckleyLeverett/BrooksAndCorey case updated to use volScalarField parameters instead of transport properties
+  - BuckleyLeverett/BrooksAndCorey case updated to use volScalarField
+    parameters instead of transport properties
 
 - groundwaterFoam-tutorials
 
-     - 1Dinfiltration case updated to use volScalarField parameters instead of transport properties
+  - 1Dinfiltration case updated to use volScalarField parameters instead of
+    transport properties
 	
 ### Bug Fixes
 
 - impesFoam/anisoImpesFoam/groundwaterFoam
 
-     - error between timestep used and timestep displayed
-
-     - velocity BC updated before SEqn.H (or hEqn.H) for time-dependent conditions
+  - error between timestep used and timestep displayed
+  - velocity BC updated before SEqn.H (or hEqn.H) for time-dependent conditions
 
 - groundwaterFoam
 
-     - change writeOpt for phitheta (useless field, only phi is used)
+  - change writeOpt for phitheta (useless field, only phi is used)
 
 **********************
-*** V1.1 (2015-09) *** New solver for groundwater flows (Richards' equation)
+*** V1.1 (2015-09)
+*** New solver for groundwater flows (Richards' equation)
 **********************
 
 ### Solvers
 
 - groundwaterFoam (new solver)
 
-     - solver added for solving Richards' equation (unsaturated soils)
+  - solver added for solving Richards' equation (unsaturated soils)
 
 - impesFoam/anisoImpesFoam
 
-     - wellbore positions are optional
-     - displays only the CFL chosen (Coats / Courant Number)
+  - wellbore positions are optional
+  - displays only the CFL chosen (Coats / Courant Number)
 	
 ### Libraries
 
 - capillarityModels
 
-   - new functions for groundwaterFoam added in the pcVanGenuchen class (pcLinear and pcBrooksAndCorey does not work with groundwaterFoam)
+  - new functions for groundwaterFoam added in the pcVanGenuchen class
+    (pcLinear and pcBrooksAndCorey does not work with groundwaterFoam)
 
 ### Tutorials
 
 - groundWaterFoam-tutorials
- 
-     - validation case (1Dinfiltration) and example (realCase) added
+
+  - validation case (1Dinfiltration) and example (realCase) added
 
 ### Bug Fixes
 
 - impesFoam/anisoImpesFoam
 
-     - parallel computation of min/max added
+  - parallel computation of min/max added
 
 - porousBoundaryConditions
 
-     - effective saturation corrected for Dirichlet boundary conditions
+  - effective saturation corrected for Dirichlet boundary conditions
 
 **********************
-*** V1.0 (2014-10) *** First release of the toolbox, two IMPES-solvers for two-phase flow in porous media
+*** V1.0 (2014-10)
+*** 1st release of the toolbox, two solvers two-phase flow in porous media
 **********************
 
 ### Solvers 
 
 - impesFoam (new solver)
 
-     - two-phase flow solvers for isotropic porous medium (permeability K is volScalarField)
+  - two-phase flow solvers for isotropic porous medium
+    (permeability K is volScalarField)
 
 - anisoImpesFoam (new solver)
 
-     - two-phase flow solvers for anisotropic porous medium (permeability K is volTensorField) 
+  - two-phase flow solvers for anisotropic porous medium
+  (permeability K is volTensorField)
 
 ### Libraries
 
 - capillarityModels
 
-     - usual capillary models for impesFoam/anisoImpesFoam (Brooks and Corey, Van Genuchten, Linear)
+  - usual capillary models for impesFoam/anisoImpesFoam (Brooks and Corey,
+    Van Genuchten, Linear)
 
 - phaseModels
 
-     - incompressible phase model for poroous media flows (constant density and viscosity)
+  - incompressible phase model for poroous media flows (constant density and
+    viscosity)
 
 - relativePermeabilityModels
 
-     - usual relative permeability laws for impesFoam/anisoImpesFoam (Brooks and Corey, Van Genuchten)
+  - usual relative permeability laws for impesFoam/anisoImpesFoam (Brooks and
+    Corey, Van Genuchten)
