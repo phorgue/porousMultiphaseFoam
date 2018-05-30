@@ -83,7 +83,8 @@ public:
     //- Correct the dispersion (effective diffusion)
     void correct()
         {
-            Deff_ = (Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/mag(U_); 
+            dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
+            Deff_ = (Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL); 
         }
 
 };

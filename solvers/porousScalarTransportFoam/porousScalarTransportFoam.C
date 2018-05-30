@@ -52,13 +52,14 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
 
+        #include "setDeltaT.H"
+
         runTime++;
 
-        #include "setDeltaT.H"
-        Info << nl << "Time = " << runTime.timeName() << nl << endl;
+        Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "CEqn.H"
-        
+
         runTime.write();
     }
 
