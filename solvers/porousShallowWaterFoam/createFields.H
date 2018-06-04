@@ -1,0 +1,135 @@
+//////////////////////////////////////////////////////////////////
+////////////////////// Height - Potential ///////////////////////
+//////////////////////////////////////////////////////////////////
+
+Info<< "Reading field potential\n" << endl;
+volScalarField potential
+(
+    IOobject
+    (
+        "potential",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+Info<< "Reading field z0 \n" << endl;
+volScalarField z0
+(
+    IOobject
+    (
+        "z0",
+        runTime.constant(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+Info << "Computing (or reading if present) hwater\n" << endl;
+volScalarField hwater
+(
+    IOobject
+    (
+        "hwater",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::AUTO_WRITE
+    ),
+    potential
+);
+
+hwater == potential - z0;
+hwater.write();
+if (min(hwater).value() < 0) FatalErrorIn("createFields.H") << "hwater negative " << abort(FatalError);
+
+//////////////////////////////////////////////////////////////////
+////////////////////// TRANSPORT PROPERTIES //////////////////////
+//////////////////////////////////////////////////////////////////
+
+Info<< "Reading transportProperties\n" << endl;
+
+IOdictionary transportProperties
+(
+    IOobject
+    (
+        "transportProperties",
+        runTime.constant(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::NO_WRITE
+    )
+);
+
+const dimensionedScalar nu(transportProperties.lookup("nu"));
+
+/////////////////////////////////////////////////////////////////////////////
+////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+Info<< "Reading Porous Media Properties \n" << endl;
+
+// Porosity	
+dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
+   
+volScalarField eps
+(
+    IOobject
+    (
+        "eps",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    epsScalar
+);
+
+// Intrinsic permeability       
+Info<< "Reading field K\n" << endl;
+volScalarField K
+(
+    IOobject
+    (
+        "K",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+// permeability/mobility field
+dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
+volScalarField M(K*g/nu);
+surfaceScalarField Kf = fvc::interpolate(K,"K");
+surfaceScalarField Mf(Kf*g/nu);
+
+/////////////////////////////////////////////////////////////////////////////
+////////////////////////// VELOCITY - FLUXES ////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+Info<< "Reading field U\n" << endl;
+volVectorField U
+(
+    IOobject
+    (
+        "U",
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+#include "createPhi.H"
+phi == (-Mf * fvc::snGrad(potential)) * mesh.magSf();
+//surfaceScalarField phiP = phi;
