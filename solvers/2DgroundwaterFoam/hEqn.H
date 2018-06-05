@@ -6,6 +6,8 @@
         (
             eps * fvm::ddt(hwater)
             + fvm::div(phi,hwater,"div(phi,hwater)")
+            ==
+            infiltration
         );
 
     hwaterEqn.solve();
