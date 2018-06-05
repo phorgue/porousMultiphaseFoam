@@ -145,3 +145,20 @@ forAll(mesh.boundary(),patchi)
 // field necessary for darcyGradPressure boundary condition
 surfaceScalarField phiG("phiG",0*phi);
 surfaceScalarField phiPc("phiPc",0*phi);
+
+//-
+Info << "Reading field infiltration (if present)\n" << endl;
+dimensionedScalar infiltrationScalar(transportProperties.lookupOrDefault("infiltration",dimensionedScalar("",dimLength/dimTime,0.)));
+volScalarField infiltration
+(
+    IOobject
+    (
+        "infiltration",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    infiltrationScalar
+);

@@ -25,7 +25,6 @@ defaultFieldValues
 
 regions
 (
-    // injection
    boxToCell
    {
      box (0 0 0) (0.5 0.1 0.1);
@@ -35,6 +34,14 @@ regions
      	);
    }   
 
+   boxToCell
+   {
+     box (0.4 0 0) (0.6 0.1 0.1);
+     fieldValues
+	(
+	   volScalarFieldValue infiltration 1e-4
+	);
+   }
 
 );
 
