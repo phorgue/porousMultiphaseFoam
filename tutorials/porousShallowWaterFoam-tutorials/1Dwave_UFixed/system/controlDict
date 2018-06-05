@@ -2,40 +2,53 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      potential;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 0 0 0 0 0];
+application     porousShallowWaterFoam;
 
-internalField   uniform 0.1;
+startFrom       startTime;
 
-boundaryField
-{
-    inlet
-    {
-        type            fixedValue;
-        value           uniform 1;
-    }
-    outlet
-    {
-        type            fixedValue;
-        value           uniform 0.4;
-    }
-    frontAndBack
-    {
-        type            empty;
-    }
-}
+startTime       0.0;
 
+stopAt          endTime;
+
+endTime         86400;
+
+deltaT          1;
+
+writeControl    adjustableRunTime;
+
+writeInterval   3600;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+adjustTimeStep  yes;
+
+runTimeModifiable yes;
+
+dhmax           0.01;
+
+maxDeltaT	1000;
 
 // ************************************************************************* //
