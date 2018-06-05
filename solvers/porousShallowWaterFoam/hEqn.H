@@ -1,20 +1,30 @@
 {
-    
+
+    hwater.storePrevIter();
+
     fvScalarMatrix hwaterEqn
         (
-            fvm::ddt(hwater)
-            + fvm::div(phi,hwater,"div(phi,hwater)") 
+            eps * fvm::ddt(hwater)
+            + fvm::div(phi,hwater,"div(phi,hwater)")
         );
 
     hwaterEqn.solve();
  
     dhdTmax = max(mag(fvc::ddt(hwater))).value();
-    
+
     //- updating potential
     potential == hwater + z0;
 
     //- updating flux/velocity field
     phi == (-Mf * fvc::snGrad(potential)) * mesh.magSf();
+    forAll(mesh.boundary(),patchi)
+    {
+        if (isA< fixedValueFvPatchField<vector> >(U.boundaryField()[patchi]))
+        {
+            phi.boundaryFieldRef()[patchi] = U.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+        }
+    }
     U = fvc::reconstruct(phi);
+    U.correctBoundaryConditions();
 
 }
