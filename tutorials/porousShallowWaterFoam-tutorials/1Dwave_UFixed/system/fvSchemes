@@ -2,39 +2,56 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    location    "0";
-    object      potential;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 0 0 0 0 0];
-
-internalField   uniform 0.1;
-
-boundaryField
+ddtSchemes
 {
-    inlet
-    {
-        type            fixedValue;
-        value           uniform 1;
-    }
-    outlet
-    {
-        type            fixedValue;
-        value           uniform 0.4;
-    }
-    frontAndBack
-    {
-        type            empty;
-    }
+    default         Euler;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default         Gauss linear;
+}
+
+laplacianSchemes
+{
+    default      	Gauss linear corrected;;
+}
+
+interpolationSchemes
+{
+    default		none;
+    K			harmonic;
+    flux(U)   		linear;
+    div(phi,hwater)     upwind phi;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+fluxRequired
+{
+    default         no;
+    p           ;
 }
 
 
