@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    porousShallowWaterFoam
+    2DgroundwaterFoam
 
 Description
     Transient solver for free-surface flow in porous media
@@ -34,7 +34,6 @@ Developer
 
 #include "fvCFD.H"
 #include "harmonic.H"
-#include "incompressiblePhase.H"
 #include "fixedValueFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
