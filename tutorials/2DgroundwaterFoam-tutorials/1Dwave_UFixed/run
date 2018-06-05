@@ -6,4 +6,4 @@
 runApplication blockMesh
 cp constant/z0.org constant/z0
 runApplication setFields
-runApplication porousShallowWaterFoam
+runApplication 2DgroundwaterFoam
