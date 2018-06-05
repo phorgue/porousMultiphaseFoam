@@ -1,0 +1,3 @@
+2DgroundwaterFoam.C  
+
+EXE = $(FOAM_USER_APPBIN)/2DgroundwaterFoam
