@@ -45,8 +45,8 @@ volScalarField hwater
 );
 
 hwater == potential - z0;
-hwater.write();
 if (min(hwater).value() < 0) FatalErrorIn("createFields.H") << "hwater negative " << abort(FatalError);
+hwater.write();
 
 //////////////////////////////////////////////////////////////////
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
@@ -82,7 +82,7 @@ volScalarField eps
     IOobject
     (
         "eps",
-        runTime.timeName(),
+        runTime.constant(),
         mesh,
         IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
@@ -91,6 +91,8 @@ volScalarField eps
     epsScalar
 );
 
+if (max(eps).value() <= 0) FatalErrorIn("createFields.H") << " porosity eps equal to 0" << exit(FatalError);
+
 // Intrinsic permeability       
 Info<< "Reading field K\n" << endl;
 volScalarField K
@@ -98,7 +100,7 @@ volScalarField K
     IOobject
     (
         "K",
-        runTime.timeName(),
+        runTime.constant(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
@@ -110,7 +112,7 @@ volScalarField K
 dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
 volScalarField M(K*g/nu);
 surfaceScalarField Kf = fvc::interpolate(K,"K");
-surfaceScalarField Mf(Kf*g/nu);
+surfaceScalarField Mf("Mf",Kf*g/nu);
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// VELOCITY - FLUXES ////////////////////////////////
@@ -132,4 +134,14 @@ volVectorField U
 
 #include "createPhi.H"
 phi == (-Mf * fvc::snGrad(potential)) * mesh.magSf();
-//surfaceScalarField phiP = phi;
+forAll(mesh.boundary(),patchi)
+{
+    if (isA< fixedValueFvPatchField<vector> >(U.boundaryField()[patchi]))
+    {
+        phi.boundaryFieldRef()[patchi] = U.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+    }
+}
+
+// field necessary for darcyGradPressure boundary condition
+surfaceScalarField phiG("phiG",0*phi);
+surfaceScalarField phiPc("phiPc",0*phi);
