@@ -45,8 +45,6 @@ capillarityModel	linear;
 
 linearCoeffs
 {
-    Sbminpc Sbminpc [0 0 0 0 0 0 0] 0.001;
-    Sbmaxpc Sbmaxpc [0 0 0 0 0 0 0] 0.999;
     pc0 pc0 [1 -1 -2 0 0 0 0] 0;
     pcMax pcMax [1 -1 -2 0 0 0 0] 19620;
 }
