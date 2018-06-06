@@ -23,7 +23,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "pcLinear.H"
+#include "pcIppisch.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -32,12 +32,12 @@ namespace Foam
 {
 namespace capillarityModels
 {
-defineTypeNameAndDebug(pcLinear, 0);
+defineTypeNameAndDebug(pcIppisch, 0);
 
 addToRunTimeSelectionTable
 (
     capillarityModel,
-    pcLinear,
+    pcIppisch,
     dictionary
 );
 }
@@ -45,7 +45,7 @@ addToRunTimeSelectionTable
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::capillarityModels::pcLinear::pcLinear
+Foam::capillarityModels::pcIppisch::pcIppisch
 (
     const word& name,
     const dictionary& transportProperties,
@@ -53,7 +53,7 @@ Foam::capillarityModels::pcLinear::pcLinear
 )
     :
     capillarityModel(name, transportProperties,Sb),
-    pcLinearCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    pcIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     Smin_
     (
         IOobject
@@ -78,52 +78,83 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-       transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+        transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
-    pc0_
+    m_
     (
         IOobject
         (
-            "pc0",
+            "m",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
+        dimensionedScalar("m",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("m",0))
     ),
-    pcMax_
+    n_(1/(1-m_)),
+    alpha_
     (
         IOobject
         (
-            "pcMax",
+            "alpha",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault("pcMax",dimensionedScalar("pcMax",dimensionSet(1,-1,-2,0,0),0))
+        dimensionedScalar("alpha",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("alpha",GREAT))
     ),
-    Se_((Sb_- Smin_)/(Smax_-Smin_))
+    tau_
+    (
+        IOobject
+        (
+            "tau",
+            Sb_.time().timeName(),
+            Sb_.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionedScalar("tau",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("tau",1.))
+    ),
+    he_
+    (
+        IOobject
+        (
+            "he",
+            Sb_.time().timeName(),
+            Sb_.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        Sb.mesh(),
+        dimensionedScalar("he",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("he",1.))
+    ),
+    Se_((Sb_-Smin_)/(Smax_-Smin_)),
+    Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
-
-    Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    pc0 ";
-    if (pc0_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(pc0_).value() << endl;}
-    Info << "    pcMax ";
-    if (pcMax_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(pcMax_).value() << endl;}
-    Info <<  "    Smin ";
-    if (Smin_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smin_).value() << endl;}
-    Info << "    Smax ";
-    if (Smax_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smax_).value() << endl;}
-    Info << "} \n" << endl;
-    
+    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m = 0 in pcIppisch" << abort(FatalError);
+    Info << "Ippisch parameters for capillary pressure model" << nl << "{" << endl;
+    Info << "    m ";
+    if (m_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(m_).value() << endl;}
+    Info <<  "    n ";
+    if (n_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(n_).value() << endl;}
+        Info <<  "    alpha ";
+    if (alpha_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(alpha_).value() << endl;}
+        Info <<  "    tau ";
+    if (tau_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(tau_).value() << endl;}
+    Info <<  "    he ";
+    if (he_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(he_).value() << endl;}
+    Info << "} \n" << endl;     
 }
 
 // ************************************************************************* //
+
