@@ -24,14 +24,16 @@ phase.theta
   mu	mu [1 -1 -1 0 0 0 0]	1e-3;
 }
 
-relativePermeabilityModel  VanGenuchten;
+relativePermeabilityModel  Ippisch;
 
-capillarityModel	VanGenuchten;
+capillarityModel	Ippisch;
 
-VanGenuchtenCoeffs
+IppischCoeffs
 {   
     m	0.5;
     alpha 3.35;
+    tau     0.4;
+    he 0.0058;
 }
 
 // ************************************************************************* //

@@ -30,10 +30,9 @@ solvers
 Picard
 {
     tolerance 1e-3;
-    dTFact      1.2; // 1.2 by default
     maxIter 10; // 10 by default
     minIter 3; // 3 by default 
-    maxIterStability  5; // 5 by default
+    nIterStability  5; // 5 by default
 }
 
 // ************************************************************************* //

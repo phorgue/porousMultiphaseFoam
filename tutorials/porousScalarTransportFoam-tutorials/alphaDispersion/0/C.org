@@ -21,7 +21,7 @@ internalField   uniform 0;
 
 boundaryField
 {
-    xandy
+    "x0|x1|ydirection"
     {
         type            zeroGradient;
     }

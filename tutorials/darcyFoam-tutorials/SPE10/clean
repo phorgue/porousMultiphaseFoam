@@ -3,5 +3,5 @@
 . $WM_PROJECT_DIR/bin/tools/CleanFunctions
 
 
-rm -f 0/K log.*
-rm -rf constant/polyMesh 2
+rm -f 0/K 0/p 0/Ua 0/phi log.*
+rm -rf constant/polyMesh

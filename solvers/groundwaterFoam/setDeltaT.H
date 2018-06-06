@@ -22,41 +22,64 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Timestep for Richards solver (Picard loop) 
+    Timestep for groundwaterFoam solver
 
-\*---------------------------------------------------------------------------*/
+    \*---------------------------------------------------------------------------*/
+
+//- compute dh from last time iteration
+scalar dtheta = dthetadTmax*runTime.deltaTValue();
 
 if(adjustTimeStep)
 {
 
-    scalar deltaTFact=1;
-    if (iterPicard > maxIterPicard)
+    //- Timestep using number of Picard's iterations
+    if (timeStepControl == "Picard")
     {
-        deltaTFact = dTFactDecrease;
-        iterStability=0;
-    }
-    else if (iterPicard < minIterPicard)
-    {
-        iterStability++;
+        scalar deltaTFact=1;
+        if(iterPicard == maxIterPicard)
+        {
+            deltaTFact = dTFactDecrease;
+            iterStability=0;
+        }
+        else if (iterPicard <= minIterPicard)
+        {
+            iterStability++;
+        }
+
+        if (iterStability == nIterStability)
+        {
+            deltaTFact = dTFactIncrease;
+            iterStability = 0;
+        }
+
+        runTime.setDeltaT
+            (
+                min(
+                    deltaTFact*runTime.deltaTValue(),
+                    maxDeltaT
+                )
+            );
     }
 
-    if (iterStability == maxIterStability)
+    //- Timestep using h variation
+    else if(timeStepControl == "dthetamax")
     {
-        deltaTFact = dTFactIncrease;      
-        iterStability=0;
-    }
-        
-    //- Computing timestep 
-    runTime.setDeltaT
-        (
-            min(
-                deltaTFact*runTime.deltaTValue(),
-                maxDeltaT
-            )
-        );
+        scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
 
-    Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
+        runTime.setDeltaT
+            (
+                min(
+                    dtForTheta,
+                    min(
+                        1.2*runTime.deltaTValue(),
+                        maxDeltaT
+                    )
+                )
+            );
+    }
 
 }
+
+Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta = " << dtheta << endl;
 
 // ************************************************************************* //
