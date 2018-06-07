@@ -22,18 +22,18 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::capillarityModels::VanGenuchten
+    Foam::capillarityModels::Ippisch
 
 Description
-    Standard Van Genuchten capillary pressure model
+    Ippisch-Vogel-Bastian capillary pressure model (AWR 2006)
 
 SourceFiles
-    pcVanGenuchten.C
+    pcIppisch.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef pcVanGenuchten_H
-#define pcVanGenuchten_H
+#ifndef pcIppisch_H
+#define pcIppisch_H
 
 #include "capillarityModel.H"
 
@@ -45,31 +45,33 @@ namespace capillarityModels
 {
 
 /*---------------------------------------------------------------------------*\
-                    Class pcVanGenuchten Declaration
+                    Class pcIppisch Declaration
 \*---------------------------------------------------------------------------*/
 
-class pcVanGenuchten
+class pcIppisch
 :
     public capillarityModel
 {
-    // pcVan Genuchten coefficients
-    dictionary pcVanGenuchtenCoeffs_;
+    //- Ippisch coefficients
+    dictionary pcIppischCoeffs_;
     volScalarField Smin_,Smax_;
-    volScalarField m_,n_,alpha_;
-    volScalarField pc0_;
+    volScalarField m_,n_,alpha_,tau_,he_;
 
     // effective saturation of phase b
     volScalarField Se_;
-        
+
+    //- cut-off point saturation (computed with entry pressure)
+    volScalarField Sc_;
+    
 public:
 
     //- Runtime type information
-    TypeName("VanGenuchten");
+    TypeName("Ippisch");
 
     // Constructors
 
     //- Construct from components
-    pcVanGenuchten
+    pcIppisch
     (
         const word& name,
         const dictionary& transportProperties,
@@ -77,7 +79,7 @@ public:
     );
 
     //- Destructor
-    ~pcVanGenuchten()
+    ~pcIppisch()
         {}
 
     // Member Functions
@@ -85,27 +87,26 @@ public:
     //- Correct the capillary pressure
     void correct()
         {
-            Se_ == (Sb_+SMALL-Smin_)/(Smax_-Smin_);
-            pc_ == pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
-            dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smax_-Smin_)) * pow(pow(Se_,-1/m_)-1,(1/n_)-1) * pow(Se_,-(1+m_)/m_);
+            FatalErrorIn("void correct()")
+                << "Not implemented in pcIppish.H " << abort(FatalError);
         }
 
     //- Correct effective saturation and capillary capacity and return saturation (Richards' solver)
     volScalarField correctAndSb(volScalarField h)
         {
-            //- Compute Saturation from! head pressure
+            //- Compute Saturation from head pressure
             h.dimensions().reset(dimless);
-            Se_ =  neg(h) *pow(1.0+pow(alpha_*mag(h),n_),-m_) + pos(h+VSMALL);
+            Se_ = neg(h+he_) *(1/Sc_)*pow(1.0+pow(alpha_*mag(h),n_),-m_) + pos(h+he_+VSMALL) ;
             h.dimensions().reset(dimLength);
 
-            //- Update effective saturation and capillary capacity
+            //- Update capillary capacity
             Ch_.dimensions().reset(dimless);
             Ch_ == alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
             Ch_.dimensions().reset(dimless/dimLength);
 
             //- Update saturation
             volScalarField Stmp_ = Smin_+(Smax_-Smin_)*(Se_-SMALL);
-            
+    
             return Stmp_;
         }
 

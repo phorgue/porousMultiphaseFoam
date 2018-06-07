@@ -7,3 +7,4 @@ set -x
 wclean libso libraries/porousBoundaryConditions
 wclean libso libraries/porousModels
 wclean all solvers
+wclean all utilities

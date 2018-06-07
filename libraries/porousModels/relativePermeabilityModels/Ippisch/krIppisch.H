@@ -22,56 +22,59 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::capillarityModels::pcBrooksAndCorey
+    Foam::relativePermeabilityModels::krIppisch
 
 Description
-    Standard Brooks and Corey capillary pressure model.
+    Ippisch Vogel Bastian relative permeability model (AWR 2006)
 
 SourceFiles
-    pcBrooksAndCorey.C
+    krIppisch.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef pcBrooksAndCorey_H
-#define pcBrooksAndCorey_H
+#ifndef krIppisch_H
+#define krIppisch_H
 
-#include "capillarityModel.H"
+#include "relativePermeabilityModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace capillarityModels
+namespace relativePermeabilityModels
 {
 
-/*---------------------------------------------------------------------------*\
-    Class pcBrooksAndCorey Declaration
+/*---------------------------------------------------------------------------* \
+    Class krIppisch Declaration
     \*---------------------------------------------------------------------------*/
 
-class pcBrooksAndCorey
+class krIppisch
 :
-    public capillarityModel
+    public relativePermeabilityModel
 {
-    // pcBrooks and Corey coefficients
-    dictionary pcBrooksAndCoreyCoeffs_;
-       
+    //- Private data
     volScalarField Smin_;
     volScalarField Smax_;
-    volScalarField pc0_;
-    volScalarField alpha_;
 
-    // effective saturation of phase b
+    //- Van Genuchten coefficients
+    dictionary krIppischCoeffs_;
+    volScalarField m_,n_,alpha_,tau_,he_;
+
+    //- effective saturation of phase b
     volScalarField Se_;
-        
+
+    //- cut-off point saturation (computed with entry pressure)
+    volScalarField Sc_;
+
 public:
 
     //- Runtime type information
-    TypeName("BrooksAndCorey");
+    TypeName("Ippisch");
 
     // Constructors
 
     //- Construct from components
-    pcBrooksAndCorey
+    krIppisch
     (
         const word& name,
         const dictionary& transportProperties,
@@ -79,40 +82,26 @@ public:
     );
 
     //- Destructor
-    ~pcBrooksAndCorey()
+    ~krIppisch()
         {}
 
     // Member Functions
 
-    //- Correct the capillary pressure
+    //- Correct the relative permeabilities
     void correct()
         {
-            Se_ == (Sb_+SMALL-Smin_)/(Smax_ - Smin_);
-            pc_ = pc0_ * pow(Se_,-alpha_);
-            dpcdS_= -alpha_*pc0_*(pow(Se_,-alpha_-1))/(Smax_-Smin_);
+            Se_==(Sb_-Smin_)/(Smax_-Smin_);
+            krb_ = pow(Se_,tau_) * pow(
+                (1-pow(1-pow(Sc_*Se_,1/m_),m_)) /
+                (1-pow(1-pow(Sc_,1/m_),m_))
+                ,2);
         }
-
-    //- Compute Moisture from head pressure (Richards' model)
-    volScalarField correctAndSb(volScalarField h) 
-        {
-            FatalErrorIn("volScalarField MoistureFromHeadPressure(volScalarField h) const")
-                << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
-            return Se_;
-        };
-
-    //- Capillary capacity (Richards' model)
-    tmp<volScalarField> Ch() const
-        {
-            FatalErrorIn("tmp<volScalarField> Ch() const")
-                << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
-            return Se_;
-        };
-
+        
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace capillarityModels
+} // End namespace relativePermeabilityModels
 
 } // End namespace Foam
 

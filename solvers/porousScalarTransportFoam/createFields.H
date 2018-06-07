@@ -12,22 +12,6 @@ volScalarField C
     mesh
 );
 
-Info<< "Reading field U\n" << endl;
-volVectorField U
-(
-    IOobject
-    (
-        "U",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
-
-#include "createPhi.H"
-
 Info<< "Reading transportProperties\n" << endl;
 IOdictionary transportProperties
 (
@@ -40,11 +24,46 @@ IOdictionary transportProperties
         IOobject::NO_WRITE
     )
 );
-
 Info<< "Reading porosity eps\n" << endl;
 dimensionedScalar eps
 (
     transportProperties.lookup("eps")
+);
+
+Info<< "Reading porous transport properties" << endl;
+dictionary porousTransport(transportProperties.subDict("porousTransport"));
+word phaseName(porousTransport.lookupOrDefault<word>("phaseName","notDefined"));
+Info << nl << "porousTransport parameters" << nl << "{" << endl;
+Info << "    " << "phaseName " << " : " << phaseName << endl;
+Info << "} \n" << endl;
+
+
+Info<< "Reading field U" << phaseName << nl << endl;
+volVectorField U
+(
+    IOobject
+    (
+        "U"+phaseName,
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
+);
+
+Info<< "Reading field phi" << phaseName << nl << endl;
+surfaceScalarField phi
+(
+    IOobject
+    (
+        "phi"+phaseName,
+        runTime.timeName(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh
 );
 
 //- creation of dispersion model

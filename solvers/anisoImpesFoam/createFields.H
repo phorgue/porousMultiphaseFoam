@@ -30,6 +30,7 @@ volScalarField p
     ),
     mesh
 );
+mesh.schemesDict().setFluxRequired(p.name());
 
 Info<< "Reading field Sb \n" << endl;
 volScalarField Sb

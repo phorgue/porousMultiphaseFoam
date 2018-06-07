@@ -28,16 +28,4 @@ solvers
 
 }
 
-SIMPLE
-{
-    nCorrectors     0;
-    nNonOrthogonalCorrectors 0;
-
-    residualControl
-    {
-        p               1e-12;
-    }
-
-}
-
 // ************************************************************************* //
