@@ -54,31 +54,31 @@ Foam::capillarityModels::pcLinear::pcLinear
     :
     capillarityModel(name, transportProperties,Sb),
     pcLinearCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    Sminpc_
+    Smin_
     (
         IOobject
         (
-            Sb_.name()+"minpc",
+            Sb_.name()+"min",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault(Sb_.name()+"minpc",transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0)))
+        transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
-    Smaxpc_
+    Smax_
     (
         IOobject
         (
-            Sb_.name()+"maxpc",
+            Sb_.name()+"max",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0)))
+       transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
     ),
     pc0_
     (
@@ -91,7 +91,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimless,0))
+        pcLinearCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
     ),
     pcMax_
     (
@@ -104,9 +104,9 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault("pcMax",dimensionedScalar("pcMax",dimless,0))
+        pcLinearCoeffs_.lookupOrDefault("pcMax",dimensionedScalar("pcMax",dimensionSet(1,-1,-2,0,0),0))
     ),
-    Se_((Sb_- Sminpc_)/(Smaxpc_-Sminpc_))
+    Se_((Sb_- Smin_)/(Smax_-Smin_))
 {
 
     Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
@@ -116,12 +116,12 @@ Foam::capillarityModels::pcLinear::pcLinear
     Info << "    pcMax ";
     if (pcMax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pcMax_).value() << endl;}
-    Info <<  "    Smaxpc ";
-    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smaxpc_).value() << endl;}
-    Info << "    Smaxpc ";
-    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smaxpc_).value() << endl;}
+    Info <<  "    Smin ";
+    if (Smin_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smin_).value() << endl;}
+    Info << "    Smax ";
+    if (Smax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smax_).value() << endl;}
     Info << "} \n" << endl;
     
 }

@@ -23,6 +23,7 @@ ddtSchemes
 gradSchemes
 {
   default none;
+  grad(p) Gauss linear;
   grad(C) Gauss linear;
 }
 
@@ -36,6 +37,7 @@ laplacianSchemes
 {
   default none;
   laplacian(Deff,C)  Gauss linear corrected;
+  laplacian(-Mf,p) Gauss linear corrected;
 }
 
 interpolationSchemes
@@ -51,6 +53,7 @@ snGradSchemes
 fluxRequired
 {
   default no;
+  p;
 }
 
 // ************************************************************************* //

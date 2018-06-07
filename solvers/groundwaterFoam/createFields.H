@@ -73,7 +73,8 @@ volScalarField theta
         IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
-    h
+    mesh,
+    dimless
 );
 theta.dimensions().reset(dimless);
 theta == 0; // temporary initialisation

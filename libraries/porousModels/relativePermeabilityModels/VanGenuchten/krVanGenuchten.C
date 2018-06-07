@@ -91,7 +91,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)
+        dimensionedScalar("m",dimless,krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0))
     ),
     Se_((Sb_-Smin_)/(Smax_-Smin_)),
     kramax_
@@ -105,7 +105,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     ),
     krbmax_
     (
@@ -118,7 +118,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0)
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     )
 {
     if (gMin(m_) <= 0)

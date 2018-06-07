@@ -54,31 +54,31 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     :
     capillarityModel(name, transportProperties,Sb),
     pcVanGenuchtenCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    Sminpc_
+    Smin_
     (
         IOobject
         (
-            Sb_.name()+"minpc",
+            Sb_.name()+"min",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcVanGenuchtenCoeffs_.lookupOrDefault(Sb_.name()+"minpc",transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0)))
+        transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
-    Smaxpc_
+    Smax_
     (
         IOobject
         (
-            Sb_.name()+"maxpc",
+            Sb_.name()+"max",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcVanGenuchtenCoeffs_.lookupOrDefault(Sb_.name()+"maxpc",transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0)))
+        transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
     ),
     m_
     (
@@ -91,7 +91,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0)
+        dimensionedScalar("m",dimless,pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0))
     ),
     n_(1/(1-m_)),
     alpha_ // necessary for Richards solver
@@ -105,7 +105,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("alpha",0)
+        dimensionedScalar("alpha",dimless,pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("alpha",0))
     ),
     pc0_
     (
@@ -120,7 +120,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
         Sb.mesh(),
         pcVanGenuchtenCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0.))
     ),
-    Se_((Sb_- Sminpc_)/(Smaxpc_-Sminpc_))
+    Se_((Sb_- Smin_)/(Smax_-Smin_))
 {
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m = 0 in pcVanGenuchten" << abort(FatalError);
     Info << "Van Genuchten parameters for capillary pressure model" << nl << "{" << endl;
@@ -130,12 +130,15 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     Info << "    pc0 ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pc0_).value() << endl;}
-    Info <<  "    Smaxpc ";
-    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smaxpc_).value() << endl;}
-    Info << "    Smaxpc ";
-    if (Smaxpc_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smaxpc_).value() << endl;}
+    Info << "    alpha ";
+    if (alpha_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(alpha_).value() << endl;}
+    Info <<  "    Smin ";
+    if (Smin_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smin_).value() << endl;}
+    Info << "    Smax ";
+    if (Smax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smax_).value() << endl;}
     Info << "} \n" << endl;
     
 }
