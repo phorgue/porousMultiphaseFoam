@@ -7,6 +7,7 @@ runApplication blockMesh
 
 cp 0/p.org 0/p
 cp 0/Ua.org 0/Ua
+cp constant/Winj.org constant/Winj
 runApplication darcyFoam -phase a 
 
 cp 0/C.org 0/C
