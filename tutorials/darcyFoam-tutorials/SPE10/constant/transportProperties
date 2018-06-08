@@ -23,9 +23,8 @@ phase.a
 
 wellboreProperties
 {
-    activateWellbores	0;    
-    qInjection	qInjection [0 3 -1 0 0 0 0]	1e-3;
-    qExtraction	qExtraction [0 3 -1 0 0 0 0]	0.5e-3;
+    qInjection	qInjection [0 3 -1 0 0 0 0]	0;//1e-3;
+    qExtraction	qExtraction [0 3 -1 0 0 0 0]	0;//0.5e-3;
 }
 
 // ************************************************************************* //
