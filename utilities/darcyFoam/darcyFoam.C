@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
     fvScalarMatrix pEqn
         (
-            fvm::laplacian(-Mf,p) + fvc::div(phiG) + (SrcExt*Wext-SrcInj*Winj)*activateWellbores
+            fvm::laplacian(-Mf,p) + fvc::div(phiG) + (SrcExt*Wext-SrcInj*Winj)
         );
 
     pEqn.solve();

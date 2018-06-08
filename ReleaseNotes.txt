@@ -5,9 +5,14 @@
 
 ### Solvers
 
-- impesFoam/anisoImpesFoam
+- groundwaterFoam
+
+  - wellbore added to handle injection/extraction
+  
+- impesFoam/anisoImpesFoam/groundwaterFoam
 
   - wellboreProperies is a subDict of transportProperties
+  - Winj/Wext (wellbore positions) are moved from 0/ to constant/
 
 - porousScalarTransportFoam
 

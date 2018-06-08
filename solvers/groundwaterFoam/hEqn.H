@@ -16,6 +16,7 @@
             pcModel->Ch() * fvm::ddt(h)
             - fvm::laplacian(Mf,h)
             + fvc::div(phiG)
+            - (SrcInj*Winj-SrcExt*Wext)
         );
 
     hEqn.solve();
