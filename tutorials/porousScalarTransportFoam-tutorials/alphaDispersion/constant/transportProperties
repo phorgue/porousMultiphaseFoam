@@ -45,9 +45,8 @@ alphaDispersionCoeffs
 
 wellboreProperties
 {
-    activateWellbores	1;
     qInjection	qInjection [0 3 -1 0 0 0 0] 1e-3;
-    qExtraction	qExtraction [0 3 -1 0 0 0 0]	0e-3;
+    qExtraction	qExtraction [0 3 -1 0 0 0 0] 0e-3;
     Cin Cin [1 -3 0 0 0 0 0] 1;
 }
 
