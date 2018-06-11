@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
         Info << "Head pressure h  " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
         dthetadTmax = gMax(mag(theta-theta.oldTime())())/runTime.deltaTValue();
+        dtheta_avg = (theta-theta.oldTime())().weightedAverage(mesh.V()).value();
 
         runTime.write();
 
