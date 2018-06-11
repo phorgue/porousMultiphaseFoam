@@ -10,14 +10,14 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    location    "0";
+    location    "constant";
     object      K;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions     [0  2  0 0 0 0 0];
+dimensions      [0 2 0 0 0 0 0];
 
-internalField   uniform 1e-11;
+internalField   uniform 9.4e-12;
 
 boundaryField
 {
@@ -29,7 +29,6 @@ boundaryField
     {
         type            zeroGradient;
     }
-
     frontAndBack
     {
         type            empty;
