@@ -80,6 +80,6 @@ if(adjustTimeStep)
 
 }
 
-Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta = " << dtheta << endl;
+Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << " ; dtheta avg = " << dtheta_avg << endl;
 
 // ************************************************************************* //
