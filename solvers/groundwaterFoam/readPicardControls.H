@@ -59,6 +59,7 @@ const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTF
 //- if dtFromtheta used
 const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
 scalar dthetadTmax = dthetamax/runTime.deltaTValue();
+scalar dtheta = 0;
 scalar dtheta_avg = 0;
 
 if (adjustTimeStep)
