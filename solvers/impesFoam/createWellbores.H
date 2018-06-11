@@ -33,11 +33,11 @@ volScalarField Winj
         "Winj",
         runTime.constant(),
         mesh,
-        IOobject::MUST_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
     ),
-    mesh// ,
-    // dimensionedScalar("",dimensionSet(0,0,0,0,0),0)
+    mesh,
+    dimensionedScalar("",dimensionSet(0,0,0,0,0),0)
 );
 
 dimensionedScalar Vinj(sum(Winj*mesh.V()));
