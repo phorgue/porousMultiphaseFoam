@@ -37,7 +37,7 @@ Description
     )
 
 Usage
-    setPermeabilityFieldFromXY -file xyK_file
+    setPermeabilityFieldFromXY -file inputFile_file
 
 \*---------------------------------------------------------------------------*/
 
@@ -45,14 +45,22 @@ Usage
 
 int main(int argc, char *argv[])
 {
-    argList::addOption("file","fileName","specify the xyK file");
-    
+    argList::addOption("fileIn","fileName","specify the input file");
+    argList::addOption("fileOut","fileName","specify the output file");   
+    argList::addOption("folder","constant","specify the folder");
+
     Foam::argList args(argc,argv); 
 
-    if (!args.optionFound("file"))
+    if (!args.optionFound("fileIn"))
     {
-        FatalError << "no file specified" 
-            << nl << " use option -file"
+        FatalError << "no input file specified" 
+            << nl << " use option -fileIn"
+            << exit(FatalError);
+    }
+    else if (!args.optionFound("fileOut"))
+    {
+        FatalError << "no output file specified" 
+            << nl << " use option -fileOut"
             << exit(FatalError);
     }
     
@@ -61,15 +69,22 @@ int main(int argc, char *argv[])
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
     
-    //- read xyK permeability matrix
-    RectangularMatrix<scalar> xyK(IFstream(args.option("file"))());
+    //- read inputFile permeability matrix
+    RectangularMatrix<scalar> inputFile(IFstream(args.option("fileIn"))());
 
-    volScalarField K
+    word fileDir = "constant";
+    if (args.optionFound("folder"))
+    {
+        fileDir = args.option("folder"); 
+    
+    }
+
+    volScalarField outputFile
         (
             IOobject
             (
-                "K",
-                runTime.timeName(),
+                args.option("fileOut"),
+                fileDir,
                 mesh,
                 IOobject::MUST_READ,
                 IOobject::AUTO_WRITE
@@ -77,7 +92,7 @@ int main(int argc, char *argv[])
             mesh
         );
 
-    forAll(K,celli)
+    forAll(outputFile,celli)
     {   
         label id1=-1;
         label id2=-1;
@@ -86,9 +101,9 @@ int main(int argc, char *argv[])
         scalar dist2 = VGREAT;
         scalar dist3 = VGREAT;
 
-        for(label i=0;i<xyK.m();i++)
+        for(label i=0;i<inputFile.m();i++)
         {
-            scalar dist = Foam::sqrt(pow(xyK[i][0]-mesh.C()[celli].x(),2)+pow(xyK[i][1]-mesh.C()[celli].y(),2));
+            scalar dist = Foam::sqrt(pow(inputFile[i][0]-mesh.C()[celli].x(),2)+pow(inputFile[i][1]-mesh.C()[celli].y(),2));
             if ( dist < dist1)
             {
                 //Info <<  "1 *** " << dist << " " << dist1 <<  " " << dist2 <<  " " << dist3 << endl;
@@ -118,15 +133,15 @@ int main(int argc, char *argv[])
         
         if ( (id1 == -1) || (id2 == -1) || (id3 == -1))
         {
-            Info << nl << "Erreur : les trois points ne sont pas trouvés..."
+            Info << nl << "Error : three point are not found for interpolation"
                 << nl << id1 << " / " << id2 << " / " << id3 << endl;
         }
        
-        K[celli] = ( dist1*xyK[id1][2] + dist2*xyK[id2][2] + dist3*xyK[id3][2] ) / (dist1+dist2+dist3);
+        outputFile[celli] = ( dist1*inputFile[id1][2] + dist2*inputFile[id2][2] + dist3*inputFile[id3][2] ) / (dist1+dist2+dist3);
 
     }
 
-    K.write();
+    outputFile.write();
     
     Info << nl << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
         << "  ClockTime = " << runTime.elapsedClockTime() << " s"
