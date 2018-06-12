@@ -31,6 +31,12 @@
 
   - updated (wellboreProperties removed)
 
+### Utilities
+
+- setFieldsFromXY (replace setPermeabilityFieldFromXY)
+
+  - can be used to initialize any volScalarFields from a rectangularMatrix
+    (x | y | value) with linear interpolation between 3 closest points
 
 ************************
 *** V1.6.0 (2018-05)
