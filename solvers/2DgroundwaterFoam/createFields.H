@@ -16,7 +16,7 @@ volScalarField potential
     mesh
 );
 
-Info<< "Reading field z0 \n" << endl;
+Info<< "Reading field z0" << endl;
 volScalarField z0
 (
     IOobject
@@ -29,8 +29,9 @@ volScalarField z0
     ),
     mesh
 );
+Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << nl << endl;
 
-Info << "Computing (or reading if present) hwater\n" << endl;
+Info << "Computing (or reading if present) hwater" << endl;
 volScalarField hwater
 (
     IOobject
@@ -43,10 +44,27 @@ volScalarField hwater
     ),
     potential
 );
-
 hwater == potential - z0;
-if (min(hwater).value() < 0) FatalErrorIn("createFields.H") << "hwater negative " << abort(FatalError);
+
+if (min(hwater).value() < 0)
+{
+    Info << "*** WARNING *** : hwater negative (initialized to 0.01) " << endl;
+
+    forAll(mesh.C(),celli)
+    {
+        hwater[celli] = max(hwater[celli],0.01);
+    }
+    forAll(hwater.boundaryField(),patchi)
+    {
+        forAll(hwater.boundaryFieldRef()[patchi],facei)
+        {
+            hwater.boundaryFieldRef()[patchi][facei] =  max(0.01,hwater.boundaryFieldRef()[patchi][facei]);
+        }
+    }
+}
 hwater.write();
+
+Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << nl << endl;
 
 //////////////////////////////////////////////////////////////////
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
@@ -107,6 +125,7 @@ volScalarField K
     ),
     mesh
 );
+Info << "min(K) = " << min(K).value() << " ; max(K) = " << max(K).value() << nl << endl;
 
 // permeability/mobility field
 dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
