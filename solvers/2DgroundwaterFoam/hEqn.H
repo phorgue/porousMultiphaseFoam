@@ -16,6 +16,7 @@
 
     //- updating potential
     potential == hwater + z0;
+    Info << "Potential min : " << min(potential).value() << " max = " << max(potential).value() << " max(dh) = " << dhdTmax*runTime.deltaTValue() << endl;
 
     //- updating flux/velocity field
     phi == (-Mf * fvc::snGrad(potential)) * mesh.magSf();
