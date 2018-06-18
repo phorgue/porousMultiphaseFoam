@@ -70,7 +70,7 @@ volScalarField Saturation
 );
 if (Saturation.headerOk())
 {
-    Info << "Ok" << nl << endl;
+    Info << "field S" << phaseName << " read, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << nl << endl;
 }
 else
 {
@@ -86,12 +86,12 @@ volVectorField U
         runTime.timeName(),
         mesh,
         IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
+        IOobject::NO_WRITE
     ),
     mesh
 );
 
-Info<< "Reading field phi" << phaseName << nl << endl;
+Info<< "Reading/Computing field phi" << phaseName << nl << endl;
 surfaceScalarField phi
 (
     IOobject
@@ -99,11 +99,14 @@ surfaceScalarField phi
         "phi"+phaseName,
         runTime.timeName(),
         mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
     ),
-    mesh
+    fvc::flux(U)
 );
+
+phi.write(); // write if computed
+phi.writeOpt()=IOobject::NO_WRITE;
 
 //- creation of dispersion model
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U);

@@ -54,7 +54,7 @@ Foam::dispersionModel::dispersionModel
             U_.time().timeName(),
             U_.db(),
             IOobject::NO_READ,
-            IOobject::AUTO_WRITE
+            IOobject::NO_WRITE
         ),
         U_.mesh(),
         dimensionSet(0,2,-1,0,0,0,0)
