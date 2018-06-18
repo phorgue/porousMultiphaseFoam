@@ -94,6 +94,17 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
         dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaT"))
     )
 {
+    Info << "Parameters for alpha dispersion model" << nl << "{" << endl;
+    Info << "    tau ";
+    if (tau_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(tau_).value() << endl;}
+    Info <<  "    alphaL ";
+    if (alphaL_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(alphaL_).value() << endl;}
+    Info << "    alphaT ";
+    if (alphaT_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(alphaT_).value() << endl;}
+    Info << "} \n" << endl;
 }
 
 // ************************************************************************* //
