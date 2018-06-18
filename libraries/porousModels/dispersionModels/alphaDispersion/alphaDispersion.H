@@ -32,6 +32,9 @@ Description
 SourceFiles
     alphaDispersion.C
 
+Developer
+    Pierre Horgue
+
 \*---------------------------------------------------------------------------*/
 
 #ifndef alphaDispersion_H
@@ -56,7 +59,9 @@ class alphaDispersion
 {
     //- Private data
     dictionary alphaDispersionCoeffs_;
-    const volScalarField tau_,alphaL_,alphaT_;
+
+    //- model coefficients
+    volScalarField tau_,alphaL_,alphaT_;
 
         
 public:
