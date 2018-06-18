@@ -16,6 +16,6 @@
 
         dCdTmax = max(mag(fvc::ddt(C))).value();
 
-        Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " dCdTmax = " << dCdTmax << " mass(C) = " << fvc::domainIntegrate(C*Saturation*eps).value() << endl;
+        Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " dCdTmax = " << dCdTmax*runTime.deltaTValue() << " mass(C) = " << fvc::domainIntegrate(C*Saturation*eps).value() << endl;
 
 }
