@@ -37,7 +37,7 @@ Usage
 
       setBoundaryHeadPressure -patch patchName -file stl_file
 
-    3) for stl dependent potential (2DgroundwaterFoam) :
+    3) for stl dependent potential (groundwater2DFoam) :
 
       setBoundaryHeadPressure -patch patchName -file stl_file -version 2D
 

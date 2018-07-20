@@ -13,5 +13,5 @@ tutorials = [{'solver' : "impesFoam", 'case' : "Buckley-Leverett/BrooksAndCorey"
              {'solver' : "groundwaterFoam", 'case' : "realCase"}, \
              {'solver' : "darcyFoam", 'case' : "SPE10"}, \
              {'solver' : "porousScalarTransportFoam", 'case' : "alphaDispersion"}, \
-             {'solver' : "2DgroundwaterFoam", 'case' : "1Dwave_hFixed"}, \
-             {'solver' : "2DgroundwaterFoam", 'case' : "1Dwave_UFixed"}]
+             {'solver' : "groundwater2DFoam", 'case' : "1Dwave_hFixed"}, \
+             {'solver' : "groundwater2DFoam", 'case' : "1Dwave_UFixed"}]
