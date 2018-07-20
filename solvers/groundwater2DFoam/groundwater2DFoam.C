@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    2DgroundwaterFoam
+    groundwater2DFoam
 
 Description
     Transient solver for free-surface flow in porous media
