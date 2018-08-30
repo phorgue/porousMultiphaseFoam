@@ -1,0 +1,3 @@
+groundwater2DFoam.C  
+
+EXE = $(FOAM_USER_APPBIN)/groundwater2DFoam
