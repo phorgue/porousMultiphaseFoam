@@ -12,6 +12,7 @@ wmake solvers/anisoImpesFoam
 wmake solvers/groundwaterFoam
 wmake solvers/porousScalarTransportFoam
 wmake solvers/groundwater2DFoam
+wmake solvers/groundwaterTransportFoam
 
 # Compiling utilities
 wmake utilities/darcyFoam
