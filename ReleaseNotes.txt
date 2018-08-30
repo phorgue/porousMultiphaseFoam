@@ -1,6 +1,6 @@
 ************************
-***
-***
+*** V1809
+*** New solvers : groundwater2DFoam + groundwaterTransportFoam
 ************************
 
 ### Solvers
@@ -19,6 +19,15 @@
   - retard coefficient "R" added
   - new time-stepping (using dCmax absolute and relative)
 
+- groundwater2DFoam
+
+  - new solver for 2D groundwater flow modeling (Dupuit's hypothesis)
+
+- groundwaterTransportFoam
+
+  - new solver coupling groundwaterFoam and porousScalarTransportFoam
+  the C component is transported in fluid phase with variable saturation
+
 ### Libraries
 
 - dispersionModels
@@ -30,6 +39,10 @@
 - impesFoam/anisoImpesFoam
 
   - updated (wellboreProperties removed)
+
+- groundwater2DFoam
+
+  - 2 test case for solver validation
 
 ### Utilities
 
