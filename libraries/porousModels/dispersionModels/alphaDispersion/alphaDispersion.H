@@ -32,6 +32,9 @@ Description
 SourceFiles
     alphaDispersion.C
 
+Developer
+    Pierre Horgue
+
 \*---------------------------------------------------------------------------*/
 
 #ifndef alphaDispersion_H
@@ -56,7 +59,9 @@ class alphaDispersion
 {
     //- Private data
     dictionary alphaDispersionCoeffs_;
-    const dimensionedScalar tau_,alphaL_,alphaT_;
+
+    //- model coefficients
+    volScalarField tau_,alphaL_,alphaT_;
 
         
 public:
@@ -83,7 +88,8 @@ public:
     //- Correct the dispersion (effective diffusion)
     void correct()
         {
-            Deff_ = (Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/mag(U_); 
+            dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
+            Deff_ = (Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL); 
         }
 
 };

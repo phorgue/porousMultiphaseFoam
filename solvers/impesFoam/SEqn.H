@@ -18,7 +18,7 @@
         (
             eps*fvm::ddt(Sb) + fvc::div(phib) 
             // wellbore part
-            - (SrcInj*Winj-Fb*SrcExt*Wext)*activateWellbores
+            - (SrcInj*Winj-Fb*SrcExt*Wext)
         );
 
     SbEqn.solve();

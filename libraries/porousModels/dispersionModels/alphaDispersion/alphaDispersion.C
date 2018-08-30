@@ -54,10 +54,57 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
     :
     dispersionModel(name, transportProperties,U),
     alphaDispersionCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    tau_(alphaDispersionCoeffs_.lookup("tau")),
-    alphaL_(alphaDispersionCoeffs_.lookup("alphaL")),
-    alphaT_(alphaDispersionCoeffs_.lookup("alphaT"))
+    tau_
+    (
+        IOobject
+        (
+            "tau",
+            U.time().timeName(),
+            U.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        U.mesh(),
+        dimensionedScalar(alphaDispersionCoeffs_.lookup("tau"))
+    ),
+    alphaL_
+    (
+        IOobject
+        (
+            "alphaL",
+            U.time().timeName(),
+            U.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        U.mesh(),
+        dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaL"))
+    ),
+    alphaT_
+    (
+        IOobject
+        (
+            "alphaT",
+            U.time().timeName(),
+            U.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        U.mesh(),
+        dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaT"))
+    )
 {
+    Info << "Parameters for alpha dispersion model" << nl << "{" << endl;
+    Info << "    tau ";
+    if (tau_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(tau_).value() << endl;}
+    Info <<  "    alphaL ";
+    if (alphaL_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(alphaL_).value() << endl;}
+    Info << "    alphaT ";
+    if (alphaT_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(alphaT_).value() << endl;}
+    Info << "} \n" << endl;
 }
 
 // ************************************************************************* //
