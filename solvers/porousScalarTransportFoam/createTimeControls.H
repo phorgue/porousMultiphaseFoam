@@ -32,12 +32,17 @@ Description
 bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
 
-scalar dCmax =
-    runTime.controlDict().lookupOrDefault<scalar>("dCmax",1);
+scalar dCmax_abs =
+    runTime.controlDict().lookupOrDefault<scalar>("dCmax_abs",1e-6);
+
+scalar dCmax_rel =
+    runTime.controlDict().lookupOrDefault<scalar>("dCmax_rel",1e-6);
 
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
-scalar dCdTmax = 1;
+
+
+scalar dCdTmax = max(dCmax_rel*gMax(C),dCmax_abs)/runTime.deltaTValue();
     
 // ************************************************************************* //

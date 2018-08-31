@@ -1,21 +1,29 @@
 Info<< "Reading wellboreProperties\n" << endl;
 
-IOdictionary wellboreProperties
+dictionary wellboreProperties(transportProperties.subDict("wellboreProperties"));
+
+// Injection Wellbore
+dimensionedScalar qInjection
 (
-    IOobject
+    wellboreProperties.lookupOrDefault<dimensionedScalar>
     (
-        "wellboreProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
+        "qInjection",
+        dimensionedScalar("qInjection",dimVol/dimTime,0.)
+    )
+);    
+
+// Extraction Wellbore
+dimensionedScalar qExtraction
+(
+    wellboreProperties.lookupOrDefault<dimensionedScalar>
+    (
+        "qExtraction",
+        dimensionedScalar("qExtraction",dimVol/dimTime,0.)
     )
 );
 
-scalar activateWellbores(wellboreProperties.lookupOrDefault<scalar>("activateWellbores",0.)); 
-
-// Injection Wellbore
-dimensionedScalar qInjection(wellboreProperties.lookup("qInjection"));    
+Info << " injection flow (m3/s) = " << qInjection << endl;
+Info << " extraction flow (m3/s) = " << qExtraction << endl;
 
 Info<< "Reading field Winj (injection wellbore)\n" << endl;
 volScalarField Winj
@@ -23,7 +31,7 @@ volScalarField Winj
     IOobject
     (
         "Winj",
-        runTime.timeName(),
+        runTime.constant(),
         mesh,
         IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
@@ -36,19 +44,13 @@ dimensionedScalar Vinj(sum(Winj*mesh.V()));
 dimensionedScalar SrcInj("SrcInj",dimensionSet(0,0,-1,0,0),0.);
 SrcInj = qInjection/(Vinj+dimensionedScalar("",dimVol,SMALL));
 
-// Extraction Wellbore
-dimensionedScalar qExtraction
-( 
-    wellboreProperties.lookup("qExtraction")  
-);    
-
 Info<< "Reading field Wext (extraction wellbore)\n" << endl;
 volScalarField Wext
 (
     IOobject
     (
         "Wext",
-        runTime.timeName(),
+        runTime.constant(),
         mesh,
         IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
@@ -59,4 +61,4 @@ volScalarField Wext
 
 dimensionedScalar Vext(sum(Wext*mesh.V()));
 dimensionedScalar SrcExt("SrcExt",dimensionSet(0,0,-1,0,0),0.);
-SrcExt = qExtraction/(Vinj+dimensionedScalar("",dimVol,SMALL));
+SrcExt =  qExtraction/(Vinj+dimensionedScalar("",dimVol,SMALL));

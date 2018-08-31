@@ -102,7 +102,7 @@ volScalarField eps
     IOobject
     (
         "eps",
-        runTime.timeName(),
+        runTime.constant(),
         mesh,
         IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
@@ -118,7 +118,7 @@ volTensorField K
     IOobject
     (
         "K",
-        runTime.timeName(),
+        runTime.constant(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
