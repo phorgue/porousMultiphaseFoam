@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 //- Timestep Saturation equation
-scalarField dSdt= mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext)*activateWellbores)().internalField()/eps.internalField();
+scalarField dSdt= mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext))().internalField()/eps.internalField();
 scalar dSdTmax = gMax(dSdt);
 scalar dtForS = dSmax/(dSdTmax+SMALL);
 
@@ -37,13 +37,13 @@ scalar maxDeltaTFact = -1;
 switch(static_cast<int>(CFLint))
 {
     case 0:
-                #include "CoatsNo.H"
+        #include "CoatsNo.H"
         break;
     case 1:
-                #include "ToddNo.H"
+        #include "ToddNo.H"
         break;
     case 2:
-                #include "CourantNo.H"
+        #include "CourantNo.H"
         break;
 };
 

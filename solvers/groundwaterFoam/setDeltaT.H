@@ -24,10 +24,7 @@ License
 Description
     Timestep for groundwaterFoam solver
 
-    \*---------------------------------------------------------------------------*/
-
-//- compute dh from last time iteration
-scalar dtheta = dthetadTmax*runTime.deltaTValue();
+\*---------------------------------------------------------------------------*/
 
 if(adjustTimeStep)
 {
@@ -80,6 +77,6 @@ if(adjustTimeStep)
 
 }
 
-Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta = " << dtheta << endl;
+Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << " ; dtheta avg = " << dtheta_avg << endl;
 
 // ************************************************************************* //

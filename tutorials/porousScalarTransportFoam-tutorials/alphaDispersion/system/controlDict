@@ -44,9 +44,13 @@ timeFormat      general;
 
 timePrecision   6;
 
+adjustTimeStep yes;
+
 runTimeModifiable true;
 
-dCmax           2e-5;
+dCmax_abs       2e-4;
+
+dCmax_rel       0.05;
 
 maxDeltaT       10000;
 
