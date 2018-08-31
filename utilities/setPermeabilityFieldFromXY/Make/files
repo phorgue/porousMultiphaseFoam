@@ -1,3 +1,0 @@
-setPermeabilityFieldFromXY.C
-
-EXE = $(FOAM_USER_APPBIN)/setPermeabilityFieldFromXY

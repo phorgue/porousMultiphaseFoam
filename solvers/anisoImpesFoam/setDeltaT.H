@@ -27,7 +27,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 //- Timestep Saturation equation
-scalarField dSdt= mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext)*activateWellbores)().internalField()/eps.internalField();
+scalarField dSdt= mag(-fvc::div(phib)+(SrcInj*Winj-SrcExt*Wext))().internalField()/eps.internalField();
 scalar dSdTmax = gMax(dSdt);
 scalar dtForS = dSmax/(dSdTmax+SMALL);
 
