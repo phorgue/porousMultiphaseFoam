@@ -77,7 +77,7 @@ volScalarField theta
     dimless
 );
 theta.dimensions().reset(dimless);
-theta == 0; // temporary initialisation
+theta = 0.0; // temporary initialisation
 
 /////////////////////////////////////////////////////////////////////////////
 //////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
@@ -102,7 +102,7 @@ volScalarField K
     IOobject
     (
         "K",
-        runTime.timeName(),
+        runTime.constant(),
         mesh,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE

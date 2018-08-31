@@ -6,7 +6,7 @@ solver=darcyFoam
 
 runApplication blockMesh
 
-cp 0/K.org 0/K
+cp constant/K.org constant/K
 cp 0/p.org 0/p
 cp 0/Ua.org 0/Ua
 

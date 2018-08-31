@@ -5,7 +5,7 @@
             // capillary term
             + fvc::div(phiPc)*activateCapillarity
             // wellbore terms
-            - (-SrcExt*Wext+SrcInj*Winj)*activateWellbores 
+            - (-SrcExt*Wext+SrcInj*Winj)
         );
 
     pEqn.solve();

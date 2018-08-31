@@ -4,4 +4,4 @@
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
 rm -f log.*
-rm -rf 0/Sa 0/Sb 0/K 0/eps 0/Winj 0/Wext *.* 1* 2* 3* 4* 5* 6* 7* 8* 9* constant/polyMesh
+rm -rf 0/Sa 0/Sb constant/K constant/eps constant/Winj constant/Wext *.* 1* 2* 3* 4* 5* 6* 7* 8* 9* constant/polyMesh

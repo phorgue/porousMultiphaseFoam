@@ -25,13 +25,21 @@ Application
     setBoundaryHeadPressure
 
 Description
-    Utility to set up Head Pressure on a specified patch. Can be used to
-    set up water level on lateral boundaries for groundwaterFoam
+    Utility to set up Head Pressure (3D) or potential (2D) on a specified patch.
+    Can be used to set up water level on lateral boundaries for (2D)groundwaterFoam
 
 Usage
-    setBoundaryHeadPressure -patch patchName -value 50.3
-    or 
-    setBoundaryHeadPressure -patch patchName -file stl_file
+    1) for uniform head pressure (groundwaterFoam) :
+
+      setBoundaryHeadPressure -patch patchName -value 50.3
+
+    2) for stl dependent head pressure (groundwaterFoam)
+
+      setBoundaryHeadPressure -patch patchName -file stl_file
+
+    3) for stl dependent potential (groundwater2DFoam) :
+
+      setBoundaryHeadPressure -patch patchName -file stl_file -version 2D
 
 \*---------------------------------------------------------------------------*/
 
@@ -43,7 +51,8 @@ int main(int argc, char *argv[])
     argList::addOption("patch","patchName","specify the patch to set head pressure");
     argList::addOption("file","fileName","specify the STL file");
     argList::addOption("value","0","uniform potential value");
-  
+    argList::addOption("version","3D","2D (h) or 3D (potential)");
+
     Foam::argList args(argc,argv); 
 
     if (!args.optionFound("patch"))
@@ -56,64 +65,26 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
 
-    volScalarField h
-        (
-            IOobject
-            (
-                "h",
-                runTime.timeName(),
-                mesh,
-                IOobject::MUST_READ,
-                IOobject::AUTO_WRITE
-            ),
-            mesh
-        );
-
-  
-    //-- Reading patch information
-    word patchName = args.optionRead<word>("patch");
-    label patchID = mesh.boundaryMesh().findPatchID(patchName);
-    fvPatchScalarField& hPatch = h.boundaryFieldRef()[patchID];
-    const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
-  
-    //-- Compute and set head pressure
-    if (args.optionFound("file"))
+    word version("3D");
+    if (args.optionFound("version"))
     {
-        //- reading STL informations
-        word STLfile = args.optionRead<word>("file");
-        triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
-        pointField pPoints = potentialSTL.points();
-        Info << nl << "Potential fixed using STL = " << STLfile << endl;
-      
-        //- computing local potential
-        forAll(hPatch,facei)
-        {
-            scalar xy_distance = GREAT;
-            label id_point = -1;
-            forAll(pPoints,pointi)
-            {
-                scalar tmp_dist = Foam::sqrt(pow(pPoints[pointi].x()-faces[facei].x(),2)+pow(pPoints[pointi].y()-faces[facei].y(),2));
-                if (tmp_dist < xy_distance)
-                {
-                    xy_distance = tmp_dist;
-                    id_point = pointi;
-                }
-            }
-            hPatch[facei] = pPoints[id_point].z() - faces[facei].z();
-        }
-
-    }  
-    else
-    {
-        scalar potential = args.optionLookupOrDefault<scalar>("value",0.);
-        Info << nl << "Uniform potential fixed = " << potential << " m " << endl;
-        forAll(faces,facei)
-        {
-            hPatch[facei] = (potential - faces[facei].z());
-        }
+        version = args.optionRead<word>("version");
     }
 
-    h.write();
+    if(version == "3D")
+    {
+        #include "version3D.H"
+    }
+    else if (version == "2D")
+    {
+        #include "version2D.H"
+    }
+    else
+    {
+        FatalErrorIn("in setBoundaryHeadPressure.C")
+            << "version not known : " << version
+                << abort(FatalError);
+    }
 
     Info << nl << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
         << "  ClockTime = " << runTime.elapsedClockTime() << " s"

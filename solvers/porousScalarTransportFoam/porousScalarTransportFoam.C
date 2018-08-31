@@ -43,22 +43,23 @@ int main(int argc, char *argv[])
 {
     #include "setRootCase.H"
     #include "createTime.H"
-    #include "createTimeControls.H"
     #include "createMesh.H"
     #include "createFields.H"
+    #include "createTimeControls.H"
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     while (runTime.run())
     {
 
+        #include "setDeltaT.H"
+
         runTime++;
 
-        #include "setDeltaT.H"
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "CEqn.H"
-        
+
         runTime.write();
     }
 

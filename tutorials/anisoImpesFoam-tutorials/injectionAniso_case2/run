@@ -5,9 +5,9 @@
 
 runApplication blockMesh
 cp 0/Sb.org 0/Sb
-cp 0/Winj.org 0/Winj
-cp 0/Wext.org 0/Wext
-cp 0/K.org 0/K
-cp 0/eps.org 0/eps
+cp constant/Winj.org constant/Winj
+cp constant/Wext.org constant/Wext
+cp constant/K.org constant/K
+cp constant/eps.org constant/eps
 runApplication setFields
 runApplication anisoImpesFoam 
