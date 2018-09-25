@@ -181,3 +181,5 @@ volScalarField infiltration
     mesh,
     infiltrationScalar
 );
+
+scalar hIntegrated = fvc::domainIntegrate(hwater).value();
