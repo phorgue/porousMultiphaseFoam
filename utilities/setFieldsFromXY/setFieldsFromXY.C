@@ -45,32 +45,62 @@ Usage
 
 int main(int argc, char *argv[])
 {
-    argList::addOption("fileIn","fileName","specify the input file");
-    argList::addOption("fileOut","fileName","specify the output file");   
+
+    argList::addOption("file","fileName","specify the input file");
+    argList::addOption("fileIn","fileName","similar to file option");
+    argList::addOption("field","fieldName","specify the output file");
+    argList::addOption("fileOut","fileName","specify the output file");
     argList::addOption("folder","constant","specify the folder");
 
     Foam::argList args(argc,argv); 
 
-    if (!args.optionFound("fileIn"))
+    word matrixFile = "default";
+    word nameField = "default";
+
+    if (args.optionFound("file"))
     {
-        FatalError << "no input file specified" 
-            << nl << " use option -fileIn"
+        matrixFile = args.option("file");
+    }
+    else if (args.optionFound("fileIn"))
+    {
+        WarningIn("setFieldsFromXY.C")
+            << "option fileIn deprecated,  use option -file instead"
+                << nl << endl;
+        matrixFile = args.option("fileIn");
+    }
+    else
+    {
+        FatalErrorIn("setFieldsFromXY.C")
+            << "no input file specified, use option -file"
             << exit(FatalError);
     }
-    else if (!args.optionFound("fileOut"))
+
+    if (args.optionFound("field"))
     {
-        FatalError << "no output file specified" 
-            << nl << " use option -fileOut"
+        nameField = args.option("field");
+    }
+    else if (args.optionFound("fileOut"))
+    {
+        WarningIn("setFieldsFromXY.C")
+            << "option fileOut deprecated, use option -field instead"
+                << nl << endl;
+        nameField = args.option("fileOut");
+    }
+    else
+    {
+        FatalErrorIn("setFieldsFromXY.C")
+            << "no field specified, use option -field"
             << exit(FatalError);
     }
-    
+
     #include "createTime.H"
     #include "createMesh.H"
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    
+
     //- read inputFile permeability matrix
-    RectangularMatrix<scalar> inputFile(IFstream(args.option("fileIn"))());
+    IFstream inputFileStream(matrixFile);
+    RectangularMatrix<scalar> inputFile(inputFileStream());
 
     word fileDir = "constant";
     if (args.optionFound("folder"))
@@ -83,7 +113,7 @@ int main(int argc, char *argv[])
         (
             IOobject
             (
-                args.option("fileOut"),
+                nameField,
                 fileDir,
                 mesh,
                 IOobject::MUST_READ,
