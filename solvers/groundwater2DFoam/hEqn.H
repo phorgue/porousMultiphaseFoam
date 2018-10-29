@@ -12,7 +12,7 @@
 
     hwaterEqn.solve();
  
-    dhdTmax = max(mag(fvc::ddt(hwater))).value();
+    dhdTmax = (max(mag(fvc::ddt(hwater)))/max(hwater)).value();
 
     //- updating potential
     potential == hwater + z0;
