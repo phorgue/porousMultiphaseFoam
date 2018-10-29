@@ -46,7 +46,7 @@ volScalarField hwater
 );
 hwater == potential - z0;
 
-if (min(hwater).value() < 0)
+if (min(hwater).value() <= 0)
 {
     Info << "*** WARNING *** : hwater negative (initialized to 0.01) " << endl;
 
