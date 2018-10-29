@@ -62,6 +62,9 @@ int main(int argc, char *argv[])
         //- Solve height equation
         #include "hEqn.H"
 
+        //- Water bilan computation
+        #include "waterBilan.H"
+
         runTime.write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
