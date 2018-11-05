@@ -1,3 +1,11 @@
+
+### Solvers
+
+- groundwater2DFoam
+
+  - water bilan added (with stationary option to stop run)
+  - dhmax is relative to the max of hwater field
+
 ************************
 *** V1809
 *** New solvers : groundwater2DFoam + groundwaterTransportFoam
