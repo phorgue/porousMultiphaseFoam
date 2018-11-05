@@ -18,10 +18,6 @@
     potential == hwater + z0;
     Info << "Potential min : " << min(potential).value() << " max = " << max(potential).value() << " max(dh) = " << dhdTmax*runTime.deltaTValue() << endl;
 
-    Info << "Water volume = " << fvc::domainIntegrate(hwater).value() << endl;
-    Info << "Water flux = " << fvc::domainIntegrate(hwater).value() - hIntegrated << endl;
-    hIntegrated = fvc::domainIntegrate(hwater).value();
-
     //- updating flux/velocity field
     phi == (-Mf * fvc::snGrad(potential)) * mesh.magSf();
     forAll(mesh.boundary(),patchi)
