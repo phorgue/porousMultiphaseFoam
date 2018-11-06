@@ -1,7 +1,11 @@
 {
-    Info << "*** water bilan ***" << endl;
+    Info << "Water bilan (m3/s) : ";
     forAll(phi.boundaryField(),patchi)
     {
-        Info << phi.boundaryField()[patchi].patch().name() << " = " <<  -sum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi]) << " m3" << endl;
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  -sum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi]) << " ; ";
+        }
     }
+    Info << endl;
 }
