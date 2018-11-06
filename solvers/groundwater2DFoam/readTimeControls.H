@@ -40,7 +40,4 @@ scalar maxDeltaT =
 
 scalar dhdTmax = dhmax/runTime.deltaTValue();
 
-scalar stationaryTolerance =
-    runTime.controlDict().lookupOrDefault("stationaryTolerance", VSMALL);
-
 // ************************************************************************* //
