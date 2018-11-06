@@ -6,12 +6,23 @@
 
 - The toolbox compatibility list:
 
-       - OpenFOAM 5.0			OK (master and dev branches)
-       - OpenFOAM 4.0 and older	   	OK (less features, switch to dedicated branch)
-       - foam-extend 4.0		OK (foam-extend branch)
-       - OpenFOAM+ v1712 and older 	OK (esi-version branch)
-       - foam-extend 3.2 and older 	NO
-       
+  - branch "master": 
+    - OpenFOAM 6	v1809
+    - OpenFOAM 5.0	v1809
+    - OpenFOAM 4.0	v1.4.1
+    - OpenFOAM 3.0	v1.2
+
+  - branch "foam-extend":
+    - foam-extend 4.0	v1809
+
+  - branch "esi-version":
+    - OpenFOAM v1806	v1809
+    - OpenFOAM v1712    v1805
+
+  - version no supported:
+    - OpenFOAM 2.4 and older
+    - foam-extend 3.2 and older
+    - OpenFOAM v1706 and older
 
 - This toolbox needs only a standard OpenFOAM installation (see www.openfoam.org)
 
