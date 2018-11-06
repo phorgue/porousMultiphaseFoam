@@ -1,3 +1,7 @@
+************************
+*** Vxxxx
+*** New solvers : stationaryGroundwater2DFoam
+************************
 
 ### Solvers
 
@@ -5,6 +9,21 @@
 
   - water bilan added (with stationary option to stop run)
   - dhmax is relative to the max of hwater field
+  - potentialEqn is solved instead of hwater equation (identical to stationary)
+
+- stationaryGroundwater2DFoam
+
+  - "stationary" version of groundwater2DFoam  
+
+### Tutorials
+
+- stationaryGroundwater2DFoam
+
+  - new tutorial relative to the new solver
+
+- groundwater2DFoam
+
+  - updated to be similar to the stationary case
 
 ************************
 *** V1809
