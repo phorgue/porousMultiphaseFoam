@@ -59,8 +59,8 @@ int main(int argc, char *argv[])
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Solve height equation
-        #include "hEqn.H"
+        //- Solve potential equation
+        #include "potentialEqn.H"
 
         //- Water bilan computation
         #include "waterBilan.H"
