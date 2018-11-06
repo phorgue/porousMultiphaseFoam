@@ -1,5 +1,5 @@
 {
-    Info << "Water bilan (m3/s) : ";
+    Info << "Water bilan (m3/s) : infiltration = " << fvc::domainIntegrate(infiltration).value() << " ; ";
     forAll(phi.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
