@@ -22,26 +22,15 @@ solvers
         solver          PCG;
         preconditioner  DIC;
         tolerance       1e-12;
-        relTol          0;
-    }
-
-    hwater
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-12;
         relTol          1e-3;
     }
-
 }
 
 SIMPLE
 {
-    nNonOrthogonalCorrectors 0;
-
     residualControl
     {
-        hwater          1e-4;
+        potential          1e-6;
     }
 }
 
@@ -49,11 +38,8 @@ relaxationFactors
 {
     equations
     {
-        hwater          0.01;
+        potential          0.5;
     }
 }
-
-
-
 
 // ************************************************************************* //
