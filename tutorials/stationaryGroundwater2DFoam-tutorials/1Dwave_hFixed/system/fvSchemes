@@ -32,7 +32,9 @@ divSchemes
 
 laplacianSchemes
 {
-    default      	Gauss linear corrected;;
+    default         none;
+    laplacian(transmissivity,potential) Gauss linear corrected;
+
 }
 
 interpolationSchemes
@@ -40,7 +42,8 @@ interpolationSchemes
     default		none;
     K			harmonic;
     flux(U)   		linear;
-    div(phi,hwater)     upwind phi;
+    interpolate(hwater) linear;
+
 }
 
 snGradSchemes

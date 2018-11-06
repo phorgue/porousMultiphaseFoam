@@ -22,10 +22,10 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    groundwater2DFoam
+    stationaryGroundwater2DFoam
 
 Description
-    Transient solver for free-surface flow in porous media
+    Stationary solver for free-surface flow in porous media
 
 Developer
     P. Horgue
@@ -47,20 +47,17 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     simpleControl simple(mesh);
     #include "createFields.H"
-    #include "readPicardControl.H"
-    //#include "computeInitialSolution.H"
-    
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    scalar sousrelax = 0;
+
     Info << "\nStarting time loop\n" << endl;
 
-    while (simple.loop(runTime) || (resPicard > tolPicard))
+    while (simple.loop(runTime))
     {
-        sousrelax += runTime.deltaTValue()*sousrelaxfactor;
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         //- Solve height equation
-        #include "hEqn.H"
+        #include "potentialEqn.H"
 
         //- Water bilan computation
         #include "waterBilan.H"
