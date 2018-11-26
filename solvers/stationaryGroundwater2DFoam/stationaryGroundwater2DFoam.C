@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     simpleControl simple(mesh);
     #include "createFields.H"
+    #include "readFixedPoints.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
