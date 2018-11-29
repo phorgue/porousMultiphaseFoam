@@ -135,8 +135,8 @@ Foam::scalar Foam::MNTfile::interpolate(const point& location)
 {
     label idx_ = floor((location.x()-x0_)/dx_);
     label idy_ = floor((location.y()-y0_)/dy_);
-    scalar fracx_ = (location.x() - idx_*dx_)/dx_;
-    scalar fracy_ = (location.y() - idy_*dy_)/dy_;
+    scalar fracx_ = (location.x() - idx_*dx_ - x0_)/dx_;
+    scalar fracy_ = (location.y() - idy_*dy_ - y0_)/dy_;
     scalar tmp1_ = (1.0-fracx_) * zvalues_[idx_+nx_*idy_]+ fracx_ * zvalues_[idx_+1+nx_*idy_];
     scalar tmp2_ = (1.0-fracx_) * zvalues_[idx_+nx_*(idy_+1)]+ fracx_ * zvalues_[idx_+1+nx_*(idy_+1)];
     scalar interpolatedValue_ = (1.0-fracy_) * tmp1_ + fracy_ * tmp2_;

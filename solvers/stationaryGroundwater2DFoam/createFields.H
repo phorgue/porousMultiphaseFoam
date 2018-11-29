@@ -168,7 +168,7 @@ surfaceScalarField phiG("phiG",0*phi);
 surfaceScalarField phiPc("phiPc",0*phi);
 
 //-
-Info << "Reading field infiltration (if present)\n" << endl;
+Info << "Reading field infiltration (if present)" << endl;
 dimensionedScalar infiltrationScalar(transportProperties.lookupOrDefault("infiltration",dimensionedScalar("",dimLength/dimTime,0.)));
 volScalarField infiltration
 (
