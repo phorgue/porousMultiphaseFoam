@@ -35,6 +35,7 @@ Developer
 #include "fvCFD.H"
 #include "harmonic.H"
 #include "fixedValueFvPatchField.H"
+#include "MNTfile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -46,6 +47,7 @@ int main(int argc, char *argv[])
     #include "readTimeControls.H"  
     #include "createMesh.H"
     #include "createFields.H"
+    #include "readFixedPoints.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
