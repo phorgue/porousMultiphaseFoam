@@ -9,6 +9,8 @@
             infiltration
         );
 
+    if(fixedPotentialIDList.size() > 0) potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
+
     potentialEqn.solve();
 
     //- updating hwater
