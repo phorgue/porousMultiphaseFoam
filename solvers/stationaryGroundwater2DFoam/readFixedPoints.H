@@ -19,14 +19,15 @@ if (MNTfileName.size() > 0)
 }
 else
 {
-    Info <<  " no MNT file"  << endl;
+    Info << nl << " no MNT file"  << endl;
 }
 
 if (fixedPotentialList.size() > 0)
 {
-    Info << " fixed potential positions and values : " << endl;
+    Info << nl << "Fixed potential positions and values are " << nl << "{";
     forAll(fixedPotentialList,pointi)
     {
-        Info << fixedPotentialList[pointi].first() << " " << fixedPotentialValueList[pointi] << endl;
+        Info << nl << "  " << fixedPotentialList[pointi].first() << " " << fixedPotentialValueList[pointi];
     }
+    Info << nl << "}" << endl;
 }
