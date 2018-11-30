@@ -19,3 +19,4 @@ wmake solvers/stationaryGroundwater2DFoam
 wmake utilities/darcyFoam
 wmake utilities/setBoundaryHeadPressure
 wmake utilities/setFieldsFromXY
+wmake utilities/setFieldsFromMNT
