@@ -113,7 +113,7 @@ volScalarField eps
 if (max(eps).value() <= 0) FatalErrorIn("createFields.H") << " porosity eps equal to 0" << exit(FatalError);
 
 // Intrinsic permeability       
-Info<< "Reading field K\n" << endl;
+Info<< "Reading field K" << endl;
 volScalarField K
 (
     IOobject
