@@ -57,56 +57,67 @@ Foam::MNTfile::MNTfile
     IFstream ifs(fileName);
     DynamicList<point> mnt_data; 
 
+    Info << nl << "Reading MNT file '" << fileName << "' ...";
     // read data
     while (ifs.good())
     {
         string line;
         ifs.getLine(line);
 
-        label n = 0;
-        std::size_t pos = 1;
-        DynamicList<string> split;
+        if (line != "")
+        {
+            label n = 0;
+            std::size_t pos = 0;
+            DynamicList<string> split;
         
-        while ((pos != std::string::npos) && (n <= nEntries))
-        {
-            std::size_t nPos = line.find(separator_, pos);
-            if (nPos == std::string::npos)
+            while ((pos != std::string::npos) && (n <= nEntries))
             {
-                split.append(line.substr(pos));
-                pos = nPos;
-                n++;
+                std::size_t nPos = line.find(separator_, pos);
+                if (nPos == std::string::npos)
+                {
+                    split.append(line.substr(pos));
+                    pos = nPos;
+                    n++;
+                }
+                else
+                {
+                    split.append(line.substr(pos, nPos - pos));
+                    pos = nPos + 1;
+                    n++;
+                }
             }
-            else
+
+            if (split.size() <= 1)
             {
-                split.append(line.substr(pos, nPos - pos));
-                pos = nPos + 1;
-                n++;
+                break;
             }
-        }
 
-        if (n != 3)
-        {
-            FatalErrorIn("MNTfile.C")
-                << "wrong number of elements in MNT file :" << fileName
-                    << nl << " found " << split.size() << " elements instead of 3 atline " << mnt_data.size()+1
-                    << nl << "List of read elements : " << split
-                    << abort(FatalError);
-        }
+            if (n != 3)
+            {
+                FatalErrorIn("MNTfile.C")
+                    << "wrong number of elements in MNT file :" << fileName
+                        << nl << " found " << split.size() << " elements instead of 3 at line " << mnt_data.size()+1
+                        << nl << "List of read elements : " << split
+                        << abort(FatalError);
+            }
 
-        scalar x = readScalar(IStringStream(split[0])());
-        scalar y = readScalar(IStringStream(split[1])());
-        scalar z = readScalar(IStringStream(split[2])());
-        mnt_data.append(point(x,y,z));
+            scalar x = readScalar(IStringStream(split[0])());
+            scalar y = readScalar(IStringStream(split[1])());
+            scalar z = readScalar(IStringStream(split[2])());
+            mnt_data.append(point(x,y,z));
+        }
 
     }
 
-    Info << nl << "MNT file : " << fileName << " read and found " << mnt_data.size() << " points" << endl;
-    
+    Info << "OK!"
+        << nl << "{"
+        << nl << "  number of points = " << mnt_data.size() << " ";
+
     x0_ = mnt_data[0][0];
     y0_ = mnt_data[0][1];
     dx_ = mnt_data[1][0] - mnt_data[0][0];
     dy_ = 0;
-    if (dx_ <= 0) FatalErrorIn("MNTfile.C") << "MNT file incorrectly sorted" << abort(FatalError);
+    if (dx_ <= 0) FatalErrorIn("MNTfile.C") << "MNT file incorrectly sorted (x1 = x2)" << abort(FatalError);
     zvalues_ = scalarList(mnt_data.size());
     zvalues_[0] = mnt_data[0][2];
 
@@ -115,14 +126,20 @@ Foam::MNTfile::MNTfile
         zvalues_[i] = mnt_data[i][2];
         if (dy_ == 0)
         {
-            if (mnt_data[i][1] > y0_)
+            if (mnt_data[i][1] != y0_)
             {
                 dy_ = mnt_data[i][1] - y0_;
-                nx_ = i+1;
+                nx_ = i;
             }
         }
     }
-    ny_ = mnt_data.size()/nx_;
+    ny_ = mag(mnt_data.size()/nx_);
+
+    Info << nl << "  grid = " << nx_ << " x " << ny_
+        << nl << "  dx = " << dx_ << " and dy = " << dy_
+        << nl << "  startPoint (" << x0_ << "," << y0_ << ")"
+        << nl << "  endPoint   (" << x0_+nx_*dx_ << "," << y0_+ny_*dy_ << ")"
+        << nl << "}" << endl;
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -135,6 +152,11 @@ Foam::scalar Foam::MNTfile::interpolate(const point& location)
 {
     label idx_ = floor((location.x()-x0_)/dx_);
     label idy_ = floor((location.y()-y0_)/dy_);
+    if ((idx_ < 0) || (idx_ >= nx_) || (idy_ < 0) || (idy_ >= ny_))
+    {
+        FatalErrorIn("Foam::scalar Foam::MNTfile::interpolate(const point& location)") << "location "
+            << location << " out of MNT bounds" << abort(FatalError);
+    }
     scalar fracx_ = (location.x() - idx_*dx_ - x0_)/dx_;
     scalar fracy_ = (location.y() - idy_*dy_ - y0_)/dy_;
     scalar tmp1_ = (1.0-fracx_) * zvalues_[idx_+nx_*idy_]+ fracx_ * zvalues_[idx_+1+nx_*idy_];
