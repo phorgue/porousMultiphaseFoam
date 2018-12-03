@@ -1,4 +1,6 @@
-List<Tuple2<point,scalar> > fixedPotentialList(transportProperties.lookup("fixedPotentialList"));
+List<Tuple2<point,scalar> > fixedPotentialList(transportProperties.lookupOrDefault
+("fixedPotentialList",List<Tuple2<point,scalar> >())
+);;
 
 labelList fixedPotentialIDList(fixedPotentialList.size());
 scalarList fixedPotentialValueList(fixedPotentialList.size());
@@ -19,7 +21,7 @@ if (MNTfileName.size() > 0)
 }
 else
 {
-    Info << nl << " no MNT file"  << endl;
+    Info << nl << "No MNT file"  << endl;
 }
 
 if (fixedPotentialList.size() > 0)
@@ -30,4 +32,7 @@ if (fixedPotentialList.size() > 0)
         Info << nl << "  " << fixedPotentialList[pointi].first() << " " << fixedPotentialValueList[pointi];
     }
     Info << nl << "}" << endl;
+}
+{
+    Info << nl << "No fixed potential" << endl;
 }
