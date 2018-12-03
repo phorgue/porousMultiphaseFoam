@@ -16,15 +16,23 @@
   - "stationary" version of groundwater2DFoam
   - fixedPotentialList added in transportProperties (optional)
 
+- stationaryGroundwaterFoam
+
+  - "stationary" version of groundwaterFoam (Richards's equation)
+
 ### Tutorials
+
+- groundwater2DFoam
+
+  - updated to be similar to the stationary case
 
 - stationaryGroundwater2DFoam
 
   - new tutorial relative to the new solver
 
-- groundwater2DFoam
+- stationaryGroundwaterFoam
 
-  - updated to be similar to the stationary case
+  - new tutorial relative to the new solver
 
 ### Libraries
 
