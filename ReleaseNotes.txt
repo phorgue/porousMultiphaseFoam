@@ -14,7 +14,7 @@
 - stationaryGroundwater2DFoam
 
   - "stationary" version of groundwater2DFoam
-  - fixedPotentialList added in 
+  - fixedPotentialList added in transportProperties (optional)
 
 ### Tutorials
 
@@ -33,6 +33,17 @@
   - new library containing classes for GIS manipulation
   - first class is MNT file used to read xyz file and performed
     bilinear interpolation.
+
+### Utilities
+
+- setFieldsFromMNT
+
+  - new utility to initialize fields using MNTfile class with bilinear
+  interpolation
+
+- setFieldsFromXY
+
+  - new option to add offset to interpolated value (also in setFieldsFromMNT)
 
 ************************
 *** V1809
