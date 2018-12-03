@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     argList::addOption("field","fieldName","specify the output file");
     argList::addOption("fileOut","fileName","specify the output file");
     argList::addOption("folder","constant","specify the folder");
+    argList::addOption("offset","0","add offset to interpolated value");
 
     Foam::argList args(argc,argv); 
 
@@ -92,6 +93,8 @@ int main(int argc, char *argv[])
             << "no field specified, use option -field"
             << exit(FatalError);
     }
+
+    scalar offset = args.optionLookupOrDefault<scalar>("offset",0.);
 
     #include "createTime.H"
     #include "createMesh.H"
@@ -167,7 +170,7 @@ int main(int argc, char *argv[])
                 << nl << id1 << " / " << id2 << " / " << id3 << endl;
         }
        
-        outputFile[celli] = ( dist1*inputFile[id1][2] + dist2*inputFile[id2][2] + dist3*inputFile[id3][2] ) / (dist1+dist2+dist3);
+        outputFile[celli] = ( dist1*inputFile[id1][2] + dist2*inputFile[id2][2] + dist3*inputFile[id3][2] ) / (dist1+dist2+dist3) + offset;
 
     }
 
