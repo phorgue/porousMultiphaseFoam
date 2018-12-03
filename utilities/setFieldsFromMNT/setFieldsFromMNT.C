@@ -37,7 +37,7 @@ Description
     with x sorted in ascending order.
 
 Usage
-    setFieldsFromMNT -file MNTfile -field z0
+    setFieldsFromMNT -file MNTfile -field z0 -offset -1
 
 \*---------------------------------------------------------------------------*/
 
@@ -50,12 +50,11 @@ int main(int argc, char *argv[])
     argList::addOption("file","fileName","specify the input file");
     argList::addOption("field","fieldName","specify the output file");
     argList::addOption("folder","constant","specify the folder");
-
+    argList::addOption("offset","0","add offset to interpolated value");
+    
     Foam::argList args(argc,argv); 
 
     word nameMNT = "default";
-    word nameField = "default";
-
     if (args.optionFound("file"))
     {
         nameMNT = args.option("file");
@@ -67,6 +66,7 @@ int main(int argc, char *argv[])
             << exit(FatalError);
     }
 
+    word nameField = "default";
     if (args.optionFound("field"))
     {
         nameField = args.option("field");
@@ -77,6 +77,8 @@ int main(int argc, char *argv[])
             << "no field specified, use option -field"
             << exit(FatalError);
     }
+    
+    scalar offset = args.optionLookupOrDefault<scalar>("offset",0.);
 
     #include "createTime.H"
     #include "createMesh.H"
@@ -89,8 +91,7 @@ int main(int argc, char *argv[])
     word fileDir = "constant";
     if (args.optionFound("folder"))
     {
-        fileDir = args.option("folder"); 
-    
+        fileDir = args.option("folder");
     }
 
     volScalarField outputFile
@@ -108,7 +109,7 @@ int main(int argc, char *argv[])
 
     forAll(outputFile,celli)
     {
-        outputFile[celli] = sourceFile.interpolate(mesh.C()[celli]);
+        outputFile[celli] = sourceFile.interpolate(mesh.C()[celli]) + offset;
     }
 
     outputFile.write();
