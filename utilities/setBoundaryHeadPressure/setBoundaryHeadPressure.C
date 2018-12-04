@@ -25,26 +25,26 @@ Application
     setBoundaryHeadPressure
 
 Description
-    Utility to set up Head Pressure (3D) or potential (2D) on a specified patch.
-    Can be used to set up water level on lateral boundaries for (2D)groundwaterFoam
+    Utility to set up head Pressure (3D) or potential (2D) on a specified patch
+    Can be used to set up water level for all groundwater solvers.
 
 Usage
-    1) for uniform head pressure (groundwaterFoam) :
+    1) for uniform head pressure (groundwaterFoam/stationaryGroundwaterFoam)
 
       setBoundaryHeadPressure -patch patchName -value 50.3
 
-    2) for stl dependent head pressure (groundwaterFoam)
+    2) MNT dependent head pressure (groundwaterFoam/stationaryGroundwaterFoam)
 
       setBoundaryHeadPressure -patch patchName -file stl_file
 
-    3) for stl dependent potential (groundwater2DFoam) :
+    3) MNT dependent potential (groundwater2DFoam/stationaryGroundwater2DFoam)
 
       setBoundaryHeadPressure -patch patchName -file stl_file -version 2D
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "triSurfaceMesh.H"
+#include "MNTfile.H"
 
 int main(int argc, char *argv[])
 {
