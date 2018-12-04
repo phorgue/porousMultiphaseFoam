@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
-|    \\/     M anipulation  |                                                 |
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -15,22 +15,23 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include "../parameters.txt"
+
 dimensions      [0 1 0 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform $param_hinit;
 
 boundaryField
 {
-    inlet
+    top
     {
         type            darcyGradPressure;
-        value           uniform -0.75;
-        gradient        uniform -0.75;   
+        value           uniform 0; 
     }
-    outlet
+    bottom
     {
         type            fixedValue;
-        value           uniform 0;
+        value           uniform $param_houtlet;
     }
     frontAndBack
     {
