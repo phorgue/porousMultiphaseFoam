@@ -14,23 +14,25 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-convertToMeters 1;
+#include "../parameters.txt"
+
+//convertToMeters 1;
 
 vertices        
 (
-    (0 0 0)
-    (0.1 0 0)
-    (0.1 10 0)
-    (0 10 0)
-    (0 0 0.1)
-    (0.1 0 0.1)
-    (0.1 10 0.1)
-    (0 10 0.1)
+    ($xmin $ymin $zmin)
+    ($xmax $ymin $zmin)
+    ($xmax $ymax $zmin)
+    ($xmin $ymax $zmin)
+    ($xmin $ymin $zmax)
+    ($xmax $ymin $zmax)
+    ($xmax $ymax $zmax)
+    ($xmin $ymax $zmax)
 );
 
 blocks          
 (
-    hex (0 1 2 3 4 5 6 7) (1 500 1) simpleGrading (1 1 1)
+    hex (0 1 2 3 4 5 6 7) ($nx $ny $nz) simpleGrading (1 1 1)
 );
 
 edges           
@@ -39,12 +41,12 @@ edges
 
 patches         
 (
-    patch inlet 
+    patch top 
     (
         (3 7 6 2)
     )
 
-    patch outlet 
+    patch bottom 
     (
         (1 5 4 0)
     )

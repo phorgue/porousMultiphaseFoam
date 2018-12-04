@@ -21,11 +21,11 @@ internalField   uniform 9.4e-12;
 
 boundaryField
 {
-    inlet
+    top
     {
         type            zeroGradient;
     }
-    outlet
+    bottom
     {
         type            zeroGradient;
     }
