@@ -11,6 +11,7 @@ wmake solvers/impesFoam
 wmake solvers/anisoImpesFoam
 wmake solvers/groundwaterFoam
 wmake solvers/porousScalarTransportFoam
+wmake solvers/porousScalarTransport2DFoam
 wmake solvers/groundwater2DFoam
 wmake solvers/groundwaterTransportFoam
 wmake solvers/stationaryGroundwater2DFoam
