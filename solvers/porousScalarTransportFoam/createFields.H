@@ -120,3 +120,19 @@ scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
 
 #include "createWellbores.H"
 dimensionedScalar Cin(wellboreProperties.lookup("Cin"));
+
+bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
+word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","CmassBalance.csv");
+OFstream massBalanceCSV(CSVoutput);
+if (CSVactive)
+{
+    massBalanceCSV << "#Time TotalMass(kg)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    massBalanceCSV << endl;
+}
