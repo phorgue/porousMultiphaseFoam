@@ -8,7 +8,7 @@
                 + fvm::div(phi, C, "div(phi,C)")
                 - fvm::laplacian(DeffModel->Deff(), C, "laplacian(Deff,C)")
                 ==
-                R * (SrcInj*Cin)*Winj - (SrcExt*C)*Wext
+                R * (SrcInj*Cin*Winj - SrcExt*C*Wext)
                 - eps * R * Saturation * fvm::Sp(lambda,C)
             );
 

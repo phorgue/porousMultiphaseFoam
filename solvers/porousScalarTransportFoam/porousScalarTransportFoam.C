@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "CEqn.H"
+        #include "CmassBalance.H"
 
         runTime.write();
     }
