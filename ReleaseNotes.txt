@@ -11,6 +11,11 @@
   - dhmax is relative to the max of hwater field
   - potentialEqn is solved instead of hwater equation (identical to stationary)
 
+-porousScalarTransportFoam
+
+  - mass balance added for C tracer for each non-wall patch and injection
+  wellbores. Results are displayed in terminal and CSV file (see tutorials)
+
 - stationaryGroundwater2DFoam
 
   - "stationary" version of groundwater2DFoam
