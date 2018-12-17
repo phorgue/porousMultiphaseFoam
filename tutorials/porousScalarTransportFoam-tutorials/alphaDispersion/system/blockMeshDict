@@ -16,14 +16,14 @@ FoamFile
 
 convertToMeters 1;
 
-xmin -100;
-xmax 1000;
+xmin 0;
+xmax 500;
 ymin -100;
 ymax 100;
 zmin 0;
 zmax 1;
 
-nx 550;
+nx 250;
 ny 100;
 
 vertices
