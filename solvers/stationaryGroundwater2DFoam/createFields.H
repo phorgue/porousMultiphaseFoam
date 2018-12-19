@@ -40,32 +40,17 @@ volScalarField hwater
         "hwater",
         runTime.timeName(),
         mesh,
-        IOobject::READ_IF_PRESENT,
+        IOobject::NO_READ,
         IOobject::AUTO_WRITE
     ),
     potential
 );
 hwater == potential - z0;
 
-if (min(hwater).value() <= 0)
-{
-    Info << "*** WARNING *** : hwater negative (initialized to 0.01) " << endl;
-
-    forAll(mesh.C(),celli)
-    {
-        hwater[celli] = max(hwater[celli],0.01);
-    }
-    forAll(hwater.boundaryField(),patchi)
-    {
-        forAll(hwater.boundaryFieldRef()[patchi],facei)
-        {
-            hwater.boundaryFieldRef()[patchi][facei] =  max(0.01,hwater.boundaryFieldRef()[patchi][facei]);
-        }
-    }
-}
-hwater.write();
+#include "correctInitialPotential.H"
 
 Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << nl << endl;
+hwater.write();
 
 //////////////////////////////////////////////////////////////////
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
