@@ -15,9 +15,9 @@
 
     //- updating hwater
     hwater == potential - z0;
-    if (min(hwater).value() <= 0) FatalErrorIn("potentialEqn.H") << " Computed hwater fields has negative values, try to reduce relaxation" << exit(FatalError);
     dhdTmax = (max(mag(fvc::ddt(hwater)))/max(hwater)).value();
     Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", max(dh) = " << dhdTmax*runTime.deltaTValue() << endl;
+    if (min(hwater).value() <= 0) FatalErrorIn("potentialEqn.H") << " Computed hwater fields has negative values, try to reduce relaxation" << exit(FatalError);
 
     //- updating flow properties
     transmissivity = Mf*fvc::interpolate(hwater);
