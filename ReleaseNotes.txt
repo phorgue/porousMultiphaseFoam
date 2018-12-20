@@ -40,7 +40,7 @@
 
 - stationaryGroundwater2DFoam
 
-  - new tutorial relative to the new solver
+  - new tutorial relative to the new solver (use forcingPotential option)
 
 - stationaryGroundwaterFoam
 

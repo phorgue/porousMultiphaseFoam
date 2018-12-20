@@ -2,64 +2,40 @@
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    object      blockMeshDict;
+    class       volScalarField;
+    location    "0";
+    object      potential;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-convertToMeters 1;
+dimensions      [0 1 0 0 0 0 0];
 
-vertices        
-(
-    (0 0 0)
-    (1 0 0)
-    (1 1 0)
-    (0 1 0)
-    (0 0 1)
-    (1 0 1)
-    (1 1 1)
-    (0 1 1)
-);
+internalField   uniform 0.1;
 
-blocks          
-(
-    hex (0 1 2 3 4 5 6 7) (10 1 1) simpleGrading (1 1 1)
-);
+boundaryField
+{
+    inlet
+    {
+        type            darcyGradPressure;
+        value           uniform 0;
+    }
+    outlet
+    {
+        type            fixedValue;
+        value           uniform 0.4;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
 
-edges           
-(
-);
-
-patches         
-(
-    patch inlet 
-    (
-        (0 4 7 3)
-    )
-
-    patch outlet 
-    (
-   	(2 6 5 1)
-    )
-
-    empty frontAndBack 
-    (
-        (3 7 6 2)
-        (0 3 2 1)
-        (1 5 4 0)
-        (4 5 6 7)
-    )
-);
-
-mergePatchPairs 
-(
-);
 
 // ************************************************************************* //
