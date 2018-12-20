@@ -10,7 +10,7 @@ volScalarField potentialMNT(
         runTime.constant(),
         mesh,
         IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
+        IOobject::NO_WRITE
     ),
     mesh,
     dimensionedScalar("default_potential",dimLength,0),
