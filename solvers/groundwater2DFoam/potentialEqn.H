@@ -9,7 +9,11 @@
             infiltration
         );
 
-    if(fixedPotentialIDList.size() > 0) potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
+    //- Fix values if forcingPotential "fixedValue" or "fixedMNT"
+    if ((forcingPotential.substr(0,5) == "fixed") && (fixedPotentialIDList.size() > 0))
+    {
+        potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
+    }
 
     potentialEqn.solve();
 
