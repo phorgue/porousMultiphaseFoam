@@ -3,6 +3,10 @@
 *** New solver : stationaryGroundwater2DFoam
 ************************
 
+### Wiki
+
+- A wiki has been initialiser for some solvers and utilities on github
+
 ### Solvers
 
 - groundwater2DFoam
@@ -20,6 +24,9 @@
 
   - "stationary" version of groundwater2DFoam
   - fixedPotentialList added in transportProperties (optional)
+  - forcing potential mode is added with two possible modes :
+    - fixedValue : use values given in fixedPotentialList
+    - fixedMNT : use bilinear interpolated value using fileMNT given 
 
 - stationaryGroundwaterFoam
 
