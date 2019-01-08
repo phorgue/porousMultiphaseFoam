@@ -36,7 +36,7 @@ dimensionedScalar eps
 
 Info<< "Reading porous transport properties" << endl;
 dictionary porousTransport(transportProperties.subDict("porousTransport"));
-word phaseName(porousTransport.lookupOrDefault<word>("phaseName","notDefined"));
+word phaseName(porousTransport.lookupOrDefault<word>("phaseName",""));
 dimensionedScalar Kd(porousTransport.lookupOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
 dimensionedScalar rs(porousTransport.lookupOrDefault("rs",dimensionedScalar("rs_default",dimensionSet(1,-3,0,0,0),0.)));
 dimensionedScalar epsTotal(porousTransport.lookupOrDefault("epsTotal",dimensionedScalar("epsTotal_default",dimless,0.)));
