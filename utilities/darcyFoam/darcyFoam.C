@@ -28,7 +28,6 @@ Description
     Stationary solver for incompressible single-phase flow in porous medium
 
 Developers
-    Romain Guibert
     Pierre Horgue
 
 \*---------------------------------------------------------------------------*/
