@@ -5,7 +5,7 @@
 
 ### Wiki
 
-- A wiki has been initialiser for some solvers and utilities on github
+- A wiki has been initialised for some solvers and utilities on github
 
 ### Solvers
 
@@ -46,6 +46,10 @@
 
   - new tutorial relative to the new solver
 
+- porousScalarTransportFoam
+
+  - new tutorial case to validate the new BC fixedFlux
+
 ### Libraries
 
 - toolsGIS
@@ -53,6 +57,12 @@
   - new library containing classes for GIS manipulation
   - first class is MNT file used to read xyz file and performed
     bilinear interpolation.
+
+- porousBoundaryConditions
+
+  - new boundary condition "fixedFlux" to impose a user-defined fixed flux
+  for a given specie C. Dispersion is set to 0 along this boundary to respect
+  mass conservation and ensure that fixed flux is correctly computed.
 
 ### Utilities
 
