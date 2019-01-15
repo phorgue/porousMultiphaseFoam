@@ -85,10 +85,11 @@ volVectorField U
         "U"+phaseName,
         runTime.timeName(),
         mesh,
-        IOobject::MUST_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
     ),
-    mesh
+    mesh,
+    dimensionedVector("Udefault",dimLength/dimTime,vector(0,0,0))
 );
 
 Info<< "Reading/Computing field phi" << phaseName << nl << endl;
