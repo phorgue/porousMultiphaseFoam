@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------* \
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     porousScalarTransportFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         10000000;//8640000;
+
+deltaT          0.1;
+
+writeControl    adjustableRunTime;
+
+writeInterval   1000000;//720000;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+adjustTimeStep yes;
+
+runTimeModifiable true;
+
+dCmax_abs       2e-4;
+
+dCmax_rel       0.05;
+
+maxDeltaT       100000;
+
+CSVactive       true;
+
+CSVoutput       "CmassBalance.csv";
+
+// ************************************************************************* //
