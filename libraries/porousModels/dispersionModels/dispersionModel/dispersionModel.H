@@ -145,7 +145,7 @@ public:
         }
 
     //- Correct the effective dispersion
-    virtual void correct() = 0; 
+    virtual void correct(const volScalarField& C) = 0; 
 
 };
 
