@@ -104,16 +104,11 @@ void Foam::fixedFlux::updateCoeffs()
     {
         return;
     }
-
-    const fvsPatchField<scalar>& Deff_=
-        patch().lookupPatchField<surfaceScalarField, scalar>("DeffModel");
-    
     const fvsPatchField<scalar>& phip_=
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
     scalarField results(patch().patch().faceCentres().size());    
     results = -fixedFluxValue_/sum(phip_);
     operator== (results);
-    Info << -fixedFluxValue_/sum(phip_) << endl;
     fixedValueFvPatchScalarField::updateCoeffs();
 }
 
