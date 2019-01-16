@@ -36,6 +36,7 @@ Developer
 #include "harmonic.H"
 #include "fixedValueFvPatchField.H"
 #include "MNTfile.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -48,6 +49,7 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "createFields.H"
     #include "readFixedPoints.H"
+    #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -56,10 +58,13 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "setDeltaT.H"
-        
+
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
+
+        //- Update event
+        #include "updateEvent.H"
 
         //- Solve potential equation
         #include "potentialEqn.H"
