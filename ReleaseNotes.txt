@@ -57,6 +57,8 @@
   - new library containing classes for GIS manipulation
   - first class is MNT file used to read xyz file and performed
     bilinear interpolation.
+  - second class is eventFile to specify spatiallized time-varying source term
+    for groundwaterFoam/groundwater2DFoam solvers
 
 - porousBoundaryConditions
 
