@@ -34,6 +34,7 @@ Developers
 
 #include "fvCFD.H"
 #include "incompressiblePhase.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,7 +48,7 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
-    #include "createWellbores.H"
+    #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
 
     fvScalarMatrix pEqn
         (
-            fvm::laplacian(-Mf,p) + fvc::div(phiG) + (SrcExt*Wext-SrcInj*Winj)
+            fvm::laplacian(-Mf,p) + fvc::div(phiG) - sourceTerm
         );
 
     pEqn.solve();
