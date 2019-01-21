@@ -1,6 +1,6 @@
 {
     //- terminal display
-    Info << "C mass balance (kg/s) : injection = " << fvc::domainIntegrate((SrcInj*Cin)*Winj).value() << " ; ";
+    Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
     forAll(phi.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")

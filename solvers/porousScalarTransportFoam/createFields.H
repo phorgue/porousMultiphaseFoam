@@ -115,12 +115,9 @@ autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportPr
 Info << "Computing retard coefficient R" << endl;
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
 
-//////////////////////////////////////////////////////////////
-//////////////////// INJECTION PROPERTIES ////////////////////
-//////////////////////////////////////////////////////////////
-
-#include "createWellbores.H"
-dimensionedScalar Cin(wellboreProperties.lookup("Cin"));
+////////////////////////////////////////////////////
+//////////////////// OUTPUT CSV ////////////////////
+////////////////////////////////////////////////////
 
 bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
 word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","CmassBalance.csv");
