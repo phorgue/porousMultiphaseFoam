@@ -28,14 +28,14 @@ Description
     Solves the transport equation for a passive scalar
     in porous media with dispersion coefficient model
 
-Authors
-    Romain Guibert
+Author
     Pierre Horgue
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
 #include "dispersionModel.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,7 +46,8 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "createFields.H"
     #include "createTimeControls.H"
-    
+    #include "readEvent.H"
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     while (runTime.run())
@@ -57,6 +58,9 @@ int main(int argc, char *argv[])
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
+
+        //- Update Event
+        #include "updateEvent.H"
 
         #include "CEqn.H"
         #include "CmassBalance.H"
