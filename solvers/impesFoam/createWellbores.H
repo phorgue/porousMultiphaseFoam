@@ -41,8 +41,7 @@ volScalarField Winj
 );
 
 dimensionedScalar Vinj(sum(Winj*mesh.V()));
-dimensionedScalar SrcInj("SrcInj",dimensionSet(0,0,-1,0,0),0.);
-SrcInj = qInjection/(Vinj+dimensionedScalar("",dimVol,SMALL));
+dimensionedScalar SrcInj("SrcInj",qInjection/(Vinj+dimensionedScalar("",dimVol,SMALL)));
 
 Info<< "Reading field Wext (extraction wellbore)\n" << endl;
 volScalarField Wext
@@ -60,5 +59,4 @@ volScalarField Wext
 );
 
 dimensionedScalar Vext(sum(Wext*mesh.V()));
-dimensionedScalar SrcExt("SrcExt",dimensionSet(0,0,-1,0,0),0.);
-SrcExt =  qExtraction/(Vinj+dimensionedScalar("",dimVol,SMALL));
+dimensionedScalar SrcExt("SrcExt",qExtraction/(Vext+dimensionedScalar("",dimVol,SMALL)));
