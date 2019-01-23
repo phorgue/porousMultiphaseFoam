@@ -1,11 +1,13 @@
 ************************
-*** Vxxxx
-*** New solver : stationaryGroundwater2DFoam
+*** V1901
+*** Hydrology module release
 ************************
 
 ### Wiki
 
 - A wiki has been initialised for some solvers and utilities on github
+
+  https://github.com/phorgue/porousMultiphaseFoam/wiki
 
 ### Solvers
 
@@ -15,10 +17,15 @@
   - dhmax is relative to the max of hwater field
   - potentialEqn is solved instead of hwater equation (identical to stationary)
 
--porousScalarTransportFoam
+- porousScalarTransportFoam
 
   - mass balance added for C tracer for each non-wall patch and injection
   wellbores. Results are displayed in terminal and CSV file (see tutorials)
+
+- porousScalarTransport2DFoam
+
+  - passive scalar transport for pre-calulated 2D flux field with
+  groundwater2DFoam
 
 - stationaryGroundwater2DFoam
 
@@ -58,13 +65,14 @@
   - first class is MNT file used to read xyz file and performed
     bilinear interpolation.
   - second class is eventFile to specify spatiallized time-varying source term
-    for groundwaterFoam/groundwater2DFoam solvers
+    for groundwater(2D)Foam and porousScalar(2D)Foam solvers
 
 - porousBoundaryConditions
 
   - new boundary condition "fixedFlux" to impose a user-defined fixed flux
   for a given specie C. Dispersion is set to 0 along this boundary to respect
   mass conservation and ensure that fixed flux is correctly computed.
+  "event table" can be given in BC for time-dependent fixed flux.
 
 ### Utilities
 
