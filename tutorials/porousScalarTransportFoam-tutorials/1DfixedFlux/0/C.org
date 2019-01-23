@@ -25,7 +25,13 @@ boundaryField
     {
         type           fixedFlux;
         fixedFluxValue 1e-8;
-        phiName        phitheta;        
+        phiName        phitheta;
+        event (
+            (0 0)
+            (1e+6 1e-8)
+            (2e+6 -1e-8)
+            (3e+6 0)
+        );
     }
 
     bottom
