@@ -37,6 +37,7 @@ Author
 
 #include "fvCFD.H"
 #include "dispersionModel.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "createFields.H"
     #include "createTimeControls.H"
+    #include "readEvent.H"
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -59,7 +61,12 @@ int main(int argc, char *argv[])
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
+        //- Update Event
+        #include "updateEvent.H"
+
+        //- Compute transport
         #include "CEqn.H"
+        #include "CmassBalance.H"
 
         runTime.write();
     }
