@@ -97,6 +97,11 @@ protected:
     //- Flux field name
     word phiName_;
 
+    //- Event list (optional)
+    label iterEvent_;
+    scalar valueEvent_;
+    List<Tuple2<scalar, scalar> > eventData_;
+
 public:
 
     //- Runtime type information
@@ -172,9 +177,8 @@ public:
             //- Update the coefficients associated with the patch field
             virtual void updateCoeffs();
 
-
-        //- Write
-        virtual void write(Ostream&) const;
+            //- Write
+            virtual void write(Ostream&) const;
 };
 
 
