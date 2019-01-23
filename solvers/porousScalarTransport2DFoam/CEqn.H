@@ -5,10 +5,10 @@
         fvScalarMatrix CEqn
             (
                 eps * R * hwater * fvm::ddt(C)
-                + fvm::div(phi, C, "div(phi,C)")
+                + dimensionedScalar("",dimLength,1) * fvm::div(phi, C, "div(phi,C)")
                 - fvm::laplacian(hwater*DeffModel->Deff(), C, "laplacian(Deff,C)")
                 ==
-                R * (SrcInj*Cin)*Winj - (SrcExt*C)*Wext
+                R * sourceTerm * dimensionedScalar("",dimLength,1)
                 - eps * R * hwater * fvm::Sp(lambda,C)
             );
 
