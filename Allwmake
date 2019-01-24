@@ -5,16 +5,20 @@ set -x
 # Compiling libraries 
 wmake libraries/porousModels
 wmake libraries/porousBoundaryConditions
-
+wmake libraries/toolsGIS
 # Compiling solvers 
 wmake solvers/impesFoam
 wmake solvers/anisoImpesFoam
 wmake solvers/groundwaterFoam
 wmake solvers/porousScalarTransportFoam
+wmake solvers/porousScalarTransport2DFoam
 wmake solvers/groundwater2DFoam
 wmake solvers/groundwaterTransportFoam
+wmake solvers/stationaryGroundwater2DFoam
+wmake solvers/stationaryGroundwaterFoam
 
 # Compiling utilities
 wmake utilities/darcyFoam
 wmake utilities/setBoundaryHeadPressure
 wmake utilities/setFieldsFromXY
+wmake utilities/setFieldsFromMNT

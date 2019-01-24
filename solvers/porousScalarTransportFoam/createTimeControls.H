@@ -41,8 +41,6 @@ scalar dCmax_rel =
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
-
-
 scalar dCdTmax = max(dCmax_rel*gMax(C),dCmax_abs)/runTime.deltaTValue();
     
 // ************************************************************************* //
