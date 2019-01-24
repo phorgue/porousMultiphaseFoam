@@ -39,5 +39,5 @@ scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
 scalar dhdTmax = dhmax/runTime.deltaTValue();
-    
+
 // ************************************************************************* //

@@ -46,25 +46,57 @@ Usage
 
 int main(int argc, char *argv[])
 {
-    argList::addOption("fileIn","fileName","specify the input file");
-    argList::addOption("fileOut","fileName","specify the output file");   
+
+    argList::addOption("file","fileName","specify the input file");
+    argList::addOption("fileIn","fileName","similar to file option");
+    argList::addOption("field","fieldName","specify the output file");
+    argList::addOption("fileOut","fileName","specify the output file");
     argList::addOption("folder","constant","specify the folder");
+    argList::addOption("offset","0","add offset to interpolated value");
 
     Foam::argList args(argc,argv); 
 
-    if (!args.optionFound("fileIn"))
+    word matrixFile = "default";
+    word nameField = "default";
+
+    if (args.optionFound("file"))
     {
-        FatalError << "no input file specified" 
-            << nl << " use option -fileIn"
+        matrixFile = args.optionRead<word>("file");
+    }
+    else if (args.optionFound("fileIn"))
+    {
+        WarningIn("setFieldsFromXY.C")
+            << "option fileIn deprecated,  use option -file instead"
+                << nl << endl;
+        matrixFile = args.optionRead<word>("fileIn");
+    }
+    else
+    {
+        FatalErrorIn("setFieldsFromXY.C")
+            << "no input file specified, use option -file"
             << exit(FatalError);
     }
-    else if (!args.optionFound("fileOut"))
+
+    if (args.optionFound("field"))
     {
-        FatalError << "no output file specified" 
-            << nl << " use option -fileOut"
+        nameField = args.optionRead<word>("field");
+    }
+    else if (args.optionFound("fileOut"))
+    {
+        WarningIn("setFieldsFromXY.C")
+            << "option fileOut deprecated, use option -field instead"
+                << nl << endl;
+        nameField = args.optionRead<word>("fileOut");
+    }
+    else
+    {
+        FatalErrorIn("setFieldsFromXY.C")
+            << "no field specified, use option -field"
             << exit(FatalError);
     }
-    
+
+    scalar offset = args.optionLookupOrDefault<scalar>("offset",0.);
+
     #include "createTime.H"
     #include "createMesh.H"
     
@@ -84,7 +116,7 @@ int main(int argc, char *argv[])
         (
             IOobject
             (
-                args.optionRead<word>("fileOut"),
+                nameField,
                 fileDir,
                 mesh,
                 IOobject::MUST_READ,
@@ -138,7 +170,7 @@ int main(int argc, char *argv[])
                 << nl << id1 << " / " << id2 << " / " << id3 << endl;
         }
        
-        outputFile[celli] = ( dist1*inputFile[id1][2] + dist2*inputFile[id2][2] + dist3*inputFile[id3][2] ) / (dist1+dist2+dist3);
+        outputFile[celli] = ( dist1*inputFile[id1][2] + dist2*inputFile[id2][2] + dist3*inputFile[id3][2] ) / (dist1+dist2+dist3) + offset;
 
     }
 

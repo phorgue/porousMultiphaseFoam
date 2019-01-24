@@ -24,13 +24,13 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         86400;
+endTime         864000;
 
 deltaT          100;
 
 writeControl    adjustableRunTime;
 
-writeInterval   7200;
+writeInterval   72000;
 
 purgeWrite      0;
 
@@ -52,6 +52,10 @@ dCmax_abs       2e-4;
 
 dCmax_rel       0.05;
 
-maxDeltaT       10000;
+maxDeltaT       100000;
+
+CSVactive       true;
+
+CSVoutput       "CmassBalance.csv";
 
 // ************************************************************************* //
