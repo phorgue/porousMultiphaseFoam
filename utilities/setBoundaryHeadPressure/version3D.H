@@ -13,7 +13,6 @@
             mesh
         );
 
-  
     //-- Reading patch information
     word patchName = args.optionRead<word>("patch");
     label patchID = mesh.boundaryMesh().findPatchID(patchName);
@@ -24,28 +23,14 @@
     if (args.optionFound("file"))
     {
         //- reading STL informations
-        word STLfile = args.optionRead<word>("file");
-        triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
-        pointField pPoints = potentialSTL.points();
-        Info << nl << "Potential fixed using STL = " << STLfile << endl;
+        MNTfile fixedPotentialMNT(args.optionRead<word>("file"));
+        Info << nl << "Potential fixed using MNT " << endl;
       
         //- computing local potential
         forAll(hPatch,facei)
         {
-            scalar xy_distance = GREAT;
-            label id_point = -1;
-            forAll(pPoints,pointi)
-            {
-                scalar tmp_dist = Foam::sqrt(pow(pPoints[pointi].x()-faces[facei].x(),2)+pow(pPoints[pointi].y()-faces[facei].y(),2));
-                if (tmp_dist < xy_distance)
-                {
-                    xy_distance = tmp_dist;
-                    id_point = pointi;
-                }
-            }
-            hPatch[facei] = pPoints[id_point].z() - faces[facei].z();
+            hPatch[facei] = fixedPotentialMNT.interpolate(faces[facei]) - faces[facei].z();
         }
-
     }  
     else
     {

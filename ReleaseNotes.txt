@@ -1,4 +1,91 @@
 ************************
+*** V1901
+*** Hydrology module release
+************************
+
+### Wiki
+
+- A wiki has been initialised for some solvers and utilities on github
+
+  https://github.com/phorgue/porousMultiphaseFoam/wiki
+
+### Solvers
+
+- groundwater2DFoam
+
+  - water bilan added (with stationary option to stop run)
+  - dhmax is relative to the max of hwater field
+  - potentialEqn is solved instead of hwater equation (identical to stationary)
+
+- porousScalarTransportFoam
+
+  - mass balance added for C tracer for each non-wall patch and injection
+  wellbores. Results are displayed in terminal and CSV file (see tutorials)
+
+- porousScalarTransport2DFoam
+
+  - passive scalar transport for pre-calulated 2D flux field with
+  groundwater2DFoam
+
+- stationaryGroundwater2DFoam
+
+  - "stationary" version of groundwater2DFoam
+  - fixedPotentialList added in transportProperties (optional)
+  - forcing potential mode is added with two possible modes :
+    - fixedValue : use values given in fixedPotentialList
+    - fixedMNT : use bilinear interpolated value using fileMNT given 
+
+- stationaryGroundwaterFoam
+
+  - "stationary" version of groundwaterFoam (Richards's equation)
+
+### Tutorials
+
+- groundwater2DFoam
+
+  - updated to be similar to the stationary case
+
+- stationaryGroundwater2DFoam
+
+  - new tutorial relative to the new solver (use forcingPotential option)
+
+- stationaryGroundwaterFoam
+
+  - new tutorial relative to the new solver
+
+- porousScalarTransportFoam
+
+  - new tutorial case to validate the new BC fixedFlux
+
+### Libraries
+
+- toolsGIS
+
+  - new library containing classes for GIS manipulation
+  - first class is MNT file used to read xyz file and performed
+    bilinear interpolation.
+  - second class is eventFile to specify spatiallized time-varying source term
+    for groundwater(2D)Foam and porousScalar(2D)Foam solvers
+
+- porousBoundaryConditions
+
+  - new boundary condition "fixedFlux" to impose a user-defined fixed flux
+  for a given specie C. Dispersion is set to 0 along this boundary to respect
+  mass conservation and ensure that fixed flux is correctly computed.
+  "event table" can be given in BC for time-dependent fixed flux.
+
+### Utilities
+
+- setFieldsFromMNT
+
+  - new utility to initialize fields using MNTfile class with bilinear
+  interpolation
+
+- setFieldsFromXY
+
+  - new option to add offset to interpolated value (also in setFieldsFromMNT)
+
+************************
 *** V1809
 *** New solvers : groundwater2DFoam + groundwaterTransportFoam
 ************************

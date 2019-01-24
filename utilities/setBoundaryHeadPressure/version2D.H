@@ -19,31 +19,15 @@
     fvPatchScalarField& potentialPatch = potential.boundaryFieldRef()[patchID];
     const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
   
-    //-- Compute and set up potential
-    
-    //- reading STL informations
-    word STLfile = args.optionRead<word>("file");
-    triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
-    pointField pPoints = potentialSTL.points();
-      
-    //- computing local potential
+
+    //- reading MNT informations
+    MNTfile fixedPotentialMNT(args.optionRead<word>("file"));
+
+    //- computing and writing local potential
     forAll(potentialPatch,facei)
     {
-        scalar xy_distance = GREAT;
-        label id_point = -1;
-        forAll(pPoints,pointi)
-        {
-            scalar tmp_dist = Foam::sqrt(pow(pPoints[pointi].x()-faces[facei].x(),2)+pow(pPoints[pointi].y()-faces[facei].y(),2));
-            if (tmp_dist < xy_distance)
-            {
-                xy_distance = tmp_dist;
-                id_point = pointi;
-            }
-        }
-        potentialPatch[facei] = pPoints[id_point].z();
+        potentialPatch[facei] = fixedPotentialMNT.interpolate(faces[facei]);
     }
-
-
     potential.write();
     
 }

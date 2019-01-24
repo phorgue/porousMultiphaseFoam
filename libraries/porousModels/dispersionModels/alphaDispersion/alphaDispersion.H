@@ -86,10 +86,15 @@ public:
     // Member Functions
 
     //- Correct the dispersion (effective diffusion)
-    void correct()
+    void correct(const volScalarField& C)
         {
             dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
-            Deff_ = (Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL); 
+            Deff_ = (Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL);
+            forAll(Deff_.boundaryField(),patchi)
+            {
+                //- Dispersion equal to zero on patch where flux is fixed
+                if (C.boundaryField().types()[patchi] == "fixedFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+            }
         }
 
 };

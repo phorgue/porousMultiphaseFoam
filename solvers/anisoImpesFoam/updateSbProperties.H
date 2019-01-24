@@ -1,10 +1,5 @@
 //- relative permeability computation
 krModel->correct();
-kra = krModel->kra();
-krb = krModel->krb();
-dkradS = krModel->dkradS();
-dkrbdS = krModel->dkrbdS();
-
 kraf = fvc::interpolate(kra,"kra");
 krbf = fvc::interpolate(krb,"krb");
 dkrafdS = fvc::interpolate(dkradS,"kra");
