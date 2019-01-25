@@ -35,6 +35,8 @@ Developer
 #include "fvCFD.H"
 #include "harmonic.H"
 #include "fixedValueFvPatchField.H"
+#include "MNTfile.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -46,6 +48,8 @@ int main(int argc, char *argv[])
     #include "readTimeControls.H"  
     #include "createMesh.H"
     #include "createFields.H"
+    #include "readFixedPoints.H"
+    #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -54,13 +58,19 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "setDeltaT.H"
-        
+
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Solve height equation
-        #include "hEqn.H"
+        //- Update event
+        #include "updateEvent.H"
+
+        //- Solve potential equation
+        #include "potentialEqn.H"
+
+        //- Water bilan computation
+        #include "waterBilan.H"
 
         runTime.write();
 

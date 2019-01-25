@@ -39,6 +39,7 @@ Developers
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "dispersionModel.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "createthetaFields.H"
     #include "readTimeControls.H"
+    #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,6 +67,9 @@ int main(int argc, char *argv[])
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
+
+        //- Update Event
+        #include "updateEvent.H"
 
         //- 1) Richard's equation
         scalar resPicard=GREAT;

@@ -36,7 +36,7 @@ dimensionedScalar eps
 
 Info<< "Reading porous transport properties" << endl;
 dictionary porousTransport(transportProperties.subDict("porousTransport"));
-word phaseName(porousTransport.lookupOrDefault<word>("phaseName","notDefined"));
+word phaseName(porousTransport.lookupOrDefault<word>("phaseName",""));
 dimensionedScalar Kd(porousTransport.lookupOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
 dimensionedScalar rs(porousTransport.lookupOrDefault("rs",dimensionedScalar("rs_default",dimensionSet(1,-3,0,0,0),0.)));
 dimensionedScalar epsTotal(porousTransport.lookupOrDefault("epsTotal",dimensionedScalar("epsTotal_default",dimless,0.)));
@@ -85,10 +85,11 @@ volVectorField U
         "U"+phaseName,
         runTime.timeName(),
         mesh,
-        IOobject::MUST_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
     ),
-    mesh
+    mesh,
+    dimensionedVector("Udefault",dimLength/dimTime,vector(0,0,0))
 );
 
 Info<< "Reading/Computing field phi" << phaseName << nl << endl;
@@ -114,9 +115,22 @@ autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportPr
 Info << "Computing retard coefficient R" << endl;
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
 
-//////////////////////////////////////////////////////////////
-//////////////////// INJECTION PROPERTIES ////////////////////
-//////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+//////////////////// OUTPUT CSV ////////////////////
+////////////////////////////////////////////////////
 
-#include "createWellbores.H"
-dimensionedScalar Cin(wellboreProperties.lookup("Cin"));
+bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
+word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","CmassBalance.csv");
+OFstream massBalanceCSV(CSVoutput);
+if (CSVactive)
+{
+    massBalanceCSV << "#Time TotalMass(kg)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    massBalanceCSV << endl;
+}
