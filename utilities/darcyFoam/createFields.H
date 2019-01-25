@@ -1,4 +1,4 @@
-word phaseName("a");
+word phaseName("");
 if (args.optionFound("phase")) phaseName = args.option("phase");
 
 Info << nl << "Reading field p\n" << endl;

@@ -1,0 +1,48 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//- column properties
+xmin 0;
+xmax 1;
+ymin 0;
+ymax 10;
+zmin 0;
+zmax 1;
+nx 1;
+ny 500;
+nz 1;
+
+//- porous media properties
+param_thetamin 0.102;
+param_thetamax 0.368;
+param_K 9.4e-12;
+
+//- fluid properties
+param_rho 1e3;
+param_mu 1e-3;
+
+//- Van Genuchten parameters
+param_m 0.5;
+param_alpha 3.35;
+
+//- Initial and boundary conditions
+param_Uinlet (0 -3.15e-8 0);
+param_Uinit (0 0 0);
+param_houtlet 0;
+param_hinit 0;
+
+// ************************************************************************* //

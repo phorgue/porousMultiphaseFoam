@@ -40,6 +40,7 @@ Developers
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "fixedValueFvPatchField.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -52,8 +53,8 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createthetaFields.H"
-    #include "createWellbores.H"
     #include "readPicardControls.H"
+    #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -67,6 +68,9 @@ int main(int argc, char *argv[])
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
+
+        //- Update Event
+        #include "updateEvent.H"
 
         scalar resPicard=GREAT;
         iterPicard = 0;

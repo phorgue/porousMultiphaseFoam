@@ -1,6 +1,6 @@
 //- relative permeability (kr)
 krModel->correct();
-volScalarField krtheta = krModel->krb();
+const volScalarField& krtheta = krModel->krb();
 surfaceScalarField krthetaf ("krthetaf",fvc::interpolate(krtheta,"krtheta"));
 
 //- mobility and fractional flow 

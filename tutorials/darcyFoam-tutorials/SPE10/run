@@ -10,4 +10,4 @@ cp constant/K.org constant/K
 cp 0/p.org 0/p
 cp 0/Ua.org 0/Ua
 
-runApplication $solver
+runApplication $solver -phase a
