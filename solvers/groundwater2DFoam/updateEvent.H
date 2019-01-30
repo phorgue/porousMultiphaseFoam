@@ -8,7 +8,6 @@ if (eventIsPresent)
             infiltration = dimensionedScalar("",dimLength/dimTime,0);
             forAll(event.coordinates(),pointi)
             {
-                Info << idCoordinates[pointi] << endl;
                 infiltration[idCoordinates[pointi]] = event.datas()[currentEvent][pointi]*zScale/mesh.V()[idCoordinates[pointi]];
             }
         }

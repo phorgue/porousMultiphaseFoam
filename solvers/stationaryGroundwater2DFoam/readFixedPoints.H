@@ -99,7 +99,5 @@ if (forcingPotential.substr(0,5) == "fixed")
     }
     Info << nl << "}" << endl;
 }
-else if (forcingPotential == "seepage")
-{
-    seepTerm =  (potential-potentialMNT)/runTime.deltaT();
-}
+
+volScalarField cellFlux(fvc::div(phi*fvc::interpolate(hwater)));
