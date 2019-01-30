@@ -8,7 +8,6 @@ if (eventIsPresent)
             sourceTerm = dimensionedScalar("",dimless/dimTime,0);
             forAll(event.coordinates(),pointi)
             {
-                Info << idCoordinates[pointi] << endl;
                 sourceTerm[idCoordinates[pointi]] = event.datas()[currentEvent][pointi]/mesh.V()[idCoordinates[pointi]];
             }
         }
