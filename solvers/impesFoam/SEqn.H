@@ -17,8 +17,9 @@
     fvScalarMatrix SbEqn
         (
             eps*fvm::ddt(Sb) + fvc::div(phib) 
-            // wellbore part
-            - (SrcInj*Winj-Fb*SrcExt*Wext)
+            ==
+            // event source terms
+            sourceTerm
         );
 
     SbEqn.solve();
