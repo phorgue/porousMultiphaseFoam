@@ -15,7 +15,8 @@
         (
             - fvm::laplacian(Mf,h)
             + fvc::div(phiG)
-            - (SrcInj*Winj-SrcExt*Wext)
+            ==
+            sourceTerm
         );
 
     hEqn.solve();

@@ -28,26 +28,6 @@ defaultFieldValues
 
 regions
 (
-    // injection
-   boxToCell
-   {
-     box (4.9 8 0) (5.1 8.2 1);
-     fieldValues
-	(
-	   volScalarFieldValue Winj 1 
-     	);
-   }   
-
-   // extraction
-    boxToCell
-   {
-     box (4.9 0.8 0) (5.1 1 1);
-     fieldValues
-        (
-           volScalarFieldValue Wext 1 
-        );
-   }   
-   
    // extraction
    boxToCell
    {
@@ -57,7 +37,6 @@ regions
            volScalarFieldValue eps 0.25 
         );
    }  
-
 );
 
 
