@@ -1,4 +1,19 @@
 ************************
+*** Vxxxx
+*** 
+************************
+
+### Solvers
+
+- stationaryGroundwater2DFoam
+
+  - seep function is available
+
+- impesFoam/anisoImpesFoam/
+
+  - generalization of the "event" use. wellbore dictionary/function is obsolete
+
+************************
 *** V1901
 *** Hydrology module release
 ************************
