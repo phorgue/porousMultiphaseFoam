@@ -42,16 +42,6 @@ regions
            volScalarFieldValue Sb 0.002
         );
    }
-
-   boxToCell
-   {
-     box (4.9 0.8 0) (5.1 1 1);
-     fieldValues
-	(
-	   volScalarFieldValue Winj 1 
-	   volScalarFieldValue Wext 1 
-     	);
-   }   
       
 );
 

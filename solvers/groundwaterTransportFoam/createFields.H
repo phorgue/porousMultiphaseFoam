@@ -158,6 +158,3 @@ autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportPr
 
 Info << "Computing retard coefficient R" << endl;
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
-
-#include "createWellbores.H"
-dimensionedScalar Cin(wellboreProperties.lookup("Cin"));
