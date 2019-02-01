@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
     #include "createthetaFields.H"
     #include "readPicardControls.H"
     #include "readEvent.H"
+    #include "readForcing.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -20,6 +20,8 @@
             sourceTerm
         );
 
+    #include "updateForcing.H"
+
     hEqn.solve();
     
     resPicard = gMax((mag(h-h.prevIter()))->internalField());
