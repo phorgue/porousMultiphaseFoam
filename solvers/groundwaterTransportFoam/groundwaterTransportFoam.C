@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
     #include "createthetaFields.H"
     #include "readTimeControls.H"
     #include "readEvent.H"
+    #include "readForcing.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
