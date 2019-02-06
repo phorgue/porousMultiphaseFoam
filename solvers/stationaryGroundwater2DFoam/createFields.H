@@ -118,7 +118,6 @@ dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
 volScalarField M(K*g/nu);
 surfaceScalarField Kf = fvc::interpolate(K,"K");
 surfaceScalarField Mf("Mf",Kf*g/nu);
-surfaceScalarField transmissivity("transmissivity",Mf*fvc::interpolate(hwater));
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// VELOCITY - FLUXES ////////////////////////////////
@@ -147,6 +146,7 @@ forAll(mesh.boundary(),patchi)
         phi.boundaryFieldRef()[patchi] = U.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
     }
 }
+surfaceScalarField transmissivity("transmissivity",Mf*fvc::interpolate(hwater));
 
 // field necessary for darcyGradPressure boundary condition
 surfaceScalarField phiG("phiG",0*phi);
