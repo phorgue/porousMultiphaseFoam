@@ -52,6 +52,6 @@ BrooksAndCoreyCoeffs
     alpha	0.2;	
 }
 
-eventFile "extraction.dat";
+eventFileFlowRate "extraction.dat";
 
 // ************************************************************************* //

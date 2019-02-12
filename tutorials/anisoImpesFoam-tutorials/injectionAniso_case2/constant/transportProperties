@@ -53,6 +53,6 @@ BrooksAndCoreyCoeffs
     alpha	0.2;	
 }
 
-eventFile "injection.dat";
+eventFileFlowRate "injection.dat";
 
 // ************************************************************************* //
