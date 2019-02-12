@@ -97,9 +97,6 @@ surfaceScalarField phi
     fvc::flux(U)
 );
 
-phi.write(); // write if computed
-phi.writeOpt()=IOobject::NO_WRITE;
-
 //- creation of dispersion model
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U);
 
