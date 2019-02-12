@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 {
 
     argList::addOption("file","fileName","specify the input file");
-    argList::addOption("field","fieldName","specify the output fil"e);
+    argList::addOption("field","fieldName","specify the output file");
     argList::addOption("folder","constant","specify the folder");
     argList::addOption("offset","0","add offset to interpolated value");
 
