@@ -26,6 +26,7 @@ boundaryField
         type           fixedFlux;
         fixedFluxValue 1e-8;
         phiName        phitheta;
+        value          uniform 0;
         event (
             (0 0)
             (1e+6 1e-8)
