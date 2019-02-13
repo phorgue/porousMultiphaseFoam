@@ -125,12 +125,19 @@ void Foam::fixedFlux::updateCoeffs()
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
 
     //- Updating event value
-    if ((iterEvent_ >= 0 ) && (iterEvent_<eventData_.size()))
+    if (iterEvent_ > -1 )
     {
-        if (eventData_[iterEvent_+1].first() < this->db().time().value())
+        valueEvent_ = eventData_[iterEvent_].second();
+        if ((iterEvent_+1) < eventData_.size())
         {
-            iterEvent_++;
-            valueEvent_ = eventData_[iterEvent_].second();
+            scalar currentTime = this->db().time().value();
+            if ( currentTime > eventData_[iterEvent_+1].first() )
+            {
+                scalar deltaT = this->db().time().deltaTValue();
+                scalar factor = (currentTime - eventData_[iterEvent_+1].first()) / deltaT;
+                valueEvent_ = factor * eventData_[iterEvent_+1].second() + (1-factor) *  eventData_[iterEvent_].second();
+                iterEvent_++;
+            }
         }
     }
 

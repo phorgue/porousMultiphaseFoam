@@ -14,8 +14,21 @@
   - generalization of the "event" use. wellbore dictionary/function is obsolete
 
 - keyword event differenciation
-  eventFileFlowRate for volumetric event file (groundwaterFoam/impesFoam...)
-  eventFileMassFlowRate for mass event file (porousScalarTransport(2D)Foam)
+
+  - eventFileFlowRate for volumetric event file (groundwaterFoam/impesFoam...)
+  - eventFileMassFlowRate for mass event file (porousScalarTransport(2D)Foam)
+
+- porousScalarTransportFoam
+
+  - water content (theta) can be given instead of saturation (Sphase) to allow
+  the direct use of pre-computed stationaryGroundwaterFoam computations.
+
+### Libraries
+
+- porousBoundaryConditions
+
+  - event fixed flow rate is conservative (flow rate is weighted for timesteps
+  during which event flow rates change)
 
 ************************
 *** V1901

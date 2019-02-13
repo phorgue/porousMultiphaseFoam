@@ -48,13 +48,27 @@ Info << "    " << Kd.name() << " : " << Kd.value() << endl;
 Info << "    " << rs.name() << " : " << rs.value() << endl;
 Info << "    " << epsTotal.name() << " : " << epsTotal.value() << endl;
 Info << "    " << lambda.name() << " : " << lambda.value() << endl;
-Info << "} \n" << endl;
+Info << "}" << endl;
 
 //////////////////////////////////////////////////////////////
 ////////////////////// PHASE PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////
 
-Info << "Reading Saturation Field (if present)... ";
+Info << nl << "Reading water content theta and/or Saturation field S" << phaseName << "..." << endl;
+volScalarField theta
+(
+    IOobject
+    (
+        "theta",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("theta",dimless,1)
+);
+
 volScalarField Saturation
 (
     IOobject
@@ -68,16 +82,24 @@ volScalarField Saturation
     mesh,
     dimensionedScalar("S"+phaseName,dimless,1)
 );
-if (Saturation.headerOk())
+
+if (theta.headerOk())
 {
-    Info << "field S" << phaseName << " read, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << nl << endl;
+    Saturation == theta/eps;
+    Info << "===> field S" << phaseName << " computed from theta/eps, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << nl << endl;
 }
 else
 {
-    Info << "Saturation file not found (saturated flow)" << nl << endl;
+    if (Saturation.headerOk())
+    {
+        Info << "===> field S" << phaseName << " read, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << nl << endl;
+    }
+    else
+    {
+        Info << "===> Saturation file not found (saturated flow)" << endl;
+    }
 }
 
-Info<< "Reading field U" << phaseName << nl << endl;
 volVectorField U
 (
     IOobject
@@ -92,7 +114,7 @@ volVectorField U
     dimensionedVector("Udefault",dimLength/dimTime,vector(0,0,0))
 );
 
-Info<< "Reading/Computing field phi" << phaseName << nl << endl;
+Info<< nl << "Reading/Computing field phi" << phaseName << endl;
 surfaceScalarField phi
 (
     IOobject
@@ -105,6 +127,22 @@ surfaceScalarField phi
     ),
     fvc::flux(U)
 );
+
+if (phi.headerOk())
+{
+    Info<< "Reading field phi" << phaseName << nl << endl;
+}
+else
+{
+    if (U.headerOk())
+    {
+        Info<< "Computing field phi" << phaseName << " from field U" << phaseName << nl << endl;
+    }
+    else
+    {
+        FatalErrorIn("createFields.H") << " neither phi" << phaseName << " or U" << phaseName << " field is present in time directory" << abort(FatalError);
+    }
+}
 
 //- creation of dispersion model
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U);
