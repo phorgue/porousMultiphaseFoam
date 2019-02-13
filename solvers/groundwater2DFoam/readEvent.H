@@ -1,5 +1,5 @@
-word eventFileName = transportProperties.lookupOrDefault<word>("eventFile","");
-bool eventIsPresent = transportProperties.found("eventFile");
+word eventFileName = transportProperties.lookupOrDefault<word>("eventFileFlowRate","");
+bool eventIsPresent = transportProperties.found("eventFileFlowRate");
 eventFile event(eventFileName);
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
 

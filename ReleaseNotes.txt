@@ -13,6 +13,10 @@
 
   - generalization of the "event" use. wellbore dictionary/function is obsolete
 
+- keyword event differenciation
+  eventFileFlowRate for volumetric event file (groundwaterFoam/impesFoam...)
+  eventFileMassFlowRate for mass event file (porousScalarTransport(2D)Foam)
+
 ************************
 *** V1901
 *** Hydrology module release

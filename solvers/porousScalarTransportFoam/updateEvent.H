@@ -13,4 +13,3 @@ if (eventIsPresent)
         }
     }
 }
-x

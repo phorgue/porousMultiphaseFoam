@@ -1,5 +1,5 @@
-word eventFileName = transportProperties.lookupOrDefault<word>("eventFile","");
-bool eventIsPresent = transportProperties.found("eventFile");
+word eventFileName = transportProperties.lookupOrDefault<word>("eventFileMassFlowRate","");
+bool eventIsPresent = transportProperties.found("eventFileMassFlowRate");
 eventFile event(eventFileName);
 
 volScalarField sourceTerm
