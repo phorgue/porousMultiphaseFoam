@@ -91,7 +91,7 @@ public:
     void correct(const volScalarField& C)
         {
             dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
-            Deff_ = (eps_*saturation*Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL);
+            Deff_ = (eps_*saturation_*Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL);
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patch where flux is fixed
