@@ -49,11 +49,25 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
 (
     const word& name,
     const dictionary& transportProperties,
-    const volVectorField& U
+    const volVectorField& U,
+    const volScalarField& saturation
 )
     :
-    dispersionModel(name, transportProperties,U),
+    dispersionModel(name, transportProperties,U,saturation),
     alphaDispersionCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    eps_
+    (
+        IOobject
+        (
+            "eps",
+            U.time().timeName(),
+            U.db(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        U.mesh(),
+        dimensionedScalar(transportProperties.lookup("eps"))
+    ),
     tau_
     (
         IOobject

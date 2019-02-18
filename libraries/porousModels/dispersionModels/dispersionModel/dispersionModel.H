@@ -61,8 +61,9 @@ protected:
     word name_;
     dictionary transportProperties_;
 
-    //- Reference to the velocity field
+    //- Reference to the velocity and saturation fields
     const volVectorField& U_;
+    const volScalarField& saturation_;
 
     //- Molecular and effective diffusion
     dimensionedScalar Dm_;
@@ -91,9 +92,10 @@ public:
         (
             const word& name,
             const dictionary& transportProperties,
-            const volVectorField& U
+            const volVectorField& U,
+            const volScalarField& saturation
         ),
-        (name, transportProperties, U)
+        (name, transportProperties, U, saturation)
     );
 
 
@@ -104,7 +106,8 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U
+        const volVectorField& U,
+        const volScalarField& saturation
     );
 
 
@@ -115,7 +118,8 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U
+        const volVectorField& U,
+        const volScalarField& saturation
     );
 
     //- Destructor
@@ -131,7 +135,6 @@ public:
             return transportProperties_;
         }
 
-    
     //- Return molecular diffusion
     const dimensionedScalar& Dm() const
         {

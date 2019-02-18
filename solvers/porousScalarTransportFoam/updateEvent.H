@@ -3,6 +3,7 @@ if (eventIsPresent)
     if (currentEvent < (event.ndates()-1))
     {
         sourceTerm = dimensionedScalar("",dimMass/(dimVol*dimTime),0);
+        Info << nl << "currentEvent = " << currentEvent << endl;
         if (runTime.timeOutputValue() > event.dates()[currentEvent+1])
         {
             scalar eventFactor =  (runTime.timeOutputValue()- event.dates()[currentEvent+1]) / runTime.deltaTValue();
@@ -17,7 +18,7 @@ if (eventIsPresent)
         {
             forAll(event.coordinates(),pointi)
             {
-                sourceTerm[idCoordinates[pointi]] = event.datas()[currentEvent][pointi]/mesh.V()[idCoordinates[pointi]];
+                Info << nl << idCoordinates[pointi] << " and " <<  sourceTerm[idCoordinates[pointi]] << endl;
             }
         }
     }
