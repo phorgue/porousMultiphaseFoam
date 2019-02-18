@@ -83,16 +83,18 @@ volScalarField Saturation
     dimensionedScalar("S"+phaseName,dimless,1)
 );
 
+word Uname="U"+phaseName;
 if (theta.headerOk())
 {
     Saturation == theta/eps;
-    Info << "===> field S" << phaseName << " computed from theta/eps, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << nl << endl;
+    Uname = "U";
+    Info << "===> field S" << phaseName << " computed from theta/eps, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << endl;
 }
 else
 {
     if (Saturation.headerOk())
     {
-        Info << "===> field S" << phaseName << " read, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << nl << endl;
+        Info << "===> field S" << phaseName << " read, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() <<  endl;
     }
     else
     {
@@ -100,21 +102,20 @@ else
     }
 }
 
+Info<< nl << "Reading field U" << phaseName << endl;
 volVectorField U
 (
     IOobject
     (
-        "U"+phaseName,
+        Uname,
         runTime.timeName(),
         mesh,
-        IOobject::READ_IF_PRESENT,
+        IOobject::MUST_READ,
         IOobject::NO_WRITE
     ),
-    mesh,
-    dimensionedVector("Udefault",dimLength/dimTime,vector(0,0,0))
+    mesh
 );
 
-Info<< nl << "Reading/Computing field phi" << phaseName << endl;
 surfaceScalarField phi
 (
     IOobject
@@ -130,22 +131,15 @@ surfaceScalarField phi
 
 if (phi.headerOk())
 {
-    Info<< "Reading field phi" << phaseName << nl << endl;
+    Info << nl << "Reading field phi" << phaseName << endl;
 }
 else
 {
-    if (U.headerOk())
-    {
-        Info<< "Computing field phi" << phaseName << " from field U" << phaseName << nl << endl;
-    }
-    else
-    {
-        FatalErrorIn("createFields.H") << " neither phi" << phaseName << " or U" << phaseName << " field is present in time directory" << abort(FatalError);
-    }
+    Info<< nl << "Computing field phi" << phaseName << " from field U" << phaseName << endl;
 }
 
 //- creation of dispersion model
-autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U);
+autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U,Saturation);
 
 Info << "Computing retard coefficient R" << endl;
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();

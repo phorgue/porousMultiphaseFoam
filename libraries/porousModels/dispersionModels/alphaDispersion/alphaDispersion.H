@@ -27,7 +27,7 @@ Class
 Description
     Dispersion model based on alphaL and alphaT coefficients
 
-        Deff = Dm/tau + alphaL * mag(U) + (alphaL - alphaT) * (U*U)/mag(U)
+        Deff = eps*Dm/tau + alphaT * mag(U) + (alphaL - alphaT) * (U*U)/mag(U)
 
 SourceFiles
     alphaDispersion.C
@@ -58,12 +58,13 @@ class alphaDispersion
     public dispersionModel
 {
     //- Private data
+
+    //- Dictionary for model coefficients
     dictionary alphaDispersionCoeffs_;
 
     //- model coefficients
-    volScalarField tau_,alphaL_,alphaT_;
+    volScalarField eps_,tau_,alphaL_,alphaT_;
 
-        
 public:
 
     //- Runtime type information
@@ -76,7 +77,8 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U
+        const volVectorField& U,
+        const volScalarField& saturation
     );
 
     //- Destructor
@@ -89,7 +91,7 @@ public:
     void correct(const volScalarField& C)
         {
             dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
-            Deff_ = (Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL);
+            Deff_ = (eps_*saturation*Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL);
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patch where flux is fixed

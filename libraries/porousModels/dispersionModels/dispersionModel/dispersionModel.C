@@ -39,12 +39,14 @@ Foam::dispersionModel::dispersionModel
 (
     const word& name,
     const dictionary& transportProperties,
-    const volVectorField& U
+    const volVectorField& U,
+    const volScalarField& saturation
 )
     :
     name_(name),
     transportProperties_(transportProperties),
     U_(U),
+    saturation_(saturation),
     Dm_(transportProperties.lookup("Dm")),
     Deff_
     (
