@@ -61,9 +61,8 @@ protected:
     word name_;
     dictionary transportProperties_;
 
-    //- Reference to the velocity and saturation fields
-    const volVectorField& U_;
-    const volScalarField& saturation_;
+    //-Reference to the mesh
+    const fvMesh& mesh_;
 
     //- Molecular and effective diffusion
     dimensionedScalar Dm_;
@@ -92,10 +91,9 @@ public:
         (
             const word& name,
             const dictionary& transportProperties,
-            const volVectorField& U,
-            const volScalarField& saturation
+            const fvMesh& mesh
         ),
-        (name, transportProperties, U, saturation)
+        (name, transportProperties, mesh)
     );
 
 
@@ -106,8 +104,7 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U,
-        const volScalarField& saturation
+        const fvMesh& mesh
     );
 
 
@@ -118,8 +115,7 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U,
-        const volScalarField& saturation
+        const fvMesh& mesh
     );
 
     //- Destructor
@@ -148,8 +144,10 @@ public:
         }
 
     //- Correct the effective dispersion
-    virtual void correct(const volScalarField& C) = 0; 
-
+    virtual void correct(
+        const volScalarField& C,
+        const volVectorField& U
+    ) = 0;
 };
 
 
