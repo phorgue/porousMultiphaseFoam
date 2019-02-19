@@ -139,7 +139,7 @@ else
 }
 
 //- creation of dispersion model
-autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U,Saturation);
+autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,mesh);
 
 Info << "Computing retard coefficient R" << endl;
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
