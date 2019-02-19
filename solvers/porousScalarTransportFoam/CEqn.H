@@ -1,12 +1,12 @@
 {
     //- update dispersion tensor coefficient
-    DeffModel->correct(C);
+    DeffModel->correct(C,U);
 
     fvScalarMatrix CEqn
         (
             eps * R * Saturation * fvm::ddt(C)
             + fvm::div(phi, C, "div(phi,C)")
-            - fvm::laplacian(DeffModel->Deff(), C, "laplacian(Deff,C)")
+            - eps * Saturation * fvm::laplacian(DeffModel->Deff(), C, "laplacian(Deff,C)")
             ==
             R * sourceTerm// (SrcInj*Cin*Winj - SrcExt*C*Wext)
             - eps * R * Saturation * fvm::Sp(lambda,C)

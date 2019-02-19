@@ -49,36 +49,22 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
 (
     const word& name,
     const dictionary& transportProperties,
-    const volVectorField& U,
-    const volScalarField& saturation
+    const fvMesh& mesh
 )
     :
-    dispersionModel(name, transportProperties,U,saturation),
+    dispersionModel(name, transportProperties, mesh),
     alphaDispersionCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    eps_
-    (
-        IOobject
-        (
-            "eps",
-            U.time().timeName(),
-            U.db(),
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        U.mesh(),
-        dimensionedScalar(transportProperties.lookup("eps"))
-    ),
     tau_
     (
         IOobject
         (
             "tau",
-            U.time().timeName(),
-            U.db(),
+            mesh_.time().timeName(),
+            mesh_,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        U.mesh(),
+        mesh_,
         dimensionedScalar(alphaDispersionCoeffs_.lookup("tau"))
     ),
     alphaL_
@@ -86,12 +72,12 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
         IOobject
         (
             "alphaL",
-            U.time().timeName(),
-            U.db(),
+            mesh_.time().timeName(),
+            mesh_,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        U.mesh(),
+        mesh_,
         dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaL"))
     ),
     alphaT_
@@ -99,12 +85,12 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
         IOobject
         (
             "alphaT",
-            U.time().timeName(),
-            U.db(),
+            mesh_.time().timeName(),
+            mesh_,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        U.mesh(),
+        mesh_,
         dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaT"))
     )
 {

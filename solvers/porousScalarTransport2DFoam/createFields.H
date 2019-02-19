@@ -24,7 +24,7 @@ IOdictionary transportProperties
         "transportProperties",
         runTime.constant(),
         mesh,
-        IOobject::MUST_READ_IF_MODIFIED,
+        IOobject::MUST_READ,
         IOobject::NO_WRITE
     )
 );
@@ -67,9 +67,9 @@ volScalarField hwater
     ),
     mesh
 );
-Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << nl << endl;
+Info << nl << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
 
-Info<< "Reading field U" << phaseName << nl << endl;
+Info << nl << "Reading field U" << phaseName << endl;
 volVectorField U
 (
     IOobject
@@ -83,7 +83,6 @@ volVectorField U
     mesh
 );
 
-Info<< "Reading/Computing field phi" << phaseName << nl << endl;
 surfaceScalarField phi
 (
     IOobject
@@ -97,8 +96,18 @@ surfaceScalarField phi
     fvc::flux(U)
 );
 
+
+if (phi.headerOk())
+{
+    Info << nl << "Reading field phi" << phaseName << endl;
+}
+else
+{
+    Info<< "Computing field phi" << phaseName << " from field U" << phaseName << nl << endl;
+}
+
 //- creation of dispersion model
-autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U);
+autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties, mesh);
 
 Info << "Computing retard coefficient R" << endl;
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
