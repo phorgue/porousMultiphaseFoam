@@ -27,7 +27,11 @@ Class
 Description
     Dispersion model based on alphaL and alphaT coefficients
 
-        Deff = eps*Dm/tau + alphaT * mag(U) + (alphaL - alphaT) * (U*U)/mag(U)
+      Deff = Dm/tau + alphaT * mag(U) + (alphaL - alphaT) * (U*U)/mag(U)
+
+    or
+
+      Deff = Dm/tau + alphaT * mag(U) + (alphaL - alphaT) * (U*U)/mag(U)
 
 SourceFiles
     alphaDispersion.C
@@ -63,7 +67,7 @@ class alphaDispersion
     dictionary alphaDispersionCoeffs_;
 
     //- model coefficients
-    volScalarField eps_,tau_,alphaL_,alphaT_;
+    volScalarField tau_,alphaL_,alphaT_;
 
 public:
 
@@ -77,8 +81,7 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U,
-        const volScalarField& saturation
+        const fvMesh& mesh
     );
 
     //- Destructor
@@ -87,18 +90,17 @@ public:
 
     // Member Functions
 
-    //- Correct the dispersion (effective diffusion)
-    void correct(const volScalarField& C)
+    //- Correct the dispersion giving water content
+    void correct(const volScalarField& C, const volVectorField& U)
         {
             dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
-            Deff_ = (eps_*saturation_*Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL);
+            Deff_ = (Dm_/tau_ + alphaT_ * mag(U))*tensor::I + (alphaL_-alphaT_) * (U*U)/(mag(U)+USMALL);
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patch where flux is fixed
                 if (C.boundaryField().types()[patchi] == "fixedFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
             }
         }
-
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
