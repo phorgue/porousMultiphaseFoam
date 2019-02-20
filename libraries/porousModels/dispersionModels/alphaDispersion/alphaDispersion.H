@@ -93,7 +93,7 @@ public:
     //- Correct the dispersion giving water content
     void correct(const volScalarField& C, const volVectorField& U, const volScalarField& theta)
         {
-            dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
+            dimensionedScalar USMALL("",dimLength/dimTime,1e-36);
 
             Deff_ = (Dm_/tau_ + alphaT_ * mag(U)/theta)*tensor::I + (alphaL_-alphaT_) * (U*U)/(theta*mag(U)+USMALL);
             forAll(Deff_.boundaryField(),patchi)
