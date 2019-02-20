@@ -146,7 +146,24 @@ public:
     //- Correct the effective dispersion
     virtual void correct(
         const volScalarField& C,
-        const volVectorField& U
+        const volVectorField& U,
+        const volScalarField& theta
+    ) = 0;
+
+    //- Correct the effective dispersion
+    virtual void correct(
+        const volScalarField& C,
+        const volVectorField& U,
+        const volScalarField& saturation,
+        const volScalarField& eps
+    ) = 0;
+
+    //- Correct the effective dispersion
+    virtual void correct(
+        const volScalarField& C,
+        const volVectorField& U,
+        const volScalarField& saturation,
+        const dimensionedScalar& eps
     ) = 0;
 };
 
