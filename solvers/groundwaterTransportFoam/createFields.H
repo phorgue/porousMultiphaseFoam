@@ -154,7 +154,7 @@ Info << "    " << lambda.name() << " : " << lambda.value() << endl;
 Info << "} \n" << endl;
 
 //- creation of dispersion model
-autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,Utheta);
+autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,mesh);
 
 Info << "Computing retard coefficient R" << endl;
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
