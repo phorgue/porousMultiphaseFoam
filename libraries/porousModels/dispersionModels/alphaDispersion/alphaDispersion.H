@@ -25,13 +25,13 @@ Class
     Foam::dispersionModels::alphaDispersion
 
 Description
-    Dispersion model based on alphaL and alphaT coefficients
+    Dispersion model based on alphaL and alphaT coefficients (Bear, 1979)
 
-      Deff = Dm/tau + alphaT * mag(U) + (alphaL - alphaT) * (U*U)/mag(U)
+      Deff= Dm/tau + (alphaT * mag(U) + (alphaL - alphaT) * (U*U)/mag(U) )/theta
 
-    or
+    where theta is water content :
 
-      Deff = Dm/tau + alphaT * mag(U) + (alphaL - alphaT) * (U*U)/mag(U)
+      theta = Saturation * porosity
 
 SourceFiles
     alphaDispersion.C
@@ -91,15 +91,30 @@ public:
     // Member Functions
 
     //- Correct the dispersion giving water content
-    void correct(const volScalarField& C, const volVectorField& U)
+    void correct(const volScalarField& C, const volVectorField& U, const volScalarField& theta)
         {
             dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
-            Deff_ = (Dm_/tau_ + alphaT_ * mag(U))*tensor::I + (alphaL_-alphaT_) * (U*U)/(mag(U)+USMALL);
+
+            Deff_ = (Dm_/tau_ + alphaT_ * mag(U)/theta)*tensor::I + (alphaL_-alphaT_) * (U*U)/(theta*mag(U)+USMALL);
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patch where flux is fixed
                 if (C.boundaryField().types()[patchi] == "fixedFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
             }
+        }
+
+    void correct(const volScalarField& C, const volVectorField& U, const volScalarField& saturation, const volScalarField& eps)
+        {
+            volScalarField theta = eps*saturation;
+            theta.dimensions().reset(dimless);
+            correct(C,U,theta);
+        }
+
+    void correct(const volScalarField& C, const volVectorField& U, const volScalarField& saturation, const dimensionedScalar& eps)
+        {
+            volScalarField theta = eps*saturation;
+            theta.dimensions().reset(dimless);
+            correct(C,U,theta);
         }
 };
 
