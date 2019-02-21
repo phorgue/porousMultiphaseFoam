@@ -72,6 +72,10 @@ int main(int argc, char *argv[])
         #include "CmassBalance.H"
 
         runTime.write();
+
+        Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
+            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
+            << nl << endl;
     }
 
     Info<< "End\n" << endl;
