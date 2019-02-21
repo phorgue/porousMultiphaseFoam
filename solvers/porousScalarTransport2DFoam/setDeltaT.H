@@ -1,1 +1,0 @@
-../porousScalarTransportFoam/setDeltaT.H

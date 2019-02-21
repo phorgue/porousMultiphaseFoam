@@ -23,6 +23,10 @@
   - water content (theta) can be given instead of saturation (Sphase) to allow
   the direct use of pre-computed stationaryGroundwaterFoam computations.
   - timestep is now controlled by porous- Courant number
+  
+- porousScalarTransportFoam
+
+  - timestep is now controlled by porous- Courant number
 
 ### Libraries
 
