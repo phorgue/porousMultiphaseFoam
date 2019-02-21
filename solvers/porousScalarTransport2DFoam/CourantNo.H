@@ -44,6 +44,6 @@ scalar meanCoNum = 0.0;
         0.5*(gSum(sumPhi)/gSum(eps.value()*hwater.field()*mesh.V().field()))*runTime.deltaTValue();
 }
     
-Info<< nl << "Courant Number mean: " << meanCoNum << " max: " << CoNum << endl;
+Info<<  "Courant Number mean: " << meanCoNum << " max: " << CoNum << endl;
     
 // ************************************************************************* //
