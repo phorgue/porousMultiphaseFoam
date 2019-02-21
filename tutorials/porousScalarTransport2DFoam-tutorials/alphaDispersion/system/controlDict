@@ -47,11 +47,9 @@ adjustTimeStep yes;
 
 runTimeModifiable true;
 
-dCmax_abs       2e-4;
+maxCo           1.0;
 
-dCmax_rel       0.05;
-
-maxDeltaT       1e6;
+maxDeltaT       1e8;
 
 CSVactive       true;
 
