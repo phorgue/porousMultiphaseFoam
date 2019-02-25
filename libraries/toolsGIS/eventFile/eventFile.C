@@ -122,19 +122,24 @@ Foam::eventFile::eventFile
             }
         }
 
-        ndates_ = datesRead.size();
-        ncoordinates_ = coordinatesRead.size()/ndates_;
+        ndates_ = datesRead.size()+1;
+        ncoordinates_ = coordinatesRead.size()/(ndates_-1);
     
         Info << "OK!"
             << nl << "{"
-            << nl << "  number of dates       = " << ndates_
+            << nl << "  number of dates       = " << ndates_-1
             << nl << "  number of coordinates = " << ncoordinates_
             << nl << "  number datas          = " << coordinatesRead.size()
             << nl << "}" << endl;
 
         //- Storing dates
-        dates_ = datesRead;
- 
+        dates_.resize(ndates_);
+        forAll(datesRead,datei)
+        {
+            dates_[datei] = datesRead[datei];
+        }
+        dates_[ndates_-1] = VGREAT;
+
         //- Storing coordinates
         coordinates_.resize(ncoordinates_);
         forAll(coordinates_,coordinatei)
@@ -152,6 +157,10 @@ Foam::eventFile::eventFile
                 datas_[datei][coordinatei] = valueRead[iter];
                 iter++;
             }
+        }
+        for(label coordinatei=0;coordinatei<ncoordinates_;coordinatei++)
+        {
+            datas_[ndates_-1][coordinatei] = 0;
         }
     }
 

@@ -69,6 +69,12 @@ int main(int argc, char *argv[])
 
         runTime.write();
 
+        //- write solution and eventTime
+        if (allEventDates[currentGlobalEvent] == runTime.timeOutputValue())
+        {
+            runTime.writeNow();
+        }
+
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
             << nl << endl;

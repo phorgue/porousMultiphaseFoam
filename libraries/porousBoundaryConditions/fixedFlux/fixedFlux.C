@@ -58,10 +58,17 @@ fixedFlux
     iterEvent_(-1),
     valueEvent_(0.0)
 {
-    if (dict.found("event"))
+    word eventFileName = db().lookupObject<dictionary>("transportProperties").lookupOrDefault<word>("eventFilePatchMassFlowRate","");
+    
+    if (eventFileName != "")
     {
-        List<Tuple2<scalar, scalar> > eventRead= dict.lookup("event");
-        eventData_ = eventRead;
+        eventFile eventFlux(eventFileName);
+        eventData_.setSize(eventFlux.ndates());
+  
+        forAll(eventFlux.dates(),eventi)
+        {
+            eventData_[eventi] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi],eventFlux.datas()[eventi][0]);
+        }
         iterEvent_ = 0;
     }
 }
@@ -127,18 +134,12 @@ void Foam::fixedFlux::updateCoeffs()
     //- Updating event value
     if (iterEvent_ > -1 )
     {
-        valueEvent_ = eventData_[iterEvent_].second();
-        if ((iterEvent_+1) < eventData_.size())
+        scalar currentTime = this->db().time().value();
+        if ( currentTime > eventData_[iterEvent_+1].first() )
         {
-            scalar currentTime = this->db().time().value();
-            if ( currentTime > eventData_[iterEvent_+1].first() )
-            {
-                scalar deltaT = this->db().time().deltaTValue();
-                scalar factor = (currentTime - eventData_[iterEvent_+1].first()) / deltaT;
-                valueEvent_ = factor * eventData_[iterEvent_+1].second() + (1-factor) *  eventData_[iterEvent_].second();
-                iterEvent_++;
-            }
+            iterEvent_++;
         }
+        valueEvent_ = eventData_[iterEvent_].second();
     }
 
     //- Computing fixed value
@@ -154,7 +155,6 @@ void Foam::fixedFlux::write(Ostream& os) const
     fvPatchScalarField::write(os);
     writeEntry("value", os);
 }
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
