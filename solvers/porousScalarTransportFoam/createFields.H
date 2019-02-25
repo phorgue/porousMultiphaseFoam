@@ -2,6 +2,19 @@
 ////////////////////// GENERAL PROPERTIES //////////////////////
 ////////////////////////////////////////////////////////////////
 
+Info<< "Reading transportProperties\n" << endl;
+IOdictionary transportProperties
+(
+    IOobject
+    (
+        "transportProperties",
+        runTime.constant(),
+        mesh,
+        IOobject::MUST_READ_IF_MODIFIED,
+        IOobject::NO_WRITE
+    )
+);
+
 Info<< "Reading field C\n" << endl;
 volScalarField C
 (
@@ -16,18 +29,6 @@ volScalarField C
     mesh
 );
 
-Info<< "Reading transportProperties\n" << endl;
-IOdictionary transportProperties
-(
-    IOobject
-    (
-        "transportProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ_IF_MODIFIED,
-        IOobject::NO_WRITE
-    )
-);
 Info<< "Reading porosity eps\n" << endl;
 dimensionedScalar eps
 (

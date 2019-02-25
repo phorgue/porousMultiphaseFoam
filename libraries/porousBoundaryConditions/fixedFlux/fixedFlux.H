@@ -72,6 +72,7 @@ SourceFiles
 #define fixedFlux_H
 
 #include "fixedValueFvPatchFields.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -168,7 +169,6 @@ public:
                 new fixedFlux(*this, iF)
             );
         }
-
 
     // Member functions
 

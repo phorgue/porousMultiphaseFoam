@@ -22,7 +22,9 @@
 
   - water content (theta) can be given instead of saturation (Sphase) to allow
   the direct use of pre-computed stationaryGroundwaterFoam computations.
-  - timestep is now controlled by porous- Courant number
+  - timestep is now controlled by porous- Courant number.
+  - solver now computes exactly solutions at event times (source event and/or
+  patch flux event) and writes in the corresponding time directory.
   
 - porousScalarTransportFoam
 
@@ -32,8 +34,15 @@
 
 - porousBoundaryConditions
 
-  - event fixed flow rate is conservative (flow rate is weighted for timesteps
-  during which event flow rates change)
+  - event fixed flow rate now use a given field in transportProperties
+    "eventFilePatchMassFlowRate" to allow the solvers to track BC changes and
+    adapt timestep.
+
+- toolsGIS
+
+  - eventFile now automatically add event Q=0 at t=GREAT to avoid several
+  tests in solvers.
+
 
 ************************
 *** V1901
