@@ -18,7 +18,6 @@ FoamFile
 
 defaultFieldValues
 (
-       volScalarFieldValue Winj 0
 );
 
 regions
@@ -31,25 +30,6 @@ regions
                 volScalarFieldValue C 1
             );
     }
-
-    boxToCell
-    {
-        box (-100 -100 0) (500 100 1);
-        fieldValues
-            (
-                volScalarFieldValue alphaL 0.01
-            );
-    }
-
-    boxToCell
-    {
-        box (50 -10 0) (70 10 1);
-        fieldValues
-            (
-                volScalarFieldValue Winj 1
-            );
-    }
-    
 );
 
 
