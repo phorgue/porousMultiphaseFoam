@@ -4,8 +4,8 @@ set -x
 
 # Compiling libraries 
 wmake libraries/porousModels
-wmake libraries/porousBoundaryConditions
 wmake libraries/toolsGIS
+wmake libraries/porousBoundaryConditions
 # Compiling solvers 
 wmake solvers/impesFoam
 wmake solvers/anisoImpesFoam
