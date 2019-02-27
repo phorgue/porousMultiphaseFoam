@@ -35,7 +35,8 @@ Author
 
 #include "fvCFD.H"
 #include "dispersionModel.H"
-#include "eventFile.H"
+#include "sourceEventFile.H"
+#include "patchEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
