@@ -1,6 +1,9 @@
 MNTfile/MNTfile.C
 XYfile/XYfile.C
+
 eventFile/eventFile.C
+eventFile/sourceEventFile.C
+eventFile/patchEventFile.C
 
 LIB = $(FOAM_USER_LIBBIN)/libtoolsGIS
 
