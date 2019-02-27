@@ -34,7 +34,7 @@ Developers
 
 #include "fvCFD.H"
 #include "incompressiblePhase.H"
-#include "eventFile.H"
+#include "sourceEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
