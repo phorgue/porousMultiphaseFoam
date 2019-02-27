@@ -77,15 +77,21 @@ Foam::sourceEventFile::sourceEventFile
                     std::size_t nPos = line.find(separator_, pos);
                     if (nPos == std::string::npos)
                     {
-                        split.append(line.substr(pos));
+                        if (line.substr(pos).size() != 0)
+                        {
+                            split.append(line.substr(pos));
+                            n++;
+                        }
                         pos = nPos;
-                        n++;
                     }
                     else
                     {
-                        split.append(line.substr(pos, nPos - pos));
+                        if (nPos - pos != 0)
+                        {
+                            split.append(line.substr(pos, nPos - pos));
+                            n++;
+                        }
                         pos = nPos + 1;
-                        n++;
                     }
                 }
 
