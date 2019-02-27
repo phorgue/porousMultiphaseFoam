@@ -51,7 +51,6 @@ Foam::patchEventFile::patchEventFile
     {
         //- properties of a MNT file
         string separator_ = " ";
-        label nEntriesMax = 2;
 
         //- file name
         IFstream ifs(fileName);
@@ -75,21 +74,27 @@ Foam::patchEventFile::patchEventFile
                 label n = 0;
                 std::size_t pos = 0;
                 DynamicList<string> split;
-        
-                while ((pos != std::string::npos) && (n <= nEntriesMax))
+
+                while (pos != std::string::npos)
                 {
                     std::size_t nPos = line.find(separator_, pos);
                     if (nPos == std::string::npos)
                     {
-                        split.append(line.substr(pos));
+                        if (line.substr(pos).size() != 0)
+                        {
+                            split.append(line.substr(pos));
+                            n++;
+                        }
                         pos = nPos;
-                        n++;
                     }
                     else
                     {
-                        split.append(line.substr(pos, nPos - pos));
+                        if (nPos - pos != 0)
+                        {
+                            split.append(line.substr(pos, nPos - pos));
+                            n++;
+                        }
                         pos = nPos + 1;
-                        n++;
                     }
                 }
 
