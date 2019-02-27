@@ -4,8 +4,8 @@ word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileS
 bool patchEventIsPresent =  transportProperties.found("eventFilePatchMassFlowRate");
 word patchEventFileName = transportProperties.lookupOrDefault<word>("eventFilePatchMassFlowRate","");
 
-eventFile sourceEvent(sourceEventFileName);
-eventFile patchEvent(patchEventFileName);
+sourceEventFile sourceEvent(sourceEventFileName);
+patchEventFile patchEvent(patchEventFileName,false);
 
 volScalarField sourceTerm
 (
@@ -82,4 +82,4 @@ else if (sourceEventIsPresent)
     allEventDates = sourceEvent.dates();
 }
 
-Info << nl << "There are " << allEventDates.size() << "events for this simulation" << endl;
+Info << nl << "There are " << allEventDates.size() << " events for this simulation" << endl;

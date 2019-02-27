@@ -1,6 +1,6 @@
 word eventFileName = transportProperties.lookupOrDefault<word>("eventFileFlowRate","");
 bool eventIsPresent = transportProperties.found("eventFileFlowRate");
-eventFile event(eventFileName);
+sourceEventFile event(eventFileName);
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
 
 //- determining cell id corresponding to datas
