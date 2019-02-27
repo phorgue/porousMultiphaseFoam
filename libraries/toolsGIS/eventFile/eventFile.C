@@ -30,15 +30,13 @@ License
 
 Foam::eventFile::eventFile
 (
-    const eventFile& MNTtoCopy
+    const eventFile& eventFileToCopy
 )
     :  
-    name_(MNTtoCopy.name()),
-    ndates_(MNTtoCopy.ndates()),
-    ncoordinates_(MNTtoCopy.ncoordinates()),
-    dates_(MNTtoCopy.dates()),
-    coordinates_(MNTtoCopy.coordinates()),
-    datas_(MNTtoCopy.datas())
+    name_(eventFileToCopy.name()),
+    ndates_(eventFileToCopy.ndates()),
+    dates_(eventFileToCopy.dates()),
+    datas_(eventFileToCopy.datas())
 {
 }
 
@@ -49,121 +47,6 @@ Foam::eventFile::eventFile
     :
     name_(fileName)
 {
-    if (fileName.size() != 0)
-    {
-        //- properties of a MNT file
-        string separator_ = " ";
-        label nEntriesMax = 4;
-
-        //- file name
-        IFstream ifs(fileName);
-        DynamicList<scalar> datesRead;
-        DynamicList<point> coordinatesRead;
-        DynamicList<scalar> valueRead;
-
-        Info << nl << "Reading Event file '" << fileName << "' ...";
-        // read data
-        while (ifs.good())
-        {
-            string line;
-            ifs.getLine(line);
-
-            if (line != "")
-            {
-
-                label n = 0;
-                std::size_t pos = 0;
-                DynamicList<string> split;
-        
-                while ((pos != std::string::npos) && (n <= nEntriesMax))
-                {
-                    std::size_t nPos = line.find(separator_, pos);
-                    if (nPos == std::string::npos)
-                    {
-                        split.append(line.substr(pos));
-                        pos = nPos;
-                        n++;
-                    }
-                    else
-                    {
-                        split.append(line.substr(pos, nPos - pos));
-                        pos = nPos + 1;
-                        n++;
-                    }
-                }
-
-                if (split.size() <= 1)
-                {
-                    break;
-                }            
-                else if (split[0] == "date")
-                {
-                    scalar newDate = readScalar(IStringStream(split[1])());
-                    datesRead.append(newDate);
-                }
-                else
-                {
-                    if (n != 4)
-                    {
-                        FatalErrorIn("eventFile.C")
-                            << "wrong number of elements in event file :" << fileName
-                                << nl << " found " << split.size() << " elements instead of 4 "
-                                << nl << "List of read elements : " << split
-                                << abort(FatalError);
-                    }
-       
-                    scalar x = readScalar(IStringStream(split[0])());
-                    scalar y = readScalar(IStringStream(split[1])());
-                    scalar z = readScalar(IStringStream(split[2])());
-                    coordinatesRead.append(point(x,y,z));
-                    scalar value = readScalar(IStringStream(split[3])());
-                    valueRead.append(value);
-                }
-            }
-        }
-
-        ndates_ = datesRead.size()+1;
-        ncoordinates_ = coordinatesRead.size()/(ndates_-1);
-    
-        Info << "OK!"
-            << nl << "{"
-            << nl << "  number of dates       = " << ndates_-1
-            << nl << "  number of coordinates = " << ncoordinates_
-            << nl << "  number datas          = " << coordinatesRead.size()
-            << nl << "}" << endl;
-
-        //- Storing dates
-        dates_.resize(ndates_);
-        forAll(datesRead,datei)
-        {
-            dates_[datei] = datesRead[datei];
-        }
-        dates_[ndates_-1] = VGREAT;
-
-        //- Storing coordinates
-        coordinates_.resize(ncoordinates_);
-        forAll(coordinates_,coordinatei)
-        {
-            coordinates_[coordinatei] = coordinatesRead[1+coordinatei];
-        }
- 
-        //- Storing infiltration datas
-        datas_.setSize(ndates_,ncoordinates_);
-        label iter = 0;
-        forAll(datesRead,datei)
-        {
-            for(label coordinatei=0;coordinatei<ncoordinates_;coordinatei++)
-            {           
-                datas_[datei][coordinatei] = valueRead[iter];
-                iter++;
-            }
-        }
-        for(label coordinatei=0;coordinatei<ncoordinates_;coordinatei++)
-        {
-            datas_[ndates_-1][coordinatei] = 0;
-        }
-    }
-
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
