@@ -22,38 +22,39 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::eventFile
+    Foam::patchEventFile
 
 Description
-    Event file handler/reader for the porousMultiphaseFoam toolbox which
+    PatchEvent file handler/reader for the porousMultiphaseFoam toolbox which
     contain 'm' dates with 'n' infiltration points where infiltration is
     expressed in m3/s. The class reads the file :
 
     date time1
-    x1 y1 z1 infiltration11
-    x2 y2 z2 infiltration12
+    patchName1 infiltration11
+    patchName1 infiltration12
     ...
-    xn yn zn infiltration1n
+    patchNameN infiltration1N
     date time2
-    x1 y1 z1 infiltration21
-    x2 y2 z2 infiltration22
+    patchName1 infiltration21
+    patchName2 infiltration22
     ...
-    date timem
+    date time
     ...
-    xn yn zn infiltrationmn
+    patchNameN infiltrationmN
 
 SourceFiles
-    eventFile.C
+    patchEventFile.C
 
 Author
     Pierre Horgue
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef eventFile_H
-#define eventFile_H
+#ifndef patchEventFile_H
+#define patchEventFile_H
 
 #include "fvMesh.H"
+#include "eventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -61,46 +62,45 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------* \
-    Class fluideventFile Declaration
+    Class fluidpatchEventFile Declaration
     \*---------------------------------------------------------------------------*/
 
-class eventFile
+class patchEventFile
+:
+    public eventFile
 {
 
 protected:
 
-    word name_;
-    label ndates_;
-    scalarList dates_;
-    RectangularMatrix<scalar> datas_;
+    label npatches_;
+    wordList patchNameList_;
 
 public:
 
     // Constructors    
     //- Copy constructor
-    eventFile
+    patchEventFile
     (
-        const eventFile& fileToCopy
+        const patchEventFile& fileToCopy
     );
 
     //- Construct from Istream
-    eventFile
+    patchEventFile
     (
-        const word& fileName
+        const word& fileName,
+        bool display = true
     );
     
     // Selectors
 
     //- Destructor
-    virtual ~eventFile();
+    ~patchEventFile();
 
     // Member Functions
     
     //- Access function
-    const word& name() const {return name_;}
-    const label& ndates() const {return ndates_;}
-    const scalarList& dates() const {return dates_;}
-    const RectangularMatrix<scalar>& datas() const {return datas_;}
+    const label& npatches() const {return npatches_;}
+    const wordList& patchNameList() const {return patchNameList_;}
 
 };
 
