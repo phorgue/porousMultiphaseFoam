@@ -72,7 +72,7 @@ SourceFiles
 #define fixedFlux_H
 
 #include "fixedValueFvPatchFields.H"
-#include "eventFile.H"
+#include "patchEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

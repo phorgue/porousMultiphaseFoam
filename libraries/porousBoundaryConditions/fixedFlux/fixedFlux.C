@@ -62,9 +62,21 @@ fixedFlux
     
     if (eventFileName != "")
     {
-        eventFile eventFlux(eventFileName);
+        patchEventFile eventFlux(eventFileName);
         eventData_.setSize(eventFlux.ndates());
-  
+
+        //- finding patch name
+        label patchID = -1;
+        forAll(eventFlux.patchNameList(),patchi)
+        {
+            if (patch().name() == eventFlux.patchNameList()[patchi]) patchID = patchi;
+        }
+
+        if (patchID == -1)
+        {
+            FatalErrorIn("fixedFlux.C") << " patch '" << patch().name() << "' not found in event file : " << eventFlux.name() << abort(FatalError);
+        }
+
         forAll(eventFlux.dates(),eventi)
         {
             eventData_[eventi] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi],eventFlux.datas()[eventi][0]);

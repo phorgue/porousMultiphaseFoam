@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::eventFile
+    Foam::sourceEventFile
 
 Description
     Event file handler/reader for the porousMultiphaseFoam toolbox which
@@ -43,48 +43,48 @@ Description
     xn yn zn infiltrationmn
 
 SourceFiles
-    eventFile.C
+    sourceEventFile.C
 
 Author
     Pierre Horgue
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef eventFile_H
-#define eventFile_H
+#ifndef sourceEventFile_H
+#define sourceEventFile_H
 
 #include "fvMesh.H"
-
+#include "eventFile.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------* \
-    Class fluideventFile Declaration
+    Class fluidsourceEventFile Declaration
     \*---------------------------------------------------------------------------*/
 
-class eventFile
+class sourceEventFile
+:
+    public eventFile
 {
 
-protected:
+private:
 
-    word name_;
-    label ndates_;
-    scalarList dates_;
-    RectangularMatrix<scalar> datas_;
+    label ncoordinates_;
+    List<point> coordinates_;
 
 public:
 
     // Constructors    
     //- Copy constructor
-    eventFile
+    sourceEventFile
     (
-        const eventFile& fileToCopy
+        const sourceEventFile& fileToCopy
     );
 
     //- Construct from Istream
-    eventFile
+    sourceEventFile
     (
         const word& fileName
     );
@@ -92,15 +92,13 @@ public:
     // Selectors
 
     //- Destructor
-    virtual ~eventFile();
+    ~sourceEventFile();
 
     // Member Functions
     
     //- Access function
-    const word& name() const {return name_;}
-    const label& ndates() const {return ndates_;}
-    const scalarList& dates() const {return dates_;}
-    const RectangularMatrix<scalar>& datas() const {return datas_;}
+    const label& ncoordinates() const {return ncoordinates_;}
+    const List<point>& coordinates() const {return coordinates_;}
 
 };
 
