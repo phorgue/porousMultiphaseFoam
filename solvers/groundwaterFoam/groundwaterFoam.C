@@ -40,7 +40,7 @@ Developers
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "fixedValueFvPatchField.H"
-#include "eventFile.H"
+#include "sourceEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;

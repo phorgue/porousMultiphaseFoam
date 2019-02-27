@@ -39,7 +39,7 @@ Developers
 #include "incompressiblePhase.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
-#include "eventFile.H"
+#include "sourceEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
