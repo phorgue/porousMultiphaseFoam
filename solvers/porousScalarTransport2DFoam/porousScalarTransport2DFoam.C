@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         runTime.write();
 
         //- write solution and eventTime
-        if (allEventDates[currentGlobalEvent] == runTime.timeOutputValue())
+        if (allEventDates[currentEventWrite] == runTime.timeOutputValue())
         {
             runTime.writeNow();
         }

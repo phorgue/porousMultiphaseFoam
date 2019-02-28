@@ -59,11 +59,11 @@ fixedFlux
     valueEvent_(0.0)
 {
     word eventFileName = db().lookupObject<dictionary>("transportProperties").lookupOrDefault<word>("eventFilePatchMassFlowRate","");
+    scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",1.0);
     
     if (eventFileName != "")
     {
         patchEventFile eventFlux(eventFileName);
-        eventData_.setSize(eventFlux.ndates());
 
         //- finding patch name
         label patchID = -1;
@@ -71,18 +71,27 @@ fixedFlux
         {
             if (patch().name() == eventFlux.patchNameList()[patchi]) patchID = patchi;
         }
-
         if (patchID == -1)
         {
             FatalErrorIn("fixedFlux.C") << " patch '" << patch().name() << "' not found in event file : " << eventFlux.name() << abort(FatalError);
         }
 
-        forAll(eventFlux.dates(),eventi)
+        //- storing event data
+        label nbEvents = eventFlux.dates().size();
+        eventData_.setSize((nbEvents-2)*3+2);
+        Info << nbEvents
+            << nl << (nbEvents-2)*3+2 << endl;
+        eventData_[0] =  Tuple2<scalar, scalar>(eventFlux.dates()[0],eventFlux.datas()[0][patchID]);
+        for(label eventi=1;eventi<nbEvents-1;eventi++)
         {
-            eventData_[eventi] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi],eventFlux.datas()[eventi][0]);
+            eventData_[eventi*3-2] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi]-eventTimeStep,(eventFlux.datas()[eventi-1][patchID]+eventFlux.datas()[eventi][patchID])/2);
+            eventData_[eventi*3-1] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi],(eventFlux.datas()[eventi-1][patchID]+eventFlux.datas()[eventi][patchID])/2);
+            eventData_[eventi*3] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi]+eventTimeStep,eventFlux.datas()[eventi][patchID]);
         }
+        eventData_[(nbEvents-2)*3+1] = Tuple2<scalar, scalar>(eventFlux.dates()[nbEvents-1]+eventTimeStep,eventFlux.datas()[nbEvents-1][patchID]);
         iterEvent_ = 0;
     }
+    Info << eventData_ << endl;
 }
 
 
