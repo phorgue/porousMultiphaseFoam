@@ -141,7 +141,7 @@ Foam::sourceEventFile::sourceEventFile
         {
             dates_[datei] = datesRead[datei];
         }
-        dates_[ndates_-1] = VGREAT;
+        dates_[ndates_-1] = GREAT;
 
         //- Storing coordinates
         coordinates_.resize(ncoordinates_);

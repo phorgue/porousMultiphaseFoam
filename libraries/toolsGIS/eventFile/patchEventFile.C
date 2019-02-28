@@ -145,7 +145,7 @@ Foam::patchEventFile::patchEventFile
         {
             dates_[datei] = datesRead[datei];
         }
-        dates_[ndates_-1] = VGREAT;
+        dates_[ndates_-1] = GREAT;
 
         //- Storing patch name
         patchNameList_.resize(npatches_);

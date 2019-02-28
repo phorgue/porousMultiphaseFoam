@@ -24,7 +24,8 @@ volScalarField sourceTerm
 //- Initialising event iterators
 label currentSourceEvent = 0;
 label currentPatchEvent = 0;
-label currentGlobalEvent = 0;
+label currentEventTimeStep = 0;
+label currentEventWrite = 1;
 
 //- determining cell id corresponding to datas
 labelList idCoordinates(sourceEvent.ncoordinates());
@@ -67,6 +68,7 @@ if (patchEventIsPresent && sourceEventIsPresent)
                 allEventDates[iterGlobal] = sourceEvent.dates()[iterSource];
             }
             iterSource++;
+
         }
     }
 
@@ -83,3 +85,21 @@ else if (sourceEventIsPresent)
 }
 
 Info << nl << "There are " << allEventDates.size() << " events for this simulation" << endl;
+
+//- Adding intermediate event to force small time step.
+scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",1));
+scalarList allEventDatesForTimeStep = allEventDates;
+
+if (allEventDates.size() > 2)
+{
+    label nbEvents = allEventDates.size();
+    allEventDatesForTimeStep.resize((nbEvents-2)*3+2);
+    allEventDatesForTimeStep[0] = allEventDates[0];
+    for(label eventi=1;eventi<nbEvents-1;eventi++)
+    {
+        allEventDatesForTimeStep[eventi*3-2] = allEventDates[eventi]-eventTimeStep;
+        allEventDatesForTimeStep[eventi*3-1] = allEventDates[eventi];
+        allEventDatesForTimeStep[eventi*3] = allEventDates[eventi]+eventTimeStep;
+    }
+    allEventDatesForTimeStep[(nbEvents-2)*3+1] =  allEventDates[nbEvents-1];
+}
