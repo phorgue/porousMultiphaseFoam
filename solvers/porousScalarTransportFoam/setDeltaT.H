@@ -49,16 +49,16 @@ if (adjustTimeStep)
         );
     
 
-    if (allEventDates.size()>0)
+    if (allEventDatesForTimeStep.size()>0)
     {
-            const scalar timeToNextEvent = allEventDates[currentGlobalEvent+1]-runTime.timeOutputValue();
+        const scalar timeToNextEvent = allEventDatesForTimeStep[currentEventTimeStep+1]-runTime.timeOutputValue();
             scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
             if (nSteps < labelMax)
             {
                 const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
                 runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
             }
-            if (nSteps <= 1) currentGlobalEvent++;
+            if (nSteps <= 1) currentEventTimeStep++;
     }
     Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
 

@@ -136,9 +136,9 @@ Foam::scalar Foam::XYfile::interpolate(const point& location)
     label id1=-1;
     label id2=-1;
     label id3=-1;     
-    scalar dist1 = VGREAT;
-    scalar dist2 = VGREAT;
-    scalar dist3 = VGREAT;
+    scalar dist1 = GREAT;
+    scalar dist2 = GREAT;
+    scalar dist3 = GREAT;
 
     for(label i=0;i<x_.size();i++)
     {
