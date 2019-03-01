@@ -59,11 +59,16 @@ fixedFlux
     valueEvent_(0.0)
 {
     word eventFileName = db().lookupObject<dictionary>("transportProperties").lookupOrDefault<word>("eventFilePatchMassFlowRate","");
-    scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",1.0);
     
     if (eventFileName != "")
     {
+        //- Reading patch event file and adding intermediate time step
         patchEventFile eventFlux(eventFileName);
+        scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",0);
+        if (eventTimeStep > 0)
+        {
+            eventFlux.addIntermediateTimeSteps(eventTimeStep);
+        }
 
         //- finding patch name
         label patchID = -1;
@@ -77,21 +82,14 @@ fixedFlux
         }
 
         //- storing event data
-        label nbEvents = eventFlux.dates().size();
-        eventData_.setSize((nbEvents-2)*3+2);
-        Info << nbEvents
-            << nl << (nbEvents-2)*3+2 << endl;
-        eventData_[0] =  Tuple2<scalar, scalar>(eventFlux.dates()[0],eventFlux.datas()[0][patchID]);
-        for(label eventi=1;eventi<nbEvents-1;eventi++)
+        eventData_.setSize(eventFlux.ndates());
+        forAll(eventData_,eventi)
         {
-            eventData_[eventi*3-2] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi]-eventTimeStep,(eventFlux.datas()[eventi-1][patchID]+eventFlux.datas()[eventi][patchID])/2);
-            eventData_[eventi*3-1] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi],(eventFlux.datas()[eventi-1][patchID]+eventFlux.datas()[eventi][patchID])/2);
-            eventData_[eventi*3] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi]+eventTimeStep,eventFlux.datas()[eventi][patchID]);
+            eventData_[eventi] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi],eventFlux.datas()[eventi][patchID]);
         }
-        eventData_[(nbEvents-2)*3+1] = Tuple2<scalar, scalar>(eventFlux.dates()[nbEvents-1]+eventTimeStep,eventFlux.datas()[nbEvents-1][patchID]);
+
         iterEvent_ = 0;
     }
-    Info << eventData_ << endl;
 }
 
 
@@ -156,7 +154,7 @@ void Foam::fixedFlux::updateCoeffs()
     if (iterEvent_ > -1 )
     {
         scalar currentTime = this->db().time().value();
-        if ( currentTime > eventData_[iterEvent_+1].first() )
+        while ( currentTime > eventData_[iterEvent_+1].first() )
         {
             iterEvent_++;
         }
@@ -165,7 +163,7 @@ void Foam::fixedFlux::updateCoeffs()
 
     //- Computing fixed value
     scalarField results(patch().patch().faceCentres().size());    
-    results = (-fixedFluxValue_-valueEvent_)/sum(phip_);
+    results = (fixedFluxValue_+valueEvent_)/sum(phip_);
     operator== (results);
     fixedValueFvPatchScalarField::updateCoeffs();
 }

@@ -36,7 +36,8 @@ Foam::eventFile::eventFile
     name_(eventFileToCopy.name()),
     ndates_(eventFileToCopy.ndates()),
     dates_(eventFileToCopy.dates()),
-    datas_(eventFileToCopy.datas())
+    datas_(eventFileToCopy.datas()),
+    iterator_(eventFileToCopy.iterator_)
 {
 }
 
@@ -47,6 +48,7 @@ Foam::eventFile::eventFile
     :
     name_(fileName)
 {
+    iterator_ = 0 ;
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -55,3 +57,61 @@ Foam::eventFile::~eventFile()
 {}
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
+
+const Foam::scalar& Foam::eventFile::currentEventStartTime() const
+{
+    return dates_[iterator_];
+}
+
+const Foam::scalar& Foam::eventFile::currentEventEndTime() const
+{
+    if (iterator_ <= ndates_-2)
+    {
+        return dates_[iterator_+1];
+    }
+    else
+    {
+        Warning() <<  " Last event from file " << name_ << " reached" << endl;
+        return dates_[iterator_];
+    }
+}
+
+void Foam::eventFile::update(const scalar& currentTime)
+{
+    if (currentEventEndTime() <= currentTime)
+    {
+        iterator_++;
+        while ((currentEventEndTime() <= currentTime) && (iterator_ < ndates_-2))
+        {
+            iterator_++;
+        }
+    }
+}
+
+void Foam::eventFile::addIntermediateTimeSteps(const scalar& smallDeltaT)
+{
+    RectangularMatrix<scalar> oldDatas = datas_;
+    scalarList oldDates = dates_;
+    datas_.setSize((ndates_-2)*3+2,datas_.n());
+    dates_.setSize((ndates_-2)*3+2);
+    dates_[0] = oldDates[0];
+    for (label datei=1;datei<ndates_-1;datei++)
+    {
+        dates_[datei*3-2] = oldDates[datei]-smallDeltaT;
+        dates_[datei*3-1] = oldDates[datei];
+        dates_[datei*3] = oldDates[datei]+smallDeltaT;
+    }
+    dates_[(ndates_-2)*3+1] = oldDates[ndates_-1];
+    for(label columni=0;columni<datas_.n();columni++)
+    {
+        datas_[0][columni] = oldDatas[0][columni];
+        for(label datei=1;datei<ndates_-1;datei++)
+        {
+            datas_[datei*3-2][columni] = (oldDatas[datei-1][columni]+oldDatas[datei][columni])/2;
+            datas_[datei*3-1][columni] = (oldDatas[datei-1][columni]+oldDatas[datei][columni])/2;
+            datas_[datei*3][columni] = oldDatas[datei][columni];
+        }
+        datas_[(ndates_-2)*3+1][columni] = oldDatas[ndates_-1][columni];
+    }
+    ndates_ = (ndates_-2)*3+2;
+}

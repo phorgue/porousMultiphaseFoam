@@ -2,6 +2,7 @@ MNTfile/MNTfile.C
 XYfile/XYfile.C
 
 eventFile/eventFile.C
+eventFile/outputEventFile.C
 eventFile/sourceEventFile.C
 eventFile/patchEventFile.C
 
