@@ -21,63 +21,70 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
-Application
-    porouScalarTransportFoam
+Class
+    Foam::outputEventFile
 
 Description
-    Solves the transport equation for a passive scalar
-    in porous media with dispersion coefficient model
+    Event file handler/reader for the porousMultiphaseFoam toolbox which
+
+SourceFiles
+    outputEventFile.C
 
 Author
     Pierre Horgue
 
 \*---------------------------------------------------------------------------*/
 
-#include "fvCFD.H"
-#include "dispersionModel.H"
-#include "sourceEventFile.H"
-#include "patchEventFile.H"
-#include "outputEventFile.H"
+#ifndef outputEventFile_H
+#define outputEventFile_H
+
+#include "fvMesh.H"
+#include "eventFile.H"
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
+{
+
+/*---------------------------------------------------------------------------* \
+    Class fluidoutputEventFile Declaration
+    \*---------------------------------------------------------------------------*/
+
+class outputEventFile
+:
+    public eventFile
+{
+
+public:
+
+    // Constructors    
+    //- Copy constructor
+    outputEventFile
+    (
+        const outputEventFile& fileToCopy
+    );
+
+    //- Construct from Istream
+    outputEventFile
+    (
+        const word& fileName
+    );
+    
+    // Selectors
+
+    //- Destructor
+    ~outputEventFile();
+
+    // Member Functions
+    
+    //- Access function
+};
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-int main(int argc, char *argv[])
-{
-    #include "setRootCase.H"
-    #include "createTime.H"
-    #include "createMesh.H"
-    #include "createFields.H"
-    #include "createTimeControls.H"
-    #include "readEvent.H"
-    #include "CourantNo.H"
-    #include "setInitialDeltaT.H"
+} // End namespace Foam
 
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    while (runTime.run())
-    {
-        #include "updateEvent.H"
-        #include "CourantNo.H"
-        #include "setDeltaT.H"
-
-        runTime++;
-
-        Info << "Time = " << runTime.timeName() << nl << endl;
-
-        #include "CEqn.H"
-        #include "CmassBalance.H"
-
-        #include "eventWrite.H"
-
-        Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
-            << "  ClockTime = " << runTime.elapsedClockTime() << " s"
-            << nl << endl;
-    }
-
-    Info<< "End\n" << endl;
-
-    return 0;
-}
-
+#endif
 
 // ************************************************************************* //
