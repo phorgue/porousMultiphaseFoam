@@ -73,6 +73,7 @@ protected:
     label ndates_;
     scalarList dates_;
     RectangularMatrix<scalar> datas_;
+    label iterator_;
 
 public:
 
@@ -101,6 +102,11 @@ public:
     const label& ndates() const {return ndates_;}
     const scalarList& dates() const {return dates_;}
     const RectangularMatrix<scalar>& datas() const {return datas_;}
+    const scalar& currentValue(const label& id) {return datas_[iterator_][id];}
+    const scalar& currentEventStartTime() const;
+    const scalar& currentEventEndTime() const;
+    void update(const scalar& currentTime);
+    void addIntermediateTimeSteps(const scalar& smallDT);
 
 };
 

@@ -39,6 +39,7 @@ Author
 #include "dispersionModel.H"
 #include "sourceEventFile.H"
 #include "patchEventFile.H"
+#include "outputEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -72,13 +73,7 @@ int main(int argc, char *argv[])
         #include "CEqn.H"
         #include "CmassBalance.H"
 
-        runTime.write();
-
-        //- write solution and eventTime
-        if (allEventDates[currentEventWrite] == runTime.timeOutputValue())
-        {
-            runTime.writeNow();
-        }
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
