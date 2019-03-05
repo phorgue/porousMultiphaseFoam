@@ -112,3 +112,18 @@ volScalarField K
 
 // permeability interpolation (harmonic by default)
 surfaceScalarField Kf = fvc::interpolate(K,"K");
+
+//- For constant or event source injection/extraction
+volScalarField sourceTerm
+(
+    IOobject
+    (
+        "sourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("",dimless/dimTime,0)
+);

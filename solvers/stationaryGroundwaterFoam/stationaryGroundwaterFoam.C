@@ -40,6 +40,7 @@ Developers
 #include "relativePermeabilityModel.H"
 #include "simpleControl.H"
 #include "sourceEventFile.H"
+#include "outputEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;

@@ -53,7 +53,6 @@ if (adjustTimeStep)
     if (patchEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,patchEvent.currentEventEndTime());
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
-    Info << nl << "timeOfNextEvent = "<< timeOfNextEvent << endl;
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
     if ((nSteps < labelMax) && (nSteps != 0))
