@@ -1,24 +1,14 @@
-if (eventIsPresent)
+if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
+if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
+
+if (sourceEventIsPresent)
 {
-    if (currentEvent < (event.ndates()-1))
+    if (sourceEvent.currentEventStartTime() == runTime.timeOutputValue())
     {
-        sourceTerm = dimensionedScalar("",dimless/dimTime,0);
-        if (runTime.timeOutputValue() > event.dates()[currentEvent+1])
+        sourceTerm.primitiveFieldRef() = 0;
+        forAll(sourceEvent.coordinates(),pointi)
         {
-            scalar eventFactor =  (runTime.timeOutputValue()- event.dates()[currentEvent+1]) / runTime.deltaTValue();
-        forAll(event.coordinates(),pointi)
-        {
-            sourceTerm[idCoordinates[pointi]] = (eventFactor * event.datas()[currentEvent+1][pointi]
-            + (1-eventFactor) * event.datas()[currentEvent][pointi]) / mesh.V()[idCoordinates[pointi]];
-        }
-        currentEvent++;
-    }
-    else
-    {
-        forAll(event.coordinates(),pointi)
-        {
-            sourceTerm[idCoordinates[pointi]] = event.datas()[currentEvent][pointi]/mesh.V()[idCoordinates[pointi]];
+            sourceTerm[idCoordinates[pointi]] = sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
         }
     }
-}
 }

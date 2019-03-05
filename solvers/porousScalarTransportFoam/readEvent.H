@@ -13,7 +13,6 @@ word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFil
 outputEventFile outputEvent(outputEventFileName);
 if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
 
-
 scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
 if (eventTimeStep > 0)
 {
@@ -21,26 +20,11 @@ if (eventTimeStep > 0)
     if (sourceEventIsPresent) sourceEvent.addIntermediateTimeSteps(eventTimeStep);
 }
 
-//- Computing source term
-volScalarField sourceTerm
-(
-    IOobject
-    (
-        "sourceTerm",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("",dimMass/(dimVol*dimTime),0)
-);
-
 //- determining cell id corresponding to datas
 labelList idCoordinates(sourceEvent.ncoordinates());
 if (sourceEventIsPresent)
 {
-    sourceTerm = dimensionedScalar("",dimMass/(dimVol*dimTime),0);
+    sourceTerm.primitiveFieldRef() = 0;
     forAll(sourceEvent.coordinates(),pointi)
     {
         idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);

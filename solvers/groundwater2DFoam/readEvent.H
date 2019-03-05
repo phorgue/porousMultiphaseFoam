@@ -1,17 +1,21 @@
-word eventFileName = transportProperties.lookupOrDefault<word>("eventFileFlowRate","");
-bool eventIsPresent = transportProperties.found("eventFileFlowRate");
-sourceEventFile event(eventFileName);
-scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
+bool uniformInfiltrationEventIsPresent = transportProperties.found("eventFileInfiltration");
+word uniformInfiltrationEventFileName = transportProperties.lookupOrDefault<word>("eventFileInfiltration","");
+uniformInfiltrationEventFile uniformInfiltrationEvent(uniformInfiltrationEventFileName);
+if (uniformInfiltrationEventIsPresent) uniformInfiltrationEvent.update(runTime.startTime().value());
 
-//- determining cell id corresponding to datas
-labelList idCoordinates(event.ncoordinates());
-label currentEvent = 0;
-if (eventIsPresent)
+bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+outputEventFile outputEvent(outputEventFileName);
+if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
+
+scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
+if (eventTimeStep > 0)
 {
-    infiltration = dimensionedScalar("",dimLength/dimTime,0);
-    forAll(event.coordinates(),pointi)
-    {
-        idCoordinates[pointi] = mesh.findNearestCell(event.coordinates()[pointi]);
-        infiltration[idCoordinates[pointi]] = event.datas()[currentEvent][pointi]*zScale/mesh.V()[idCoordinates[pointi]];
-    }
+    if (uniformInfiltrationEventIsPresent) uniformInfiltrationEvent.addIntermediateTimeSteps(eventTimeStep);
+}
+
+//- Updating infiltration value using event file
+if (uniformInfiltrationEventIsPresent)
+{
+    infiltration.primitiveFieldRef() = uniformInfiltrationEvent.currentValue();
 }
