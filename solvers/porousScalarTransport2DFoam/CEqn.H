@@ -8,7 +8,7 @@
             + dimensionedScalar("",dimLength,1) * fvm::div(phi, C, "div(phi,C)")
             - eps * hwater * fvm::laplacian(DeffModel->Deff(), C, "laplacian(Deff,C)")
             ==
-            R * sourceTerm * dimensionedScalar("",dimLength,1)
+            R * sourceTerm * zScale
             - eps * R * hwater * fvm::Sp(lambda,C)
         );
 

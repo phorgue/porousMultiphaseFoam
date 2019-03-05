@@ -41,6 +41,7 @@ Developers
 #include "relativePermeabilityModel.H"
 #include "fixedValueFvPatchField.H"
 #include "sourceEventFile.H"
+#include "outputEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -94,13 +95,7 @@ int main(int argc, char *argv[])
         dthetadTmax = dtheta/runTime.deltaTValue();
         dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
 
-        runTime.write();
-
-        //- write solution and eventTime
-        if (event.dates()[currentEvent+1] == runTime.timeOutputValue())
-        {
-            runTime.writeNow();
-        }
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

@@ -164,3 +164,18 @@ if (CSVactive)
     }
     massBalanceCSV << endl;
 }
+
+//- Source term
+volScalarField sourceTerm
+(
+    IOobject
+    (
+        "sourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("",dimMass/(dimVol*dimTime),0)
+);

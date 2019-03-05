@@ -75,19 +75,20 @@ if(adjustTimeStep)
             );
     }
 
-    if (event.ndates() > 0)
+    scalar timeOfNextEvent = GREAT;
+    if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
+    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
+
+    scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
+    scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+    if ((nSteps < labelMax) && (nSteps != 0))
     {
-        const scalar timeToNextEvent = event.dates()[currentEvent+1]-runTime.timeOutputValue();
-        scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
-        if ((nSteps < labelMax) && (nSteps > 0))
-        {
-            const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
-            runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
-        }
+        const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
+        runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
     }
 
-}
+    Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << " ; dtheta avg = " << dtheta_avg << endl;
 
-Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << " ; dtheta avg = " << dtheta_avg << endl;
+}
 
 // ************************************************************************* //

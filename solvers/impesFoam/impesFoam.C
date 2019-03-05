@@ -41,6 +41,7 @@ Developers
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "sourceEventFile.H"
+#include "outputEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -79,13 +80,7 @@ int main(int argc, char *argv[])
         //- Solve pressure equation (implicit)
         #include "pEqn.H"
 
-        runTime.write();
-
-        //- write solution and eventTime
-        if (event.dates()[currentEvent+1] == runTime.timeOutputValue())
-        {
-            runTime.writeNow();
-        }
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

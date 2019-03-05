@@ -4,6 +4,7 @@ if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
 
 if (sourceEventIsPresent)
 {
+    sourceTerm.primitiveFieldRef() = 0;
     if (sourceEvent.currentEventStartTime() == runTime.timeOutputValue())
     {
         forAll(sourceEvent.coordinates(),pointi)

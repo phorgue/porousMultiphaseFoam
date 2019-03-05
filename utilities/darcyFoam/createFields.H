@@ -66,3 +66,18 @@ surfaceScalarField Kf(fvc::interpolate(K,"K"));
 surfaceScalarField Mf ("Mf",Kf/mu);
 surfaceScalarField phiG("phiG",(rho * Mf * g) & mesh.Sf());
 surfaceScalarField phiPc("phiPc", 0 * phiG); //- required for porousBoundaryConditions
+
+//- For constant or event source injection/extraction
+volScalarField sourceTerm
+(
+    IOobject
+    (
+        "sourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("",dimless/dimTime,0)
+);

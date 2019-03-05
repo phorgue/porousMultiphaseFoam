@@ -18,6 +18,6 @@ FoamFile
 eps eps [0 0 0 0 0 0 0] 0.5;
 nu nu [0 2 -1 0 0 0 0] 1.0e-06;
 
-eventFileFlowRate "flowRateOverTime.dat";
+eventFileInfiltration "flowRateOverTime.dat";
 
 // ************************************************************************* //

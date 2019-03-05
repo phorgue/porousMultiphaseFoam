@@ -36,7 +36,8 @@ Developer
 #include "harmonic.H"
 #include "fixedValueFvPatchField.H"
 #include "MNTfile.H"
-#include "sourceEventFile.H"
+#include "uniformInfiltrationEventFile.H"
+#include "outputEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -72,13 +73,7 @@ int main(int argc, char *argv[])
         //- Water bilan computation
         #include "waterBilan.H"
 
-        runTime.write();
-
-        //- write solution and eventTime
-        if (event.dates()[currentEvent+1] == runTime.timeOutputValue())
-        {
-            runTime.writeNow();
-        }
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
