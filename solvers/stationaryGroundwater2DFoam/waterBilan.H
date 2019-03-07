@@ -16,7 +16,7 @@
         cellFlux = fvc::div(phi*fvc::interpolate(hwater));
         forAll(fixedPotentialIDList,pointi)
         {
-            fixedFlowRate += cellFlux.internalField()[fixedPotentialIDList[pointi]]*mesh.V()[fixedPotentialIDList[pointi]];
+            fixedFlowRate -= cellFlux.internalField()[fixedPotentialIDList[pointi]]*mesh.V()[fixedPotentialIDList[pointi]];
         }
         Info << " fixed points = " << fixedFlowRate;
     }

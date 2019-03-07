@@ -103,7 +103,7 @@ Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
                 }
                 else
                 {
-                    if (n != 1)
+                    if (n > 2)
                     {
                         FatalErrorIn("uniformInfiltrationEventFile.C")
                             << "wrong number of elements in event file :" << fileName

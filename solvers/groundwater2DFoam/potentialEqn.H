@@ -6,14 +6,10 @@
             eps * fvm::ddt(potential)
             - fvm::laplacian(transmissivity,potential,"laplacian(transmissivity,potential)")
             ==
-            infiltration
+            - infiltration
         );
 
-    //- Fix values if forcingPotential "fixedValue" or "fixedMNT"
-    if ((forcingPotential.substr(0,5) == "fixed") && (fixedPotentialIDList.size() > 0))
-    {
-        potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
-    }
+    #include "updateForcing.H"
 
     potentialEqn.solve();
 
