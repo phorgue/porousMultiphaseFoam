@@ -5,7 +5,7 @@
         (
             - fvm::laplacian(transmissivity,potential,"laplacian(transmissivity,potential)")
             ==
-            infiltration
+            - infiltration
         );
 
     #include "updateForcing.H"
