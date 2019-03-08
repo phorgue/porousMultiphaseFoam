@@ -7,7 +7,7 @@
             + fvc::div(phiPc)*activateCapillarity
             ==
             // event source terms
-            sourceTerm
+            - sourceTerm
         );
 
     pEqn.solve();
