@@ -13,7 +13,7 @@
     //- CSV output
     if (CSVactive)
     {
-        if ((!outputEventIsPresent) || outputEvent.currentEventStartTime() == runTime.timeOutputValue())
+        if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
             massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(hwater*C*eps).value();
             forAll(mesh.boundaryMesh(),patchi)
