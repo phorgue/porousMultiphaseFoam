@@ -58,16 +58,14 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-
+        //- Update Event
+        #include "updateEvent.H"
         #include "CourantNo.H"
         #include "setDeltaT.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
-
-        //- Update Event
-        #include "updateEvent.H"
 
         //- Compute transport
         #include "CEqn.H"

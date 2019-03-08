@@ -154,11 +154,22 @@ void Foam::fixedFlux::updateCoeffs()
     if (iterEvent_ > -1 )
     {
         scalar currentTime = this->db().time().value();
-        while ( currentTime > eventData_[iterEvent_+1].first() )
+        if (currentTime > eventData_[iterEvent_+1].first())
         {
             iterEvent_++;
+            scalar deltaT =this->db().time().deltaT().value();
+            scalar deltaT0 =this->db().time().deltaT0().value();
+            // Coefficient for t-3/2 (between times 0 and 00)
+            scalar coefft0_00 = deltaT/(deltaT + deltaT0);
+
+            // Coefficient for t-1/2 (between times n and 0)
+            scalar coefftn_0 = 1 + coefft0_00;
+            valueEvent_ = coefftn_0*eventData_[iterEvent_].second() - coefft0_00*eventData_[iterEvent_-1].second();
         }
+        else
+        {
         valueEvent_ = eventData_[iterEvent_].second();
+        }
     }
 
     //- Computing fixed value

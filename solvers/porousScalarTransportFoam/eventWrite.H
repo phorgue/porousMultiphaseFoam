@@ -1,7 +1,7 @@
 //- write using event file or controlDict
 if (outputEventIsPresent)
 {
-    if (outputEvent.currentEventStartTime() == runTime.timeOutputValue())
+    if (outputEvent.currentEventEndTime() == runTime.timeOutputValue())
     {
         runTime.writeNow();
     }
