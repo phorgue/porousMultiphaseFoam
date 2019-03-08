@@ -17,7 +17,7 @@
             - fvm::laplacian(Mf,h)
             + fvc::div(phiG)
             ==
-            sourceTerm
+            - sourceTerm
         );
 
     #include "updateForcing.H"

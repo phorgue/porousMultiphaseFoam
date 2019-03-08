@@ -19,7 +19,7 @@
             eps*fvm::ddt(Sb) + fvc::div(phib) 
             ==
             // event source terms
-            sourceTerm
+            - sourceTerm
         );
 
     SbEqn.solve();
