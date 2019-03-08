@@ -16,7 +16,7 @@
             - fvm::laplacian(Mf,h)
             + fvc::div(phiG)
             ==
-            sourceTerm
+            - sourceTerm
         );
 
     hEqn.solve();
