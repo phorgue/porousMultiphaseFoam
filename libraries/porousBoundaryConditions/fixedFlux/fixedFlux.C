@@ -39,6 +39,7 @@ fixedFlux
     fixedValueFvPatchScalarField(h, iF),
     fixedFluxValue_(0.),
     phiName_("phi"),
+    isBackwardScheme_(false),
     iterEvent_(-1),
     valueEvent_(0.0)
 {}
@@ -55,6 +56,7 @@ fixedFlux
     fixedValueFvPatchScalarField(h, iF, dict, false),
     fixedFluxValue_(dict.lookupOrDefault<scalar>("fixedFluxValue",0.)),
     phiName_(dict.lookupOrDefault<word>("phiName","phi")),
+    isBackwardScheme_(false),
     iterEvent_(-1),
     valueEvent_(0.0)
 {
@@ -90,6 +92,13 @@ fixedFlux
 
         iterEvent_ = 0;
     }
+
+    //- Read if backward time scheme is used
+    if (word(internalField().mesh().ddtScheme("source")) == "backward")
+    {
+        isBackwardScheme_ = true;
+    }
+
 }
 
 
@@ -105,6 +114,7 @@ fixedFlux
     fixedValueFvPatchScalarField(ptf, h, iF, mapper),
     fixedFluxValue_(ptf.fixedFluxValue_),
     phiName_(ptf.phiName_),
+    isBackwardScheme_(false),
     iterEvent_(-1),
     valueEvent_(0.0)
 {}
@@ -119,6 +129,7 @@ fixedFlux
     fixedValueFvPatchScalarField(ptf),
     fixedFluxValue_(ptf.fixedFluxValue_),
     phiName_(ptf.phiName_),
+    isBackwardScheme_(false),
     iterEvent_(-1),
     valueEvent_(0.0)
 {}
@@ -134,6 +145,7 @@ fixedFlux
     fixedValueFvPatchScalarField(ptf, iF),
     fixedFluxValue_(ptf.fixedFluxValue_),
     phiName_(ptf.phiName_),
+    isBackwardScheme_(false),
     iterEvent_(-1),
     valueEvent_(0.0)
 {}
@@ -157,18 +169,22 @@ void Foam::fixedFlux::updateCoeffs()
         if (currentTime > eventData_[iterEvent_+1].first())
         {
             iterEvent_++;
-            scalar deltaT =this->db().time().deltaT().value();
-            scalar deltaT0 =this->db().time().deltaT0().value();
-            // Coefficient for t-3/2 (between times 0 and 00)
-            scalar coefft0_00 = deltaT/(deltaT + deltaT0);
-
-            // Coefficient for t-1/2 (between times n and 0)
-            scalar coefftn_0 = 1 + coefft0_00;
-            valueEvent_ = coefftn_0*eventData_[iterEvent_].second() - coefft0_00*eventData_[iterEvent_-1].second();
+            if (isBackwardScheme_)
+            {
+                scalar deltaT =this->db().time().deltaT().value();
+                scalar deltaT0 =this->db().time().deltaT0().value();
+                scalar coefft0_00 = deltaT/(deltaT + deltaT0);
+                scalar coefftn_0 = 1 + coefft0_00;
+                valueEvent_ = coefftn_0*eventData_[iterEvent_].second() - coefft0_00*eventData_[iterEvent_-1].second();
+            }
+            else
+            {
+                valueEvent_ = eventData_[iterEvent_].second();
+            }
         }
         else
         {
-        valueEvent_ = eventData_[iterEvent_].second();
+            valueEvent_ = eventData_[iterEvent_].second();
         }
     }
 
@@ -190,11 +206,11 @@ void Foam::fixedFlux::write(Ostream& os) const
 
 namespace Foam
 {
-    makePatchTypeField
-    (
-        fvPatchScalarField,
-        fixedFlux
-    );
+makePatchTypeField
+(
+    fvPatchScalarField,
+    fixedFlux
+);
 }
 
 // ************************************************************************* //

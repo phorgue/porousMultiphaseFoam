@@ -97,6 +97,7 @@ protected:
 
     //- Flux field name
     word phiName_;
+    bool isBackwardScheme_;
 
     //- Event list (optional)
     label iterEvent_;
