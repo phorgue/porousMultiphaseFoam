@@ -58,6 +58,11 @@ Foam::eventFile::~eventFile()
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
 
+const Foam::scalar& Foam::eventFile::previousValue(const label& id) const
+{
+    if (iterator_ > 0) return datas_[iterator_-1][id];
+    else return  datas_[0][id];
+}
 const Foam::scalar& Foam::eventFile::currentEventStartTime() const
 {
     return dates_[iterator_];
