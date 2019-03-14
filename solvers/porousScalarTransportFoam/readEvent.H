@@ -28,6 +28,6 @@ if (sourceEventIsPresent)
     forAll(sourceEvent.coordinates(),pointi)
     {
         idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);
-        sourceTerm[idCoordinates[pointi]] = sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
+        sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
     }
 }
