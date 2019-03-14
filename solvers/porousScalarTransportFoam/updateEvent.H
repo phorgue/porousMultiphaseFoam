@@ -12,14 +12,14 @@ if (sourceEventIsPresent)
 
         forAll(sourceEvent.coordinates(),pointi)
         {
-            sourceTerm[idCoordinates[pointi]] = (coefftn_0*sourceEvent.currentValue(pointi) - coefft0_00*sourceEvent.previousValue(pointi))/mesh.V()[idCoordinates[pointi]];
+            sourceTerm[idCoordinates[pointi]] += (coefftn_0*sourceEvent.currentValue(pointi) - coefft0_00*sourceEvent.previousValue(pointi))/mesh.V()[idCoordinates[pointi]];
         }
     }
     else
     {
         forAll(sourceEvent.coordinates(),pointi)
         {
-            sourceTerm[idCoordinates[pointi]] = sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
+            sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
         }
     }
 }
