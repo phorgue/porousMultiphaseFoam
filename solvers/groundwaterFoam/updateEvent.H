@@ -8,7 +8,7 @@ if (sourceEventIsPresent)
         sourceTerm.primitiveFieldRef() = 0;
         forAll(sourceEvent.coordinates(),pointi)
         {
-            sourceTerm[idCoordinates[pointi]] = sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
+            sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
         }
     }
 }
