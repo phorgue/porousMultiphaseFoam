@@ -143,14 +143,21 @@ public:
             return Deff_;
         }
 
-    //- Correct the effective dispersion
+    //- Correct the dispersion giving water content or porosity field
     virtual void correct(
         const volScalarField& C,
         const volVectorField& U,
         const volScalarField& theta
     ) = 0;
 
-    //- Correct the effective dispersion
+    //- Correct the dispersion giving scalar porosity
+    virtual void correct(
+        const volScalarField& C,
+        const volVectorField& U,
+        const dimensionedScalar& eps
+    ) = 0;
+
+    //- Correct the dispersion giving saturation and porosity field
     virtual void correct(
         const volScalarField& C,
         const volVectorField& U,
@@ -158,7 +165,7 @@ public:
         const volScalarField& eps
     ) = 0;
 
-    //- Correct the effective dispersion
+    //- Correct the dispersion giving saturation and scalar porosity
     virtual void correct(
         const volScalarField& C,
         const volVectorField& U,
