@@ -1,6 +1,6 @@
 {
     //- update dispersion tensor coefficient
-    DeffModel->correct(C,U,hwater,eps);
+    DeffModel->correct(C,U,eps);
 
     fvScalarMatrix CEqn
         (

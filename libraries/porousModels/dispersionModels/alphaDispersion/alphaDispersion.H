@@ -90,7 +90,7 @@ public:
 
     // Member Functions
 
-    //- Correct the dispersion giving water content
+    //- Correct the dispersion giving water content or porosity field
     void correct(const volScalarField& C, const volVectorField& U, const volScalarField& theta)
         {
             dimensionedScalar USMALL("",dimLength/dimTime,1e-36);
@@ -103,6 +103,20 @@ public:
             }
         }
 
+    //- Correct the dispersion giving scalar porosity
+    void correct(const volScalarField& C, const volVectorField& U, const dimensionedScalar& eps)
+        {
+            dimensionedScalar USMALL("",dimLength/dimTime,1e-36);
+
+            Deff_ = (Dm_/tau_ + alphaT_ * mag(U)/eps)*tensor::I + (alphaL_-alphaT_) * (U*U)/(eps*mag(U)+USMALL);
+            forAll(Deff_.boundaryField(),patchi)
+            {
+                //- Dispersion equal to zero on patch where flux is fixed
+                if (C.boundaryField().types()[patchi] == "fixedFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+            }
+        }
+
+    //- Correct the dispersion giving saturation and porosity field
     void correct(const volScalarField& C, const volVectorField& U, const volScalarField& saturation, const volScalarField& eps)
         {
             volScalarField theta = eps*saturation;
@@ -110,6 +124,7 @@ public:
             correct(C,U,theta);
         }
 
+    //- Correct the dispersion giving saturation and scalar porosity
     void correct(const volScalarField& C, const volVectorField& U, const volScalarField& saturation, const dimensionedScalar& eps)
         {
             volScalarField theta = eps*saturation;
