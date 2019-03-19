@@ -36,6 +36,7 @@ Description
 
 if (adjustTimeStep)
 {
+
     scalar maxDeltaTFact = maxCo/(CoNum + small);
     scalar deltaTFact = min(min(maxDeltaTFact, 1.0 + 0.1*maxDeltaTFact), 1.2);
    
@@ -55,10 +56,39 @@ if (adjustTimeStep)
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+
     if ((nSteps < labelMax) && (nSteps != 0))
     {
         const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
         runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
+    }
+
+    //- To handle close event times (inferior to current timestep)
+    if (nSteps == 0)
+    {
+        scalar timeToCloseEvent = GREAT;
+        if (sourceEventIsPresent)
+        {
+            if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        if (patchEventIsPresent)
+        {
+            if (patchEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,patchEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        if (outputEventIsPresent)
+        {
+            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue() << endl;

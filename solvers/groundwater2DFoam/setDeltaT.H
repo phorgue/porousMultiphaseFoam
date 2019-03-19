@@ -55,6 +55,27 @@ if (adjustTimeStep)
         runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
     }
 
+    //- To handle close event times (inferior to current timestep)
+    if (nSteps == 0)
+    {
+        scalar timeToCloseEvent = GREAT;
+        if (uniformInfiltrationEventIsPresent)
+        {
+            if (uniformInfiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,uniformInfiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        if (outputEventIsPresent)
+        {
+            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
+    }
+
     Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
            
 }    

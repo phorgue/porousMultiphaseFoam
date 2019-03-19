@@ -5,7 +5,7 @@
     fvScalarMatrix CEqn
         (
             eps * R * hwater * fvm::ddt(C)
-            + fvm::div(phi*fvc::interpolate(hwater), C, "div(phi,C)")
+            + fvm::div(phi, C, "div(phi,C)")
             - eps * hwater * fvm::laplacian(DeffModel->Deff(), C, "laplacian(Deff,C)")
             ==
             - R * sourceTerm * zScale
@@ -14,6 +14,6 @@
 
     CEqn.solve();
 
-    Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value()  << " mass(C) = " << fvc::domainIntegrate(C*hwater*eps).value() << endl;
+    Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value()  << " mass(C) = " << fvc::domainIntegrate(C*hwater*eps).value()/zScale << endl;
 
 }
