@@ -94,7 +94,7 @@ surfaceScalarField phi
         IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
     ),
-    fvc::flux(U)
+    fvc::flux(U)*fvc::interpolate(hwater)
 );
 
 if (phi.headerOk())
@@ -104,6 +104,7 @@ if (phi.headerOk())
 else
 {
     Info<< "Computing field phi" << phaseName << " from field U" << phaseName << nl << endl;
+    phi.write();
 }
 
 //- creation of dispersion model
