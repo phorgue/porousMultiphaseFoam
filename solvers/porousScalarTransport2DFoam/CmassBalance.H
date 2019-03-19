@@ -1,11 +1,11 @@
 {
     //- terminal display
-    Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
+    Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value()/zScale << " ; ";
     forAll(phi.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]) << " ; ";
+            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale << " ; ";
         }
     }
     Info << endl;
@@ -15,12 +15,12 @@
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
-            massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(hwater*C*eps).value();
+            massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(hwater*C*eps).value()/zScale;
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    massBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                    massBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale;
                 }
             }
             massBalanceCSV << endl;
