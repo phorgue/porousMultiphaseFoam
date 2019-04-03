@@ -1,12 +1,20 @@
 bool sourceEventIsPresent = transportProperties.found("eventFileSourceMassFlowRate");
 word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSourceMassFlowRate","");
 sourceEventFile sourceEvent(sourceEventFileName);
-if (sourceEventIsPresent) sourceEvent.update(runTime.startTime().value());
+if (sourceEventIsPresent)
+{
+    sourceEvent.update(runTime.startTime().value());
+    sourceEvent.storeOldValues();
+}
 
 bool patchEventIsPresent =  transportProperties.found("eventFilePatchMassFlowRate");
 word patchEventFileName = transportProperties.lookupOrDefault<word>("eventFilePatchMassFlowRate","");
 patchEventFile patchEvent(patchEventFileName,false);
-if (patchEventIsPresent) patchEvent.update(runTime.startTime().value());
+if (patchEventIsPresent)
+{
+    patchEvent.update(runTime.startTime().value());
+    patchEvent.storeOldValues();
+}
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");

@@ -100,9 +100,8 @@ protected:
     bool isBackwardScheme_;
 
     //- Event list (optional)
-    label iterEvent_;
-    scalar valueEvent_;
-    List<Tuple2<scalar, scalar> > eventData_;
+    label patchEventID_;
+    patchEventFile eventFile_;
 
 public:
 
