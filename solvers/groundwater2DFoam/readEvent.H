@@ -1,7 +1,11 @@
 bool uniformInfiltrationEventIsPresent = transportProperties.found("eventFileInfiltration");
 word uniformInfiltrationEventFileName = transportProperties.lookupOrDefault<word>("eventFileInfiltration","");
 uniformInfiltrationEventFile uniformInfiltrationEvent(uniformInfiltrationEventFileName);
-if (uniformInfiltrationEventIsPresent) uniformInfiltrationEvent.update(runTime.startTime().value());
+if (uniformInfiltrationEventIsPresent)
+{
+    uniformInfiltrationEvent.update(runTime.startTime().value());
+    uniformInfiltrationEvent.storeOldValues();
+}
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
