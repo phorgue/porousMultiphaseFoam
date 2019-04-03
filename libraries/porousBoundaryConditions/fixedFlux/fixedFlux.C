@@ -40,8 +40,8 @@ fixedFlux
     fixedFluxValue_(0.),
     phiName_("phi"),
     isBackwardScheme_(false),
-    iterEvent_(-1),
-    valueEvent_(0.0)
+    patchEventID_(-1),
+    eventFile_()
 {}
 
 
@@ -57,40 +57,39 @@ fixedFlux
     fixedFluxValue_(dict.lookupOrDefault<scalar>("fixedFluxValue",0.)),
     phiName_(dict.lookupOrDefault<word>("phiName","phi")),
     isBackwardScheme_(false),
-    iterEvent_(-1),
-    valueEvent_(0.0)
+    patchEventID_(-1),
+    eventFile_()
 {
     word eventFileName = db().lookupObject<dictionary>("transportProperties").lookupOrDefault<word>("eventFilePatchMassFlowRate","");
+    //- Read if backward time scheme is used
+    if (word(internalField().mesh().ddtScheme("source")) == "backward")
+    {
+        isBackwardScheme_ = true;
+    }
     
     if (eventFileName != "")
     {
+        //- reading patch event file, compute current value, store to old values
+        eventFile_.read(eventFileName,true);
+        eventFile_.update(this->db().time().startTime().value());
+        eventFile_.storeOldValues();
+
         //- Reading patch event file and adding intermediate time step
-        patchEventFile eventFlux(eventFileName);
         scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",0);
         if (eventTimeStep > 0)
         {
-            eventFlux.addIntermediateTimeSteps(eventTimeStep);
+            eventFile_.addIntermediateTimeSteps(eventTimeStep);
         }
 
-        //- finding patch name
-        label patchID = -1;
-        forAll(eventFlux.patchNameList(),patchi)
+        //- finding corresponding patch name
+        forAll(eventFile_.patchNameList(),patchi)
         {
-            if (patch().name() == eventFlux.patchNameList()[patchi]) patchID = patchi;
+            if (patch().name() == eventFile_.patchNameList()[patchi]) patchEventID_ = patchi;
         }
-        if (patchID == -1)
+        if (patchEventID_ == -1)
         {
-            FatalErrorIn("fixedFlux.C") << " patch '" << patch().name() << "' not found in event file : " << eventFlux.name() << abort(FatalError);
+            FatalErrorIn("fixedFlux.C") << " patch '" << patch().name() << "' not found in event file : " << eventFile_.name() << abort(FatalError);
         }
-
-        //- storing event data
-        eventData_.setSize(eventFlux.ndates());
-        forAll(eventData_,eventi)
-        {
-            eventData_[eventi] = Tuple2<scalar, scalar>(eventFlux.dates()[eventi],eventFlux.datas()[eventi][patchID]);
-        }
-
-        iterEvent_ = 0;
     }
 
     //- Read if backward time scheme is used
@@ -115,8 +114,8 @@ fixedFlux
     fixedFluxValue_(ptf.fixedFluxValue_),
     phiName_(ptf.phiName_),
     isBackwardScheme_(false),
-    iterEvent_(-1),
-    valueEvent_(0.0)
+    patchEventID_(-1),
+    eventFile_()
 {}
 
 
@@ -130,8 +129,8 @@ fixedFlux
     fixedFluxValue_(ptf.fixedFluxValue_),
     phiName_(ptf.phiName_),
     isBackwardScheme_(false),
-    iterEvent_(-1),
-    valueEvent_(0.0)
+    patchEventID_(-1),
+    eventFile_()
 {}
 
 
@@ -146,8 +145,8 @@ fixedFlux
     fixedFluxValue_(ptf.fixedFluxValue_),
     phiName_(ptf.phiName_),
     isBackwardScheme_(false),
-    iterEvent_(-1),
-    valueEvent_(0.0)
+    patchEventID_(-1),
+    eventFile_()
 {}
 
 
@@ -162,35 +161,30 @@ void Foam::fixedFlux::updateCoeffs()
     const fvsPatchField<scalar>& phip_=
         patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
 
-    //- Updating event value
-    if (iterEvent_ > -1 )
+    scalar valueEvent = 0.0;
+
+    if (patchEventID_ != -1)
     {
-        scalar currentTime = this->db().time().value();
-        if (currentTime > eventData_[iterEvent_+1].first())
+        if (isBackwardScheme_)
         {
-            iterEvent_++;
-            if (isBackwardScheme_)
-            {
-                scalar deltaT =this->db().time().deltaT().value();
-                scalar deltaT0 =this->db().time().deltaT0().value();
-                scalar coefft0_00 = deltaT/(deltaT + deltaT0);
-                scalar coefftn_0 = 1 + coefft0_00;
-                valueEvent_ = coefftn_0*eventData_[iterEvent_].second() - coefft0_00*eventData_[iterEvent_-1].second();
-            }
-            else
-            {
-                valueEvent_ = eventData_[iterEvent_].second();
-            }
+            scalar deltaT =this->db().time().deltaT().value();
+            scalar deltaT0 =this->db().time().deltaT0().value();
+            scalar coefft0_00 = deltaT/(deltaT + deltaT0);
+            scalar coefftn_0 = 1 + coefft0_00;
+            valueEvent = coefftn_0*eventFile_.currentValue(patchEventID_) - coefft0_00*eventFile_.oldValue(patchEventID_);
         }
         else
         {
-            valueEvent_ = eventData_[iterEvent_].second();
+            valueEvent = eventFile_.currentValue(patchEventID_);
         }
+
+        //- Updating event value
+        eventFile_.update(this->db().time().value());
     }
 
     //- Computing fixed value
     scalarField results(patch().patch().faceCentres().size());    
-    results = (fixedFluxValue_+valueEvent_)/sum(phip_);
+    results = (fixedFluxValue_+valueEvent)/sum(phip_);
     operator== (results);
     fixedValueFvPatchScalarField::updateCoeffs();
 }

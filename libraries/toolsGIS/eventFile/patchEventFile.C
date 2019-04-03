@@ -27,6 +27,13 @@ License
 #include "IFstream.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+Foam::patchEventFile::patchEventFile()
+    :
+    eventFile(""),
+    npatches_(0),
+    patchNameList_()
+{
+}
 
 Foam::patchEventFile::patchEventFile
 (
@@ -47,6 +54,19 @@ Foam::patchEventFile::patchEventFile
     :
     eventFile(fileName)
 {
+    this->read(fileName,display);
+}
+
+// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+
+Foam::patchEventFile::~patchEventFile()
+{}
+
+// * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
+
+void Foam::patchEventFile::read(const word& fileName, bool display)
+{
+    name_ = fileName;
     if (fileName.size() != 0)
     {
         //- properties of a MNT file
@@ -169,13 +189,8 @@ Foam::patchEventFile::patchEventFile
         {
             datas_[ndates_-1][patchi] = 0;
         }
+
+        currentValues_.setSize(npatches_);
+        oldValues_.setSize(npatches_);
     }
-
 }
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::patchEventFile::~patchEventFile()
-{}
-
-// * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //

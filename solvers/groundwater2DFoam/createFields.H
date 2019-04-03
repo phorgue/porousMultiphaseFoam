@@ -168,3 +168,10 @@ volScalarField infiltration
     mesh,
     infiltrationScalar
 );
+
+//- Looking for 2nd order time-scheme for source term
+bool isBackwardScheme = false;
+if (word(mesh.ddtScheme("source")) == "backward")
+{
+    isBackwardScheme = true;
+}

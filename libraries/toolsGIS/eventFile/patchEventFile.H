@@ -77,7 +77,11 @@ protected:
 
 public:
 
-    // Constructors    
+    // Constructors
+
+    //- initializer
+    patchEventFile();
+
     //- Copy constructor
     patchEventFile
     (
@@ -97,6 +101,7 @@ public:
     ~patchEventFile();
 
     // Member Functions
+    void read(const word& fileName, bool display);
     
     //- Access function
     const label& npatches() const {return npatches_;}

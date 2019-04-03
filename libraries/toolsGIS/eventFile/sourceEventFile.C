@@ -165,6 +165,10 @@ Foam::sourceEventFile::sourceEventFile
         {
             datas_[ndates_-1][coordinatei] = 0;
         }
+
+        //- initializing values
+        currentValues_.setSize(ncoordinates_,0);
+        oldValues_.setSize(ncoordinates_,0);
     }
 
 }

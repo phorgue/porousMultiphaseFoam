@@ -36,7 +36,9 @@ Foam::eventFile::eventFile
     name_(eventFileToCopy.name()),
     ndates_(eventFileToCopy.ndates()),
     dates_(eventFileToCopy.dates()),
-    datas_(eventFileToCopy.datas()),
+    datas_(eventFileToCopy.datas_),
+    currentValues_(eventFileToCopy.currentValues_),
+    oldValues_(eventFileToCopy.oldValues_),
     iterator_(eventFileToCopy.iterator_)
 {
 }
@@ -46,10 +48,14 @@ Foam::eventFile::eventFile
     const word& fileName
 )
     :
-    name_(fileName)
-{
-    iterator_ = 0 ;
-}
+    name_(fileName),
+    ndates_(0),
+    dates_(),
+    datas_(),
+    currentValues_(),
+    oldValues_(),
+    iterator_(0)
+{}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -58,11 +64,6 @@ Foam::eventFile::~eventFile()
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
 
-const Foam::scalar& Foam::eventFile::previousValue(const label& id) const
-{
-    if (iterator_ > 0) return datas_[iterator_-1][id];
-    else return  datas_[0][id];
-}
 const Foam::scalar& Foam::eventFile::currentEventStartTime() const
 {
     return dates_[iterator_];
@@ -70,7 +71,7 @@ const Foam::scalar& Foam::eventFile::currentEventStartTime() const
 
 const Foam::scalar& Foam::eventFile::currentEventEndTime() const
 {
-    if (iterator_ <= ndates_-2)
+    if (iterator_ < ndates_-1)
     {
         return dates_[iterator_+1];
     }
@@ -83,6 +84,8 @@ const Foam::scalar& Foam::eventFile::currentEventEndTime() const
 
 void Foam::eventFile::update(const scalar& currentTime)
 {
+    storeOldValues();
+
     if (currentEventEndTime() <= currentTime)
     {
         iterator_++;
@@ -90,6 +93,18 @@ void Foam::eventFile::update(const scalar& currentTime)
         {
             iterator_++;
         }
+    }
+    if (iterator_ < ndates_-2)
+    {
+        scalar interpolateFactor_ = (currentTime - dates_[iterator_]) / (dates_[iterator_+1] - dates_[iterator_]);
+        forAll(currentValues_,id)
+        {
+            currentValues_[id] = (1.0 - interpolateFactor_) * datas_[iterator_][id] + interpolateFactor_ * datas_[iterator_+1][id];
+        }
+    }
+    else
+    {
+        currentValues_ = 0.0;
     }
 }
 

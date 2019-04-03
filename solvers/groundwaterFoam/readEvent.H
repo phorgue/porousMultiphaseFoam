@@ -1,7 +1,11 @@
 bool sourceEventIsPresent = transportProperties.found("eventFileSourceMassFlowRate");
 word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSourceMassFlowRate","");
 sourceEventFile sourceEvent(sourceEventFileName);
-if (sourceEventIsPresent) sourceEvent.update(runTime.startTime().value());
+if (sourceEventIsPresent)
+{
+    sourceEvent.update(runTime.startTime().value());
+    sourceEvent.storeOldValues();
+}
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");

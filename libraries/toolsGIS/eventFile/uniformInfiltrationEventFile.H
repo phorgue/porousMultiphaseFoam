@@ -87,7 +87,8 @@ public:
     // Member Functions
     
     //- Access function
-    const scalar& currentValue() {return datas_[iterator_][0];}
+    const scalar& currentValue() {return currentValues_[0];}
+    const scalar& oldValue() {return oldValues_[0];}
 
 };
 

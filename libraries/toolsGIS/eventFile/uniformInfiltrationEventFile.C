@@ -144,6 +144,8 @@ Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
         }
         datas_[ndates_-1][0] = 0;
 
+        currentValues_.setSize(1,0);
+        oldValues_.setSize(1,0);
     }
 
 }
