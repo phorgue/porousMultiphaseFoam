@@ -146,14 +146,14 @@ void Foam::patchEventFile::read(const word& fileName, bool display)
             }
         }
 
-        ndates_ = datesRead.size()+1;
-        npatches_ = nameRead.size()/(ndates_-1);
+        ndates_ = datesRead.size();
+        npatches_ = nameRead.size()/ndates_;
 
         if (display)
         {
             Info << "OK!"
                 << nl << "{"
-                << nl << "  number of dates   = " << ndates_-1
+                << nl << "  number of dates   = " << ndates_
                 << nl << "  number of patches = " << npatches_
                 << nl << "  number of datas   = " << valueRead.size()
                 << nl << "}" << endl;
@@ -165,7 +165,6 @@ void Foam::patchEventFile::read(const word& fileName, bool display)
         {
             dates_[datei] = datesRead[datei];
         }
-        dates_[ndates_-1] = GREAT;
 
         //- Storing patch name
         patchNameList_.resize(npatches_);
@@ -184,10 +183,6 @@ void Foam::patchEventFile::read(const word& fileName, bool display)
                 datas_[datei][patchi] = valueRead[iter];
                 iter++;
             }
-        }
-        for(label patchi=0;patchi<npatches_;patchi++)
-        {
-            datas_[ndates_-1][patchi] = 0;
         }
 
         currentValues_.setSize(npatches_);

@@ -77,15 +77,13 @@ const Foam::scalar& Foam::eventFile::currentEventEndTime() const
     }
     else
     {
-        Warning() <<  " Last event from file " << name_ << " reached" << endl;
-        return dates_[iterator_];
+        return GREAT;
     }
 }
 
 void Foam::eventFile::update(const scalar& currentTime)
 {
     storeOldValues();
-
     if (currentEventEndTime() <= currentTime)
     {
         iterator_++;
@@ -94,7 +92,11 @@ void Foam::eventFile::update(const scalar& currentTime)
             iterator_++;
         }
     }
-    if (iterator_ < ndates_-2)
+    if (currentTime < dates_[0])
+    {
+        currentValues_ = 0.0;
+    }
+    else if (iterator_ < ndates_-1)
     {
         scalar interpolateFactor_ = (currentTime - dates_[iterator_]) / (dates_[iterator_+1] - dates_[iterator_]);
         forAll(currentValues_,id)

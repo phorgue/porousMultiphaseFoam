@@ -118,12 +118,12 @@ Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
             }
         }
 
-        ndates_ = datesRead.size()+1;
+        ndates_ = datesRead.size();
     
         Info << "OK!"
             << nl << "{"
-            << nl << "  number of dates       = " << ndates_-1
-            << nl << "  number datas          = " << ndates_-1
+            << nl << "  number of dates       = " << ndates_
+            << nl << "  number datas          = " << ndates_
             << nl << "}" << endl;
 
         //- Storing dates
@@ -132,7 +132,6 @@ Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
         {
             dates_[datei] = datesRead[datei];
         }
-        dates_[ndates_-1] = GREAT;
 
         //- Storing infiltration datas
         datas_.setSize(ndates_,1);
@@ -142,7 +141,6 @@ Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
                 datas_[datei][0] = valueRead[iter];
                 iter++;
         }
-        datas_[ndates_-1][0] = 0;
 
         currentValues_.setSize(1,0);
         oldValues_.setSize(1,0);
