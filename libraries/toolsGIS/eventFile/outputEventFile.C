@@ -106,7 +106,7 @@ Foam::outputEventFile::outputEventFile
         }
 
         Info << "OK" << endl;
-        ndates_ = datesRead.size()+1;
+        ndates_ = datesRead.size();
     
         //- Storing dates
         dates_.resize(ndates_);
@@ -114,7 +114,6 @@ Foam::outputEventFile::outputEventFile
         {
             dates_[datei] = datesRead[datei];
         }
-        dates_[ndates_-1] = GREAT;
     
     }
 
