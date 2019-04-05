@@ -55,7 +55,7 @@ Info << "} \n" << endl;
 ////////////////////// PHASE PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////
 
-Info << "Reading hwater field...";
+Info << "Reading hwater field if present...";
 volScalarField hwater
 (
     IOobject
@@ -63,12 +63,53 @@ volScalarField hwater
         "hwater",
         runTime.timeName(),
         mesh,
-        IOobject::MUST_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::AUTO_WRITE
     ),
-    mesh
+    mesh,
+    dimensionedScalar("hwater_default",dimLength,0.)
 );
-Info << nl << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+
+if (hwater.headerOk())
+{
+    Info << nl << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+}
+else
+{
+    Info << "file hwater not found " << endl
+        << nl << "Reading potential field..." << endl;
+    volScalarField potential
+        (
+            IOobject
+            (
+                "potential",
+                runTime.timeName(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::AUTO_WRITE
+            ),
+            mesh
+        );
+
+    Info<< nl << "Reading field z0" << endl;
+    volScalarField z0
+        (
+            IOobject
+            (
+                "z0",
+                runTime.constant(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::AUTO_WRITE
+            ),
+            mesh
+        );
+    Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << endl;
+
+    hwater == potential - z0;
+
+    Info << nl << "Computed hwater : min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+}
 
 Info << nl << "Reading field U" << phaseName << endl;
 volVectorField U
