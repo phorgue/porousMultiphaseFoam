@@ -111,8 +111,8 @@ public:
             Deff_ = (Dm_/tau_ + alphaT_ * mag(U)/eps)*tensor::I + (alphaL_-alphaT_) * (U*U)/(eps*mag(U)+USMALL);
             forAll(Deff_.boundaryField(),patchi)
             {
-                //- Dispersion equal to zero on patch where flux is fixed
-                if (C.boundaryField().types()[patchi] == "fixedFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+                //- Dispersion equal to zero on patches
+                Deff_.boundaryFieldRef()[patchi] = tensor(zero());
             }
         }
 
