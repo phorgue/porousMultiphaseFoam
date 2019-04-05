@@ -2,13 +2,15 @@
     //- update dispersion tensor coefficient
     DeffModel->correct(C,U,Saturation,eps);
 
+    volTensorField Deff = eps*Saturation*DeffModel->Deff();
+
     fvScalarMatrix CEqn
         (
             eps * R * Saturation * fvm::ddt(C)
             + fvm::div(phi, C, "div(phi,C)")
-            - eps * Saturation * fvm::laplacian(DeffModel->Deff(), C, "laplacian(Deff,C)")
+            - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
-            - R * sourceTerm// (SrcInj*Cin*Winj - SrcExt*C*Wext)
+            - R * sourceTerm
             - eps * R * Saturation * fvm::Sp(lambda,C)
         );
 
