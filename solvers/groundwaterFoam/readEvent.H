@@ -1,5 +1,5 @@
 bool sourceEventIsPresent = transportProperties.found("eventFileSourceMassFlowRate");
-word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSourceMassFlowRate","");
+word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSourceFlowRate","");
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)
 {

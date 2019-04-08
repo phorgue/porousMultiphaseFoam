@@ -26,6 +26,13 @@ Class
 
 Description
     Event file handler/reader for the porousMultiphaseFoam toolbox which
+    contains 'm' dates used for time output instead of classical openfoam 
+    write management. The class reads the file
+
+    time1
+    time2
+    ...
+    timen
 
 SourceFiles
     outputEventFile.C
