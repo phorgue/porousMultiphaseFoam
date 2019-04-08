@@ -26,21 +26,22 @@ Class
 
 Description
     Event file handler/reader for the porousMultiphaseFoam toolbox which
-    contain 'm' dates with 'n' infiltration points where infiltration is
-    expressed in m3/s. The class reads the file :
+    contain 'm' dates with 'n' source points where flow rate is expressed 
+    in m3/s. Source terms are applied in the closest cells to the given point
+    The class reads the file :
 
     date time1
-    x1 y1 z1 infiltration11
-    x2 y2 z2 infiltration12
+    x1 y1 z1 sourceTerm11
+    x2 y2 z2 sourceTerm12
     ...
-    xn yn zn infiltration1n
+    xn yn zn sourceTerm1n
     date time2
-    x1 y1 z1 infiltration21
-    x2 y2 z2 infiltration22
+    x1 y1 z1 sourceTerm21
+    x2 y2 z2 sourceTerm22
     ...
     date timem
     ...
-    xn yn zn infiltrationmn
+    xn yn zn sourceTermmn
 
 SourceFiles
     sourceEventFile.C

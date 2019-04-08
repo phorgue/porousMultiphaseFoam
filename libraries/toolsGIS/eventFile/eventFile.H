@@ -25,22 +25,11 @@ Class
     Foam::eventFile
 
 Description
-    Event file handler/reader for the porousMultiphaseFoam toolbox which
-    contain 'm' dates with 'n' infiltration points where infiltration is
-    expressed in m3/s. The class reads the file :
-
-    date time1
-    x1 y1 z1 infiltration11
-    x2 y2 z2 infiltration12
-    ...
-    xn yn zn infiltration1n
-    date time2
-    x1 y1 z1 infiltration21
-    x2 y2 z2 infiltration22
-    ...
-    date timem
-    ...
-    xn yn zn infiltrationmn
+    The is an general class used to handle/read the various event files for
+    the porousMultiphaseFoam toolbox. This can be used to impose volumic or 
+    mass flow rate source inside the domain or on specified patch. It can be
+    used to impose time variable uniform infiltration or specify user-defined
+    time outputs.
 
 SourceFiles
     eventFile.C
