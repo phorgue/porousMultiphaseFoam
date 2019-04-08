@@ -26,21 +26,21 @@ Class
 
 Description
     PatchEvent file handler/reader for the porousMultiphaseFoam toolbox which
-    contain 'm' dates with 'n' infiltration points where infiltration is
-    expressed in m3/s. The class reads the file :
+    contain 'm' dates with 'n' flow rate values expressed in m3/s. The class 
+    reads the file :
 
     date time1
-    patchName1 infiltration11
-    patchName1 infiltration12
+    patchName1 flowrate11
+    patchName1 flowrate12
     ...
-    patchNameN infiltration1N
+    patchNamen flowrate1n
     date time2
-    patchName1 infiltration21
-    patchName2 infiltration22
+    patchName1 flowrate21
+    patchName2 flowrate22
     ...
-    date time
+    date timem
     ...
-    patchNameN infiltrationmN
+    patchNamen flowratemn
 
 SourceFiles
     patchEventFile.C
