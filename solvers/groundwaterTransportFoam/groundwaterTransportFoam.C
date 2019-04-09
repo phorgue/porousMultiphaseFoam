@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "setDeltaT.H"
+        #include "updateEvent.H"
 
         runTime++;
 
