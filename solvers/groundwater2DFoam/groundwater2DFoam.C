@@ -59,13 +59,11 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "setDeltaT.H"
+        #include "updateEvent.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
-
-        //- Update event
-        #include "updateEvent.H"
 
         //- Solve potential equation
         #include "potentialEqn.H"
