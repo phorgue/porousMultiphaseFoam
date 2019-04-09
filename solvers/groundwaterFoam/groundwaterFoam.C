@@ -66,13 +66,12 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "setDeltaT.H"
+        #include "updateEvent.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Update Event
-        #include "updateEvent.H"
 
         scalar resPicard=GREAT;
         iterPicard = 0;
