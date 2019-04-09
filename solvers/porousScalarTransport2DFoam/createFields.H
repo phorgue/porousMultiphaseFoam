@@ -111,6 +111,11 @@ else
     Info << nl << "Computed hwater : min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
 }
 
+if (min(hwater).value() < 0)
+{
+    FatalErrorIn("createFields") << " hwater has negative values" << abort(FatalError);
+}
+
 Info << nl << "Reading field U" << phaseName << endl;
 volVectorField U
 (
