@@ -10,12 +10,12 @@
             + fvm::div(phi, C, "div(phi,C)")
             - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
-            - R * sourceTerm
+            - sourceTerm
             - eps * R * Saturation * fvm::Sp(lambda,C)
         );
 
     CEqn.solve();
 
-    Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " mass(C) = " << fvc::domainIntegrate(C*Saturation*eps).value() << endl;
+    Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " mass(C) = " << fvc::domainIntegrate(R*C*Saturation*eps).value() << endl;
 
 }
