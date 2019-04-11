@@ -15,7 +15,7 @@
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
-            massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(hwater*C*eps).value()/zScale;
+            massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*hwater*C*eps).value()/zScale;
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")

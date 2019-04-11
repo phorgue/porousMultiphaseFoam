@@ -109,6 +109,7 @@ else
     hwater == potential - z0;
 
     Info << nl << "Computed hwater : min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+    hwater.write();
 }
 
 if (min(hwater).value() < 0)
@@ -156,8 +157,9 @@ else
 //- creation of dispersion model
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties, mesh);
 
-Info << "Computing retard coefficient R" << endl;
+Info << "Computing retard coefficient R = ";
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
+Info << R << endl;
 
 /////////////////////////////////////////////////////////
 //////////////////// OUTLET CSV FILE ////////////////////
