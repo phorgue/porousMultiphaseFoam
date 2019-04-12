@@ -183,6 +183,8 @@ volScalarField seepageTerm
     dimensionedScalar("seepage_value",dimless/dimTime,0.)
 );
 
+scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
+
 //- Looking for 2nd order time-scheme for source term
 bool isBackwardScheme = false;
 if (word(mesh.ddtScheme("source")) == "backward")
