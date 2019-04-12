@@ -141,7 +141,7 @@ surfaceScalarField phi
         IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
     ),
-    fvc::flux(U)*fvc::interpolate(hwater)
+    fvc::flux(U)
 );
 
 if (phi.headerOk())
@@ -153,6 +153,8 @@ else
     Info<< "Computing field phi" << phaseName << " from field U" << phaseName << nl << endl;
     phi.write();
 }
+
+surfaceScalarField phiWater = phi * fvc::interpolate(hwater);
 
 //- creation of dispersion model
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties, mesh);
@@ -175,7 +177,7 @@ if (CSVactive)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            massBalanceCSV << " flux(" << phiWater.boundaryField()[patchi].patch().name() << ")";
         }
     }
     massBalanceCSV << endl;
@@ -197,6 +199,35 @@ volScalarField sourceTerm
 );
 
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
+
+Info << nl << "Read seepage flow rate if present...";
+volScalarField seepageTerm
+(
+    IOobject
+    (
+        "seepageTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("seepage_value",dimless/dimTime,0.)
+);
+
+if (seepageTerm.headerOk())
+{
+    Info << "OK" << endl;
+    //- ensuring that there is no seepage inflow
+    forAll(seepageTerm,celli)
+    {
+        seepageTerm[celli] = max(0,seepageTerm[celli]);
+    }
+}
+else
+{
+    Info << " no seepageTerm file" << endl;
+}
 
 //- Looking for 2nd order time-scheme for source term
 bool isBackwardScheme = false;

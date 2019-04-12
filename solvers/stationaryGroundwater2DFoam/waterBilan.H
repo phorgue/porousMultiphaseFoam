@@ -17,7 +17,7 @@
         cellFlux = fvc::div(phi*fvc::interpolate(hwater));
         forAll(fixedPotentialIDList,pointi)
         {
-            seepageTerm[fixedPotentialIDList[pointi]] -= cellFlux.internalField()[fixedPotentialIDList[pointi]];//*mesh.V()[fixedPotentialIDList[pointi]];
+            seepageTerm[fixedPotentialIDList[pointi]] -= cellFlux.internalField()[fixedPotentialIDList[pointi]]/zScale;
         }
         Info << " fixed points = " << fvc::domainIntegrate(seepageTerm).value();
     }

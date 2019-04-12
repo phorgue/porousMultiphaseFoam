@@ -182,3 +182,5 @@ volScalarField seepageTerm
     mesh,
     dimensionedScalar("seepage_value",dimless/dimTime,0.)
 );
+
+scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
