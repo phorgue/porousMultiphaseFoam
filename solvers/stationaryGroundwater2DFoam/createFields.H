@@ -168,3 +168,17 @@ volScalarField infiltration
     mesh,
     infiltrationScalar
 );
+
+volScalarField seepageTerm
+(
+    IOobject
+    (
+        "seepageTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("seepage_value",dimless/dimTime,0.)
+);

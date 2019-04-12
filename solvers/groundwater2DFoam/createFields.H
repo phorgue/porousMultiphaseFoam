@@ -169,6 +169,20 @@ volScalarField infiltration
     infiltrationScalar
 );
 
+volScalarField seepageTerm
+(
+    IOobject
+    (
+        "seepageTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("seepage_value",dimless/dimTime,0.)
+);
+
 //- Looking for 2nd order time-scheme for source term
 bool isBackwardScheme = false;
 if (word(mesh.ddtScheme("source")) == "backward")
