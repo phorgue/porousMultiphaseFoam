@@ -7,11 +7,12 @@
     fvScalarMatrix CEqn
         (
             eps * R * hwater * fvm::ddt(C)
-            + fvm::div(phi, C, "div(phi,C)")
+            + fvm::div(phiWater, C, "div(phi,C)")
             - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm * zScale
             - eps * R * hwater * fvm::Sp(lambda,C)
+            - dimensionedScalar("",dimLength,zScale) * fvm::Sp(seepageTerm,C)
         );
 
     CEqn.solve();

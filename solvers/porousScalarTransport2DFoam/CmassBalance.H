@@ -1,12 +1,16 @@
 {
     //- terminal display
     Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value()/zScale << " ; ";
-    forAll(phi.boundaryField(),patchi)
+    forAll(phiWater.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale << " ; ";
+            Info << phiWater.boundaryField()[patchi].patch().name() << " = " <<  sum(phiWater.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale << " ; ";
         }
+    }
+    if (max(seepageTerm).value() > 0)
+    {
+        Info << " seepage = " << fvc::domainIntegrate(seepageTerm*C).value();
     }
     Info << endl;
 
@@ -20,7 +24,7 @@
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    massBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale;
+                    massBalanceCSV << " " << sum(phiWater.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale;
                 }
             }
             massBalanceCSV << endl;
