@@ -5,30 +5,47 @@
 
 ### Solvers
 
-- stationaryGroundwater2DFoam
+- Global :
 
-  - seep function is available
+  - keyword event differenciation
+    eventFileSourceFlowRate for volumetric term (groundwaterFoam/impesFoam...)
+    eventFileSourceMassFlowRate for mass term (porousScalarTransport(2D)Foam)
+    eventFilePatchMassFlowRate (fixedFlux in porousScalarTransportFoam)
+    eventFileOutput to specify write times
 
-- impesFoam/anisoImpesFoam/
+  - solvers with injection/extraction terms are now conservative using Euler
+  or backward time-scheme (Crank-Nicholson still not supported)
 
-  - generalization of the "event" use. wellbore dictionary/function is obsolete
+  - All injection terms in event should be negative (as for boundaries) and
+  extraction terms should be positive (as for outlet boundary fluxes)
 
-- keyword event differenciation
+- groundwaterFoam
 
-  - eventFileFlowRate for volumetric event file (groundwaterFoam/impesFoam...)
-  - eventFileMassFlowRate for mass event file (porousScalarTransport(2D)Foam)
+  - seepage function is available (generates seepageTerm field)
+  - potentialMNT field is modified if < z0
+
+- impesFoam/anisoImpesFoam
+
+  - generalization of the "event" use wellbore dictionary/function is obsolete
 
 - porousScalarTransportFoam
 
   - water content (theta) can be given instead of saturation (Sphase) to allow
-  the direct use of pre-computed stationaryGroundwaterFoam computations.
-  - timestep is now controlled by porous- Courant number.
-  - solver now computes exactly solutions at event times (source event and/or
-  patch flux event) and writes in the corresponding time directory.
+  the direct use of pre-computed stationaryGroundwaterFoam computations
+  - timestep is now controlled by porous- Courant number
   
-- porousScalarTransportFoam
+- porousScalarTransport2DFoam
 
   - timestep is now controlled by porous- Courant number
+  - retard coefficient fixed
+  - seepage outlet handled (requires seepageTerm field)
+  - fatal error added when hwater field is negative
+  - solver requires for initialization hwater or potential/z0
+
+- stationaryGroundwater2DFoam
+
+  - seepage function is available (generates seepageTerm field)
+  - potentialMNT field is modified if < z0
 
 ### Libraries
 
@@ -36,13 +53,22 @@
 
   - event fixed flow rate now use a given field in transportProperties
     "eventFilePatchMassFlowRate" to allow the solvers to track BC changes and
-    adapt timestep.
+    adapt timestep
+
+- porousModels
+
+  - alphaDispersion model fixed
 
 - toolsGIS
 
-  - eventFile now automatically add event Q=0 at t=GREAT to avoid several
-  tests in solvers.
-
+  - event files generalized to all solvers
+  - value at given time is interpolated using given event values
+  - event values before first event time and after last event time is equal to 0
+  - keyword event differenciation : 
+    - source event for injection/extraction terms in the domains
+    - patch event for tracer injection (porousScalarTransportFoam)
+    - infiltration event for uniform infiltration (groundwater2DFoam)
+    - output event to specify write times
 
 ************************
 *** V1901
@@ -109,7 +135,7 @@
 
   - new library containing classes for GIS manipulation
   - first class is MNT file used to read xyz file and performed
-    bilinear interpolation.
+    bilinear interpolation
   - second class is eventFile to specify spatiallized time-varying source term
     for groundwater(2D)Foam and porousScalar(2D)Foam solvers
 
@@ -117,8 +143,8 @@
 
   - new boundary condition "fixedFlux" to impose a user-defined fixed flux
   for a given specie C. Dispersion is set to 0 along this boundary to respect
-  mass conservation and ensure that fixed flux is correctly computed.
-  "event table" can be given in BC for time-dependent fixed flux.
+  mass conservation and ensure that fixed flux is correctly computed
+  "event table" can be given in BC for time-dependent fixed flux
 
 ### Utilities
 

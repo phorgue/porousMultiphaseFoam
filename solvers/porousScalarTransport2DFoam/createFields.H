@@ -180,7 +180,7 @@ if (CSVactive)
             massBalanceCSV << " flux(" << phiWater.boundaryField()[patchi].patch().name() << ")";
         }
     }
-    massBalanceCSV << endl;
+    massBalanceCSV << " flux(fixedPoint)" << endl;
 }
 
 //- Source term
