@@ -158,6 +158,7 @@ surfaceScalarField phiWater = phi * fvc::interpolate(hwater);
 
 //- creation of dispersion model
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties, mesh);
+volTensorField Deff =  eps*hwater*DeffModel->Deff();
 
 Info << "Computing retard coefficient R = ";
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();

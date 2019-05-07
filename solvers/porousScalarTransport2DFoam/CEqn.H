@@ -1,8 +1,7 @@
 {
     //- update dispersion tensor coefficient
     DeffModel->correct(C,U,eps);
-
-    volTensorField Deff = eps*hwater*DeffModel->Deff();
+    Deff = eps*hwater*DeffModel->Deff();
 
     fvScalarMatrix CEqn
         (
