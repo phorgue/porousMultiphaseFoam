@@ -26,7 +26,7 @@
                     massBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
                 }
             }
-            massBalanceCSV << " " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
+            massBalanceCSV << " " << fvc::domainIntegrate(seepageTerm*C).value() << endl;
         }
     }
 }
