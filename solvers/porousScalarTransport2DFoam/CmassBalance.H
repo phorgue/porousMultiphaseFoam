@@ -8,7 +8,7 @@
             Info << phiWater.boundaryField()[patchi].patch().name() << " = " <<  sum(phiWater.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale << " ; ";
         }
     }
-    Info << " fixed points = " << fvc::domainIntegrate(seepageTerm*C).value() << endl;
+    Info << " fixed points = " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
 
     //- CSV output
     if (CSVactive)
@@ -26,7 +26,7 @@
                     massBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
                 }
             }
-            massBalanceCSV << " " << fvc::domainIntegrate(seepageTerm*C).value() << endl;
+            massBalanceCSV << " " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
         }
     }
 }
