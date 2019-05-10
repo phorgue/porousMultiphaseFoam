@@ -11,7 +11,7 @@
             ==
             - sourceTerm * zScale
             - eps * R * hwater * fvm::Sp(lambda,C)
-            - dimensionedScalar("",dimLength,zScale) * fvm::Sp(seepageTerm,C)
+            - fvm::Sp(seepageTerm,C)
         );
 
     CEqn.solve();

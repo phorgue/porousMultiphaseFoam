@@ -213,7 +213,7 @@ volScalarField seepageTerm
         IOobject::NO_WRITE
     ),
     mesh,
-    dimensionedScalar("seepage_value",dimless/dimTime,0.)
+    dimensionedScalar("seepage_value",dimLength/dimTime,0.)
 );
 
 if (seepageTerm.headerOk())
