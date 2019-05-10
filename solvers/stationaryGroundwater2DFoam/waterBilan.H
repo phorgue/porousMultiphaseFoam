@@ -10,16 +10,20 @@
         }
     }
 
-    seepageTerm = dimensionedScalar("",dimless/dimTime,0);
+    seepageTerm = dimensionedScalar("",dimLength/dimTime,0);
 
     if (fixedPotentialIDList.size() > 0)
     {
         cellFlux = fvc::div(phi*fvc::interpolate(hwater));
+        scalar flowOutFixedPoints = 0;
         forAll(fixedPotentialIDList,pointi)
         {
-            seepageTerm[fixedPotentialIDList[pointi]] -= cellFlux.internalField()[fixedPotentialIDList[pointi]]/zScale;
+            label currentCell = fixedPotentialIDList[pointi];
+            scalar area = mesh.V()[currentCell]/zScale;
+            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell]/area;
+            flowOutFixedPoints -= cellFlux.internalField()[currentCell]*area;
         }
-        Info << " fixed points = " << fvc::domainIntegrate(seepageTerm).value();
+        Info << " fixed points = " << flowOutFixedPoints;
     }
     Info << endl;
 }
