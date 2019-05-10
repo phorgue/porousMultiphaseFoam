@@ -70,7 +70,8 @@ IOdictionary transportProperties
     )
 );
 
-const dimensionedScalar nu(transportProperties.lookup("nu"));
+const dimensionedScalar rho(transportProperties.lookup("rho"));
+const dimensionedScalar mu(transportProperties.lookup("mu"));
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
@@ -115,9 +116,9 @@ Info << "min(K) = " << min(K).value() << " ; max(K) = " << max(K).value() << nl 
 
 // permeability/mobility field
 dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
-volScalarField M(K*g/nu);
+volScalarField M(K*rho*g/mu);
 surfaceScalarField Kf = fvc::interpolate(K,"K");
-surfaceScalarField Mf("Mf",Kf*g/nu);
+surfaceScalarField Mf("Mf",Kf*g*rho/mu);
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// VELOCITY - FLUXES ////////////////////////////////
