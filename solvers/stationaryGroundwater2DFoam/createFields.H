@@ -77,27 +77,6 @@ const dimensionedScalar mu(transportProperties.lookup("mu"));
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-Info<< "Reading Porous Media Properties \n" << endl;
-
-// Porosity	
-dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
-   
-volScalarField eps
-(
-    IOobject
-    (
-        "eps",
-        runTime.constant(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    epsScalar
-);
-
-if (max(eps).value() <= 0) FatalErrorIn("createFields.H") << " porosity eps equal to 0" << exit(FatalError);
-
 // Intrinsic permeability       
 Info<< "Reading field K" << endl;
 volScalarField K
