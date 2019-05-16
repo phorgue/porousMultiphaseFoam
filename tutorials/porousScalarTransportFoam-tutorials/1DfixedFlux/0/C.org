@@ -24,7 +24,7 @@ boundaryField
     top
     {
         type           fixedFlux;
-        fixedFluxValue 1e-8;
+        fixedFluxValue -1e-8;
         phiName        phitheta;
         value          uniform 0;
     }
