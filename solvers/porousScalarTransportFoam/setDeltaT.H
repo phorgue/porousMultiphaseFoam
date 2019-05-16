@@ -36,15 +36,14 @@ Description
 
 if (adjustTimeStep)
 {
-
-    scalar maxDeltaTFact = maxCo/(CoNum + small);
-    scalar deltaTFact = min(min(maxDeltaTFact, 1.0 + 0.1*maxDeltaTFact), 1.2);
-   
+    //- C-variation control
+    scalar dtForC =  max(dCmax*gMax(C),dCresidual)/(dCdTmax+SMALL);
+    scalar newDeltaT = min(dtForC, 1.2*runTime.deltaTValue());
     runTime.setDeltaT
         (
             min
             (
-                deltaTFact*runTime.deltaTValue(),
+                newDeltaT,
                 maxDeltaT
             )
         );

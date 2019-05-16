@@ -51,14 +51,13 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "createTimeControls.H"
     #include "readEvent.H"
-    #include "CourantNo.H"
-    #include "setInitialDeltaT.H"
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     while (runTime.run())
     {
         #include "CourantNo.H"
+        Info << "Cvariation max = " << dCdTmax*runTime.deltaTValue() << endl;
         #include "setDeltaT.H"
         #include "updateEvent.H"
 

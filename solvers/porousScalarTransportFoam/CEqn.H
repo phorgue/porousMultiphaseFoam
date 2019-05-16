@@ -16,6 +16,8 @@
 
     CEqn.solve();
 
+    dCdTmax = max(mag(fvc::ddt(C))).value();
+
     Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " mass(C) = " << fvc::domainIntegrate(R*C*Saturation*eps).value() << endl;
 
 }
