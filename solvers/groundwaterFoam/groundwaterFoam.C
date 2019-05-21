@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
         dthetadTmax = dtheta/runTime.deltaTValue();
         dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
 
+        #include "waterMassBalance.H"
         #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
