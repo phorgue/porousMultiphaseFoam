@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
         //- Solve potential equation
         #include "potentialEqn.H"
 
-        //- Water bilan computation
-        #include "waterBilan.H"
+        //- Water mass balance computation
+        #include "waterMassBalance.H"
 
         #include "eventWrite.H"
 
