@@ -58,14 +58,17 @@ int main(int argc, char *argv[])
     {
         #include "CourantNo.H"
         Info << "Cvariation max = " << dCdTmax*runTime.deltaTValue() << endl;
+        if (patchEventIsPresent)  patchEvent.update(runTime.timeOutputValue());
+        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
+        if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
         #include "setDeltaT.H"
-        #include "updateEvent.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         //- Compute transport
+        #include "computeSourceTerm.H"
         #include "CEqn.H"
         #include "CmassBalance.H"
 
