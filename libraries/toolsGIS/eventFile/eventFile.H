@@ -92,11 +92,12 @@ public:
     const word& name() const {return name_;}
     const label& ndates() const {return ndates_;}
     const scalarList& dates() const {return dates_;}
+    scalar iterator() const {return iterator_;}
     const RectangularMatrix<scalar>& datas() const {return datas_;}
     const scalar& lastValue(const label& id) const {return datas_[iterator_][id];}
     const scalar& oldValue(const label& id) const {return oldValues_[id];}
     const scalar& currentValue(const label& id) const {return currentValues_[id];}
-    const scalar& currentEventStartTime() const;
+    scalar currentEventStartTime() const;
     const scalar& currentEventEndTime() const;
     void storeOldValues() {oldValues_ = currentValues_;}
     void update(const scalar& currentTime);
