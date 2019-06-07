@@ -1,8 +1,6 @@
-if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
-
+//- compute source term
 if (sourceEventIsPresent)
 {
-    sourceEvent.update(runTime.timeOutputValue());
     sourceTerm.primitiveFieldRef() = 0;
     if (isBackwardScheme)
     {

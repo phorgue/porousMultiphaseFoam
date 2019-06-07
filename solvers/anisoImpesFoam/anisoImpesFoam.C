@@ -63,12 +63,15 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
+        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
+        if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
         #include "setDeltaT.H"
-        #include "updateEvent.H"
 
         runTime++;
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
+
+        #include "computeSourceTerm.H"
 
         //- Solve saturation equation (explicit)
         #include "SEqn.H"

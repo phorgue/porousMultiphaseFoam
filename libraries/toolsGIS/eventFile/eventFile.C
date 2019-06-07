@@ -54,7 +54,7 @@ Foam::eventFile::eventFile
     datas_(),
     currentValues_(),
     oldValues_(),
-    iterator_(0)
+    iterator_(-1)
 {}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -64,9 +64,16 @@ Foam::eventFile::~eventFile()
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
 
-const Foam::scalar& Foam::eventFile::currentEventStartTime() const
+Foam::scalar Foam::eventFile::currentEventStartTime() const
 {
-    return dates_[iterator_];
+    if (iterator_ == -1)
+    {
+        return 0;
+    }
+    else
+    {
+        return dates_[iterator_];
+    }
 }
 
 const Foam::scalar& Foam::eventFile::currentEventEndTime() const

@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
+        #include "computeSourceTerm.H"
         #include "hEqn.H"
         #include "updateProperties.H"
 
