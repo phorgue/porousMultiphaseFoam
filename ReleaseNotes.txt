@@ -19,6 +19,10 @@
   - All injection terms in event should be negative (as for boundaries) and
   extraction terms should be positive (as for outlet boundary fluxes)
 
+- groundwater2DFoam
+
+  - solver accepts dry cells (display WARNING when adding water)
+
 - groundwaterFoam
 
   - seepage function is available (generates seepageTerm field)

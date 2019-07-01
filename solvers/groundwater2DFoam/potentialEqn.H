@@ -13,11 +13,30 @@
 
     potentialEqn.solve();
 
-    //- updating hwater
+    //- updating hwater and fluxes
     hwater == potential - z0;
-    dhdTmax = (max(mag(fvc::ddt(hwater)))/max(hwater)).value();
+
+    //- Checking for dry cells
+    if (min(hwater).value() <= hwaterMin.value())
+    {
+        scalar waterAdded = 0;
+        label ndryCells = 0;
+        forAll(hwater,celli)
+        {
+            if (hwater[celli] <= hwaterMin.value())
+            {
+                ndryCells++;
+                waterAdded += (hwaterMin.value()-hwater[celli])*mesh.V()[celli]/zScale;
+                hwater[celli] = hwaterMin.value();
+            }
+        }
+        cumulativeWaterAdded += waterAdded;
+        Info << "*** WARNING *** : number of dry cells = " << ndryCells << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m)" << endl;
+     }
+
     Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", max(dh) = " << dhdTmax*runTime.deltaTValue() << endl;
-    if (min(hwater).value() <= 0) FatalErrorIn("potentialEqn.H") << " Computed hwater fields has negative values, try to reduce relaxation" << exit(FatalError);
+
+    dhdTmax = (max(mag(fvc::ddt(hwater)))/max(hwater)).value();
 
     //- updating flow properties
     transmissivity = Mf*fvc::interpolate(hwater);

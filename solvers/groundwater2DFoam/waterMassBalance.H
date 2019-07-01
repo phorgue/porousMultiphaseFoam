@@ -15,7 +15,7 @@
             seepageTerm[currentCell] -= cellFlux.internalField()[currentCell]/area;
             flowOutFixedPoints -= cellFlux.internalField()[currentCell]*area;
         }
-        Info << " fixed points = " << flowOutFixedPoints;
+        Info << "fixed points = " << flowOutFixedPoints << " ; ";
     }
 
     forAll(phi.boundaryField(),patchi)
