@@ -184,6 +184,9 @@ volScalarField seepageTerm
     dimensionedScalar("seepage_value",dimLength/dimTime,0.)
 );
 
+dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01)));
+scalar cumulativeWaterAdded = 0;
+
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
 
 //- Looking for 2nd order time-scheme for source term
