@@ -1,3 +1,23 @@
+//////////////////////////////////////////////////////////////////
+////////////////////// TRANSPORT PROPERTIES //////////////////////
+//////////////////////////////////////////////////////////////////
+
+Info<< "Reading transportProperties\n" << endl;
+
+IOdictionary transportProperties
+(
+    IOobject
+    (
+        "transportProperties",
+        runTime.constant(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::NO_WRITE
+    )
+);
+
+const dimensionedScalar rho(transportProperties.lookup("rho"));
+const dimensionedScalar mu(transportProperties.lookup("mu"));
 
 //////////////////////////////////////////////////////////////////
 ////////////////////// Height - Potential ///////////////////////
@@ -47,31 +67,14 @@ volScalarField hwater
 );
 hwater == potential - z0;
 
+dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01)));
+
 #include "correctInitialPotential.H"
 
-Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << nl << endl;
+Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value()
+<< " ; hwaterMin = " << hwaterMin.value() << nl << endl;
+
 hwater.write();
-
-//////////////////////////////////////////////////////////////////
-////////////////////// TRANSPORT PROPERTIES //////////////////////
-//////////////////////////////////////////////////////////////////
-
-Info<< "Reading transportProperties\n" << endl;
-
-IOdictionary transportProperties
-(
-    IOobject
-    (
-        "transportProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
-    )
-);
-
-const dimensionedScalar rho(transportProperties.lookup("rho"));
-const dimensionedScalar mu(transportProperties.lookup("mu"));
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
