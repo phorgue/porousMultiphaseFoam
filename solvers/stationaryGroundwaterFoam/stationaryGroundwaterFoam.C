@@ -41,6 +41,7 @@ Developers
 #include "simpleControl.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
+#include "patchEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
