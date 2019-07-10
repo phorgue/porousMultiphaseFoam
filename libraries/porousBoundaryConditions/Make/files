@@ -6,4 +6,6 @@ fixedHeadPressureSTL/fixedHeadPressureSTL.C
 
 fixedFlux/fixedFlux.C
 
+timeVaryingInfiltration/timeVaryingInfiltration.C
+
 LIB = $(FOAM_USER_LIBBIN)/libporousBoundaryConditions

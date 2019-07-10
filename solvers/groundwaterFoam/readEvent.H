@@ -7,6 +7,15 @@ if (sourceEventIsPresent)
     sourceEvent.storeOldValues();
 }
 
+bool patchEventIsPresent =  transportProperties.found("eventFilePatchInfiltration");
+word patchEventFileName = transportProperties.lookupOrDefault<word>("eventFilePatchInfiltration","");
+patchEventFile patchEvent(patchEventFileName,false);
+if (patchEventIsPresent)
+{
+    patchEvent.update(runTime.startTime().value());
+    patchEvent.storeOldValues();
+}
+
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
@@ -16,6 +25,7 @@ scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeSte
 if (eventTimeStep > 0)
 {
     if (sourceEventIsPresent) sourceEvent.addIntermediateTimeSteps(eventTimeStep);
+    if (patchEventIsPresent) patchEvent.addIntermediateTimeSteps(eventTimeStep);
 }
 
 //- determining cell id corresponding to datas
