@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fixedFlux
+    Foam::eventFlux
 
 Group
     grpGenericBoundaryConditions
@@ -32,20 +32,20 @@ Description
     variable C calculated as:
 
         \f[
-            C = fixedFluxValue / totalFlux
+            C = (constant value + event value) / totalFlux
         \f]
 
     where
     \vartable
         C                | Variable solved
-        fixedFluxValue   | fixed flux value of variable solved
+        constantValue    | fixed flux value of variable solved
         totalFlux        | computed flux using field name
     \endtable
 
 Usage
     \table
         Property          | Description                  | Required    | Default value
-        fixedFluxValue    | Fixed flux value of C        | yes         | 0
+        constantValue     | constant fixed flux          | yes         | 0
         phiName           | Name of the flux field       | no          | phi
     \endtable
 
@@ -53,8 +53,8 @@ Usage
     \verbatim
     <patchName>
     {
-        type            fixedFlux;
-        fixedFluxValue  50;
+        type            eventFlux;
+        eventFluxValue  50;
         phiName         phi; // optional (phi by default)
         value           uniform 0; // optional initial value
     }
@@ -64,12 +64,12 @@ See also
     Foam::fixedValue
 
 SourceFiles
-    fixedFlux.C
+    eventFlux.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fixedFlux_H
-#define fixedFlux_H
+#ifndef eventFlux_H
+#define eventFlux_H
 
 #include "fixedValueFvPatchFields.H"
 #include "patchEventFile.H"
@@ -80,10 +80,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-         Class fixedFlux Declaration
+         Class eventFlux Declaration
 \*---------------------------------------------------------------------------*/
 
-class fixedFlux
+class eventFlux
 :
     public fixedValueFvPatchScalarField
 {
@@ -93,7 +93,7 @@ protected:
     // Protected data
     
     //- Fixed flux value
-    scalar fixedFluxValue_;
+    scalar eventFluxValue_;
 
     //- Flux field name
     word phiName_;
@@ -106,20 +106,20 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("fixedFlux");
+    TypeName("eventFlux");
 
 
     // Constructors
 
         //- Construct from patch and internal field
-        fixedFlux
+        eventFlux
         (
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        fixedFlux
+        eventFlux
         (
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
@@ -127,19 +127,19 @@ public:
         );
 
         //- Construct by mapping given
-        //  fixedFlux onto a new patch
-        fixedFlux
+        //  eventFlux onto a new patch
+        eventFlux
         (
-            const fixedFlux&,
+            const eventFlux&,
             const fvPatch&,
             const DimensionedField<scalar, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy
-        fixedFlux
+        eventFlux
         (
-            const fixedFlux&
+            const eventFlux&
         );
 
         //- Construct and return a clone
@@ -147,14 +147,14 @@ public:
         {
             return tmp<fvPatchScalarField >
             (
-                new fixedFlux(*this)
+                new eventFlux(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        fixedFlux
+        eventFlux
         (
-            const fixedFlux&,
+            const eventFlux&,
             const DimensionedField<scalar, volMesh>&
         );
 
@@ -166,7 +166,7 @@ public:
         {
             return tmp<fvPatchScalarField>
             (
-                new fixedFlux(*this, iF)
+                new eventFlux(*this, iF)
             );
         }
 
