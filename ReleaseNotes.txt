@@ -55,10 +55,6 @@
 
 - porousBoundaryConditions
 
-  - event fixed flow rate now use a given field in transportProperties
-    "eventFilePatchMassFlowRate" to allow the solvers to track BC changes and
-    adapt timestep
-
   - timeVaryingInfiltration
     new BC to impose event variable velocity in impesFoam, anisoImpesFoam
     and groundwaterFoam. Patch event file is directly given in the BC
