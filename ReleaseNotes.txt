@@ -59,6 +59,11 @@
     "eventFilePatchMassFlowRate" to allow the solvers to track BC changes and
     adapt timestep
 
+  - timeVaryingInfiltration
+    new BC to impose event variable velocity in impesFoam, anisoImpesFoam
+    and groundwaterFoam. Patch event file is directly given in the BC
+    dictionary using the keyword "eventFile" (as for fixedFlux).
+
 - porousModels
 
   - alphaDispersion model fixed

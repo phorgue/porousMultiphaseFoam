@@ -77,10 +77,12 @@ if(adjustTimeStep)
 
     scalar timeOfNextEvent = GREAT;
     if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
+    if (patchEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,patchEvent.currentEventEndTime());
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+
     if ((nSteps < labelMax) && (nSteps != 0))
     {
         const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
@@ -96,6 +98,13 @@ if(adjustTimeStep)
             if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
             {
                 timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        if (patchEventIsPresent)
+        {
+            if (patchEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,patchEvent.currentEventEndTime()-runTime.timeOutputValue());
             }
         }
         if (outputEventIsPresent)
