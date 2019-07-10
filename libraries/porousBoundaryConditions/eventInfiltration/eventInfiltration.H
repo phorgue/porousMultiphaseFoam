@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::timeVaryingInfiltration
+    Foam::eventInfiltration
 
 Group
     grpGenericBoundaryConditions
@@ -35,7 +35,7 @@ Description
 Usage
     \table
         Property              | Description                  | Required    | Default value
-        constantInfiltration  | constant infiltration value  | no          | 0
+        constantValue         | constant infiltration value  | no          | 0
         eventFile             | File name                    | no          | ""
     \endtable
 
@@ -43,8 +43,8 @@ Usage
     \verbatim
     <patchName>
     {
-        type                  timeVaryingInfiltration;
-        constantInfiltration  50;
+        type                  eventInfiltration;
+        constantValue         -0.01;
         eventFile             "patchEventFileExample.dat";
         value                 uniform 0; // value for paraview visualization
     }
@@ -54,12 +54,12 @@ See also
     Foam::fixedValue
 
 SourceFiles
-    timeVaryingInfiltration.C
+    eventInfiltration.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef timeVaryingInfiltration_H
-#define timeVaryingInfiltration_H
+#ifndef eventInfiltration_H
+#define eventInfiltration_H
 
 #include "fixedValueFvPatchFields.H"
 #include "patchEventFile.H"
@@ -70,10 +70,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-         Class timeVaryingInfiltration Declaration
+         Class eventInfiltration Declaration
 \*---------------------------------------------------------------------------*/
 
-class timeVaryingInfiltration
+class eventInfiltration
 :
     public fixedValueFvPatchVectorField
 {
@@ -95,20 +95,20 @@ protected:
 public:
 
     //- Runtime type information
-    TypeName("timeVaryingInfiltration");
+    TypeName("eventInfiltration");
 
 
     // Constructors
 
         //- Construct from patch and internal field
-        timeVaryingInfiltration
+        eventInfiltration
         (
             const fvPatch&,
             const DimensionedField<vector, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        timeVaryingInfiltration
+        eventInfiltration
         (
             const fvPatch&,
             const DimensionedField<vector, volMesh>&,
@@ -116,19 +116,19 @@ public:
         );
 
         //- Construct by mapping given
-        //  timeVaryingInfiltration onto a new patch
-        timeVaryingInfiltration
+        //  eventInfiltration onto a new patch
+        eventInfiltration
         (
-            const timeVaryingInfiltration&,
+            const eventInfiltration&,
             const fvPatch&,
             const DimensionedField<vector, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy
-        timeVaryingInfiltration
+        eventInfiltration
         (
-            const timeVaryingInfiltration&
+            const eventInfiltration&
         );
 
         //- Construct and return a clone
@@ -136,14 +136,14 @@ public:
         {
             return tmp<fvPatchVectorField >
             (
-                new timeVaryingInfiltration(*this)
+                new eventInfiltration(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        timeVaryingInfiltration
+        eventInfiltration
         (
-            const timeVaryingInfiltration&,
+            const eventInfiltration&,
             const DimensionedField<vector, volMesh>&
         );
 
@@ -155,7 +155,7 @@ public:
         {
             return tmp<fvPatchVectorField>
             (
-                new timeVaryingInfiltration(*this, iF)
+                new eventInfiltration(*this, iF)
             );
         }
 
