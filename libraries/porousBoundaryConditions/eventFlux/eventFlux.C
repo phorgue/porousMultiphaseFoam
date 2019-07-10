@@ -23,37 +23,39 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "timeVaryingInfiltration.H"
+#include "eventFlux.H"
 #include "addToRunTimeSelectionTable.H"
 #include "surfaceFields.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::timeVaryingInfiltration::
-timeVaryingInfiltration
+Foam::eventFlux::
+eventFlux
 (
     const fvPatch& h,
-    const DimensionedField<vector, volMesh>& iF
+    const DimensionedField<scalar, volMesh>& iF
 )
     :
-    fixedValueFvPatchVectorField(h, iF),
-    fixedInfiltrationValue_(0.),
+    fixedValueFvPatchScalarField(h, iF),
+    eventFluxValue_(0.),
+    phiName_("phi"),
     isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
 
 
-Foam::timeVaryingInfiltration::
-timeVaryingInfiltration
+Foam::eventFlux::
+eventFlux
 (
     const fvPatch& h,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<scalar, volMesh>& iF,
     const dictionary& dict
 )
     :
-    fixedValueFvPatchVectorField(h, iF, dict, false),
-    fixedInfiltrationValue_(dict.lookupOrDefault<scalar>("constantInfiltration",0.)),
+    fixedValueFvPatchScalarField(h, iF, dict, false),
+    eventFluxValue_(dict.lookupOrDefault<scalar>("constantValue",0.)),
+    phiName_(dict.lookupOrDefault<word>("phiName","phi")),
     isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
@@ -65,7 +67,7 @@ timeVaryingInfiltration
     {
         isBackwardScheme_ = true;
     }
-
+    
     if (eventFileName != "")
     {
         //- reading patch event file, compute current value, store to old values
@@ -87,7 +89,7 @@ timeVaryingInfiltration
         }
         if (patchEventID_ == -1)
         {
-            FatalErrorIn("timeVaryingInfiltration.C") << " patch '" << patch().name() << "' not found in event file : " << eventFile_.name() << abort(FatalError);
+            FatalErrorIn("eventFlux.C") << " patch '" << patch().name() << "' not found in event file : " << eventFile_.name() << abort(FatalError);
         }
     }
 
@@ -100,46 +102,49 @@ timeVaryingInfiltration
 }
 
 
-Foam::timeVaryingInfiltration::
-timeVaryingInfiltration
+Foam::eventFlux::
+eventFlux
 (
-    const timeVaryingInfiltration& ptf,
+    const eventFlux& ptf,
     const fvPatch& h,
-    const DimensionedField<vector, volMesh>& iF,
+    const DimensionedField<scalar, volMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
 :
-    fixedValueFvPatchVectorField(ptf, h, iF, mapper),
-    fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
+    fixedValueFvPatchScalarField(ptf, h, iF, mapper),
+    eventFluxValue_(ptf.eventFluxValue_),
+    phiName_(ptf.phiName_),
     isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
 
 
-Foam::timeVaryingInfiltration::
-timeVaryingInfiltration
+Foam::eventFlux::
+eventFlux
 (
-    const timeVaryingInfiltration& ptf
+    const eventFlux& ptf
 )
 :
-    fixedValueFvPatchVectorField(ptf),
-    fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
+    fixedValueFvPatchScalarField(ptf),
+    eventFluxValue_(ptf.eventFluxValue_),
+    phiName_(ptf.phiName_),
     isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
 
 
-Foam::timeVaryingInfiltration::
-timeVaryingInfiltration
+Foam::eventFlux::
+eventFlux
 (
-    const timeVaryingInfiltration& ptf,
-    const DimensionedField<vector, volMesh>& iF
+    const eventFlux& ptf,
+    const DimensionedField<scalar, volMesh>& iF
 )
 :
-    fixedValueFvPatchVectorField(ptf, iF),
-    fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
+    fixedValueFvPatchScalarField(ptf, iF),
+    eventFluxValue_(ptf.eventFluxValue_),
+    phiName_(ptf.phiName_),
     isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
@@ -148,12 +153,14 @@ timeVaryingInfiltration
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::timeVaryingInfiltration::updateCoeffs()
+void Foam::eventFlux::updateCoeffs()
 {
     if (updated())
     {
         return;
     }
+    const fvsPatchField<scalar>& phip_=
+        patch().lookupPatchField<surfaceScalarField, scalar>(phiName_);
 
     scalar valueEvent = 0.0;
 
@@ -177,16 +184,16 @@ void Foam::timeVaryingInfiltration::updateCoeffs()
     }
 
     //- Computing fixed value
-    
-    vectorField updatedFixedValue = (fixedInfiltrationValue_+valueEvent)*patch().nf();
-    operator== (updatedFixedValue);
-    fixedValueFvPatchVectorField::updateCoeffs();
+    scalarField results(patch().patch().faceCentres().size());    
+    results = (eventFluxValue_+valueEvent)/sum(phip_);
+    operator== (results);
+    fixedValueFvPatchScalarField::updateCoeffs();
 }
 
 
-void Foam::timeVaryingInfiltration::write(Ostream& os) const
+void Foam::eventFlux::write(Ostream& os) const
 {
-    fvPatchVectorField::write(os);
+    fvPatchScalarField::write(os);
     writeEntry("value", os);
 }
 
@@ -196,8 +203,8 @@ namespace Foam
 {
 makePatchTypeField
 (
-    fvPatchVectorField,
-    timeVaryingInfiltration
+    fvPatchScalarField,
+    eventFlux
 );
 }
 

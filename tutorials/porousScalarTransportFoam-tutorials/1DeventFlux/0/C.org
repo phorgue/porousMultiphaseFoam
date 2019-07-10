@@ -23,8 +23,9 @@ boundaryField
 {
     top
     {
-        type           fixedFlux;
-        fixedFluxValue -1e-8;
+        type           eventFlux;
+        constantValue  -1e-8;
+        eventFile      "patchInjection.dat";
         phiName        phitheta;
         value          uniform 0;
     }
