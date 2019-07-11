@@ -59,7 +59,7 @@ eventInfiltration
     eventFile_()
 {
     word eventFileName = dict.lookupOrDefault<word>("eventFile","");
-
+    Info << nl << "eventFileName " << eventFileName << endl;
     //- Read if backward time scheme is used
     if (word(internalField().mesh().ddtScheme("source")) == "backward")
     {
@@ -89,6 +89,10 @@ eventInfiltration
         {
             FatalErrorIn("eventInfiltration.C") << " patch '" << patch().name() << "' not found in event file : " << eventFile_.name() << abort(FatalError);
         }
+    }
+    else
+    {
+        Info << "eventInfiltration boundary condition without event file" << endl;
     }
 
     //- Read if backward time scheme is used
