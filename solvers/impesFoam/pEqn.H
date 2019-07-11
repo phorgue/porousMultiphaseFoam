@@ -4,8 +4,9 @@
             fvm::laplacian(-Mf, p) + fvc::div(phiG)
             // capillary term
             + fvc::div(phiPc)*activateCapillarity
-            // wellbore terms
-            - (-SrcExt*Wext+SrcInj*Winj)
+            ==
+            // event source terms
+            - sourceTerm
         );
 
     pEqn.solve();

@@ -49,10 +49,4 @@ linearCoeffs
     pcMax pcMax [1 -1 -2 0 0 0 0] 19620;
 }
 
-wellboreProperties
-{
-    qInjection	qInjection [0 3 -1 0 0 0 0]	0e-3;
-    qExtraction	qExtraction [0 3 -1 0 0 0 0]	0e-3;
-}
-
 // ************************************************************************* //

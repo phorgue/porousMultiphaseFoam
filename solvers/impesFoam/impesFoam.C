@@ -40,7 +40,9 @@ Developers
 #include "incompressiblePhase.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
-#include "fixedValueFvPatchField.H"
+#include "sourceEventFile.H"
+#include "outputEventFile.H"
+#include "patchEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -54,8 +56,8 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createSbFields.H"
-    #include "createWellbores.H"
     #include "readTimeControls.H"
+    #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,11 +65,16 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
+        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
+        if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
+        if (patchEventIsPresent) patchEvent.update(runTime.timeOutputValue());
         #include "setDeltaT.H"
-        
+
         runTime++;
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
+
+        #include "computeSourceTerm.H"
 
         //- Solve saturation equation (explicit)
         #include "SEqn.H"
@@ -76,7 +83,7 @@ int main(int argc, char *argv[])
         //- Solve pressure equation (implicit)
         #include "pEqn.H"
 
-        runTime.write();
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

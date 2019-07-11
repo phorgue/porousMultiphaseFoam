@@ -38,8 +38,10 @@ Developers
 #include "incompressiblePhase.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
-#include "fixedValueFvPatchField.H"
 #include "simpleControl.H"
+#include "sourceEventFile.H"
+#include "outputEventFile.H"
+#include "patchEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -53,7 +55,7 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createthetaFields.H"
-    #include "createWellbores.H"
+    #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,6 +66,7 @@ int main(int argc, char *argv[])
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
+        #include "computeSourceTerm.H"
         #include "hEqn.H"
         #include "updateProperties.H"
 

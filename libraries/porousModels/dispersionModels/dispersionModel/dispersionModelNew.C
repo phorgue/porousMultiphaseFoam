@@ -31,7 +31,7 @@ Foam::autoPtr<Foam::dispersionModel> Foam::dispersionModel::New
 (
     const word& name,
     const dictionary& transportProperties,
-    const volVectorField& U
+    const fvMesh& mesh
 )
 {
     const word modelType(transportProperties.lookup("dispersionModel"));
@@ -46,8 +46,8 @@ Foam::autoPtr<Foam::dispersionModel> Foam::dispersionModel::New
         FatalErrorIn
             (
                 "dispersionModel::New(const word&, "
-                " const dictionary& transportProperties,"
-                " const volVectorField& U"
+                " const dictionary& transportProperties"
+                " const fvMesh& mesh)"
             )   << "Unknown dispersionModel type "
                 << modelType << nl << nl
                 << "Valid dispersionModels are : " << endl
@@ -56,7 +56,7 @@ Foam::autoPtr<Foam::dispersionModel> Foam::dispersionModel::New
     }
 
     return autoPtr<dispersionModel>
-        (cstrIter()(name, transportProperties, U));
+        (cstrIter()(name, transportProperties, mesh));
 }
 
 

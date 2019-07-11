@@ -1,0 +1,6 @@
+date 0
+inlet -3e-6
+date 5000
+inlet -1e-6
+date 10000
+inlet 0
