@@ -36,7 +36,8 @@ Developer
 #include "harmonic.H"
 #include "fixedValueFvPatchField.H"
 #include "MNTfile.H"
-#include "eventFile.H"
+#include "uniformInfiltrationEventFile.H"
+#include "outputEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -58,27 +59,26 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "setDeltaT.H"
+        #include "updateEvent.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Update event
-        #include "updateEvent.H"
-
         //- Solve potential equation
         #include "potentialEqn.H"
 
-        //- Water bilan computation
-        #include "waterBilan.H"
+        //- Water mass balance computation
+        #include "waterMassBalance.H"
 
-        runTime.write();
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
             << nl << endl;
     }
 
+    if (cumulativeWaterAdded > 0) Info << "Cumulated water added = " << cumulativeWaterAdded << " m3, equivalent height = " << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m" << nl << endl;
     Info<< "End\n" << endl;
 
     return 0;

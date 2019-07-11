@@ -42,9 +42,43 @@ if (adjustTimeStep)
                 maxDeltaT
             )
         );
-   
+
+    scalar timeOfNextEvent = GREAT;
+    if (uniformInfiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,uniformInfiltrationEvent.currentEventEndTime());
+    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
+
+    scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
+    scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+    if ((nSteps < labelMax) && (nSteps != 0))
+    {
+        const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
+        runTime.setDeltaT(timeToNextEvent/nStepsToNextEvent,false);
+    }
+
+    //- To handle close event times (inferior to current timestep)
+    if (nSteps == 0)
+    {
+        scalar timeToCloseEvent = GREAT;
+        if (uniformInfiltrationEventIsPresent)
+        {
+            if (uniformInfiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,uniformInfiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        if (outputEventIsPresent)
+        {
+            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        runTime.setDeltaT(min(runTime.deltaTValue(),timeToCloseEvent),false);
+    }
+
+    Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
+           
 }    
 
-Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
 
 // ************************************************************************* //

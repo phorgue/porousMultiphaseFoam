@@ -61,8 +61,8 @@ protected:
     word name_;
     dictionary transportProperties_;
 
-    //- Reference to the velocity field
-    const volVectorField& U_;
+    //-Reference to the mesh
+    const fvMesh& mesh_;
 
     //- Molecular and effective diffusion
     dimensionedScalar Dm_;
@@ -91,9 +91,9 @@ public:
         (
             const word& name,
             const dictionary& transportProperties,
-            const volVectorField& U
+            const fvMesh& mesh
         ),
-        (name, transportProperties, U)
+        (name, transportProperties, mesh)
     );
 
 
@@ -104,7 +104,7 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U
+        const fvMesh& mesh
     );
 
 
@@ -115,7 +115,7 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U
+        const fvMesh& mesh
     );
 
     //- Destructor
@@ -131,7 +131,6 @@ public:
             return transportProperties_;
         }
 
-    
     //- Return molecular diffusion
     const dimensionedScalar& Dm() const
         {
@@ -144,9 +143,35 @@ public:
             return Deff_;
         }
 
-    //- Correct the effective dispersion
-    virtual void correct(const volScalarField& C) = 0; 
+    //- Correct the dispersion giving water content or porosity field
+    virtual void correct(
+        const volScalarField& C,
+        const volVectorField& U,
+        const volScalarField& theta
+    ) = 0;
 
+    //- Correct the dispersion giving scalar porosity
+    virtual void correct(
+        const volScalarField& C,
+        const volVectorField& U,
+        const dimensionedScalar& eps
+    ) = 0;
+
+    //- Correct the dispersion giving saturation and porosity field
+    virtual void correct(
+        const volScalarField& C,
+        const volVectorField& U,
+        const volScalarField& saturation,
+        const volScalarField& eps
+    ) = 0;
+
+    //- Correct the dispersion giving saturation and scalar porosity
+    virtual void correct(
+        const volScalarField& C,
+        const volVectorField& U,
+        const volScalarField& saturation,
+        const dimensionedScalar& eps
+    ) = 0;
 };
 
 

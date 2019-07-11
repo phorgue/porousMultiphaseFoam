@@ -25,9 +25,13 @@ Class
     Foam::dispersionModels::alphaDispersion
 
 Description
-    Dispersion model based on alphaL and alphaT coefficients
+    Dispersion model based on alphaL and alphaT coefficients (Bear, 1979)
 
-        Deff = Dm/tau + alphaL * mag(U) + (alphaL - alphaT) * (U*U)/mag(U)
+      Deff= Dm/tau + (alphaT * mag(U) + (alphaL - alphaT) * (U*U)/mag(U) )/theta
+
+    where theta is water content :
+
+      theta = Saturation * porosity
 
 SourceFiles
     alphaDispersion.C
@@ -58,12 +62,13 @@ class alphaDispersion
     public dispersionModel
 {
     //- Private data
+
+    //- Dictionary for model coefficients
     dictionary alphaDispersionCoeffs_;
 
     //- model coefficients
     volScalarField tau_,alphaL_,alphaT_;
 
-        
 public:
 
     //- Runtime type information
@@ -76,7 +81,7 @@ public:
     (
         const word& name,
         const dictionary& transportProperties,
-        const volVectorField& U
+        const fvMesh& mesh
     );
 
     //- Destructor
@@ -85,11 +90,12 @@ public:
 
     // Member Functions
 
-    //- Correct the dispersion (effective diffusion)
-    void correct(const volScalarField& C)
+    //- Correct the dispersion giving water content or porosity field
+    void correct(const volScalarField& C, const volVectorField& U, const volScalarField& theta)
         {
-            dimensionedScalar USMALL("",dimLength/dimTime,1e-12);
-            Deff_ = (Dm_/tau_ + alphaT_ * mag(U_))*tensor::I + (alphaL_-alphaT_) * (U_*U_)/(mag(U_)+USMALL);
+            dimensionedScalar USMALL("",dimLength/dimTime,1e-36);
+
+            Deff_ = (Dm_/tau_ + alphaT_ * mag(U)/theta)*tensor::I + (alphaL_-alphaT_) * (U*U)/(theta*mag(U)+USMALL);
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patch where flux is fixed
@@ -97,6 +103,34 @@ public:
             }
         }
 
+    //- Correct the dispersion giving scalar porosity
+    void correct(const volScalarField& C, const volVectorField& U, const dimensionedScalar& eps)
+        {
+            dimensionedScalar USMALL("",dimLength/dimTime,1e-36);
+
+            Deff_ = (Dm_/tau_ + alphaT_ * mag(U)/eps)*tensor::I + (alphaL_-alphaT_) * (U*U)/(eps*mag(U)+USMALL);
+            forAll(Deff_.boundaryField(),patchi)
+            {
+                //- Dispersion equal to zero on patches
+                if (C.boundaryField().types()[patchi] == "fixedFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+            }
+        }
+
+    //- Correct the dispersion giving saturation and porosity field
+    void correct(const volScalarField& C, const volVectorField& U, const volScalarField& saturation, const volScalarField& eps)
+        {
+            volScalarField theta = eps*saturation;
+            theta.dimensions().reset(dimless);
+            correct(C,U,theta);
+        }
+
+    //- Correct the dispersion giving saturation and scalar porosity
+    void correct(const volScalarField& C, const volVectorField& U, const volScalarField& saturation, const dimensionedScalar& eps)
+        {
+            volScalarField theta = eps*saturation;
+            theta.dimensions().reset(dimless);
+            correct(C,U,theta);
+        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
