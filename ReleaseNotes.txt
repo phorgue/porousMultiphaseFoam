@@ -7,10 +7,10 @@
 
 - Global :
 
-  - keyword event differenciation
-    eventFileSourceFlowRate for volumetric term (groundwaterFoam/impesFoam...)
-    eventFileSourceMassFlowRate for mass term (porousScalarTransport(2D)Foam)
-    eventFilePatchMassFlowRate (fixedFlux in porousScalarTransportFoam)
+  - Event file can be specified in transportProperties to force the solver
+    to compute solution at given date time.
+    eventFileSource for volumetric/mass event :
+    eventFilePatch for infiltration/fixed flux event on BC
     eventFileOutput to specify write times
 
   - solvers with injection/extraction terms are now conservative using Euler
