@@ -1,5 +1,5 @@
-bool sourceEventIsPresent = transportProperties.found("eventFileSourceMassFlowRate");
-word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSourceMassFlowRate","");
+bool sourceEventIsPresent = transportProperties.found("eventFileSource");
+word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSource","");
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)
 {
@@ -7,8 +7,8 @@ if (sourceEventIsPresent)
     sourceEvent.storeOldValues();
 }
 
-bool patchEventIsPresent =  transportProperties.found("eventFilePatchMassFlowRate");
-word patchEventFileName = transportProperties.lookupOrDefault<word>("eventFilePatchMassFlowRate","");
+bool patchEventIsPresent =  transportProperties.found("eventFilePatch");
+word patchEventFileName = transportProperties.lookupOrDefault<word>("eventFilePatch","");
 patchEventFile patchEvent(patchEventFileName,false);
 if (patchEventIsPresent)
 {
