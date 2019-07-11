@@ -1,31 +1,33 @@
 **************************************************************************
-****************** PorousMultiphaseFoam for OpenFOAM *********************
+************* PorousMultiphaseFoam (PMF) for OpenFOAM ********************
 **************************************************************************
 
-* General Informations : 
+* General Informations
 
-- The toolbox compatibility list:
+- The current branches (last version of the toolbox)
 
-  - branch "master": 
-    - OpenFOAM 6	v1901
-    - OpenFOAM 5.0	v1809
-    - OpenFOAM 4.0	v1.4.1
-    - OpenFOAM 3.0	v1.2
+  - branch "openfoam-v1812" > PMFv1906
+  - branch "openfoam-v6"    > PMFv1906
 
-  - branch "foam-extend":
-    - foam-extend 4.0	v1901
+- Old branches not updated
 
-  - branch "esi-version":
-    - OpenFOAM v1812    v1901
-    - OpenFOAM v1806	v1809
-    - OpenFOAM v1712    v1805
+   - branch "openfoam-v5"     > PMFv1809
+   - branch "foam-extend-4.0" >	PMFv1809
+   - branch "openfoam-v1806"  > PMFv1809
+   - branch "openfoam-v1712"  > PMFv1805
+
+- Older version (no branches)
+
+    - OpenFOAM 4.0	PMFv1.4.1
+    - OpenFOAM 3.0	PMFv1.2
 
   - version no supported:
     - OpenFOAM 2.4 and older
     - foam-extend 3.2 and older
     - OpenFOAM v1706 and older
 
-- This toolbox needs only a standard OpenFOAM installation (see www.openfoam.org)
+- This toolbox needs only a standard OpenFOAM installation (see www.openfoam.org
+  or openfoam.com)
 
 - Please cite the related paper in the "doc" folder if you are using this toolbox.
 
@@ -33,9 +35,8 @@
 
 * Installation instructions : 
 
-
 - First, source the OpenFOAM configuration file, i.e. (example for ubuntu version) : 
-   source /opt/openfoam5x/etc/bashrc
+   source /opt/openfoamv6/etc/bashrc
 
 - then in the "porousMultiphaseFoam" directory, run :
 

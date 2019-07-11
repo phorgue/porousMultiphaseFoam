@@ -1,6 +1,6 @@
 ************************
-*** Vxxxx
-*** 
+*** PMFv1906
+*** Event file generalization + seepage/forcing term for 2D solvers
 ************************
 
 ### Solvers
@@ -40,7 +40,6 @@
   
 - porousScalarTransport2DFoam
 
-  - timestep is now controlled by porous- Courant number
   - retard coefficient fixed
   - seepage outlet handled (requires seepageTerm field)
   - fatal error added when hwater field is negative
@@ -55,10 +54,13 @@
 
 - porousBoundaryConditions
 
-  - timeVaryingInfiltration
+  - eventInfiltration
     new BC to impose event variable velocity in impesFoam, anisoImpesFoam
     and groundwaterFoam. Patch event file is directly given in the BC
     dictionary using the keyword "eventFile" (as for fixedFlux).
+
+  - eventFlux
+    replace old fixedFlux BC for porousScalarTransportFoam
 
 - porousModels
 
