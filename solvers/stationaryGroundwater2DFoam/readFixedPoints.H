@@ -38,21 +38,22 @@ if ((forcingPotential == "fixedMNT") || (forcingPotential == "seepage"))
                 potentialMNT[celli] = potentialMNTfile.interpolate(mesh.C()[celli]);
             }
             Info << "OK" << endl;
-            //- checking that potentialMNT in superior to z0)
-            if (min(potentialMNT.internalField() - z0.internalField()).value() <= 0)
-            {
-                Info << "*** WARNING *** : potential MNT inferior to z0 in domain " << endl;
-                forAll(potentialMNT.internalField(),celli)
-                {
-                    potentialMNT.ref()[celli] = max(potentialMNT.internalField()[celli],z0.internalField()[celli]+0.01);
-                }
-            }
             potentialMNT.write();
         }
         else
         {
             FatalErrorIn("readFixedPoints.H") << nl << "no potentialMNT file neither MNT file for forcing potential mode : "
                 << forcingPotential << endl;
+        }
+    }
+
+    //- checking that potentialMNT in superior to z0)
+    if (min(potentialMNT.internalField() - z0.internalField()).value() <= 0)
+    {
+        Info << "*** WARNING *** : potential MNT inferior to z0 in domain " << endl;
+        forAll(potentialMNT.internalField(),celli)
+        {
+            potentialMNT.ref()[celli] = max(potentialMNT.internalField()[celli],z0.internalField()[celli]+0.01);
         }
     }
 }
@@ -99,7 +100,5 @@ if (forcingPotential.substr(0,5) == "fixed")
     }
     Info << nl << "}" << endl;
 }
-else if (forcingPotential == "seepage")
-{
-    seepTerm =  (potential-potentialMNT)/runTime.deltaT();
-}
+
+volScalarField cellFlux(fvc::div(phi*fvc::interpolate(hwater)));

@@ -36,7 +36,4 @@ VanGenuchtenCoeffs
     alpha $param_alpha;
 }
 
-wellboreProperties
-{}
-
 // ************************************************************************* //

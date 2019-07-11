@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      C;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -3 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    top
+    {
+        type           eventFlux;
+        constantValue  -1e-8;
+        eventFile      "patchInjection.dat";
+        phiName        phitheta;
+        value          uniform 0;
+    }
+
+    bottom
+    {
+        type            zeroGradient;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

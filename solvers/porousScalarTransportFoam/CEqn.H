@@ -1,21 +1,23 @@
 {
-        //- update dispersion tensor coefficient
-        DeffModel->correct(C);
-        
-        fvScalarMatrix CEqn
-            (
-                eps * R * Saturation * fvm::ddt(C)
-                + fvm::div(phi, C, "div(phi,C)")
-                - fvm::laplacian(DeffModel->Deff(), C, "laplacian(Deff,C)")
-                ==
-                R * sourceTerm// (SrcInj*Cin*Winj - SrcExt*C*Wext)
-                - eps * R * Saturation * fvm::Sp(lambda,C)
-            );
+    //- update dispersion tensor coefficient
+    DeffModel->correct(C,U,Saturation,eps);
 
-        CEqn.solve();
+    volTensorField Deff = eps*Saturation*DeffModel->Deff();
 
-        dCdTmax = max(mag(fvc::ddt(C))).value();
+    fvScalarMatrix CEqn
+        (
+            eps * R * Saturation * fvm::ddt(C)
+            + fvm::div(phi, C, "div(phi,C)")
+            - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
+            ==
+            - sourceTerm
+            - eps * R * Saturation * fvm::Sp(lambda,C)
+        );
 
-        Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " dCdTmax = " << dCdTmax*runTime.deltaTValue() << " mass(C) = " << fvc::domainIntegrate(C*Saturation*eps).value() << endl;
+    CEqn.solve();
+
+    dCdTmax = max(mag(fvc::ddt(C))).value();
+
+    Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " mass(C) = " << fvc::domainIntegrate(R*C*Saturation*eps).value() << endl;
 
 }

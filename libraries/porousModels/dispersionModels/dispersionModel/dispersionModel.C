@@ -39,24 +39,24 @@ Foam::dispersionModel::dispersionModel
 (
     const word& name,
     const dictionary& transportProperties,
-    const volVectorField& U
+    const fvMesh& mesh
 )
     :
     name_(name),
     transportProperties_(transportProperties),
-    U_(U),
+    mesh_(mesh),
     Dm_(transportProperties.lookup("Dm")),
     Deff_
     (
         IOobject
         (
             name,
-            U_.time().timeName(),
-            U_.db(),
+            mesh_.time().timeName(),
+            mesh_,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        U_.mesh(),
+        mesh_,
         dimensionSet(0,2,-1,0,0,0,0)
     )
 {}

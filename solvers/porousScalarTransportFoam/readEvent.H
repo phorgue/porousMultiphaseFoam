@@ -1,30 +1,41 @@
-word eventFileName = transportProperties.lookupOrDefault<word>("eventFile","");
-bool eventIsPresent = transportProperties.found("eventFile");
-eventFile event(eventFileName);
+bool sourceEventIsPresent = transportProperties.found("eventFileSource");
+word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSource","");
+sourceEventFile sourceEvent(sourceEventFileName);
+if (sourceEventIsPresent)
+{
+    sourceEvent.update(runTime.startTime().value());
+    sourceEvent.storeOldValues();
+}
 
-volScalarField sourceTerm
-(
-    IOobject
-    (
-        "sourceTerm",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("",dimMass/(dimVol*dimTime),0)
-);
+bool patchEventIsPresent =  transportProperties.found("eventFilePatch");
+word patchEventFileName = transportProperties.lookupOrDefault<word>("eventFilePatch","");
+patchEventFile patchEvent(patchEventFileName,false);
+if (patchEventIsPresent)
+{
+    patchEvent.update(runTime.startTime().value());
+    patchEvent.storeOldValues();
+}
+
+bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+outputEventFile outputEvent(outputEventFileName);
+if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
+
+scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
+if (eventTimeStep > 0)
+{
+    if (patchEventIsPresent) patchEvent.addIntermediateTimeSteps(eventTimeStep);
+    if (sourceEventIsPresent) sourceEvent.addIntermediateTimeSteps(eventTimeStep);
+}
 
 //- determining cell id corresponding to datas
-labelList idCoordinates(event.ncoordinates());
-label currentEvent = 0;
-if (eventIsPresent)
+labelList idCoordinates(sourceEvent.ncoordinates());
+if (sourceEventIsPresent)
 {
-    sourceTerm = dimensionedScalar("",dimMass/(dimVol*dimTime),0);
-    forAll(event.coordinates(),pointi)
+    sourceTerm.primitiveFieldRef() = 0;
+    forAll(sourceEvent.coordinates(),pointi)
     {
-        idCoordinates[pointi] = mesh.findNearestCell(event.coordinates()[pointi]);
-        sourceTerm[idCoordinates[pointi]] = event.datas()[currentEvent][pointi]/mesh.V()[idCoordinates[pointi]];
+        idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);
+        sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
     }
 }

@@ -30,15 +30,16 @@ License
 
 Foam::eventFile::eventFile
 (
-    const eventFile& MNTtoCopy
+    const eventFile& eventFileToCopy
 )
     :  
-    name_(MNTtoCopy.name()),
-    ndates_(MNTtoCopy.ndates()),
-    ncoordinates_(MNTtoCopy.ncoordinates()),
-    dates_(MNTtoCopy.dates()),
-    coordinates_(MNTtoCopy.coordinates()),
-    datas_(MNTtoCopy.datas())
+    name_(eventFileToCopy.name()),
+    ndates_(eventFileToCopy.ndates()),
+    dates_(eventFileToCopy.dates()),
+    datas_(eventFileToCopy.datas_),
+    currentValues_(eventFileToCopy.currentValues_),
+    oldValues_(eventFileToCopy.oldValues_),
+    iterator_(eventFileToCopy.iterator_)
 {
 }
 
@@ -47,115 +48,14 @@ Foam::eventFile::eventFile
     const word& fileName
 )
     :
-    name_(fileName)
-{
-    if (fileName.size() != 0)
-    {
-        //- properties of a MNT file
-        string separator_ = " ";
-        label nEntriesMax = 4;
-
-        //- file name
-        IFstream ifs(fileName);
-        DynamicList<scalar> datesRead;
-        DynamicList<point> coordinatesRead;
-        DynamicList<scalar> valueRead;
-
-        Info << nl << "Reading Event file '" << fileName << "' ...";
-        // read data
-        while (ifs.good())
-        {
-            string line;
-            ifs.getLine(line);
-
-            if (line != "")
-            {
-
-                label n = 0;
-                std::size_t pos = 0;
-                DynamicList<string> split;
-        
-                while ((pos != std::string::npos) && (n <= nEntriesMax))
-                {
-                    std::size_t nPos = line.find(separator_, pos);
-                    if (nPos == std::string::npos)
-                    {
-                        split.append(line.substr(pos));
-                        pos = nPos;
-                        n++;
-                    }
-                    else
-                    {
-                        split.append(line.substr(pos, nPos - pos));
-                        pos = nPos + 1;
-                        n++;
-                    }
-                }
-
-                if (split.size() <= 1)
-                {
-                    break;
-                }            
-                else if (split[0] == "date")
-                {
-                    scalar newDate = readScalar(IStringStream(split[1])());
-                    datesRead.append(newDate);
-                }
-                else
-                {
-                    if (n != 4)
-                    {
-                        FatalErrorIn("eventFile.C")
-                            << "wrong number of elements in event file :" << fileName
-                                << nl << " found " << split.size() << " elements instead of 4 "
-                                << nl << "List of read elements : " << split
-                                << abort(FatalError);
-                    }
-       
-                    scalar x = readScalar(IStringStream(split[0])());
-                    scalar y = readScalar(IStringStream(split[1])());
-                    scalar z = readScalar(IStringStream(split[2])());
-                    coordinatesRead.append(point(x,y,z));
-                    scalar value = readScalar(IStringStream(split[3])());
-                    valueRead.append(value);
-                }
-            }
-        }
-
-        ndates_ = datesRead.size();
-        ncoordinates_ = coordinatesRead.size()/ndates_;
-    
-        Info << "OK!"
-            << nl << "{"
-            << nl << "  number of dates       = " << ndates_
-            << nl << "  number of coordinates = " << ncoordinates_
-            << nl << "  number datas          = " << coordinatesRead.size()
-            << nl << "}" << endl;
-
-        //- Storing dates
-        dates_ = datesRead;
- 
-        //- Storing coordinates
-        coordinates_.resize(ncoordinates_);
-        forAll(coordinates_,coordinatei)
-        {
-            coordinates_[coordinatei] = coordinatesRead[1+coordinatei];
-        }
- 
-        //- Storing infiltration datas
-        datas_.setSize(ndates_,ncoordinates_);
-        label iter = 0;
-        forAll(datesRead,datei)
-        {
-            for(label coordinatei=0;coordinatei<ncoordinates_;coordinatei++)
-            {           
-                datas_[datei][coordinatei] = valueRead[iter];
-                iter++;
-            }
-        }
-    }
-
-}
+    name_(fileName),
+    ndates_(0),
+    dates_(),
+    datas_(),
+    currentValues_(),
+    oldValues_(),
+    iterator_(-1)
+{}
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
@@ -163,3 +63,84 @@ Foam::eventFile::~eventFile()
 {}
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
+
+Foam::scalar Foam::eventFile::currentEventStartTime() const
+{
+    if (iterator_ == -1)
+    {
+        return 0;
+    }
+    else
+    {
+        return dates_[iterator_];
+    }
+}
+
+const Foam::scalar& Foam::eventFile::currentEventEndTime() const
+{
+    if (iterator_ < ndates_-1)
+    {
+        return dates_[iterator_+1];
+    }
+    else
+    {
+        return GREAT;
+    }
+}
+
+void Foam::eventFile::update(const scalar& currentTime)
+{
+    storeOldValues();
+    if (currentEventEndTime() <= currentTime)
+    {
+        iterator_++;
+        while ((currentEventEndTime() <= currentTime) && (iterator_ < ndates_-2))
+        {
+            iterator_++;
+        }
+    }
+    if (currentTime < dates_[0])
+    {
+        currentValues_ = 0.0;
+    }
+    else if (iterator_ < ndates_-1)
+    {
+        scalar interpolateFactor_ = (currentTime - dates_[iterator_]) / (dates_[iterator_+1] - dates_[iterator_]);
+        forAll(currentValues_,id)
+        {
+            currentValues_[id] = (1.0 - interpolateFactor_) * datas_[iterator_][id] + interpolateFactor_ * datas_[iterator_+1][id];
+        }
+    }
+    else
+    {
+        currentValues_ = 0.0;
+    }
+}
+
+void Foam::eventFile::addIntermediateTimeSteps(const scalar& smallDeltaT)
+{
+    RectangularMatrix<scalar> oldDatas = datas_;
+    scalarList oldDates = dates_;
+    datas_.setSize((ndates_-2)*3+2,datas_.n());
+    dates_.setSize((ndates_-2)*3+2);
+    dates_[0] = oldDates[0];
+    for (label datei=1;datei<ndates_-1;datei++)
+    {
+        dates_[datei*3-2] = oldDates[datei]-smallDeltaT;
+        dates_[datei*3-1] = oldDates[datei];
+        dates_[datei*3] = oldDates[datei]+smallDeltaT;
+    }
+    dates_[(ndates_-2)*3+1] = oldDates[ndates_-1];
+    for(label columni=0;columni<datas_.n();columni++)
+    {
+        datas_[0][columni] = oldDatas[0][columni];
+        for(label datei=1;datei<ndates_-1;datei++)
+        {
+            datas_[datei*3-2][columni] = (oldDatas[datei-1][columni]+oldDatas[datei][columni])/2;
+            datas_[datei*3-1][columni] = (oldDatas[datei-1][columni]+oldDatas[datei][columni])/2;
+            datas_[datei*3][columni] = oldDatas[datei][columni];
+        }
+        datas_[(ndates_-2)*3+1][columni] = oldDatas[ndates_-1][columni];
+    }
+    ndates_ = (ndates_-2)*3+2;
+}

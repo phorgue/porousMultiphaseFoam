@@ -25,22 +25,11 @@ Class
     Foam::eventFile
 
 Description
-    Event file handler/reader for the porousMultiphaseFoam toolbox which
-    contain 'm' dates with 'n' infiltration points where infiltration is
-    expressed in m3/s. The class reads the file :
-
-    date time1
-    x1 y1 z1 infiltration11
-    x2 y2 z2 infiltration12
-    ...
-    xn yn zn infiltration1n
-    date time2
-    x1 y1 z1 infiltration21
-    x2 y2 z2 infiltration22
-    ...
-    date timem
-    ...
-    xn yn zn infiltrationmn
+    The is an general class used to handle/read the various event files for
+    the porousMultiphaseFoam toolbox. This can be used to impose volumic or 
+    mass flow rate source inside the domain or on specified patch. It can be
+    used to impose time variable uniform infiltration or specify user-defined
+    time outputs.
 
 SourceFiles
     eventFile.C
@@ -67,14 +56,15 @@ namespace Foam
 class eventFile
 {
 
-private:
+protected:
 
     word name_;
     label ndates_;
-    label ncoordinates_;
     scalarList dates_;
-    List<point> coordinates_;
     RectangularMatrix<scalar> datas_;
+    scalarList currentValues_;
+    scalarList oldValues_;
+    label iterator_;
 
 public:
 
@@ -101,10 +91,17 @@ public:
     //- Access function
     const word& name() const {return name_;}
     const label& ndates() const {return ndates_;}
-    const label& ncoordinates() const {return ncoordinates_;}
     const scalarList& dates() const {return dates_;}
-    const List<point>& coordinates() const {return coordinates_;}
+    scalar iterator() const {return iterator_;}
     const RectangularMatrix<scalar>& datas() const {return datas_;}
+    const scalar& lastValue(const label& id) const {return datas_[iterator_][id];}
+    const scalar& oldValue(const label& id) const {return oldValues_[id];}
+    const scalar& currentValue(const label& id) const {return currentValues_[id];}
+    scalar currentEventStartTime() const;
+    const scalar& currentEventEndTime() const;
+    void storeOldValues() {oldValues_ = currentValues_;}
+    void update(const scalar& currentTime);
+    void addIntermediateTimeSteps(const scalar& smallDT);
 
 };
 

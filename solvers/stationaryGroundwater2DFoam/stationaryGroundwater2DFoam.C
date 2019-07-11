@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
         #include "potentialEqn.H"
 
         //- Water bilan computation
-        #include "waterBilan.H"
+        #include "waterMassBalance.H"
 
         runTime.write();
 

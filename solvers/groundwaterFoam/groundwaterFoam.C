@@ -40,7 +40,9 @@ Developers
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "fixedValueFvPatchField.H"
-#include "eventFile.H"
+#include "sourceEventFile.H"
+#include "outputEventFile.H"
+#include "patchEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -55,6 +57,7 @@ int main(int argc, char *argv[])
     #include "createthetaFields.H"
     #include "readPicardControls.H"
     #include "readEvent.H"
+    #include "readForcing.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,15 +66,16 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
+        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
+        if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
+        if (patchEventIsPresent) patchEvent.update(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Update Event
-        #include "updateEvent.H"
-
+        #include "computeSourceTerm.H"
         scalar resPicard=GREAT;
         iterPicard = 0;
         while (resPicard > tolPicard)
@@ -93,7 +97,8 @@ int main(int argc, char *argv[])
         dthetadTmax = dtheta/runTime.deltaTValue();
         dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
 
-        runTime.write();
+        #include "waterMassBalance.H"
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

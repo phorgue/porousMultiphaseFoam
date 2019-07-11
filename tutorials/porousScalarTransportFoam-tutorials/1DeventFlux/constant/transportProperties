@@ -1,0 +1,42 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.0                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+  version     2.0;
+  format      ascii;
+  class       dictionary;
+  location    "constant";
+  object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+	
+eps eps [0 0 0 0 0 0 0]	0.25;
+
+Dm Dm [0 2 -1 0 0 0 0] 1e-9;
+
+porousTransport
+{
+    phaseName theta;
+    Kd Kd [-1 3 0 0 0 0 0] 1e-3;
+    rs rs [1 -3 0 0 0 0 0] 0;
+    epsTotal epsTotal [0 0 0 0 0 0 0] 0.30;
+    lambda lambda [0 0 -1 0 0 0 0 ] 0;//1.1574e-6;
+}
+
+dispersionModel alphaDispersion;
+
+alphaDispersionCoeffs
+{
+    tau tau [0 0 0 0 0 0 0] 2;
+    alphaL alphaL [0 1 0 0 0 0 0] 0.01;
+    alphaT alphaT [0 1 0 0 0 0 0] 0.002;
+}
+
+eventFilePatchMassFlowRate "patchInjection.dat";
+
+// ************************************************************************* //

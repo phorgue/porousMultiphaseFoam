@@ -156,3 +156,24 @@ surfaceScalarField phiP = phi;
 
 scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
 autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,Sb);
+
+volScalarField sourceTerm
+(
+    IOobject
+    (
+        "sourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("",dimless/dimTime,0)
+);
+
+//- Looking for 2nd order time-scheme for source term
+bool isBackwardScheme = false;
+if (word(mesh.ddtScheme("source")) == "backward")
+{
+    isBackwardScheme = true;
+}

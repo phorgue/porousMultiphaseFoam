@@ -5,7 +5,7 @@
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  -sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]) << " ; ";
+            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]) << " ; ";
         }
     }
     Info << endl;
@@ -13,14 +13,17 @@
     //- CSV output
     if (CSVactive)
     {
-        massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(C*Saturation*eps).value();
-        forAll(mesh.boundaryMesh(),patchi)
+        if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
-            if (mesh.boundaryMesh()[patchi].type() == "patch")
+            massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*C*Saturation*eps).value();
+            forAll(mesh.boundaryMesh(),patchi)
             {
-                massBalanceCSV << " " << -sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                if (mesh.boundaryMesh()[patchi].type() == "patch")
+                {
+                    massBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                }
             }
+            massBalanceCSV << endl;
         }
-        massBalanceCSV << endl;       
     }
 }

@@ -39,7 +39,7 @@ Developers
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "dispersionModel.H"
-#include "eventFile.H"
+#include "sourceEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
     #include "createthetaFields.H"
     #include "readTimeControls.H"
     #include "readEvent.H"
+    #include "readForcing.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,6 +64,7 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "setDeltaT.H"
+        #include "updateEvent.H"
 
         runTime++;
 
@@ -98,6 +100,12 @@ int main(int argc, char *argv[])
         #include "CEqn.H"
         
         runTime.write();
+
+        //- write solution and eventTime
+        if (event.dates()[currentEvent+1] == runTime.timeOutputValue())
+        {
+            runTime.writeNow();
+        }
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

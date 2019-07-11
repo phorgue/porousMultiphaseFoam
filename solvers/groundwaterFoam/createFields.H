@@ -112,3 +112,45 @@ volScalarField K
 
 // permeability interpolation (harmonic by default)
 surfaceScalarField Kf = fvc::interpolate(K,"K");
+
+//- For constant or event source injection/extraction
+volScalarField sourceTerm
+(
+    IOobject
+    (
+        "sourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("",dimless/dimTime,0)
+);
+
+//- Looking for 2nd order time-scheme for source term
+bool isBackwardScheme = false;
+if (word(mesh.ddtScheme("source")) == "backward")
+{
+    isBackwardScheme = true;
+}
+
+////////////////////////////////////////////////////
+//////////////////// OUTPUT CSV ////////////////////
+////////////////////////////////////////////////////
+
+bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
+word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","waterMassBalance.csv");
+OFstream massBalanceCSV(CSVoutput);
+if (CSVactive)
+{
+    massBalanceCSV << "#Time ";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    massBalanceCSV << endl;
+}
