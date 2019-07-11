@@ -61,7 +61,6 @@ eventFlux
     eventFile_()
 {
     word eventFileName = dict.lookupOrDefault<word>("eventFile","");
-
     //- Read if backward time scheme is used
     if (word(internalField().mesh().ddtScheme("source")) == "backward")
     {
@@ -91,6 +90,10 @@ eventFlux
         {
             FatalErrorIn("eventFlux.C") << " patch '" << patch().name() << "' not found in event file : " << eventFile_.name() << abort(FatalError);
         }
+    }
+    else
+    {
+        Info << "eventFlux boundary condition without event file" << endl;
     }
 
     //- Read if backward time scheme is used
