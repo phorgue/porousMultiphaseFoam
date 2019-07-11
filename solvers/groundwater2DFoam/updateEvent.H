@@ -1,16 +1,17 @@
-if (eventIsPresent)
+if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
+
+if (uniformInfiltrationEventIsPresent)
 {
-    if (currentEvent < event.ndates()-1)
+    uniformInfiltrationEvent.update(runTime.timeOutputValue());
+    infiltration.primitiveFieldRef() = 0;
+    if (isBackwardScheme)
     {
-        if (runTime.timeOutputValue() > event.dates()[currentEvent+1])
-        {
-            currentEvent++;
-            infiltration = dimensionedScalar("",dimLength/dimTime,0);
-            forAll(event.coordinates(),pointi)
-            {
-                Info << idCoordinates[pointi] << endl;
-                infiltration[idCoordinates[pointi]] = event.datas()[currentEvent][pointi]*zScale/mesh.V()[idCoordinates[pointi]];
-            }
-        }
+        scalar coefft0_00 = runTime.deltaTValue()/(runTime.deltaTValue() + runTime.deltaT0Value());
+        scalar coefftn_0 = 1 + coefft0_00;
+        infiltration.primitiveFieldRef() = (coefftn_0*uniformInfiltrationEvent.currentValue() - coefft0_00*uniformInfiltrationEvent.oldValue());
+    }
+    else
+    {
+        infiltration.primitiveFieldRef() = uniformInfiltrationEvent.currentValue();
     }
 }

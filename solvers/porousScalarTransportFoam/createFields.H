@@ -2,6 +2,19 @@
 ////////////////////// GENERAL PROPERTIES //////////////////////
 ////////////////////////////////////////////////////////////////
 
+Info<< "Reading transportProperties\n" << endl;
+IOdictionary transportProperties
+(
+    IOobject
+    (
+        "transportProperties",
+        runTime.constant(),
+        mesh,
+        IOobject::MUST_READ_IF_MODIFIED,
+        IOobject::NO_WRITE
+    )
+);
+
 Info<< "Reading field C\n" << endl;
 volScalarField C
 (
@@ -16,18 +29,6 @@ volScalarField C
     mesh
 );
 
-Info<< "Reading transportProperties\n" << endl;
-IOdictionary transportProperties
-(
-    IOobject
-    (
-        "transportProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ_IF_MODIFIED,
-        IOobject::NO_WRITE
-    )
-);
 Info<< "Reading porosity eps\n" << endl;
 dimensionedScalar eps
 (
@@ -48,13 +49,27 @@ Info << "    " << Kd.name() << " : " << Kd.value() << endl;
 Info << "    " << rs.name() << " : " << rs.value() << endl;
 Info << "    " << epsTotal.name() << " : " << epsTotal.value() << endl;
 Info << "    " << lambda.name() << " : " << lambda.value() << endl;
-Info << "} \n" << endl;
+Info << "}" << endl;
 
 //////////////////////////////////////////////////////////////
 ////////////////////// PHASE PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////
 
-Info << "Reading Saturation Field (if present)... ";
+Info << nl << "Reading water content theta and/or Saturation field S" << phaseName << "..." << endl;
+volScalarField theta
+(
+    IOobject
+    (
+        "theta",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("theta",dimless,1)
+);
+
 volScalarField Saturation
 (
     IOobject
@@ -68,31 +83,40 @@ volScalarField Saturation
     mesh,
     dimensionedScalar("S"+phaseName,dimless,1)
 );
-if (Saturation.headerOk())
+
+word Uname="U"+phaseName;
+if (theta.headerOk())
 {
-    Info << "field S" << phaseName << " read, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << nl << endl;
+    Saturation == theta/eps;
+    Uname = "U";
+    Info << "===> field S" << phaseName << " computed from theta/eps, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << endl;
 }
 else
 {
-    Info << "Saturation file not found (saturated flow)" << nl << endl;
+    if (Saturation.headerOk())
+    {
+        Info << "===> field S" << phaseName << " read, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() <<  endl;
+    }
+    else
+    {
+        Info << "===> Saturation file not found (saturated flow)" << endl;
+    }
 }
 
-Info<< "Reading field U" << phaseName << nl << endl;
+Info<< nl << "Reading field U" << phaseName << endl;
 volVectorField U
 (
     IOobject
     (
-        "U"+phaseName,
+        Uname,
         runTime.timeName(),
         mesh,
-        IOobject::READ_IF_PRESENT,
+        IOobject::MUST_READ,
         IOobject::NO_WRITE
     ),
-    mesh,
-    dimensionedVector("Udefault",dimLength/dimTime,vector(0,0,0))
+    mesh
 );
 
-Info<< "Reading/Computing field phi" << phaseName << nl << endl;
 surfaceScalarField phi
 (
     IOobject
@@ -106,14 +130,21 @@ surfaceScalarField phi
     fvc::flux(U)
 );
 
-phi.write(); // write if computed
-phi.writeOpt()=IOobject::NO_WRITE;
+if (phi.headerOk())
+{
+    Info << nl << "Reading field phi" << phaseName << endl;
+}
+else
+{
+    Info<< nl << "Computing field phi" << phaseName << " from field U" << phaseName << endl;
+}
 
 //- creation of dispersion model
-autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U);
+autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,mesh);
 
-Info << "Computing retard coefficient R" << endl;
+Info << "Computing retard coefficient R = ";
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
+Info << R << endl;
 
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////
@@ -133,4 +164,26 @@ if (CSVactive)
         }
     }
     massBalanceCSV << endl;
+}
+
+//- Source term
+volScalarField sourceTerm
+(
+    IOobject
+    (
+        "sourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("",dimMass/(dimVol*dimTime),0)
+);
+
+//- Looking for 2nd order time-scheme for source term
+bool isBackwardScheme = false;
+if (word(mesh.ddtScheme("source")) == "backward")
+{
+    isBackwardScheme = true;
 }

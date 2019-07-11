@@ -21,10 +21,4 @@ phase.a
     rho             rho [ 1 -3 0 0 0 0 0 ] 1000;
 }
 
-wellboreProperties
-{
-    qInjection	qInjection [0 3 -1 0 0 0 0]	0;//1e-3;
-    qExtraction	qExtraction [0 3 -1 0 0 0 0]	0;//0.5e-3;
-}
-
 // ************************************************************************* //

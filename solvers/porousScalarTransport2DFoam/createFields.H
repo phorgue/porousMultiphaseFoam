@@ -2,6 +2,19 @@
 ////////////////////// GENERAL PROPERTIES //////////////////////
 ////////////////////////////////////////////////////////////////
 
+Info<< "Reading transportProperties\n" << endl;
+IOdictionary transportProperties
+(
+    IOobject
+    (
+        "transportProperties",
+        runTime.constant(),
+        mesh,
+        IOobject::MUST_READ,
+        IOobject::NO_WRITE
+    )
+);
+
 Info<< "Reading field C\n" << endl;
 volScalarField C
 (
@@ -16,18 +29,6 @@ volScalarField C
     mesh
 );
 
-Info<< "Reading transportProperties\n" << endl;
-IOdictionary transportProperties
-(
-    IOobject
-    (
-        "transportProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ_IF_MODIFIED,
-        IOobject::NO_WRITE
-    )
-);
 Info<< "Reading porosity eps\n" << endl;
 dimensionedScalar eps
 (
@@ -54,7 +55,7 @@ Info << "} \n" << endl;
 ////////////////////// PHASE PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////
 
-Info << "Reading hwater field...";
+Info << "Reading hwater field if present...";
 volScalarField hwater
 (
     IOobject
@@ -62,14 +63,61 @@ volScalarField hwater
         "hwater",
         runTime.timeName(),
         mesh,
-        IOobject::MUST_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::AUTO_WRITE
     ),
-    mesh
+    mesh,
+    dimensionedScalar("hwater_default",dimLength,0.)
 );
-Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << nl << endl;
 
-Info<< "Reading field U" << phaseName << nl << endl;
+if (hwater.headerOk())
+{
+    Info << nl << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+}
+else
+{
+    Info << "file hwater not found " << endl
+        << nl << "Reading potential field..." << endl;
+    volScalarField potential
+        (
+            IOobject
+            (
+                "potential",
+                runTime.timeName(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::AUTO_WRITE
+            ),
+            mesh
+        );
+
+    Info<< nl << "Reading field z0" << endl;
+    volScalarField z0
+        (
+            IOobject
+            (
+                "z0",
+                runTime.constant(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::AUTO_WRITE
+            ),
+            mesh
+        );
+    Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << endl;
+
+    hwater == potential - z0;
+
+    Info << nl << "Computed hwater : min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+    hwater.write();
+}
+
+if (min(hwater).value() < 0)
+{
+    FatalErrorIn("createFields") << " hwater has negative values" << abort(FatalError);
+}
+
+Info << nl << "Reading field U" << phaseName << endl;
 volVectorField U
 (
     IOobject
@@ -83,7 +131,6 @@ volVectorField U
     mesh
 );
 
-Info<< "Reading/Computing field phi" << phaseName << nl << endl;
 surfaceScalarField phi
 (
     IOobject
@@ -97,14 +144,25 @@ surfaceScalarField phi
     fvc::flux(U)
 );
 
-phi.write(); // write if computed
-phi.writeOpt()=IOobject::NO_WRITE;
+if (phi.headerOk())
+{
+    Info << nl << "Reading field phi" << phaseName << endl;
+}
+else
+{
+    Info<< "Computing field phi" << phaseName << " from field U" << phaseName << nl << endl;
+    phi.write();
+}
+
+surfaceScalarField phiWater = phi * fvc::interpolate(hwater);
 
 //- creation of dispersion model
-autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,U);
+autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties, mesh);
+volTensorField Deff =  eps*hwater*DeffModel->Deff();
 
-Info << "Computing retard coefficient R" << endl;
+Info << "Computing retard coefficient R = ";
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
+Info << R << endl;
 
 /////////////////////////////////////////////////////////
 //////////////////// OUTLET CSV FILE ////////////////////
@@ -120,8 +178,61 @@ if (CSVactive)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            massBalanceCSV << " flux(" << phiWater.boundaryField()[patchi].patch().name() << ")";
         }
     }
-    massBalanceCSV << endl;
+    massBalanceCSV << " flux(fixedPoint)" << endl;
+}
+
+//- Source term
+volScalarField sourceTerm
+(
+    IOobject
+    (
+        "sourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("",dimMass*dimLength/(dimVol*dimTime),0)
+);
+
+scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
+
+Info << nl << "Read seepage flow rate if present...";
+volScalarField seepageTerm
+(
+    IOobject
+    (
+        "seepageTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("seepage_value",dimLength/dimTime,0.)
+);
+
+if (seepageTerm.headerOk())
+{
+    Info << "OK" << endl;
+    //- ensuring that there is no seepage inflow
+    forAll(seepageTerm,celli)
+    {
+        seepageTerm[celli] = max(0,seepageTerm[celli]);
+    }
+}
+else
+{
+    Info << " no seepageTerm file" << endl;
+}
+
+//- Looking for 2nd order time-scheme for source term
+bool isBackwardScheme = false;
+if (word(mesh.ddtScheme("source")) == "backward")
+{
+    isBackwardScheme = true;
 }

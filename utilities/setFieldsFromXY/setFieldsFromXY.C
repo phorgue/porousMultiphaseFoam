@@ -22,53 +22,41 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    setPermeabilityFieldFromXY
+    setFieldsFromXY
 
 Description
-    set the permeability field by performing linear interpolation using 
-    permeability reference values (as table with x,y,K)
-    For N points, the file should be in the form
-    N 3
-    (
-    (x1 y1 K1)
-    (x2 y2 K2)
+    set a given field by performing linear interpolation using
+    reference values given as table with x/y/values.
+    The file should be in the form
+
+    x1 y1 value1
+    x2 y2 value2
     ...
-    (xN yN kN)
-    )
+    xN yN valueN
 
 Usage
-    setPermeabilityFieldFromXY -file inputFile_file
+    setPermeabilityFieldFromXY -file inputFile_file -field fieldName
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
 #include "IFstream.H"
+#include "XYfile.H"
 
 int main(int argc, char *argv[])
 {
 
     argList::addOption("file","fileName","specify the input file");
-    argList::addOption("fileIn","fileName","similar to file option");
     argList::addOption("field","fieldName","specify the output file");
-    argList::addOption("fileOut","fileName","specify the output file");
     argList::addOption("folder","constant","specify the folder");
     argList::addOption("offset","0","add offset to interpolated value");
 
     Foam::argList args(argc,argv); 
 
-    word matrixFile = "default";
-    word nameField = "default";
-
+    word nameXY = "default";
     if (args.optionFound("file"))
     {
-        matrixFile = args.optionRead<word>("file");
-    }
-    else if (args.optionFound("fileIn"))
-    {
-        WarningIn("setFieldsFromXY.C")
-            << "option fileIn deprecated,  use option -file instead"
-                << nl << endl;
-        matrixFile = args.optionRead<word>("fileIn");
+        nameXY = args.optionRead<word>("file");
     }
     else
     {
@@ -77,17 +65,12 @@ int main(int argc, char *argv[])
             << exit(FatalError);
     }
 
+    word nameField = "default";
     if (args.optionFound("field"))
     {
         nameField = args.optionRead<word>("field");
     }
-    else if (args.optionFound("fileOut"))
-    {
-        WarningIn("setFieldsFromXY.C")
-            << "option fileOut deprecated, use option -field instead"
-                << nl << endl;
-        nameField = args.optionRead<word>("fileOut");
-    }
+
     else
     {
         FatalErrorIn("setFieldsFromXY.C")
@@ -102,14 +85,13 @@ int main(int argc, char *argv[])
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    //- read inputFile permeability matrix
-    RectangularMatrix<scalar> inputFile(IFstream(args.optionRead<word>("fileIn"))());
+    //- read the XY file
+    XYfile sourceFile(nameXY);
 
     word fileDir = "constant";
     if (args.optionFound("folder"))
     {
         fileDir = args.optionRead<word>("folder"); 
-    
     }
 
     volScalarField outputFile
@@ -126,60 +108,15 @@ int main(int argc, char *argv[])
         );
 
     forAll(outputFile,celli)
-    {   
-        label id1=-1;
-        label id2=-1;
-        label id3=-1;     
-        scalar dist1 = VGREAT;
-        scalar dist2 = VGREAT;
-        scalar dist3 = VGREAT;
-
-        for(label i=0;i<inputFile.m();i++)
-        {
-            scalar dist = Foam::sqrt(pow(inputFile[i][0]-mesh.C()[celli].x(),2)+pow(inputFile[i][1]-mesh.C()[celli].y(),2));
-            if ( dist < dist1)
-            {
-                //Info <<  "1 *** " << dist << " " << dist1 <<  " " << dist2 <<  " " << dist3 << endl;
-                id3 = id2;
-                dist3 = dist2;
-                id2 = id1;
-                dist2 = dist1;
-                id1 = i;
-                dist1 = dist;
-            }
-            else if ( dist < dist2)
-            {
-                //         Info <<  "2 *** " << dist << " " << dist1 <<  " " << dist2 <<  " " << dist3 << endl;      
-                id3 = id2;
-                dist3 = dist2;
-                id2 = i;
-                dist2 = dist;                
-            }
-            else if ( dist < dist3)
-            {
-                //                Info <<  "3 *** " << dist << " " << dist1 <<  " " << dist2 <<  " " << dist3 << endl;
-                id3 = i;
-                dist3 = dist;                
-            }
-        }
-
-        
-        if ( (id1 == -1) || (id2 == -1) || (id3 == -1))
-        {
-            Info << nl << "Error : three point are not found for interpolation"
-                << nl << id1 << " / " << id2 << " / " << id3 << endl;
-        }
-       
-        outputFile[celli] = ( dist1*inputFile[id1][2] + dist2*inputFile[id2][2] + dist3*inputFile[id3][2] ) / (dist1+dist2+dist3) + offset;
-
+    {
+        outputFile[celli] = sourceFile.interpolate(mesh.C()[celli]) + offset;
     }
 
     outputFile.write();
-    
+
     Info << nl << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
         << "  ClockTime = " << runTime.elapsedClockTime() << " s"
         << nl << endl;
-
 
     Info<< "End\n" << endl;
 

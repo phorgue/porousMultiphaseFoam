@@ -37,7 +37,6 @@ phase.b
 
 relativePermeabilityModel   BrooksAndCorey;
 
-
 //// capillarity pressure model ////
 
 capillarityModel	BrooksAndCorey;
@@ -52,10 +51,6 @@ BrooksAndCoreyCoeffs
     alpha	0.2;	
 }
 
-wellboreProperties
-{
-    qInjection	qInjection [0 3 -1 0 0 0 0]	1e-3;
-    qExtraction	qExtraction [0 3 -1 0 0 0 0]	0e-3;
-}
+eventFileFlowRate "injection.dat";
 
 // ************************************************************************* //

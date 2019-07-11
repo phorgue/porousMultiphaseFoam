@@ -1,4 +1,81 @@
 ************************
+*** Vxxxx
+*** 
+************************
+
+### Solvers
+
+- Global :
+
+  - Event file can be specified in transportProperties to force the solver
+    to compute solution at given date time.
+    eventFileSource for volumetric/mass event :
+    eventFilePatch for infiltration/fixed flux event on BC
+    eventFileOutput to specify write times
+
+  - solvers with injection/extraction terms are now conservative using Euler
+  or backward time-scheme (Crank-Nicholson still not supported)
+
+  - All injection terms in event should be negative (as for boundaries) and
+  extraction terms should be positive (as for outlet boundary fluxes)
+
+- groundwater2DFoam
+
+  - solver accepts dry cells (display WARNING when adding water)
+
+- groundwaterFoam
+
+  - seepage function is available (generates seepageTerm field)
+  - potentialMNT field is modified if < z0
+
+- impesFoam/anisoImpesFoam
+
+  - generalization of the "event" use wellbore dictionary/function is obsolete
+
+- porousScalarTransportFoam
+
+  - water content (theta) can be given instead of saturation (Sphase) to allow
+  the direct use of pre-computed stationaryGroundwaterFoam computations
+  - timestep is now controlled by porous- Courant number
+  
+- porousScalarTransport2DFoam
+
+  - timestep is now controlled by porous- Courant number
+  - retard coefficient fixed
+  - seepage outlet handled (requires seepageTerm field)
+  - fatal error added when hwater field is negative
+  - solver requires for initialization hwater or potential/z0
+
+- stationaryGroundwater2DFoam
+
+  - seepage function is available (generates seepageTerm field)
+  - potentialMNT field is modified if < z0
+
+### Libraries
+
+- porousBoundaryConditions
+
+  - timeVaryingInfiltration
+    new BC to impose event variable velocity in impesFoam, anisoImpesFoam
+    and groundwaterFoam. Patch event file is directly given in the BC
+    dictionary using the keyword "eventFile" (as for fixedFlux).
+
+- porousModels
+
+  - alphaDispersion model fixed
+
+- toolsGIS
+
+  - event files generalized to all solvers
+  - value at given time is interpolated using given event values
+  - event values before first event time and after last event time is equal to 0
+  - keyword event differenciation : 
+    - source event for injection/extraction terms in the domains
+    - patch event for tracer injection (porousScalarTransportFoam)
+    - infiltration event for uniform infiltration (groundwater2DFoam)
+    - output event to specify write times
+
+************************
 *** V1901
 *** Hydrology module release
 ************************
@@ -63,7 +140,7 @@
 
   - new library containing classes for GIS manipulation
   - first class is MNT file used to read xyz file and performed
-    bilinear interpolation.
+    bilinear interpolation
   - second class is eventFile to specify spatiallized time-varying source term
     for groundwater(2D)Foam and porousScalar(2D)Foam solvers
 
@@ -71,8 +148,8 @@
 
   - new boundary condition "fixedFlux" to impose a user-defined fixed flux
   for a given specie C. Dispersion is set to 0 along this boundary to respect
-  mass conservation and ensure that fixed flux is correctly computed.
-  "event table" can be given in BC for time-dependent fixed flux.
+  mass conservation and ensure that fixed flux is correctly computed
+  "event table" can be given in BC for time-dependent fixed flux
 
 ### Utilities
 
