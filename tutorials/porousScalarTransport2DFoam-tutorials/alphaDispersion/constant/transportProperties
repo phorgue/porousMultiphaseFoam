@@ -36,6 +36,6 @@ alphaDispersionCoeffs
     alphaT alphaT [0 1 0 0 0 0 0] 0.002;
 }
 
-eventFileSourceMassFlowRate injection.dat;
+eventFileSource injection.dat;
 
 // ************************************************************************* //
