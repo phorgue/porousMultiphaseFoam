@@ -112,7 +112,7 @@ public:
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patches
-                if (C.boundaryField().types()[patchi] == "fixedFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+                if (C.boundaryField().types()[patchi] == "eventFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
             }
         }
 
