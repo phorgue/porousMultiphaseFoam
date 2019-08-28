@@ -197,7 +197,7 @@ void Foam::eventFlux::updateCoeffs()
 void Foam::eventFlux::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
-    writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

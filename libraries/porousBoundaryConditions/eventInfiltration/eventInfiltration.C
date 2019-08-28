@@ -191,7 +191,7 @@ void Foam::eventInfiltration::updateCoeffs()
 void Foam::eventInfiltration::write(Ostream& os) const
 {
     fvPatchVectorField::write(os);
-    writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
