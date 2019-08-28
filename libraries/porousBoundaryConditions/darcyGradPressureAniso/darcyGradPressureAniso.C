@@ -155,7 +155,7 @@ void Foam::darcyGradPressureAniso::write(Ostream& os) const
     writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
     writeEntryIfDifferent<word>(os, "Lf", "Lf", LfName_);  
     writeEntryIfDifferent<word>(os, "gradpc", "gradpc", gradpcName_);
-    writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 
