@@ -23,40 +23,44 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "uniformInfiltrationEventFile.H"
+#include "infiltrationEventFile.H"
 #include "IFstream.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
+Foam::infiltrationEventFile::infiltrationEventFile
 (
-    const uniformInfiltrationEventFile& eventFileToCopy
+    const infiltrationEventFile& eventFileToCopy
 )
     :
-    eventFile(eventFileToCopy)
+    eventFile(eventFileToCopy),
+    uniform_(eventFileToCopy.uniform_)
 {
 }
 
-Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
+Foam::infiltrationEventFile::infiltrationEventFile
 (
     const word& fileName
 )
     :
-    eventFile(fileName)
+    eventFile(fileName),
+    uniform_(true)
 {
     if (fileName.size() != 0)
     {
+        //- Infiltration field size (1 = uniform infiltration)
+        label fieldSize = 1;
+
         //- properties of a MNT file
         string separator_ = " ";
 
         //- file name
         IFstream ifs(fileName);
         DynamicList<scalar> datesRead;
-        DynamicList<point> coordinatesRead;
-        DynamicList<scalar> valueRead;
+        DynamicList<DynamicList<scalar> > valueRead;
 
+       // read data
         Info << nl << "Reading Event file '" << fileName << "' ...";
-        // read data
         while (ifs.good())
         {
             string line;
@@ -103,28 +107,43 @@ Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
                 }
                 else
                 {
-                    if (n > 2)
+                    DynamicList<scalar> tmpValueRead;
+                    for(label iter=0;iter<split.size();iter++)
                     {
-                        FatalErrorIn("uniformInfiltrationEventFile.C")
-                            << "wrong number of elements in event file :" << fileName
-                                << nl << " found " << split.size() << " elements instead of 1 "
-                                << nl << "List of read elements : " << split
-                                << abort(FatalError);
+                        scalar newValue =  readScalar(IStringStream(split[iter])());
+                        tmpValueRead.append(newValue);
                     }
-
-                    scalar value = readScalar(IStringStream(split[0])());
-                    valueRead.append(value);
+                    if (tmpValueRead.size() > 1)
+                    {
+                        if (fieldSize == 1) fieldSize = tmpValueRead.size();
+                        if (fieldSize != tmpValueRead.size())
+                        {
+                            FatalErrorIn("infiltrationEventFile.C")
+                                << "wrong number of elements in event file :" << fileName
+                                    << nl << " found " << split.size() << " elements instead of 1 or "
+                                    << fieldSize << " (size of the first non-uniform infiltration data)"
+                                    << abort(FatalError);
+                        }
+                    }
+                    valueRead.append(tmpValueRead);
                 }
+
             }
         }
-
         ndates_ = datesRead.size();
     
         Info << "OK!"
             << nl << "{"
-            << nl << "  number of dates       = " << ndates_
-            << nl << "  number datas          = " << ndates_
-            << nl << "}" << endl;
+            << nl << "  number of dates      = " << ndates_;
+        if (fieldSize == 1)
+        {
+            Info << nl << "  type of infiltration = uniform";
+        }
+        else
+        {
+            Info << nl << "  type of infiltration = nonuniform";
+        }
+        Info << nl << "}" << endl;
 
         //- Storing dates
         dates_.resize(ndates_);
@@ -134,23 +153,36 @@ Foam::uniformInfiltrationEventFile::uniformInfiltrationEventFile
         }
 
         //- Storing infiltration datas
-        datas_.setSize(ndates_,1);
-        label iter = 0;
+        datas_.setSize(ndates_,fieldSize);
         forAll(datesRead,datei)
-        {     
-                datas_[datei][0] = valueRead[iter];
-                iter++;
+        {
+            scalarList currentData = valueRead[datei];
+            if (currentData.size() == 1)
+            {
+                for(label celli=0;celli<fieldSize;celli++)
+                {
+                    datas_[datei][celli] = currentData[0];
+                }
+            }
+            else
+            {
+                for(label celli=0;celli<fieldSize;celli++)
+                {
+                    datas_[datei][celli] = currentData[celli];
+                }
+            }
         }
 
-        currentValues_.setSize(1,0);
-        oldValues_.setSize(1,0);
+        if (fieldSize > 1) uniform_ = false;
+        currentValues_.setSize(fieldSize,0);
+        oldValues_.setSize(fieldSize,0);
     }
 
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::uniformInfiltrationEventFile::~uniformInfiltrationEventFile()
+Foam::infiltrationEventFile::~infiltrationEventFile()
 {}
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //

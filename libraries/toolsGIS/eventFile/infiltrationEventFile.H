@@ -22,31 +22,41 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::uniformInfiltrationEventFile
+    Foam::infiltrationEventFile
 
 Description
     Event file handler/reader for the porousMultiphaseFoam toolbox which
-    contain 'm' dates with uniform infiltration values where infiltration is
-    expressed in m/s. The class reads the file :
+    contain 'M' dates with uniform or non uniform infiltration values where 
+    infiltration is expressed in m/s. The class reads the uniform file :
 
     date time1
     infiltration1
     date time2
     infiltration2
     ...
-    date timem
-    infiltrationm
+    date timeM
+    infiltrationM
+
+    or the non-uniform file :
+
+    date time1
+    infiltrationCell11 infiltrationCell21 ... infiltrationCellN1
+    date time2
+    infiltrationCell12 infiltrationCell22 ... infiltrationCellN2
+    ...
+    date timeM
+    infiltrationCell1M infiltrationCell2M ... infiltrationCellNM
 
 SourceFiles
-    uniformInfiltrationEventFile.C
+    infiltrationEventFile.C
 
 Author
     Pierre Horgue
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef uniformInfiltrationEventFile_H
-#define uniformInfiltrationEventFile_H
+#ifndef infiltrationEventFile_H
+#define infiltrationEventFile_H
 
 #include "fvMesh.H"
 #include "eventFile.H"
@@ -56,25 +66,27 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------* \
-    Class fluiduniformInfiltrationEventFile Declaration
+    Class fluidinfiltrationEventFile Declaration
     \*---------------------------------------------------------------------------*/
 
-class uniformInfiltrationEventFile
+class infiltrationEventFile
 :
     public eventFile
 {
+    //- True if infiltration is uniform
+    bool uniform_;
 
 public:
 
     // Constructors    
     //- Copy constructor
-    uniformInfiltrationEventFile
+    infiltrationEventFile
     (
-        const uniformInfiltrationEventFile& fileToCopy
+        const infiltrationEventFile& fileToCopy
     );
 
     //- Construct from Istream
-    uniformInfiltrationEventFile
+    infiltrationEventFile
     (
         const word& fileName
     );
@@ -82,13 +94,12 @@ public:
     // Selectors
 
     //- Destructor
-    ~uniformInfiltrationEventFile();
+    ~infiltrationEventFile();
 
     // Member Functions
     
     //- Access function
-    const scalar& currentValue() {return currentValues_[0];}
-    const scalar& oldValue() {return oldValues_[0];}
+    const bool& isUniform() {return uniform_;}
 
 };
 

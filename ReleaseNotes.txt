@@ -1,4 +1,23 @@
 ************************
+*** PMFvXXXX
+*** XXXXXXXXXXXXXXXXXXXX
+************************
+
+### Solvers
+
+- groundwater2DFoam
+
+  - solver adapted to handle uniform or non-uniform infiltration event
+
+### Libraries
+
+- toolsGIS
+
+  - uniformInfiltrationEventFile replaced by infiltrationEventFile
+  infiltration for groundwater2DFoam can be uniform or non-uniform (value
+  specified at each time for each cell in event file)
+
+************************
 *** PMFv1906
 *** Event file generalization + seepage/forcing term for 2D solvers
 ************************
