@@ -1,17 +1,31 @@
 if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
 
-if (uniformInfiltrationEventIsPresent)
+if (infiltrationEventIsPresent)
 {
-    uniformInfiltrationEvent.update(runTime.timeOutputValue());
+    infiltrationEvent.update(runTime.timeOutputValue());
     infiltration.primitiveFieldRef() = 0;
     if (isBackwardScheme)
     {
         scalar coefft0_00 = runTime.deltaTValue()/(runTime.deltaTValue() + runTime.deltaT0Value());
         scalar coefftn_0 = 1 + coefft0_00;
-        infiltration.primitiveFieldRef() = (coefftn_0*uniformInfiltrationEvent.currentValue() - coefft0_00*uniformInfiltrationEvent.oldValue());
+        if (infiltrationEvent.isUniform())
+        {
+            infiltration.primitiveFieldRef() = (coefftn_0*infiltrationEvent.currentValue(0) - coefft0_00*infiltrationEvent.oldValue(0));
+        }
+        else
+        {
+            infiltration.primitiveFieldRef() = (coefftn_0*infiltrationEvent.currentValues() - coefft0_00*infiltrationEvent.oldValues());
+        }
     }
     else
     {
-        infiltration.primitiveFieldRef() = uniformInfiltrationEvent.currentValue();
+        if (infiltrationEvent.isUniform())
+        {
+            infiltration.primitiveFieldRef() = infiltrationEvent.currentValue(0);
+        }
+        else
+        {
+            infiltration.primitiveFieldRef() = infiltrationEvent.currentValues();
+        }
     }
 }

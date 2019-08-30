@@ -36,7 +36,7 @@ Developer
 #include "harmonic.H"
 #include "fixedValueFvPatchField.H"
 #include "MNTfile.H"
-#include "uniformInfiltrationEventFile.H"
+#include "infiltrationEventFile.H"
 #include "outputEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

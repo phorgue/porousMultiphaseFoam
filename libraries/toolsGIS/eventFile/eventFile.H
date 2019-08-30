@@ -96,7 +96,9 @@ public:
     const RectangularMatrix<scalar>& datas() const {return datas_;}
     const scalar& lastValue(const label& id) const {return datas_[iterator_][id];}
     const scalar& oldValue(const label& id) const {return oldValues_[id];}
+    const scalarList& oldValues() const {return oldValues_;}
     const scalar& currentValue(const label& id) const {return currentValues_[id];}
+    const scalarList& currentValues() const {return currentValues_;}
     scalar currentEventStartTime() const;
     const scalar& currentEventEndTime() const;
     void storeOldValues() {oldValues_ = currentValues_;}

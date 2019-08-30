@@ -44,7 +44,7 @@ if (adjustTimeStep)
         );
 
     scalar timeOfNextEvent = GREAT;
-    if (uniformInfiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,uniformInfiltrationEvent.currentEventEndTime());
+    if (infiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,infiltrationEvent.currentEventEndTime());
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
@@ -59,11 +59,11 @@ if (adjustTimeStep)
     if (nSteps == 0)
     {
         scalar timeToCloseEvent = GREAT;
-        if (uniformInfiltrationEventIsPresent)
+        if (infiltrationEventIsPresent)
         {
-            if (uniformInfiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
+            if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
             {
-                timeToCloseEvent = min(timeToCloseEvent,uniformInfiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
+                timeToCloseEvent = min(timeToCloseEvent,infiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
             }
         }
         if (outputEventIsPresent)
