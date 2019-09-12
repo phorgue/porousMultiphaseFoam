@@ -58,12 +58,16 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
+        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
+        if (infiltrationEventIsPresent) infiltrationEvent.update(runTime.timeOutputValue());
         #include "setDeltaT.H"
-        #include "updateEvent.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
+
+        //- Update infiltration term
+        #include "computeInfiltration.H"
 
         //- Solve potential equation
         #include "potentialEqn.H"
