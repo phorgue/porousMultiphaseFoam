@@ -2,7 +2,7 @@
 ////////////////////// GENERAL PROPERTIES //////////////////////
 ////////////////////////////////////////////////////////////////
 
-Info<< "Reading transportProperties\n" << endl;
+Info << "Reading transportProperties" << endl;
 IOdictionary transportProperties
 (
     IOobject
@@ -15,7 +15,7 @@ IOdictionary transportProperties
     )
 );
 
-Info<< "Reading field C\n" << endl;
+Info << nl << "Reading concentration field C" << endl;
 volScalarField C
 (
     IOobject
@@ -29,7 +29,7 @@ volScalarField C
     mesh
 );
 
-Info<< "Reading porosity eps\n" << endl;
+Info<< "Reading porosity value eps\n" << endl;
 dimensionedScalar eps
 (
     transportProperties.lookupOrDefault("eps",dimensionedScalar("eps_default",dimless,1))
@@ -51,9 +51,13 @@ Info << "    " << epsTotal.name() << " : " << epsTotal.value() << endl;
 Info << "    " << lambda.name() << " : " << lambda.value() << endl;
 Info << "}" << endl;
 
-//////////////////////////////////////////////////////////////
-////////////////////// PHASE PROPERTIES //////////////////////
-//////////////////////////////////////////////////////////////
+Info << nl << "Computing retard coefficient R = ";
+scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
+Info << R << endl;
+
+///////////////////////////////////////////////////////////////////
+////////////////////// POTENTIAL-SATURATION ///////////////////////
+///////////////////////////////////////////////////////////////////
 
 Info << nl << "Reading water content theta and/or Saturation field S" << phaseName << "..." << endl;
 volScalarField theta
@@ -103,6 +107,10 @@ else
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////
+////////////////////////// VELOCITY - FLUXES ////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
 Info<< nl << "Reading field U" << phaseName << endl;
 volVectorField U
 (
@@ -142,29 +150,9 @@ else
 //- creation of dispersion model
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,mesh);
 
-Info << "Computing retard coefficient R = ";
-scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
-Info << R << endl;
-
-////////////////////////////////////////////////////
-//////////////////// OUTPUT CSV ////////////////////
-////////////////////////////////////////////////////
-
-bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
-word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","CmassBalance.csv");
-OFstream massBalanceCSV(CSVoutput);
-if (CSVactive)
-{
-    massBalanceCSV << "#Time TotalMass(kg)";
-    forAll(mesh.boundaryMesh(),patchi)
-    {
-        if (mesh.boundaryMesh()[patchi].type() == "patch")
-        {
-            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
-        }
-    }
-    massBalanceCSV << endl;
-}
+///////////////////////////////////////////////////////////////////
+////////////////////////// FORCING TERMS //////////////////////////
+///////////////////////////////////////////////////////////////////
 
 //- Source term
 volScalarField sourceTerm
@@ -186,4 +174,24 @@ bool isBackwardScheme = false;
 if (word(mesh.ddtScheme("source")) == "backward")
 {
     isBackwardScheme = true;
+}
+
+////////////////////////////////////////////////////
+//////////////////// OUTPUT CSV ////////////////////
+////////////////////////////////////////////////////
+
+bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
+word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","CmassBalance.csv");
+OFstream massBalanceCSV(CSVoutput);
+if (CSVactive)
+{
+    massBalanceCSV << "#Time TotalMass(kg)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    massBalanceCSV << endl;
 }
