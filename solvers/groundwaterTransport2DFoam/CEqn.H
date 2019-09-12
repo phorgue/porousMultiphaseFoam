@@ -7,7 +7,7 @@
         (
             eps * R * hwater * fvm::ddt(C)
             + eps * R * C * fvc::ddt(hwater)
-            + fvm::div(phi, C, "div(phi,C)")
+            + fvm::div(phiWater, C, "div(phi,C)")
             - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm * zScale
