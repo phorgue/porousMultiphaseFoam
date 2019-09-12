@@ -81,6 +81,9 @@ int main(int argc, char *argv[])
         //- Solve transport equation
         #include "CEqn.H"
 
+        //- C mass balance computation
+        #include "CmassBalance.H"
+
         #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

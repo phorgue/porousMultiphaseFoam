@@ -15,15 +15,15 @@
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
-            massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*C*Saturation*eps).value();
+            CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*C*Saturation*eps).value();
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    massBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                    CmassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
                 }
             }
-            massBalanceCSV << endl;
+            CmassBalanceCSV << endl;
         }
     }
 }

@@ -149,6 +149,7 @@ forAll(mesh.boundary(),patchi)
     }
 }
 surfaceScalarField transmissivity("transmissivity",Mf*fvc::interpolate(hwater));
+surfaceScalarField phiWater = phi * fvc::interpolate(hwater);
 
 // field necessary for darcyGradPressure boundary condition
 surfaceScalarField phiG("phiG",0*phi);
@@ -261,17 +262,30 @@ Info << R << endl;
 ////////////////////////////////////////////////////
 
 bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
-word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","waterMassBalance.csv");
-OFstream massBalanceCSV(CSVoutput);
+OFstream waterMassBalanceCSV("waterMassBalance.csv");
 if (CSVactive)
 {
-    massBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
+    waterMassBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
     forAll(mesh.boundaryMesh(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
         }
     }
-    massBalanceCSV << endl;
+    waterMassBalanceCSV << endl;
+}
+
+OFstream CmassBalanceCSV("CmassBalance.csv");
+if (CSVactive)
+{
+    CmassBalanceCSV << "#Time TotalMass(kg)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            CmassBalanceCSV << " flux(" << phiWater.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    CmassBalanceCSV << " flux(fixedPoint)" << endl;
 }
