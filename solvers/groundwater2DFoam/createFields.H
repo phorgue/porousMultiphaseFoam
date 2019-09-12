@@ -205,16 +205,16 @@ if (word(mesh.ddtScheme("source")) == "backward")
 
 bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
 word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","waterMassBalance.csv");
-OFstream massBalanceCSV(CSVoutput);
+OFstream waterMassBalanceCSV(CSVoutput);
 if (CSVactive)
 {
-    massBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
+    waterMassBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
     forAll(mesh.boundaryMesh(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
         }
     }
-    massBalanceCSV << endl;
+    waterMassBalanceCSV << endl;
 }
