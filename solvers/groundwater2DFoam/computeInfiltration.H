@@ -1,8 +1,5 @@
-if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
-
 if (infiltrationEventIsPresent)
 {
-    infiltrationEvent.update(runTime.timeOutputValue());
     infiltration.primitiveFieldRef() = 0;
     if (isBackwardScheme)
     {
