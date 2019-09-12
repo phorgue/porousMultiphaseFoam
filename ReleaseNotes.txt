@@ -7,7 +7,13 @@
 
 - groundwater2DFoam
 
-  - solver adapted to handle uniform or non-uniform infiltration event
+  - solver adapted to handle uniform or non-uniform infiltration event (also
+  accept mesh conformal event => consider as uniform infiltration)
+
+- groundwaterTransport2DFoam
+
+  - new solver coupling 2D water modeling (groundwater2DFoam) with 2D scalar
+  transport (porousScalarTransport2DFoam).
 
 ### Libraries
 
@@ -16,6 +22,10 @@
   - uniformInfiltrationEventFile replaced by infiltrationEventFile
   infiltration for groundwater2DFoam can be uniform or non-uniform (value
   specified at each time for each cell in event file)
+
+### Tutorials
+
+- fix event keywords in several tutorials
 
 ************************
 *** PMFv1906
