@@ -101,6 +101,9 @@ public:
     //- Access function
     const bool& isUniform() {return uniform_;}
 
+    //- reset infiltration as uniform if size does not correspond to mesh size
+    void setInfiltrationAsUniform() {uniform_ = true;}
+
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

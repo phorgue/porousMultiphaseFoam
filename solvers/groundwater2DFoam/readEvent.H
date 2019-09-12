@@ -27,6 +27,16 @@ if (infiltrationEventIsPresent)
     }
     else
     {
-        infiltration.primitiveFieldRef() = infiltrationEvent.currentValues();
+        if (infiltrationEvent.currentValues().size() != mesh.C().size())
+        {
+            Warning() << "Number of infiltration values does not correspond to the mesh size, first value is used as uniform infiltration" << endl;
+            infiltrationEvent.setInfiltrationAsUniform();
+            infiltration.primitiveFieldRef() = infiltrationEvent.currentValue(0);
+        }
+        else
+        {
+            infiltration.primitiveFieldRef() = infiltrationEvent.currentValues();
+        }
+
     }
 }
