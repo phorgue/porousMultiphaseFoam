@@ -34,6 +34,6 @@ VanGenuchtenCoeffs
     alpha 3.35;
 }
 
-eventFilePatchInfiltration "infiltration.dat";
+eventFilePatch "infiltration.dat";
 
 // ************************************************************************* //
