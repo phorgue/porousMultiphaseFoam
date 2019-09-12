@@ -1,8 +1,8 @@
-////////////////////////////////////////////////////////////////
-////////////////////// GENERAL PROPERTIES //////////////////////
-////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+////////////////////// TRANSPORT PROPERTIES //////////////////////
+//////////////////////////////////////////////////////////////////
 
-Info<< "Reading transportProperties\n" << endl;
+Info << "Reading transportProperties" << endl;
 IOdictionary transportProperties
 (
     IOobject
@@ -15,7 +15,7 @@ IOdictionary transportProperties
     )
 );
 
-Info<< "Reading field C\n" << endl;
+Info << nl << "Reading concentration field C" << endl;
 volScalarField C
 (
     IOobject
@@ -29,13 +29,13 @@ volScalarField C
     mesh
 );
 
-Info<< "Reading porosity eps\n" << endl;
+Info << nl << "Reading porosity field eps" << endl;
 dimensionedScalar eps
 (
     transportProperties.lookupOrDefault("eps",dimensionedScalar("eps_default",dimless,1))
 );
 
-Info<< "Reading porous transport properties" << endl;
+Info << nl << "Reading porous transport properties" << endl;
 dictionary porousTransport(transportProperties.subDict("porousTransport"));
 word phaseName(porousTransport.lookupOrDefault<word>("phaseName",""));
 dimensionedScalar Kd(porousTransport.lookupOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
@@ -49,13 +49,17 @@ Info << "    " << Kd.name() << " : " << Kd.value() << endl;
 Info << "    " << rs.name() << " : " << rs.value() << endl;
 Info << "    " << epsTotal.name() << " : " << epsTotal.value() << endl;
 Info << "    " << lambda.name() << " : " << lambda.value() << endl;
-Info << "} \n" << endl;
+Info << "}" << endl;
 
-//////////////////////////////////////////////////////////////
-////////////////////// PHASE PROPERTIES //////////////////////
-//////////////////////////////////////////////////////////////
+Info << nl << "Computing retard coefficient R = ";
+scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
+Info << R << endl;
 
-Info << "Reading hwater field if present...";
+/////////////////////////////////////////////////////////////////
+////////////////////// HEIGHT - POTENTIAL ///////////////////////
+/////////////////////////////////////////////////////////////////
+
+Info << nl << "Reading hwater field (if present)" << endl;
 volScalarField hwater
 (
     IOobject
@@ -72,7 +76,7 @@ volScalarField hwater
 
 if (hwater.headerOk())
 {
-    Info << nl << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+    Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
 }
 else
 {
@@ -117,6 +121,10 @@ if (min(hwater).value() < 0)
     FatalErrorIn("createFields") << " hwater has negative values" << abort(FatalError);
 }
 
+/////////////////////////////////////////////////////////////////////////////
+////////////////////////// VELOCITY - FLUXES ////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
 Info << nl << "Reading field U" << phaseName << endl;
 volVectorField U
 (
@@ -160,29 +168,9 @@ surfaceScalarField phiWater = phi * fvc::interpolate(hwater);
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties, mesh);
 volTensorField Deff =  eps*hwater*DeffModel->Deff();
 
-Info << "Computing retard coefficient R = ";
-scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
-Info << R << endl;
-
-/////////////////////////////////////////////////////////
-//////////////////// OUTLET CSV FILE ////////////////////
-/////////////////////////////////////////////////////////
-
-bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
-word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","CmassBalance.csv");
-OFstream massBalanceCSV(CSVoutput);
-if (CSVactive)
-{
-    massBalanceCSV << "#Time TotalMass(kg)";
-    forAll(mesh.boundaryMesh(),patchi)
-    {
-        if (mesh.boundaryMesh()[patchi].type() == "patch")
-        {
-            massBalanceCSV << " flux(" << phiWater.boundaryField()[patchi].patch().name() << ")";
-        }
-    }
-    massBalanceCSV << " flux(fixedPoint)" << endl;
-}
+///////////////////////////////////////////////////////////////////
+////////////////////////// FORCING TERMS //////////////////////////
+///////////////////////////////////////////////////////////////////
 
 //- Source term
 volScalarField sourceTerm
@@ -235,4 +223,24 @@ bool isBackwardScheme = false;
 if (word(mesh.ddtScheme("source")) == "backward")
 {
     isBackwardScheme = true;
+}
+
+/////////////////////////////////////////////////////////
+//////////////////// OUTLET CSV FILE ////////////////////
+/////////////////////////////////////////////////////////
+
+bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
+word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","CmassBalance.csv");
+OFstream massBalanceCSV(CSVoutput);
+if (CSVactive)
+{
+    massBalanceCSV << "#Time TotalMass(kg)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            massBalanceCSV << " flux(" << phiWater.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    massBalanceCSV << " flux(fixedPoint)" << endl;
 }
