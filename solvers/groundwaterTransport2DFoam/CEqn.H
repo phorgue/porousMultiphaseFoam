@@ -3,6 +3,9 @@
     DeffModel->correct(C,U,eps);
     Deff = eps*hwater*DeffModel->Deff();
 
+    //- update water flux
+    phiWater = phi * fvc::interpolate(hwater);
+
     fvScalarMatrix CEqn
         (
             eps * R * hwater * fvm::ddt(C)
