@@ -14,7 +14,7 @@ wmake solvers/porousScalarTransportFoam
 wmake solvers/porousScalarTransport2DFoam
 wmake solvers/groundwater2DFoam
 wmake solvers/groundwaterTransport2DFoam
-#wmake solvers/groundwaterTransportFoam
+wmake solvers/groundwaterTransportFoam
 wmake solvers/stationaryGroundwater2DFoam
 wmake solvers/stationaryGroundwaterFoam
 

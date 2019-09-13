@@ -29,26 +29,17 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-//- Choose the method to compute time step
+//- Global parameters
 const bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
 
-const word timeStepControl =
-    runTime.controlDict().lookupOrDefault<word>("timeStepControl", "Picard");
-
-//- Time control with C variation
-scalar dCmax_abs =
-    runTime.controlDict().lookupOrDefault<scalar>("dCmax_abs",1e-6);
-
-scalar dCmax_rel =
-    runTime.controlDict().lookupOrDefault<scalar>("dCmax_rel",1e-6);
-
-scalar dCdTmax = max(dCmax_rel*gMax(C),dCmax_abs)/runTime.deltaTValue();
-scalar dC = 0;
-
-//- Global parameters
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+
+/////////////////////////////////////////////////////////////////////////////
+//- water flow time step control
+const word timeStepControl =
+    runTime.controlDict().lookupOrDefault<word>("timeStepControl", "Picard");
 
 const dictionary& PicardDict = mesh.solutionDict().subDict("Picard");
 
@@ -56,14 +47,12 @@ const scalar tolPicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1.);
 
 const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
 
-
 //- if dtFromPicard used
 const label nIterStability = PicardDict.lookupOrDefault<label>("nIterStability",5);
 const label minIterPicard = PicardDict.lookupOrDefault<label>("minIter",3);
 label iterStability = 0;
 const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",0);
 const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0);
-
 
 //- if dtFromtheta used
 const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
@@ -100,5 +89,16 @@ else
 {
     Info << "Timestep is fixed";
 }
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+//- tracer timestep control
+scalar dCresidual =
+    runTime.controlDict().lookupOrDefault<scalar>("dCresidual",1e-6);
+
+scalar dCmax =
+    runTime.controlDict().lookupOrDefault<scalar>("dCmax",0.01);
+
+scalar dCdTmax = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
 
 // ************************************************************************* //
