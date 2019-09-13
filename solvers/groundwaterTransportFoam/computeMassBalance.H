@@ -1,0 +1,59 @@
+{
+    //- water mass balance terminal display
+    Info << "Water mass balance (m3/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm_water).value() << " ; ";
+    forAll(phi.boundaryField(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]) << " ; ";
+        }
+    }
+    Info << endl;
+
+    //- water mass balance CSV output
+    if (CSVactive)
+    {
+        if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
+        {
+            waterMassBalanceCSV << runTime.timeName() << " ";
+            forAll(mesh.boundaryMesh(),patchi)
+            {
+                if (mesh.boundaryMesh()[patchi].type() == "patch")
+                {
+                    waterMassBalanceCSV << " " << sum(phi.boundaryField()[patchi]);
+                }
+            }
+            waterMassBalanceCSV << endl;
+        }
+    }
+
+    //- tracer mass balance terminal display
+    Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm_tracer).value() << " ; ";
+    forAll(phi.boundaryField(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[pat
+chi]) << " ; ";
+        }
+    }
+    Info << endl;
+
+    //- CSV output
+    if (CSVactive)
+    {
+        if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
+        {
+            CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*C*theta).value();
+            forAll(mesh.boundaryMesh(),patchi)
+            {
+                if (mesh.boundaryMesh()[patchi].type() == "patch")
+                {
+                    CmassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                }
+            }
+            CmassBalanceCSV << endl;
+        }
+    }
+
+}

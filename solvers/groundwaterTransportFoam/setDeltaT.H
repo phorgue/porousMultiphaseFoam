@@ -28,6 +28,8 @@ Description
 
 if(adjustTimeStep)
 {
+   //- C-variation control
+    scalar dtForC =  max(dCmax*gMax(C),dCresidual)/(dCdTmax+SMALL);
 
     //- Timestep using number of Picard's iterations
     if (timeStepControl == "Picard")
@@ -52,7 +54,10 @@ if(adjustTimeStep)
         runTime.setDeltaT
             (
                 min(
-                    deltaTFact*runTime.deltaTValue(),
+                    min(
+                        deltaTFact*runTime.deltaTValue(),
+                        dtForC
+                    ),
                     maxDeltaT
                 )
             );
@@ -66,7 +71,10 @@ if(adjustTimeStep)
         runTime.setDeltaT
             (
                 min(
-                    dtForTheta,
+                    min(
+                        dtForTheta,
+                        dtForC
+                    ),
                     min(
                         1.2*runTime.deltaTValue(),
                         maxDeltaT
@@ -74,40 +82,57 @@ if(adjustTimeStep)
                 )
             );
     }
-
-    //- Timestep using C variation
-    else if(timeStepControl == "dCmax")
+    else
     {
-        scalar dCmax = max(dCmax_rel*gMax(C),dCmax_abs);
-        scalar dtForC =  dCmax/(dCdTmax+SMALL);
-        scalar newDeltaT = min(dtForC, 1.2*runTime.deltaTValue());
-        
-        runTime.setDeltaT
-            (
-                min
-                (
-                    newDeltaT,
-                    maxDeltaT
-                )
-            );
-
-    }   
-
-    if (event.ndates() > 0)
-    {
-        const scalar timeToNextEvent = event.dates()[currentEvent+1]-runTime.timeOutputValue();
-        scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
-        if ((nSteps < labelMax) && (nSteps > 0))
-        {
-            const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
-            runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
-        }
+        FatalErrorIn("setDeltaT.H") << "Time step control " << timeStepControl
+            << " is unknown, use Picard or dthetamax" << abort(FatalError);
     }
-}
 
-Info<< "deltaT = " <<  runTime.deltaTValue()
+    scalar timeOfNextEvent = GREAT;
+    if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
+    if (eventIsPresent_tracer) timeOfNextEvent = min(timeOfNextEvent,event_tracer.currentEventEndTime());
+    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
+
+    scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
+    scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+    if ((nSteps < labelMax) && (nSteps != 0))
+    {
+        const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
+        runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
+    }
+
+    //- To handle close event times (inferior to current timestep)
+    if (nSteps == 0)
+    {
+        scalar timeToCloseEvent = GREAT;
+        if (eventIsPresent_water)
+        {
+            if (event_water.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,event_water.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        if (eventIsPresent_tracer)
+        {
+            if (event_tracer.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,event_tracer.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        if (outputEventIsPresent)
+        {
+            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
+            {
+                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
+            }
+        }
+        runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
+    }
+
+    Info<< "deltaT = " <<  runTime.deltaTValue()
     << " ; dtheta = " << dtheta
-    << " ; dtheta avg = " << dtheta_avg
-    << " ; dC = " << dC << endl;
+    << " ; dtheta avg = " << dtheta_avg << endl;
+
+}
 
 // ************************************************************************* //
