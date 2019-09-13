@@ -8,8 +8,7 @@
 
     fvScalarMatrix CEqn
         (
-            eps * R * hwater * fvm::ddt(C)
-            + eps * R * C * fvc::ddt(hwater)
+            eps * R * fvm::ddt(hwater,C)
             + fvm::div(phiWater, C, "div(phi,C)")
             - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
