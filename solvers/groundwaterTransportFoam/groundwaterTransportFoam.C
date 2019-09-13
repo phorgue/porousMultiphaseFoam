@@ -40,6 +40,7 @@ Developers
 #include "relativePermeabilityModel.H"
 #include "dispersionModel.H"
 #include "sourceEventFile.H"
+#include "outputEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -63,15 +64,17 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
+        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
+        if (eventIsPresent_water)  event_water.update(runTime.timeOutputValue());
+        if (eventIsPresent_tracer) event_tracer.update(runTime.timeOutputValue());
         #include "setDeltaT.H"
-        #include "updateEvent.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Update Event
-        #include "updateEvent.H"
+        //- Compute source terms
+        #include "computeSourceTerms.H"
 
         //- 1) Richard's equation
         scalar resPicard=GREAT;
@@ -99,13 +102,7 @@ int main(int argc, char *argv[])
         //- 2) scalar transport
         #include "CEqn.H"
         
-        runTime.write();
-
-        //- write solution and eventTime
-        if (event.dates()[currentEvent+1] == runTime.timeOutputValue())
-        {
-            runTime.writeNow();
-        }
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

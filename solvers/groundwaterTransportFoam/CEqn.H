@@ -6,19 +6,17 @@
 
     fvScalarMatrix CEqn
         (
-            R * theta * fvm::ddt(C)
-            + R * C * fvc::ddt(theta)
+            R * fvm::ddt(theta,C)
             + fvm::div(phi, C, "div(phi,C)")
             - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
-            //R * (SrcInj*Cin)*Winj - (SrcExt*C)*Wext
+            - sourceTerm_tracer
             - R * theta * fvm::Sp(lambda,C)
         );
 
     CEqn.solve();
 
     dCdTmax = max(mag(fvc::ddt(C))).value();
-    dC = dCdTmax*runTime.deltaTValue();
 
     Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " dCdTmax = " << dCdTmax << " mass(C) = " << fvc::domainIntegrate(C*theta).value() << endl;
 
