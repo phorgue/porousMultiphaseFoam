@@ -1,10 +1,9 @@
-
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -19,12 +18,8 @@ FoamFile
 defaultFieldValues
 (
 	volScalarFieldValue Sb 0.002
-	volScalarFieldValue Winj 0
-	volScalarFieldValue Wext 0
 	volScalarFieldValue eps 0.75
 );
-
-
 
 regions
 (
@@ -39,5 +34,4 @@ regions
    }  
 );
 
-
-
+// ************************************************************************* //
