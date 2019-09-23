@@ -1,10 +1,9 @@
-
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.1                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -21,22 +20,16 @@ defaultFieldValues
 	volScalarFieldValue z0 0
 );
 
-
-
 regions
 (
-    // injection
-   boxToCell
-   {
-     box (0 0 0) (100 5 01);
-     fieldValues
+    boxToCell
+    {
+        box (0 0 0) (100 5 01);
+        fieldValues
 	(
 	   volScalarFieldValue z0 0.2 
      	);
-   }   
-
-
+    }   
 );
 
-
-
+// ************************************************************************* //
