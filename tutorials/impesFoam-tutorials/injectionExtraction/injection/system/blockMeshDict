@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.1                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -45,53 +45,48 @@ edges
 boundary
 (
 
-
-
-
- top
-    {
-       type patch;
-        faces
-        (
-	 (5 4 10 11)
-	 (4 3 9 10)
-            
-        );
-    }
-
-inlet
+    top
     {
         type patch;
         faces
-	(
-	   (0 1 7 6)
-	   (1 2 8 7)
-        );
+            (
+                (5 4 10 11)
+                (4 3 9 10)
+            
+            );
+    }
+
+    inlet
+    {
+        type patch;
+        faces
+            (
+                (0 1 7 6)
+                (1 2 8 7)
+            );
     }   
-axis   
+    axis   
     {
         type wall;
         faces
-	(
-	 (0 5 11 6)
-	 (2 3 9 8)
-	);
-	}
+            (
+                (0 5 11 6)
+                (2 3 9 8)
+            );
+    }
     
-frontAndBack 
+    frontAndBack 
     {
         type empty;
         faces
-        (
-           (0 1 4 5)
-	   (1 2 3 4)
-	   (6 7 10 11)
-	   (7 8 9 10)
-        );
+            (
+                (0 1 4 5)
+                (1 2 3 4)
+                (6 7 10 11)
+                (7 8 9 10)
+            );
     }
 
 );
-
-
 
 // ************************************************************************* //
