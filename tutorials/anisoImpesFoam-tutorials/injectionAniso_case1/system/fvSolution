@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -27,22 +27,9 @@ solvers
 
     Sb
     {
-        solver          BICCG;
-        preconditioner  DILU;
-        tolerance       1e-12;
-        relTol          0;
+        solver         no_solver_required;
     }
 
 }
-
-PISO
-{
-    nCorrectors     1;
-    nNonOrthogonalCorrectors 0;
-    nSCorr	    1;
-    pRefCell 0;
-    pRefValue 0;
-}
-
 
 // ************************************************************************* //

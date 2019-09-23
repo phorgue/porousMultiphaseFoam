@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     groundwaterFoam;
+application     groundwaterTransportFoam;
 
 startFrom       startTime;
 
@@ -53,12 +53,13 @@ maxDeltaT	1000;
 timeStepControl Picard;
 dTFactIncrease  1.2;
 dTFactDecrease  0.8;
-
-dCmax       0.01;
-dCresidual      1e-3;
-
+nIterStability  5;
 //- for h variation time step control
 //timeStepControl dthetamax;
 //dthetamax           0.005;
+
+//- for tracer time step control
+dCmax       0.01;
+dCresidual      1e-3;
 
 // ************************************************************************* //

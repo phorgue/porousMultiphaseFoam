@@ -27,6 +27,8 @@
 
 - fix event keywords in several tutorials
 
+- cleaning configuration files removing useless keywords/dictionaries
+
 ************************
 *** PMFv1906
 *** Event file generalization + seepage/forcing term for 2D solvers
