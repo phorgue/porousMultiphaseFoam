@@ -29,8 +29,7 @@ solvers
 Picard
 {
     tolerance 1e-2;
-    maxIter 10; // 10 by default
-    minIter 3; // 3 by default 
+    maxIter 10;
 }
 
 // ************************************************************************* //
