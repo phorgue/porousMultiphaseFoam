@@ -46,22 +46,21 @@ class testCase:
 
         else:
 
-            find_str = "FOAM exiting"
-            foamFile = "log."+self.solver
-            with open(foamFile, "r") as f:
-                f.seek(0, 2)
-                fsize = f.tell()
-                f.seek (max (fsize-1024, 0), 0)
-                lines = f.readlines()
+            foam_exit = "FOAM exiting"
+            foam_abort = "FOAM aborting"
+            foamFile = file("log."+self.solver)
+            error_found = False
+            for lines in foamFile:
+                if foam_exit in lines:
+                    error_found = True
+                    break
+                if foam_abort in lines:
+                    error_found = True
+                    break
 
-            lines = lines[-3:]
-
-            if find_str + "\n" in lines:
-
+            if error_found:
                 print "[ ERROR OpenFOAM ] "
-
             else:
-
                 print "[ OK ]"
 
             os.chdir(refDir)

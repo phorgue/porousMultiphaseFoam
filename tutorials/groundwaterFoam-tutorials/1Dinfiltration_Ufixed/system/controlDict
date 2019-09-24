@@ -54,6 +54,7 @@ maxDeltaT	1000;
 // dTFactIncrease  1.2;
 // dTFactDecrease  0.8;
 // nIterStability  5;
+// minIter         3;
 
 //- for h variation time step control
 timeStepControl dthetamax;
