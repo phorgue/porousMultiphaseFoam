@@ -25,9 +25,7 @@ Global
     readTimeControls
 
 Description
-    Read the control parameters used by setDeltaT for groundwaterTransportFoam
-    solver
-
+    Read the control parameters used by setDeltaT for groundwaterFoam solver
 \*---------------------------------------------------------------------------*/
 
 //- Global parameters
@@ -39,17 +37,18 @@ const word timeStepControl =
     runTime.controlDict().lookupOrDefault<word>("timeStepControl", "Picard");
 
 //- if dtFromPicard used
-const label nIterStability = PicardDict.lookupOrDefault<label>("nIterStability",5);
-const label minIterPicard = PicardDict.lookupOrDefault<label>("minIter",3);
+const label nIterStability = runTime.controlDict().lookupOrDefault<label>("nIterStability",5);
+const label minIterPicard = runTime.controlDict().lookupOrDefault<label>("minIter",3);
 label iterStability = 0;
-const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",0);
-const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0);
+const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",1.1);
+const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.9);
 
 //- if dtFromtheta used
 const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
 scalar dthetadTmax = dthetamax/runTime.deltaTValue();
 scalar dtheta = 0;
 scalar dtheta_avg = 0;
+
 if (adjustTimeStep)
 {
     if (timeStepControl == "Picard")
@@ -80,12 +79,5 @@ else
 {
     Info << "Timestep is fixed";
 }
-
-//- tracer timestep control
-scalar dCresidual =
-    runTime.controlDict().lookupOrDefault<scalar>("dCresidual",1e-6);
-scalar dCmax =
-    runTime.controlDict().lookupOrDefault<scalar>("dCmax",0.01);
-scalar dCdTmax = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
 
 // ************************************************************************* //
