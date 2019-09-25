@@ -180,10 +180,9 @@ if (word(mesh.ddtScheme("source")) == "backward")
 //////////////////// OUTPUT CSV ////////////////////
 ////////////////////////////////////////////////////
 
-bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
-word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","CmassBalance.csv");
-OFstream CmassBalanceCSV(CSVoutput);
-if (CSVactive)
+bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
+OFstream CmassBalanceCSV("CmassBalance.csv");
+if (CSVoutput)
 {
     CmassBalanceCSV << "#Time TotalMass(kg)";
     forAll(mesh.boundaryMesh(),patchi)
