@@ -55,4 +55,6 @@ maxDeltaT       1e+9;
 
 CSVoutput       true;
 
+eventTimeTracking true;
+
 // ************************************************************************* //
