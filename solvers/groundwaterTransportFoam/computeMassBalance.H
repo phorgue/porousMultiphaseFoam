@@ -11,7 +11,7 @@
     Info << endl;
 
     //- water mass balance CSV output
-    if (CSVoutpt)
+    if (CSVoutput)
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
@@ -33,8 +33,7 @@
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[pat
-chi]) << " ; ";
+            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]) << " ; ";
         }
     }
     Info << endl;
