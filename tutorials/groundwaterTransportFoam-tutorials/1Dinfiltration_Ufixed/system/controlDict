@@ -66,4 +66,6 @@ dCresidual      1e-3;
 
 CSVoutput  true;
 
+eventTimeTracking true;
+
 // ************************************************************************* //

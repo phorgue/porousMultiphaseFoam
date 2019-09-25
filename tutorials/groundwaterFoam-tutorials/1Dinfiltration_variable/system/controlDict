@@ -60,4 +60,6 @@ maxDeltaT	1000;
 timeStepControl dthetamax;
 dthetamax           0.005;
 
+eventTimeTracking true;
+
 // ************************************************************************* //
