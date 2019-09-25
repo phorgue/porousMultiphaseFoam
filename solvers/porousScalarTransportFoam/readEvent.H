@@ -1,5 +1,5 @@
-bool sourceEventIsPresent = transportProperties.found("eventFileSource");
-word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSource","");
+bool sourceEventIsPresent = transportProperties.found("eventFileTracerSource");
+word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileTracerSource","");
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)
 {

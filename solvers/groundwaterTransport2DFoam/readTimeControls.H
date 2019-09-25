@@ -32,9 +32,10 @@ Description
 //- global parameters
 bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
-
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+const bool eventTimeTracking =
+     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
 //- water time step control
 scalar dhmax =

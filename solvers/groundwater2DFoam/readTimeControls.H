@@ -31,6 +31,8 @@ Description
 
 bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
+const bool eventTimeTracking =
+     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
 scalar dhmax =
     runTime.controlDict().lookupOrDefault<scalar>("dhmax",1e-6);

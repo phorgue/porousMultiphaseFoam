@@ -48,8 +48,11 @@ if (adjustTimeStep)
         );
 
     scalar timeOfNextEvent = GREAT;
-    if (infiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,infiltrationEvent.currentEventEndTime());
-    if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
+    if (eventTimeTracking)
+    {
+        if (infiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,infiltrationEvent.currentEventEndTime());
+        if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
+    }
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
@@ -64,18 +67,21 @@ if (adjustTimeStep)
     if (nSteps == 0)
     {
         scalar timeToCloseEvent = GREAT;
-        if (infiltrationEventIsPresent)
+        if (eventTimeTracking)
         {
-            if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
+            if (infiltrationEventIsPresent)
             {
-                timeToCloseEvent = min(timeToCloseEvent,infiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
+                if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,infiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
-        }
-        if (sourceEventIsPresent)
-        {
-            if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
+            if (sourceEventIsPresent)
             {
-                timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+                if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
         }
         if (outputEventIsPresent)
@@ -91,6 +97,5 @@ if (adjustTimeStep)
     Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
            
 }    
-
 
 // ************************************************************************* //

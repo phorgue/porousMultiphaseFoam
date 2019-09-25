@@ -24,11 +24,11 @@ License
 Description
     Timestep for groundwaterFoam solver
 
-    \*---------------------------------------------------------------------------*/
+\*---------------------------------------------------------------------------*/
 
 if(adjustTimeStep)
 {
-   //- C-variation control
+    //- C-variation control
     scalar dtForC =  max(dCmax*gMax(C),dCresidual)/(dCdTmax+SMALL);
 
     //- Timestep using number of Picard's iterations
@@ -89,8 +89,11 @@ if(adjustTimeStep)
     }
 
     scalar timeOfNextEvent = GREAT;
-    if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
-    if (eventIsPresent_tracer) timeOfNextEvent = min(timeOfNextEvent,event_tracer.currentEventEndTime());
+    if (eventTimeTracking)
+    {
+        if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
+        if (eventIsPresent_tracer) timeOfNextEvent = min(timeOfNextEvent,event_tracer.currentEventEndTime());
+    }
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
@@ -105,18 +108,21 @@ if(adjustTimeStep)
     if (nSteps == 0)
     {
         scalar timeToCloseEvent = GREAT;
-        if (eventIsPresent_water)
+        if (eventTimeTracking)
         {
-            if (event_water.currentEventEndTime() != runTime.timeOutputValue())
+            if (eventIsPresent_water)
             {
-                timeToCloseEvent = min(timeToCloseEvent,event_water.currentEventEndTime()-runTime.timeOutputValue());
+                if (event_water.currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,event_water.currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
-        }
-        if (eventIsPresent_tracer)
-        {
-            if (event_tracer.currentEventEndTime() != runTime.timeOutputValue())
+            if (eventIsPresent_tracer)
             {
-                timeToCloseEvent = min(timeToCloseEvent,event_tracer.currentEventEndTime()-runTime.timeOutputValue());
+                if (event_tracer.currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,event_tracer.currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
         }
         if (outputEventIsPresent)
@@ -130,8 +136,8 @@ if(adjustTimeStep)
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue()
-    << " ; dtheta = " << dtheta
-    << " ; dtheta avg = " << dtheta_avg << endl;
+        << " ; dtheta = " << dtheta
+        << " ; dtheta avg = " << dtheta_avg << endl;
 
 }
 

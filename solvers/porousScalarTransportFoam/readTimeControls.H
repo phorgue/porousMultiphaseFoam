@@ -43,4 +43,6 @@ scalar maxDeltaT =
 
 scalar dCdTmax = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
 
+const bool eventTimeTracking =
+     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 // ************************************************************************* //
