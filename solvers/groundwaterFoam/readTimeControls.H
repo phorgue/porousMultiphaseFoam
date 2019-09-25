@@ -35,6 +35,9 @@ const bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
 const word timeStepControl =
     runTime.controlDict().lookupOrDefault<word>("timeStepControl", "Picard");
+const bool eventTimeTracking =
+     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
+
 
 //- if dtFromPicard used
 const label nIterStability = runTime.controlDict().lookupOrDefault<label>("nIterStability",5);
