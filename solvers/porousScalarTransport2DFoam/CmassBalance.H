@@ -11,7 +11,7 @@
     Info << " fixed points = " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
 
     //- CSV output
-    if (CSVactive)
+    if (CSVoutput)
     {
         volTensorField Deff = eps*hwater*DeffModel->Deff();
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())

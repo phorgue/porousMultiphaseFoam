@@ -28,7 +28,7 @@
     Info << endl;
 
     //- CSV output
-    if (CSVactive)
+    if (CSVoutput)
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {

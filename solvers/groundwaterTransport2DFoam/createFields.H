@@ -261,9 +261,9 @@ Info << R << endl;
 //////////////////// OUTPUT CSV ////////////////////
 ////////////////////////////////////////////////////
 
-bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
+bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
 OFstream waterMassBalanceCSV("waterMassBalance.csv");
-if (CSVactive)
+if (CSVoutput)
 {
     waterMassBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
     forAll(mesh.boundaryMesh(),patchi)
@@ -277,7 +277,7 @@ if (CSVactive)
 }
 
 OFstream CmassBalanceCSV("CmassBalance.csv");
-if (CSVactive)
+if (CSVoutput)
 {
     CmassBalanceCSV << "#Time TotalMass(kg)";
     forAll(mesh.boundaryMesh(),patchi)

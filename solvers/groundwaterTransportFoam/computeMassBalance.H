@@ -11,7 +11,7 @@
     Info << endl;
 
     //- water mass balance CSV output
-    if (CSVactive)
+    if (CSVoutpt)
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
@@ -40,7 +40,7 @@ chi]) << " ; ";
     Info << endl;
 
     //- CSV output
-    if (CSVactive)
+    if (CSVoutput)
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
