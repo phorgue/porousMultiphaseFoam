@@ -165,3 +165,36 @@ if (word(mesh.ddtScheme("source")) == "backward")
 {
     isBackwardScheme = true;
 }
+
+////////////////////////////////////////////////////
+//////////////////// OUTPUT CSV ////////////////////
+////////////////////////////////////////////////////
+
+bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
+OFstream waterMassBalanceCSV("waterMassBalance.csv");
+if (CSVoutput)
+{
+    waterMassBalanceCSV << "#Time ";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    waterMassBalanceCSV << endl;
+}
+
+OFstream CmassBalanceCSV("CmassBalance.csv");
+if (CSVoutput)
+{
+    CmassBalanceCSV << "#Time TotalMass(kg)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            CmassBalanceCSV << " flux(" << C.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    CmassBalanceCSV << endl;
+}

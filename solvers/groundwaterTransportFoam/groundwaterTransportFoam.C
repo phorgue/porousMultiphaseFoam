@@ -99,10 +99,13 @@ int main(int argc, char *argv[])
         dtheta = gMax(dtheta_tmp);
         dthetadTmax = dtheta/runTime.deltaTValue();
         dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
-        
+
         //- 2) scalar transport
         #include "CEqn.H"
-        
+
+        //- C and water mass balance computation
+        #include "computeMassBalance.H"
+
         #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
