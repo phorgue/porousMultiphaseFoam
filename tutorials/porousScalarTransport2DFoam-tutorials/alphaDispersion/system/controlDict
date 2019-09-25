@@ -53,8 +53,6 @@ dCresidual      1e-4;
 
 maxDeltaT       1e8;
 
-CSVactive       true;
-
-CSVoutput       "CmassBalance.csv";
+CSVoutput       true;
 
 // ************************************************************************* //
