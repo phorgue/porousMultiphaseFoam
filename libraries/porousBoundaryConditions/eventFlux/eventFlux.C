@@ -69,6 +69,18 @@ eventFlux
     
     if (eventFileName != "")
     {
+        //- Check if patchEventFile
+        if (this->db().foundObject<IOdictionary>("patchEventFiles"))
+        {
+            this->db().lookupObjectRef<IOdictionary>("patchEventFiles").add("eventFlux",eventFileName);
+        }
+        else
+        {
+            FatalErrorIn("eventFlux.C")
+                << "eventFlux BC is used with an incompatible solver"
+                    << abort(FatalError);
+        }
+
         //- reading patch event file, compute current value, store to old values
         eventFile_.read(eventFileName,true);
         eventFile_.update(this->db().time().startTime().value());
