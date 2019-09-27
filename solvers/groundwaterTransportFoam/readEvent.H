@@ -60,6 +60,31 @@ if (eventIsPresent_tracer)
     }
 }
 
+//- patch event reader for time step managing
+List<patchEventFile*> patchEventList;
+bool patchEventIsPresent = false;
+if (patchEventFiles.size() > 0)
+{
+    patchEventIsPresent = true;
+    if(patchEventFiles.found("eventInfiltration"))
+    {
+        patchEventList.append(new patchEventFile(patchEventFiles["eventInfiltration"]));
+    }
+    if(patchEventFiles.found("eventFlux"))
+    {
+        patchEventList.append(new patchEventFile(patchEventFiles["eventFlux"]));
+    }
+}
+
+if (patchEventIsPresent)
+{
+    forAll(patchEventList,patchEventi)
+    {
+        patchEventList[patchEventi]->update(runTime.startTime().value());
+        patchEventList[patchEventi]->storeOldValues();
+    }
+}
+
 //- Output event reading
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");

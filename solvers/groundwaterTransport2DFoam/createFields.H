@@ -15,6 +15,19 @@ IOdictionary transportProperties
     )
 );
 
+//- dictionary for handling event time from boundary conditions
+IOdictionary patchEventFiles
+(
+    IOobject
+    (
+        "patchEventFiles",
+        runTime.constant(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    )
+);
+
 const dimensionedScalar rho(transportProperties.lookup("rho"));
 const dimensionedScalar mu(transportProperties.lookup("mu"));
 
