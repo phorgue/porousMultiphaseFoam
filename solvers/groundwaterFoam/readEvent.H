@@ -7,26 +7,30 @@ if (sourceEventIsPresent)
     sourceEvent.storeOldValues();
 }
 
-bool patchEventIsPresent =  transportProperties.found("eventFilePatch");
-word patchEventFileName = transportProperties.lookupOrDefault<word>("eventFilePatch","");
-patchEventFile patchEvent(patchEventFileName,false);
+List<patchEventFile*> patchEventList;
+bool patchEventIsPresent = false;
+if (patchEventFiles.size() > 0)
+{
+    patchEventIsPresent = true;
+    if(patchEventFiles.found("eventInfiltration"))
+    {
+        patchEventList.append(new patchEventFile(patchEventFiles["eventInfiltration"]));
+    }
+}
+
 if (patchEventIsPresent)
 {
-    patchEvent.update(runTime.startTime().value());
-    patchEvent.storeOldValues();
+    forAll(patchEventList,patchEventi)
+    {
+        patchEventList[patchEventi]->update(runTime.startTime().value());
+        patchEventList[patchEventi]->storeOldValues();
+    }
 }
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
 if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
-
-scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
-if (eventTimeStep > 0)
-{
-    if (sourceEventIsPresent) sourceEvent.addIntermediateTimeSteps(eventTimeStep);
-    if (patchEventIsPresent) patchEvent.addIntermediateTimeSteps(eventTimeStep);
-}
 
 //- determining cell id corresponding to datas
 labelList idCoordinates(sourceEvent.ncoordinates());
