@@ -5,6 +5,12 @@
 
 ### Solvers
 
+- Global:
+
+  -patchEvent are now automatically read by solvers inside fields file.
+  -keyword "eventTimeTracking" is used to constraint the solver to
+  explictly compute solution at event time (source/patch events).
+
 - groundwater2DFoam
 
   - solver adapted to handle uniform or non-uniform infiltration event (also
