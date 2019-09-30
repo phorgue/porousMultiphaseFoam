@@ -29,6 +29,10 @@
   infiltration for groundwater2DFoam can be uniform or non-uniform (value
   specified at each time for each cell in event file)
 
+- eventFlux
+  - now accept zero flux field (phi=0)
+  - FatalError is handle if fixed flux > 0 and phi = 0
+
 ### Tutorials
 
 - fix event keywords in several tutorials
