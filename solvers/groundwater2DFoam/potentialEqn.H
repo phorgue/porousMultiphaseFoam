@@ -31,7 +31,7 @@
             }
         }
         cumulativeWaterAdded += waterAdded;
-        Info << "*** WARNING *** : number of dry cells = " << ndryCells << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m)" << endl;
+        Warning() << "number of dry cells = " << ndryCells << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m)" << endl;
      }
 
     Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", max(dh) = " << dhdTmax*runTime.deltaTValue() << endl;
