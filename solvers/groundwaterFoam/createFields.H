@@ -33,6 +33,19 @@ IOdictionary transportProperties
     )
 );
 
+//- dictionary for handling event time from boundary conditions
+IOdictionary patchEventFiles
+(
+    IOobject
+    (
+        "patchEventFiles",
+        runTime.constant(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    )
+);
+
 /////////////////////////////////////////////////////////////////////////////
 //////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
 /////////////////////////////////////////////////////////////////////////////

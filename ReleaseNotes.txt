@@ -5,6 +5,12 @@
 
 ### Solvers
 
+- Global:
+
+  -patchEvent are now automatically read by solvers inside fields file.
+  -keyword "eventTimeTracking" is used to constraint the solver to
+  explictly compute solution at event time (source/patch events).
+
 - groundwater2DFoam
 
   - solver adapted to handle uniform or non-uniform infiltration event (also
@@ -22,6 +28,10 @@
   - uniformInfiltrationEventFile replaced by infiltrationEventFile
   infiltration for groundwater2DFoam can be uniform or non-uniform (value
   specified at each time for each cell in event file)
+
+- eventFlux
+  - now accept zero flux field (phi=0)
+  - FatalError is handle if fixed flux > 0 and phi = 0
 
 ### Tutorials
 
