@@ -39,6 +39,7 @@ Developer
 #include "infiltrationEventFile.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
+#include "patchEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
         if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
         if (infiltrationEventIsPresent) infiltrationEvent.update(runTime.timeOutputValue());
         if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
+        if (patchEventIsPresent) forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;

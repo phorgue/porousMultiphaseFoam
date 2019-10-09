@@ -52,7 +52,7 @@ if (adjustTimeStep)
     if (eventTimeTracking)
     {
         if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
-        if (patchEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,patchEvent.currentEventEndTime());
+        if (patchEventIsPresent) forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
     }
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
@@ -80,9 +80,12 @@ if (adjustTimeStep)
             }
             if (patchEventIsPresent)
             {
-                if (patchEvent.currentEventEndTime() != runTime.timeOutputValue())
+                forAll(patchEventList,patchEventi)
                 {
-                    timeToCloseEvent = min(timeToCloseEvent,patchEvent.currentEventEndTime()-runTime.timeOutputValue());
+                    if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                    {
+                        timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                    }
                 }
             }
         }
