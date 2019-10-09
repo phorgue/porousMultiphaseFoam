@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     {
         #include "CourantNo.H"
         Info << "Cvariation max = " << dCdTmax*runTime.deltaTValue() << endl;
-        if (patchEventIsPresent)  patchEvent.update(runTime.timeOutputValue());
+        if (patchEventIsPresent) forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
         if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
         if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
         #include "setDeltaT.H"

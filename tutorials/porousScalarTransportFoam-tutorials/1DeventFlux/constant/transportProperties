@@ -37,6 +37,4 @@ alphaDispersionCoeffs
     alphaT alphaT [0 1 0 0 0 0 0] 0.002;
 }
 
-eventFilePatch "patchInjection.dat";
-
 // ************************************************************************* //

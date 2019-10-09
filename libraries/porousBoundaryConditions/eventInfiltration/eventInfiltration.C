@@ -68,6 +68,18 @@ eventInfiltration
 
     if (eventFileName != "")
     {
+        //- Check if patchEventFile
+        if (this->db().foundObject<IOdictionary>("patchEventFiles"))
+        {
+            this->db().lookupObjectRef<IOdictionary>("patchEventFiles").add("eventInfiltration",eventFileName);
+        }
+        else
+        {
+            FatalErrorIn("eventInfiltration.C")
+                << "eventInfiltration BC is used with an incompatible solver"
+                    << abort(FatalError);
+        }
+
         //- reading patch event file, compute current value, store to old values
         eventFile_.read(eventFileName,true);
         eventFile_.update(this->db().time().startTime().value());

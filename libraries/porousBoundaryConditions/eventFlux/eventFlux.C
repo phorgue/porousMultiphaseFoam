@@ -69,6 +69,18 @@ eventFlux
     
     if (eventFileName != "")
     {
+        //- Check if patchEventFile
+        if (this->db().foundObject<IOdictionary>("patchEventFiles"))
+        {
+            this->db().lookupObjectRef<IOdictionary>("patchEventFiles").add("eventFlux",eventFileName);
+        }
+        else
+        {
+            FatalErrorIn("eventFlux.C")
+                << "eventFlux BC is used with an incompatible solver"
+                    << abort(FatalError);
+        }
+
         //- reading patch event file, compute current value, store to old values
         eventFile_.read(eventFileName,true);
         eventFile_.update(this->db().time().startTime().value());
@@ -186,9 +198,15 @@ void Foam::eventFlux::updateCoeffs()
         eventFile_.update(this->db().time().value());
     }
 
+    if ((mag(valueEvent + eventFluxValue_) > SMALL) && (mag(sum(phip_)) < SMALL))
+    {
+        FatalErrorIn("eventFlux.C")
+            << "non-zero fixed flux for C with zero flux field phi" << abort(FatalError);
+    }
+
     //- Computing fixed value
     scalarField results(patch().patch().faceCentres().size());    
-    results = (eventFluxValue_+valueEvent)/sum(phip_);
+    results = (eventFluxValue_+valueEvent)/sum(phip_+SMALL);
     operator== (results);
     fixedValueFvPatchScalarField::updateCoeffs();
 }
