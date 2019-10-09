@@ -9,8 +9,8 @@ if (infiltrationEventIsPresent)
 }
 
 //- Tracer injection event
-bool sourceEventIsPresent = transportProperties.found("eventFileWaterSource");
-word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
+bool sourceEventIsPresent = transportProperties.found("eventFileTracerSource");
+word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileTracerSource","");
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)
 {

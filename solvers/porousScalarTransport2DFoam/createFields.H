@@ -53,7 +53,6 @@ Info << "}" << endl;
 
 Info << nl << "Computing retard coefficient R = ";
 scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
-Info << R << endl;
 
 /////////////////////////////////////////////////////////////////
 ////////////////////// HEIGHT - POTENTIAL ///////////////////////

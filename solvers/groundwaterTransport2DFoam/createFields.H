@@ -253,9 +253,8 @@ Info << "}" << endl;
 autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties, mesh);
 volTensorField Deff =  eps*hwater*DeffModel->Deff();
 
-Info << nl << "Computing retard coefficient R = ";
+Info << nl << "Computing retard coefficient R";
 volScalarField R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps;
-Info << R << endl;
 
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////

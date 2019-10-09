@@ -50,7 +50,7 @@ if ((forcingPotential == "fixedMNT") || (forcingPotential == "seepage"))
     //- checking that potentialMNT in superior to z0)
     if (min(potentialMNT.internalField() - z0.internalField()).value() <= 0)
     {
-        Info << "*** WARNING *** : potential MNT inferior to z0 in domain " << endl;
+        Warning() << "potential MNT inferior to z0 in domain " << endl;
         forAll(potentialMNT.internalField(),celli)
         {
             potentialMNT.ref()[celli] = max(potentialMNT.internalField()[celli],z0.internalField()[celli]+0.01);
