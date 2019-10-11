@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
 
         runTime++;
 
+noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         //- Compute source terms
@@ -83,27 +84,37 @@ int main(int argc, char *argv[])
         scalar resPicard=GREAT;
         iterPicard = 0;
         theta.storeOldTime();
-        while (resPicard > tolPicard)
+        while ((resPicard > tolPicard) && (iterPicard != maxIterPicard))
         {
             iterPicard++;
             #include "hEqn.H"
             #include "updateProperties.H"
-            if (iterPicard == maxIterPicard)
-            {
-                Warning() <<  " Max iteration reached in Picard loop" << endl;
-                break;
-            }
+        }
+        if (resPicard > tolPicard)
+        {
+            Info << endl;
+            Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            iterPicard++;
+            h == h.oldTime();
+            //- rewind time
+            runTime.setTime(runTime.timeOutputValue()-runTime.deltaTValue(),runTime.timeIndex());
+            //- recompute time step
+            #include "setDeltaT.H"
+            //- Update new time
+            runTime.setTime(runTime.timeOutputValue()+runTime.deltaTValue(),runTime.timeIndex());
+            #include "updateProperties.H"
+            goto noConvergence;
         }
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
         Info << "Head pressure h  " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
-        volScalarField dtheta_tmp = mag(theta-theta.oldTime());
+        scalarField dtheta_tmp = mag(theta.internalField()-theta.oldTime().internalField());
         dtheta = gMax(dtheta_tmp);
         dthetadTmax = dtheta/runTime.deltaTValue();
-        dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
 
         //- 2) scalar transport
         #include "CEqn.H"
+        dCrelative = dCdTmax*runTime.deltaTValue()/(gMax(C)+SMALL);
 
         //- C and water mass balance computation
         #include "computeMassBalance.H"
