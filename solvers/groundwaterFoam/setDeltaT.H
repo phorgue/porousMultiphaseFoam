@@ -28,27 +28,12 @@ Description
 
 if(adjustTimeStep)
 {
-
-    //- Timestep using number of Picard's iterations
-    if (timeStepControl == "Picard")
+    scalar deltaTFact=1;
+    //- in case of non convergence of the Picard's algorithm
+    if (iterPicard == maxIterPicard+1)
     {
-        scalar deltaTFact=1;
-        if(iterPicard == maxIterPicard)
-        {
-            deltaTFact = dTFactDecrease;
-            iterStability=0;
-        }
-        else if (iterPicard <= minIterPicard)
-        {
-            iterStability++;
-        }
-
-        if (iterStability == nIterStability)
-        {
-            deltaTFact = dTFactIncrease;
-            iterStability = 0;
-        }
-
+        deltaTFact = dTFactDecrease;
+        iterStability=0;
         runTime.setDeltaT
             (
                 min(
@@ -57,22 +42,48 @@ if(adjustTimeStep)
                 )
             );
     }
-
-    //- Timestep using h variation
-    else if(timeStepControl == "dthetamax")
+    else
     {
-        scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
+        //- Timestep using number of Picard's iterations
+        if (timeStepControl == "Picard")
+        {
+            scalar deltaTFact=1;
+            if (iterPicard <= minIterPicard)
+            {
+                iterStability++;
+            }
 
-        runTime.setDeltaT
-            (
-                min(
-                    dtForTheta,
+            if (iterStability == nIterStability)
+            {
+                deltaTFact = dTFactIncrease;
+                iterStability = 0;
+            }
+
+            runTime.setDeltaT
+                (
                     min(
-                        1.2*runTime.deltaTValue(),
+                        deltaTFact*runTime.deltaTValue(),
                         maxDeltaT
                     )
-                )
-            );
+                );
+        }
+
+        //- Timestep using h variation
+        else if(timeStepControl == "dthetamax")
+        {
+            scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
+
+            runTime.setDeltaT
+                (
+                    min(
+                        dtForTheta,
+                        min(
+                            1.2*runTime.deltaTValue(),
+                            maxDeltaT
+                        )
+                    )
+                );
+        }
     }
 
     scalar timeOfNextEvent = GREAT;
