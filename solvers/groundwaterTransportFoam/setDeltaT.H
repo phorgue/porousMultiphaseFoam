@@ -28,64 +28,76 @@ Description
 
 if(adjustTimeStep)
 {
-    //- C-variation control
-    scalar dtForC =  max(dCmax*gMax(C),dCresidual)/(dCdTmax+SMALL);
-
-    //- Timestep using number of Picard's iterations
-    if (timeStepControl == "Picard")
+    scalar deltaTFact=1;
+    //- in case of non convergence of the Picard's algorithm
+    if (iterPicard == maxIterPicard+1)
     {
-        scalar deltaTFact=1;
-        if(iterPicard == maxIterPicard)
-        {
-            deltaTFact = dTFactDecrease;
-            iterStability=0;
-        }
-        else if (iterPicard <= minIterPicard)
-        {
-            iterStability++;
-        }
-
-        if (iterStability == nIterStability)
-        {
-            deltaTFact = dTFactIncrease;
-            iterStability = 0;
-        }
-
+        deltaTFact = dTFactDecrease;
+        iterStability=0;
         runTime.setDeltaT
             (
                 min(
-                    min(
-                        deltaTFact*runTime.deltaTValue(),
-                        dtForC
-                    ),
+                    deltaTFact*runTime.deltaTValue(),
                     maxDeltaT
-                )
-            );
-    }
-
-    //- Timestep using h variation
-    else if(timeStepControl == "dthetamax")
-    {
-        scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
-
-        runTime.setDeltaT
-            (
-                min(
-                    min(
-                        dtForTheta,
-                        dtForC
-                    ),
-                    min(
-                        1.2*runTime.deltaTValue(),
-                        maxDeltaT
-                    )
                 )
             );
     }
     else
     {
-        FatalErrorIn("setDeltaT.H") << "Time step control " << timeStepControl
-            << " is unknown, use Picard or dthetamax" << abort(FatalError);
+        //- C-variation control
+        scalar dtForC =  max(dCmax*gMax(C),dCresidual)/(dCdTmax+SMALL);
+
+        //- Timestep using number of Picard's iterations
+        if (timeStepControl == "Picard")
+        {
+            scalar deltaTFact=1;
+            if (iterPicard <= minIterPicard)
+            {
+                iterStability++;
+            }
+
+            if (iterStability == nIterStability)
+            {
+                deltaTFact = dTFactIncrease;
+                iterStability = 0;
+            }
+
+            runTime.setDeltaT
+                (
+                    min(
+                        min(
+                            deltaTFact*runTime.deltaTValue(),
+                            dtForC
+                        ),
+                        maxDeltaT
+                    )
+                );
+        }
+
+        //- Timestep using h variation
+        else if(timeStepControl == "dthetamax")
+        {
+            scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
+
+            runTime.setDeltaT
+                (
+                    min(
+                        min(
+                            dtForTheta,
+                            dtForC
+                        ),
+                        min(
+                            1.2*runTime.deltaTValue(),
+                            maxDeltaT
+                        )
+                    )
+                );
+        }
+        else
+        {
+            FatalErrorIn("setDeltaT.H") << "Time step control " << timeStepControl
+                << " is unknown, use Picard or dthetamax" << abort(FatalError);
+        }
     }
 
     scalar timeOfNextEvent = GREAT;
@@ -147,7 +159,7 @@ if(adjustTimeStep)
 
     Info<< "deltaT = " <<  runTime.deltaTValue()
         << " ; dtheta = " << dtheta
-        << " ; dtheta avg = " << dtheta_avg << endl;
+        << " ; dCrelative = " << dCrelative << endl;
 
 }
 
