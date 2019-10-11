@@ -37,7 +37,7 @@ solvers
 
 Picard
 {
-    tolerance 0.01;
+    tolerance 1e-4;
     maxIter 10;
 }
 
