@@ -74,21 +74,32 @@ int main(int argc, char *argv[])
 
         runTime++;
 
+noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "computeSourceTerm.H"
         scalar resPicard=GREAT;
         iterPicard = 0;
-        while (resPicard > tolPicard)
+        while ((resPicard > tolPicard) && (iterPicard != maxIterPicard))
         {
             iterPicard++;
             #include "hEqn.H"
             #include "updateProperties.H"
-            if (iterPicard == maxIterPicard)
-            {
-                Warning() <<  " Max iteration reached in Picard loop" << endl;
-                break;
-            }
+        }
+        if (resPicard > tolPicard)
+        {
+            Info << endl;
+            Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            iterPicard++;
+            h == h.oldTime();
+            //- rewind time
+            runTime.setTime(runTime.timeOutputValue()-runTime.deltaTValue(),runTime.timeIndex());
+            //- recompute time step
+            #include "setDeltaT.H"
+            //- Update new time
+            runTime.setTime(runTime.timeOutputValue()+runTime.deltaTValue(),runTime.timeIndex());
+            #include "updateProperties.H"
+            goto noConvergence;
         }
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;

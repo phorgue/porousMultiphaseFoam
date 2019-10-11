@@ -62,7 +62,8 @@ volScalarField theta
         IOobject::AUTO_WRITE
     ),
     mesh,
-    dimless
+    dimless,
+    zeroGradientFvPatchField<scalar>::typeName
 );
 theta.dimensions().reset(dimless);
 theta == 0;
