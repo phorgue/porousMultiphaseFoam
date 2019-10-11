@@ -51,7 +51,6 @@ const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTF
 const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
 scalar dthetadTmax = dthetamax/runTime.deltaTValue();
 scalar dtheta = 0;
-scalar dtheta_avg = 0;
 if (adjustTimeStep)
 {
     if (timeStepControl == "Picard")
@@ -89,5 +88,6 @@ scalar dCresidual =
 scalar dCmax =
     runTime.controlDict().lookupOrDefault<scalar>("dCmax",0.01);
 scalar dCdTmax = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
+scalar dCrelative = 0;
 
 // ************************************************************************* //
