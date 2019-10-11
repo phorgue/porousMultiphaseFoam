@@ -25,7 +25,7 @@ stopAt          endTime;
 
 endTime         864000;
 
-deltaT          600;
+deltaT          86400;
 
 writeControl    adjustableRunTime;
 
@@ -50,14 +50,14 @@ runTimeModifiable yes;
 maxDeltaT	1e9;
 
 //- for Picard time step control
-// timeStepControl Picard;
-// dTFactIncrease  1.1;
-// dTFactDecrease  0.9;
-// nIterStability  5;
-// minIter         3;
+timeStepControl Picard;
+dTFactIncrease  1.1;
+dTFactDecrease  0.9;
+nIterStability  5;
+minIter         3;
 
 //- for h variation time step control
-timeStepControl dthetamax;
-dthetamax           0.01;
+// timeStepControl dthetamax;
+// dthetamax           0.01;
 
 // ************************************************************************* //
