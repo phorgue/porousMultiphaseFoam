@@ -62,10 +62,6 @@ class pcLinear
     volScalarField pc0_;
     volScalarField pcMax_;
 
-    //- effective saturation of phase b
-    volScalarField Se_;
-
-
 public:
 
     //- Runtime type information

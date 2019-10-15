@@ -83,7 +83,8 @@ Foam::capillarityModel::capillarityModel
         ),
         Sb.mesh(),
         dimensionSet(0,-1,0,0,0,0,0)
-    )
+    ),
+    Se_(Sb)
 {}
 
 // ************************************************************************* //
