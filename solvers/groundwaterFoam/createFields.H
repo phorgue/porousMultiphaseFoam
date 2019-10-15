@@ -121,6 +121,10 @@ volScalarField K
 // permeability interpolation
 surfaceScalarField Kf = fvc::interpolate(K,"K");
 
+// specific storage
+dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
+Info << nl << "Reading speficic storage : Ss = " << Ss.value() << endl;
+
 ///////////////////////////////////////////////////////////////////
 ////////////////////////// FORCING TERMS //////////////////////////
 ///////////////////////////////////////////////////////////////////

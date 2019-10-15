@@ -13,7 +13,7 @@
 
     fvScalarMatrix hEqn
         (
-            pcModel->Ch() * fvm::ddt(h)
+            (Ss*pcModel->Se() + pcModel->Ch()) * fvm::ddt(h)
             - fvm::laplacian(Mf,h)
             + fvc::div(phiG)
             ==
