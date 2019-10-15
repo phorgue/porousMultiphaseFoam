@@ -57,7 +57,6 @@ const dimensionedScalar& rhotheta = phasetheta->rho();
 const dimensionedScalar& mutheta = phasetheta->mu();    
 phasetheta->phi().writeOpt()=IOobject::NO_WRITE;
 
-
 surfaceScalarField phi
 (
     IOobject
@@ -125,6 +124,10 @@ volScalarField K
 
 // permeability interpolation (harmonic by default)
 surfaceScalarField Kf = fvc::interpolate(K,"K");
+
+// specific storage
+dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
+Info << nl << "Reading speficic storage : Ss = " << Ss.value() << endl;
 
 ///////////////////////////////////////////////////////////////////////
 ////////////////////////// SCALAR TRANSPORT  //////////////////////////
