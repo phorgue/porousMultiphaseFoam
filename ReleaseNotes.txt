@@ -7,14 +7,15 @@
 
 - Global:
 
-  -patchEvent are now automatically read by solvers inside fields file.
+  -patchEvent are now automatically read by solvers inside fields file
   -keyword "eventTimeTracking" is used to constraint the solver to
-  explictly compute solution at event time (source/patch events).
+  explictly compute solution at event time (source/patch events)
 
 - groundwaterFoam
 
   - The non-convergence of the Picard's algorithm now forces the solver to
-  recompute the time iteration reducing the time step.
+  recompute the time iteration reducing the time step
+  - add specific storage term (Ss) to the Richards' formulation
 
 - groundwater2DFoam
 
@@ -24,13 +25,14 @@
 - groundwaterTransportFoam
 
   - The non-convergence of the Picard's algorithm now forces the solver to
-  recompute the time iteration reducing the time step.
+  recompute the time iteration reducing the time step
   - CSV output fixed
+  - add specific storage term (Ss) to the Richards' formulation
 
 - groundwaterTransport2DFoam
 
   - new solver coupling 2D water modeling (groundwater2DFoam) with 2D scalar
-  transport (porousScalarTransport2DFoam).
+  transport (porousScalarTransport2DFoam)
 
 ### Libraries
 
@@ -114,7 +116,7 @@
   - eventInfiltration
     new BC to impose event variable velocity in impesFoam, anisoImpesFoam
     and groundwaterFoam. Patch event file is directly given in the BC
-    dictionary using the keyword "eventFile" (as for fixedFlux).
+    dictionary using the keyword "eventFile" (as for fixedFlux)
 
   - eventFlux
     replace old fixedFlux BC for porousScalarTransportFoam

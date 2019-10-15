@@ -41,8 +41,8 @@ const bool eventTimeTracking =
      runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
 //- if dtFromPicard used
-const label nIterStability = PicardDict.lookupOrDefault<label>("nIterStability",5);
-const label minIterPicard = PicardDict.lookupOrDefault<label>("minIter",3);
+const label nIterStability = runTime.controlDict().lookupOrDefault<label>("nIterStability",5);
+const label minIterPicard = runTime.controlDict().lookupOrDefault<label>("minIter",3);
 label iterStability = 0;
 const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",0);
 const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0);
