@@ -59,13 +59,9 @@ class krBrooksAndCorey
     dictionary krBrooksAndCoreyCoeffs_;
     volScalarField n_;
 
-    //- effective saturation of phase b
-    volScalarField Se_;
-
     //- end points
     volScalarField kramax_;
     volScalarField krbmax_;
-
         
 public:
 
