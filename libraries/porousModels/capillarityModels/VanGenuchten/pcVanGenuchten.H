@@ -57,9 +57,6 @@ class pcVanGenuchten
     volScalarField Smin_,Smax_;
     volScalarField m_,n_,alpha_;
     volScalarField pc0_;
-
-    // effective saturation of phase b
-    volScalarField Se_;
         
 public:
 

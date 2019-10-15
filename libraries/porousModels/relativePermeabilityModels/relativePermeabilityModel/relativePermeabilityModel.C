@@ -97,7 +97,8 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
         ),
         Sb.mesh(),
         dimensionSet(0,0,0,0,0)
-    )
+    ),
+    Se_(Sb_)
 {}
 
 // ************************************************************************* //

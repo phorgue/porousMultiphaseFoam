@@ -133,9 +133,9 @@ Foam::capillarityModels::pcIppisch::pcIppisch
         Sb.mesh(),
         dimensionedScalar("he",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("he",1.))
     ),
-    Se_((Sb_-Smin_)/(Smax_-Smin_)),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
+    Se_ == ((Sb_-Smin_)/(Smax_-Smin_));
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m = 0 in pcIppisch" << abort(FatalError);
     Info << "Ippisch parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    m ";

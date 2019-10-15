@@ -60,13 +60,9 @@ class krVanGenuchten
     dictionary krVanGenuchtenCoeffs_;
     volScalarField m_;
 
-    //- effective saturation of phase b
-    volScalarField Se_;
-
     //- end points
     volScalarField kramax_;
     volScalarField krbmax_;
-
 
 public:
 

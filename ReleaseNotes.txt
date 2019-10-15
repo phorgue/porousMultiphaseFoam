@@ -11,10 +11,21 @@
   -keyword "eventTimeTracking" is used to constraint the solver to
   explictly compute solution at event time (source/patch events).
 
+- groundwaterFoam
+
+  - The non-convergence of the Picard's algorithm now forces the solver to
+  recompute the time iteration reducing the time step.
+
 - groundwater2DFoam
 
   - solver adapted to handle uniform or non-uniform infiltration event (also
   accept mesh conformal event => consider as uniform infiltration)
+  
+- groundwaterTransportFoam
+
+  - The non-convergence of the Picard's algorithm now forces the solver to
+  recompute the time iteration reducing the time step.
+  - CSV output fixed
 
 - groundwaterTransport2DFoam
 
@@ -32,6 +43,11 @@
 - eventFlux
   - now accept zero flux field (phi=0)
   - FatalError is handle if fixed flux > 0 and phi = 0
+
+- porousModels
+
+  - relativePermeabilityModel/capillarityModel has new function Se() which
+  return effective saturation.
 
 ### Tutorials
 

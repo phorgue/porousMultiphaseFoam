@@ -68,6 +68,9 @@ protected:
     // capillary pressure, derivative and capillary capacity
     volScalarField pc_,dpcdS_,Ch_;
 
+    // Effective saturation field
+    volScalarField Se_;
+
     // Private Member Functions
 
     //- Disallow copy construct
@@ -141,6 +144,12 @@ public:
     tmp<volScalarField> dpcdS() const
         {
             return dpcdS_;
+        }
+
+    //- Return effective saturation
+    tmp<volScalarField> Se() const
+        {
+            return Se_;
         }
 
     //- Correct the capillary pressure

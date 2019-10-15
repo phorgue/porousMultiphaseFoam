@@ -59,9 +59,6 @@ class pcBrooksAndCorey
     volScalarField Smax_;
     volScalarField pc0_;
     volScalarField alpha_;
-
-    // effective saturation of phase b
-    volScalarField Se_;
         
 public:
 
