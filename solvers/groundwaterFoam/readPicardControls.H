@@ -44,3 +44,8 @@ if (!PicardDict.found("maxIter"))
             << abort(FatalError);
 }
 const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
+
+//- to switch between conservative mixed formulation (by default) and head pressure (non conservative)
+bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
+scalar massConservativeTerms = 0;
+if (massConservative) massConservativeTerms = 1;
