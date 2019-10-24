@@ -16,6 +16,9 @@
   - The non-convergence of the Picard's algorithm now forces the solver to
   recompute the time iteration reducing the time step
   - add specific storage term (Ss) to the Richards' formulation
+  - adding by default the mass-conservative terms to head pressure equation
+  (mixed-formulation). The old head-pressure formulation can be now obtained
+  adding "massConservative false;" in transportProperties
 
 - groundwater2DFoam
 
@@ -28,6 +31,9 @@
   recompute the time iteration reducing the time step
   - CSV output fixed
   - add specific storage term (Ss) to the Richards' formulation
+  - adding by default the mass-conservative terms to head pressure equation
+  (mixed-formulation). The old head-pressure formulation can be now obtained
+  adding "massConservative false;" in transportProperties
 
 - groundwaterTransport2DFoam
 
