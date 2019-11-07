@@ -27,7 +27,7 @@ sets
 (
     acrossFlow
     {
-        type    midPoint;
+        type    lineCell;
         axis    y;
         start   ( 0.05 0.60 0.05 );
         end     ( 0.05 0 0.05 );
