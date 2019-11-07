@@ -107,7 +107,7 @@ Foam::capillarityModels::pcLinear::pcLinear
         pcLinearCoeffs_.lookupOrDefault("pcMax",dimensionedScalar("pcMax",dimensionSet(1,-1,-2,0,0),0))
     )
 {
-    Se_ == ((Sb_-Smin_)/(Smax_-Smin_));
+    Se_ = ((Sb_-Smin_)/(Smax_-Smin_));
     Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    pc0 ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}

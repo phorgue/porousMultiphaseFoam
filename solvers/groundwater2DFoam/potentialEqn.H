@@ -14,7 +14,7 @@
     potentialEqn.solve();
 
     //- updating hwater and fluxes
-    hwater == potential - z0;
+    hwater = potential - z0;
 
     //- Checking for dry cells
     if (min(hwater).value() <= hwaterMin.value())
@@ -40,7 +40,7 @@
 
     //- updating flow properties
     transmissivity = Mf*fvc::interpolate(hwater);
-    phi == (-Mf * fvc::snGrad(potential)) * mesh.magSf();
+    phi = (-Mf * fvc::snGrad(potential)) * mesh.magSf();
     forAll(mesh.boundary(),patchi)
     {
         if (isA< fixedValueFvPatchField<vector> >(U.boundaryField()[patchi]))
