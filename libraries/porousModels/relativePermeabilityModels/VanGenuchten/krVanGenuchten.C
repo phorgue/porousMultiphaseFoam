@@ -120,7 +120,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
         dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     )
 {
-    Se_ == (Sb_-Smin_)/(Smax_-Smin_);
+    Se_ = (Sb_-Smin_)/(Smax_-Smin_);
     if (gMin(m_) <= 0)
     {
         FatalErrorIn

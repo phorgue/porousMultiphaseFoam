@@ -95,7 +95,7 @@ noConvergence :
             Info << endl;
             Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
             iterPicard++;
-            h == h.oldTime();
+            h = h.oldTime();
             //- rewind time
             runTime.setTime(runTime.timeOutputValue()-runTime.deltaTValue(),runTime.timeIndex());
             //- recompute time step

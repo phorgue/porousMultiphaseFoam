@@ -1,5 +1,5 @@
 //- update saturation 
-theta == pcModel->correctAndSb(h);
+theta = pcModel->correctAndSb(h);
 
 //- relative permeability computation
 krModel->correct();
