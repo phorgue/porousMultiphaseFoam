@@ -50,7 +50,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     (
         IOobject
         (
-            name,
+            name+".kra",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::NO_READ,
@@ -63,7 +63,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     (
         IOobject
         (
-            name,
+            name+".krb",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::NO_READ,
@@ -76,7 +76,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     (
         IOobject
         (
-            name,
+            name+".dkradS",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::NO_READ,
@@ -89,7 +89,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     (
         IOobject
         (
-            name,
+            name+".dkrbdS",
             Sb_.time().timeName(),
             Sb_.db(),
             IOobject::NO_READ,
@@ -98,7 +98,19 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
         Sb.mesh(),
         dimensionSet(0,0,0,0,0)
     ),
-    Se_(Sb_)
+    Se_
+    (
+        IOobject
+        (
+            name+".Se",
+            Sb.time().timeName(),
+            Sb.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb,
+        calculatedFvPatchScalarField::typeName
+    )
 {}
 
 // ************************************************************************* //

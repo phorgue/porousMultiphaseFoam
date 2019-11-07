@@ -86,10 +86,11 @@ volScalarField theta
         IOobject::AUTO_WRITE
     ),
     mesh,
-    dimless
+    dimless,
+    calculatedFvPatchScalarField::typeName
 );
 theta.dimensions().reset(dimless);
-theta == 0; // temporary initialisation
+theta = 0; // temporary initialisation
 
 /////////////////////////////////////////////////////////////////////////////
 //////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
@@ -100,7 +101,7 @@ autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krM
 autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,theta);
 
 Info<< "Computing field theta \n" << endl;
-theta == pcModel->correctAndSb(h);
+theta = pcModel->correctAndSb(h);
 theta.write();
 
 /////////////////////////////////////////////////////////////////////////////

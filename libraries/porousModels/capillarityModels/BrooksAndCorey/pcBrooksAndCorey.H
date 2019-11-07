@@ -84,7 +84,7 @@ public:
     //- Correct the capillary pressure
     void correct()
         {
-            Se_ == (Sb_+SMALL-Smin_)/(Smax_ - Smin_);
+            Se_ = (Sb_+SMALL-Smin_)/(Smax_ - Smin_);
             pc_ = pc0_ * pow(Se_,-alpha_);
             dpcdS_= -alpha_*pc0_*(pow(Se_,-alpha_-1))/(Smax_-Smin_);
         }

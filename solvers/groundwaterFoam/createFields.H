@@ -63,17 +63,17 @@ volScalarField theta
     ),
     mesh,
     dimless,
-    zeroGradientFvPatchField<scalar>::typeName
+    calculatedFvPatchScalarField::typeName
 );
 theta.dimensions().reset(dimless);
-theta == 0;
+theta = 0;
 
 // Relative permeability / Capillary pressure models
 autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,theta);
 autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,theta);
 
 Info << nl << "Computing saturation field theta" << endl;
-theta == pcModel->correctAndSb(h);
+theta = pcModel->correctAndSb(h);
 theta.write();
 
 ////////////////////////////////////////////////////////////////////

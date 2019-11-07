@@ -49,7 +49,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            name,
+            name+".pc",
             Sb.time().timeName(),
             Sb.db(),
             IOobject::NO_READ,
@@ -62,7 +62,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            name,
+            name+".dpcdS",
             Sb.time().timeName(),
             Sb.db(),
             IOobject::NO_READ,
@@ -75,7 +75,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            name,
+            name+".Ch",
             Sb.time().timeName(),
             Sb.db(),
             IOobject::NO_READ,
@@ -84,7 +84,19 @@ Foam::capillarityModel::capillarityModel
         Sb.mesh(),
         dimensionSet(0,-1,0,0,0,0,0)
     ),
-    Se_(Sb)
+    Se_
+    (
+        IOobject
+        (
+            name+".Se",
+            Sb.time().timeName(),
+            Sb.db(),
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        Sb,
+        calculatedFvPatchScalarField::typeName
+    )
 {}
 
 // ************************************************************************* //

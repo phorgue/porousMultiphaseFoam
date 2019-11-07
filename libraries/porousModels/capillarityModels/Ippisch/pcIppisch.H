@@ -98,7 +98,7 @@ public:
 
             //- Update capillary capacity
             Ch_.dimensions().reset(dimless);
-            Ch_ == alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
+            Ch_ = alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
             Ch_.dimensions().reset(dimless/dimLength);
 
             //- Update saturation

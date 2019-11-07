@@ -136,7 +136,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
-    Se_ == (Sb_-Smin_)/(Smax_-Smin_);
+    Se_ = (Sb_-Smin_)/(Smax_-Smin_);
     if (gMin(m_) <= 0)
     {
         FatalErrorIn

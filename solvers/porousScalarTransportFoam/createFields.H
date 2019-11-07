@@ -104,7 +104,7 @@ volScalarField Saturation
 word Uname="U"+phaseName;
 if (theta.headerOk())
 {
-    Saturation == theta/eps;
+    Saturation = theta/eps;
     Uname = "U";
     Info << "===> field S" << phaseName << " computed from theta/eps, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << endl;
 }

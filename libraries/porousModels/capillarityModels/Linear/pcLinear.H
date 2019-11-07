@@ -86,7 +86,7 @@ public:
     //- Correct the capillarity
     void correct()
         {
-            Se_ == (Sb_- Smin_)/(Smax_-Smin_);
+            Se_ = (Sb_- Smin_)/(Smax_-Smin_);
             pc_ = pc0_ + (1 - Se_) * (pcMax_ - pc0_);
             dpcdS_ =  pc0_ - pcMax_;
         }
