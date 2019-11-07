@@ -65,7 +65,7 @@ volScalarField hwater
     ),
     potential
 );
-hwater == potential - z0;
+hwater = potential - z0;
 
 dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01)));
 
@@ -121,7 +121,7 @@ volVectorField U
 );
 
 #include "createPhi.H"
-phi == (-Mf * fvc::snGrad(potential)) * mesh.magSf();
+phi = (-Mf * fvc::snGrad(potential)) * mesh.magSf();
 forAll(mesh.boundary(),patchi)
 {
     if (isA< fixedValueFvPatchField<vector> >(U.boundaryField()[patchi]))

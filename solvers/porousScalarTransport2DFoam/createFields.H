@@ -122,7 +122,7 @@ else
         );
     Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << endl;
 
-    hwater == potential - z0;
+    hwater = potential - z0;
 
     Info << nl << "Computed hwater : min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
     hwater.write();
