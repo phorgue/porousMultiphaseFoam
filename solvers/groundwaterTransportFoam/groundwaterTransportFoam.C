@@ -42,6 +42,8 @@ Developers
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
 #include "patchEventFile.H"
+#include "eventInfiltration.H"
+#include "eventFlux.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -69,7 +71,7 @@ int main(int argc, char *argv[])
         if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
         if (eventIsPresent_water)  event_water.update(runTime.timeOutputValue());
         if (eventIsPresent_tracer) event_tracer.update(runTime.timeOutputValue());
-        if (patchEventIsPresent) forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;
