@@ -54,28 +54,10 @@ if (sourceEventIsPresent)
 }
 
 //- patch event reader for time step managing
-List<patchEventFile*> patchEventList;
-bool patchEventIsPresent = false;
-if (patchEventFiles.size() > 0)
+forAll(patchEventList,patchEventi)
 {
-    patchEventIsPresent = true;
-    if(patchEventFiles.found("eventInfiltration"))
-    {
-        patchEventList.append(new patchEventFile(patchEventFiles["eventInfiltration"]));
-    }
-    if(patchEventFiles.found("eventFlux"))
-    {
-        patchEventList.append(new patchEventFile(patchEventFiles["eventFlux"]));
-    }
-}
-
-if (patchEventIsPresent)
-{
-    forAll(patchEventList,patchEventi)
-    {
-        patchEventList[patchEventi]->update(runTime.startTime().value());
-        patchEventList[patchEventi]->storeOldValues();
-    }
+    patchEventList[patchEventi]->update(runTime.startTime().value());
+    patchEventList[patchEventi]->storeOldValues();
 }
 
 //- Output event reading
