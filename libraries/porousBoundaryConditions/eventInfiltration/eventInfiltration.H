@@ -81,6 +81,7 @@ class eventInfiltration
 protected:
 
     // Protected data
+    static List<patchEventFile*>* eventFileRegistry_;
     
     //- Fixed flux value
     scalar fixedInfiltrationValue_;
@@ -97,6 +98,7 @@ public:
     //- Runtime type information
     TypeName("eventInfiltration");
 
+    static void setEventFileRegistry(List<patchEventFile*>& eventFileRegistry);
 
     // Constructors
 

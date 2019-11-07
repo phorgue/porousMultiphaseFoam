@@ -70,18 +70,9 @@ IOdictionary transportProperties
     )
 );
 
-//- dictionary for handling event time from boundary conditions
-IOdictionary patchEventFiles
-(
-    IOobject
-    (
-        "patchEventFiles",
-        runTime.constant(),
-        mesh,
-        IOobject::NO_READ,
-        IOobject::NO_WRITE
-    )
-);
+//- list that receives event files of event-based boundary conditions
+List<patchEventFile*> patchEventList;
+eventInfiltration::setEventFileRegistry(patchEventList);
 
 dimensionedScalar Sbmin(transportProperties.lookupOrDefault("Sbmin",dimensionedScalar("Sbmin",dimless,0)));
 

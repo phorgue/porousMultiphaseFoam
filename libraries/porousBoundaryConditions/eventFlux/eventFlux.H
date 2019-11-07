@@ -91,6 +91,7 @@ class eventFlux
 protected:
 
     // Protected data
+    static List<patchEventFile*>* eventFileRegistry_;
     
     //- Fixed flux value
     scalar eventFluxValue_;
@@ -108,6 +109,7 @@ public:
     //- Runtime type information
     TypeName("eventFlux");
 
+    static void setEventFileRegistry(List<patchEventFile*>& eventFileRegistry);
 
     // Constructors
 

@@ -7,25 +7,13 @@ if (sourceEventIsPresent)
     sourceEvent.storeOldValues();
 }
 
-List<patchEventFile*> patchEventList;
-bool patchEventIsPresent = false;
-if (patchEventFiles.size() > 0)
+
+forAll(patchEventList,patchEventi)
 {
-    patchEventIsPresent = true;
-    if(patchEventFiles.found("eventFlux"))
-    {
-        patchEventList.append(new patchEventFile(patchEventFiles["eventFlux"]));
-    }
+    patchEventList[patchEventi]->update(runTime.startTime().value());
+    patchEventList[patchEventi]->storeOldValues();
 }
 
-if (patchEventIsPresent)
-{
-    forAll(patchEventList,patchEventi)
-    {
-        patchEventList[patchEventi]->update(runTime.startTime().value());
-        patchEventList[patchEventi]->storeOldValues();
-    }
-}
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");

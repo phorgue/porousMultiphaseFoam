@@ -136,14 +136,11 @@ if(adjustTimeStep)
                     timeToCloseEvent = min(timeToCloseEvent,event_tracer.currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
-            if (patchEventIsPresent)
+            forAll(patchEventList,patchEventi)
             {
-                forAll(patchEventList,patchEventi)
+                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
-                    {
-                        timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
-                    }
+                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
         }
