@@ -1,6 +1,12 @@
+forAll(composition.Y(), speciesi)
 {
+    const auto& speciesName = composition.species()[speciesi];
+    const auto& C = composition.Y(speciesi);
+    const auto& R = composition.R(speciesi);
+    const auto sourceTerm = composition.sourceTerm(speciesi);
+
     //- terminal display
-    Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value()/zScale << " ; ";
+    Info << speciesName << " mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value()/zScale << " ; ";
     forAll(phiWater.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
@@ -13,7 +19,9 @@
     //- CSV output
     if (CSVoutput)
     {
-        volTensorField Deff = eps*hwater*DeffModel->Deff();
+        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
+        
+        volTensorField Deff = eps*hwater*composition.Deff(speciesi, U, eps);
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
             CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*hwater*C*eps).value()/zScale;

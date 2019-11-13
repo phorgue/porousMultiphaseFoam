@@ -1,6 +1,12 @@
+forAll(composition.Y(), speciesi)
 {
+    const auto& speciesName = composition.species()[speciesi];
+    const auto& C = composition.Y(speciesi);
+    const auto& R = composition.R(speciesi);
+    const auto sourceTerm = composition.sourceTerm(speciesi);
+
     //- terminal display
-    Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
+    Info << speciesName << " mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
     forAll(phi.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
@@ -13,6 +19,8 @@
     //- CSV output
     if (CSVoutput)
     {
+        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
+        
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
             CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*C*Saturation*eps).value();

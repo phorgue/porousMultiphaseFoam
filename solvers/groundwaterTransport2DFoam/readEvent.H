@@ -8,16 +8,6 @@ if (infiltrationEventIsPresent)
     infiltrationEvent.storeOldValues();
 }
 
-//- Tracer injection event
-bool sourceEventIsPresent = transportProperties.found("eventFileTracerSource");
-word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileTracerSource","");
-sourceEventFile sourceEvent(sourceEventFileName);
-if (sourceEventIsPresent)
-{
-    sourceEvent.update(runTime.startTime().value());
-    sourceEvent.storeOldValues();
-}
-
 //- Updating infiltration value using event file
 if (infiltrationEventIsPresent)
 {
@@ -38,18 +28,6 @@ if (infiltrationEventIsPresent)
             infiltration.primitiveFieldRef() = infiltrationEvent.currentValues();
         }
 
-    }
-}
-
-//- determining cell id corresponding tracer injection points
-labelList idCoordinates(sourceEvent.ncoordinates());
-if (sourceEventIsPresent)
-{
-    sourceTerm.primitiveFieldRef() = 0;
-    forAll(sourceEvent.coordinates(),pointi)
-    {
-        idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);
-        sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
     }
 }
 

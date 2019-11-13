@@ -41,7 +41,12 @@ scalar dCmax =
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
-scalar dCdTmax = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
+scalarList dCdTmax(composition.Y().size());
+forAll(composition.Y(), speciesi)
+{
+    const auto& C = composition.Y(speciesi);
+    dCdTmax[speciesi] = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
+}
 
 const bool eventTimeTracking =
      runTime.controlDict().lookupOrDefault("eventTimeTracking", false);

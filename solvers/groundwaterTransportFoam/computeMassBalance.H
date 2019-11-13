@@ -28,31 +28,41 @@
     }
 
     //- tracer mass balance terminal display
-    Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm_tracer).value() << " ; ";
-    forAll(phi.boundaryField(),patchi)
+    forAll(composition.Y(), speciesi)
     {
-        if (mesh.boundaryMesh()[patchi].type() == "patch")
-        {
-            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]) << " ; ";
-        }
-    }
-    Info << endl;
+        const auto& speciesName = composition.species()[speciesi];
+        const auto& C = composition.Y(speciesi);
+        const auto& R = composition.R(speciesi);
+        const auto sourceTerm_tracer = composition.sourceTerm(speciesi);
 
-    //- CSV output
-    if (CSVoutput)
-    {
-        if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
+        Info << speciesName << " mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm_tracer).value() << " ; ";
+        forAll(phi.boundaryField(),patchi)
         {
-            CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*C*theta).value();
-            forAll(mesh.boundaryMesh(),patchi)
+            if (mesh.boundaryMesh()[patchi].type() == "patch")
             {
-                if (mesh.boundaryMesh()[patchi].type() == "patch")
-                {
-                    CmassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
-                }
+                Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]) << " ; ";
             }
-            CmassBalanceCSV << endl;
         }
-    }
+        Info << endl;
 
+        //- CSV output
+        if (CSVoutput)
+        {
+            auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
+            
+            if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
+            {
+                CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*C*theta).value();
+                forAll(mesh.boundaryMesh(),patchi)
+                {
+                    if (mesh.boundaryMesh()[patchi].type() == "patch")
+                    {
+                        CmassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                    }
+                }
+                CmassBalanceCSV << endl;
+            }
+        }
+
+    }
 }

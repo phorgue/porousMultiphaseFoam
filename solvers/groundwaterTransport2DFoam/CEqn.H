@@ -1,7 +1,12 @@
+forAll(composition.Y(), speciesi)
 {
-    //- update dispersion tensor coefficient
-    DeffModel->correct(C,U,eps);
-    Deff = eps*hwater*DeffModel->Deff();
+    const auto& speciesName = composition.species()[speciesi];
+    
+    auto& C = composition.Y(speciesi);
+    const auto& R = composition.R(speciesi);
+    const auto Deff = composition.Deff(speciesi, U, eps);
+    const auto& lambda = composition.lambda(speciesi);
+    const auto sourceTerm = composition.sourceTerm(speciesi);
 
     //- update water flux
     phiWater = phi * fvc::interpolate(hwater);
@@ -10,7 +15,7 @@
         (
             eps * R * fvm::ddt(hwater,C)
             + fvm::div(phiWater, C, "div(phi,C)")
-            - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
+            - fvm::laplacian(eps*hwater*Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm * zScale
             - eps * R * hwater * fvm::Sp(lambda,C)
@@ -19,8 +24,10 @@
 
     CEqn.solve();
 
-    dCdTmax = max(mag(fvc::ddt(C))).value();
+    dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
 
-    Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value()  << " mass(C) = " << fvc::domainIntegrate(R*C*hwater*eps).value()/zScale << endl;
+    Info<< "Concentration Min(" << speciesName << ") = " << min(C).value()
+        << " Max(" << speciesName << ") = " << max(C).value()
+        << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*hwater*eps).value()/zScale << endl;
 
 }

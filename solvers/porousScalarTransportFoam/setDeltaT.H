@@ -37,7 +37,16 @@ Description
 if (adjustTimeStep)
 {
     //- C-variation control
-    scalar dtForC =  max(dCmax*gMax(C),dCresidual)/(dCdTmax+SMALL);
+    scalar dtForC = VGREAT;
+    forAll(composition.Y(), speciesi)
+    {
+        const auto& C = composition.Y(speciesi);
+        dtForC = min
+        (
+            dtForC,
+            max(dCmax*gMax(C),dCresidual)/(dCdTmax[speciesi]+SMALL)
+        );
+    }
     scalar newDeltaT = min(dtForC, 1.2*runTime.deltaTValue());
     runTime.setDeltaT
         (
@@ -51,7 +60,7 @@ if (adjustTimeStep)
     scalar timeOfNextEvent = GREAT;
     if (eventTimeTracking)
     {
-        if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
+        forAll(sourceEventList,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList[sourceEventi]->currentEventEndTime());
         forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
     }
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
@@ -71,11 +80,11 @@ if (adjustTimeStep)
         scalar timeToCloseEvent = GREAT;
         if (eventTimeTracking)
         {
-            if (sourceEventIsPresent)
+            forAll(sourceEventList,sourceEventi)
             {
-                if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
+                if (sourceEventList[sourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+                    timeToCloseEvent = min(timeToCloseEvent,sourceEventList[sourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
             forAll(patchEventList,patchEventi)
