@@ -29,37 +29,6 @@ if (eventIsPresent_water)
     }
 }
 
-//- Tracer source event reading
-word eventFileName_tracer = transportProperties.lookupOrDefault<word>("eventFileTracerSource","");
-bool eventIsPresent_tracer = transportProperties.found("eventFileTracerSource");
-sourceEventFile event_tracer(eventFileName_tracer);
-
-volScalarField sourceTerm_tracer
-(
-    IOobject
-    (
-        "sourceTerm_tracer",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("",dimMass/(dimVol*dimTime),0)
-);
-
-labelList idCoordinates_tracer(event_tracer.ncoordinates());
-label currentEvent_tracer = 0;
-if (eventIsPresent_tracer)
-{
-    sourceTerm_tracer = dimensionedScalar("",dimMass/(dimVol*dimTime),0);
-    forAll(event_tracer.coordinates(),pointi)
-    {
-        idCoordinates_tracer[pointi] = mesh.findNearestCell(event_tracer.coordinates()[pointi]);
-        sourceTerm_tracer[idCoordinates_tracer[pointi]] = event_tracer.datas()[currentEvent_tracer][pointi]/mesh.V()[idCoordinates_tracer[pointi]];
-    }
-}
-
 //- patch event reader for time step managing
 forAll(patchEventList,patchEventi)
 {
