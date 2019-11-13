@@ -34,7 +34,7 @@ Author
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "dispersionModel.H"
+#include "multiscalarMixture.H"
 #include "sourceEventFile.H"
 #include "patchEventFile.H"
 #include "outputEventFile.H"
@@ -56,17 +56,16 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "CourantNo.H"
-        Info << "Cvariation max = " << dCdTmax*runTime.deltaTValue() << endl;
+        Info << "Cvariation max = " << max(dCdTmax)*runTime.deltaTValue() << endl;
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
         if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
-        if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
+        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->update(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        #include "computeSourceTerm.H"
         #include "CEqn.H"
         #include "CmassBalance.H"
 
