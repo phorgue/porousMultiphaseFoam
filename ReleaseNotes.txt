@@ -36,11 +36,13 @@
   species without their own sub-dictionaries have their properties read
   directly from transportProperties). This support has also been extended to 
   all transport solvers in the toolbox.
+  - epsTotal now defaults to 1
 
 - porousScalarTransport2DFoam
 
   - support for multiple transported species in a single case (see the notes
   for porousScalarTransportFoam)
+  - epsTotal now defaults to 1
   
 - groundwaterTransportFoam
 
@@ -53,6 +55,7 @@
   adding "massConservative false;" in transportProperties
     - support for multiple transported species in a single case (see the notes
   for porousScalarTransportFoam)
+  - epsTotal now defaults to 1
 
 - groundwaterTransport2DFoam
 
@@ -60,6 +63,7 @@
   transport (porousScalarTransport2DFoam)
   - support for multiple transported species in a single case (see the notes
   for porousScalarTransportFoam)
+  - epsTotal now defaults to 1
 
 ### Libraries
 
