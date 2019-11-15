@@ -18,7 +18,7 @@ forAll(composition.Y(), speciesi)
             - R * theta * fvm::Sp(lambda,C)
         );
 
-    CEqn.solve();
+    CEqn.solve("C");
 
     dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
 
