@@ -15,10 +15,20 @@ IOdictionary transportProperties
     )
 );
 
-Info << nl << "Reading porosity field eps" << endl;
-dimensionedScalar eps
+Info<< "Reading porosity field eps (if present)" << endl;
+dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
+volScalarField eps
 (
-    transportProperties.lookupOrDefault("eps",dimensionedScalar("eps_default",dimless,1))
+    IOobject
+    (
+        "eps",
+        runTime.constant(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    epsScalar
 );
 
 Info<< "Reading phaseName" << endl;
