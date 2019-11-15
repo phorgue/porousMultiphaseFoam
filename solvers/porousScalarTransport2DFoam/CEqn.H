@@ -4,9 +4,9 @@ forAll(composition.Y(), speciesi)
     
     auto& C = composition.Y(speciesi);
     const auto& R = composition.R(speciesi);
-    const auto Deff = composition.Deff(speciesi, U, eps);
+    const auto& Deff = composition.Deff(speciesi, U, eps);
     const auto& lambda = composition.lambda(speciesi);
-    const auto sourceTerm = composition.sourceTerm(speciesi);
+    const auto& sourceTerm = composition.sourceTerm(speciesi);
 
     fvScalarMatrix CEqn
         (
