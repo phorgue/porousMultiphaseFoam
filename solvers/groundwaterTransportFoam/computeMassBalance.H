@@ -33,7 +33,7 @@
         const auto& speciesName = composition.species()[speciesi];
         const auto& C = composition.Y(speciesi);
         const auto& R = composition.R(speciesi);
-        const auto sourceTerm_tracer = composition.sourceTerm(speciesi);
+        const auto& sourceTerm_tracer = composition.sourceTerm(speciesi);
 
         Info << speciesName << " mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm_tracer).value() << " ; ";
         forAll(phi.boundaryField(),patchi)
