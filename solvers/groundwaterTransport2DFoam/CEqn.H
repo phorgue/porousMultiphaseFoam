@@ -22,7 +22,7 @@ forAll(composition.Y(), speciesi)
             - fvm::Sp(seepageTerm,C)
         );
 
-    CEqn.solve();
+    CEqn.solve("C");
 
     dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
 
