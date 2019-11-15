@@ -180,6 +180,23 @@ Foam::tmp<Foam::volTensorField> Foam::multiscalarMixture::Deff
 }
 
 
+template<typename SaturationType, typename EpsType>
+Foam::tmp<Foam::volTensorField> Foam::multiscalarMixture::Deff
+(
+    const label speciesi,
+    const volVectorField& U,
+    const SaturationType& saturation,
+    const EpsType& eps
+) const
+{
+    auto& dispersionModel = dispersionModels_[speciesi];
+
+    dispersionModel.correct(Y(speciesi), U, saturation, eps);
+
+    return dispersionModel.Deff();
+}
+
+
 inline Foam::tmp<Foam::volScalarField> Foam::multiscalarMixture::sourceTerm(const label speciesi) const
 {
     if (sourceEvents_(speciesi))
