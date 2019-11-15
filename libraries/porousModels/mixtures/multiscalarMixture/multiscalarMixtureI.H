@@ -78,7 +78,7 @@ Foam::multiscalarMixture::multiscalarMixture
         Info << "    " << lambdas_[speciesi].name() << " : " << lambdas_[speciesi].value() << endl;
         Info << "}" << endl;
 
-        Info << nl << "Computing retard coefficient R = ";
+        Info << nl << "Computing retard coefficient: ";
 
         R_.set
         (
@@ -99,7 +99,7 @@ Foam::multiscalarMixture::multiscalarMixture
         );
 
         R_[speciesi] =  1 + (1-epsTotal) * rs * Kd / eps;
-        Info << R_[speciesi] << endl; //TODO: print format
+        Info << "Min(R) = " << gMin(R_[speciesi]) << " Max(R) = " << gMax(R_[speciesi]) << endl;
 
         //- creation of dispersion model
         dispersionModels_.set(speciesi, dispersionModel::New("DeffModel", speciesDict, mesh));
