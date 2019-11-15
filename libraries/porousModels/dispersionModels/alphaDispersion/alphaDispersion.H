@@ -115,22 +115,6 @@ public:
                 if (C.boundaryField().types()[patchi] == "eventFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
             }
         }
-
-    //- Correct the dispersion giving saturation and porosity field
-    void correct(const volScalarField& C, const volVectorField& U, const volScalarField& saturation, const volScalarField& eps)
-        {
-            volScalarField theta = eps*saturation;
-            theta.dimensions().reset(dimless);
-            correct(C,U,theta);
-        }
-
-    //- Correct the dispersion giving saturation and scalar porosity
-    void correct(const volScalarField& C, const volVectorField& U, const volScalarField& saturation, const dimensionedScalar& eps)
-        {
-            volScalarField theta = eps*saturation;
-            theta.dimensions().reset(dimless);
-            correct(C,U,theta);
-        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

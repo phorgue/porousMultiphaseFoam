@@ -150,28 +150,40 @@ public:
         const volScalarField& theta
     ) = 0;
 
-    //- Correct the dispersion giving scalar porosity
+    //- Correct the dispersion giving scalar porosity or water content
     virtual void correct(
         const volScalarField& C,
         const volVectorField& U,
         const dimensionedScalar& eps
-    ) = 0;
+    )
+        {
+            volScalarField theta
+            (
+                IOobject
+                (
+                    "theta",
+                    C.time().constant(),
+                    C.mesh(),
+                    IOobject::NO_READ
+                ),
+                C.mesh(),
+                eps
+            );
 
-    //- Correct the dispersion giving saturation and porosity field
-    virtual void correct(
+            return correct(C, U, theta);
+        }
+
+    //- Correct the dispersion giving both saturation and porosity (as scalars or fields)
+    template<typename SaturationType, typename EpsType>
+    void correct(
         const volScalarField& C,
         const volVectorField& U,
-        const volScalarField& saturation,
-        const volScalarField& eps
-    ) = 0;
-
-    //- Correct the dispersion giving saturation and scalar porosity
-    virtual void correct(
-        const volScalarField& C,
-        const volVectorField& U,
-        const volScalarField& saturation,
-        const dimensionedScalar& eps
-    ) = 0;
+        const SaturationType& saturation,
+        const EpsType& eps
+    )
+        {
+            correct(C, U, eps*saturation);
+        }
 };
 
 
