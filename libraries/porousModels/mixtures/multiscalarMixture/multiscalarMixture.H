@@ -97,6 +97,16 @@ public:
             const ThetaType& theta
         ) const;
 
+        template<typename SaturationType, typename EpsType>
+        tmp<volTensorField> Deff
+        (
+            const label speciesi,
+            const volVectorField& U,
+            const SaturationType& saturation,
+            const EpsType& eps
+        ) const;
+
+
         //- Source term [dimSourceTerm]
         inline tmp<volScalarField> sourceTerm(const label speciesi) const;
 
