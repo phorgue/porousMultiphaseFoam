@@ -3,7 +3,7 @@ forAll(composition.Y(), speciesi)
     const auto& speciesName = composition.species()[speciesi];
     const auto& C = composition.Y(speciesi);
     const auto& R = composition.R(speciesi);
-    const auto sourceTerm = composition.sourceTerm(speciesi);
+    const auto& sourceTerm = composition.sourceTerm(speciesi);
 
     //- terminal display
     Info << speciesName << " mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
