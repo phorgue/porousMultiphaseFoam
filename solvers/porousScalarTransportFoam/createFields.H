@@ -15,58 +15,53 @@ IOdictionary transportProperties
     )
 );
 
-//- dictionary for handling event time from boundary conditions
-IOdictionary patchEventFiles
+Info<< "Reading porosity field eps (if present)" << endl;
+dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
+volScalarField eps
 (
     IOobject
     (
-        "patchEventFiles",
+        "eps",
         runTime.constant(),
         mesh,
-        IOobject::NO_READ,
+        IOobject::READ_IF_PRESENT,
         IOobject::NO_WRITE
-    )
-);
-
-Info << nl << "Reading concentration field C" << endl;
-volScalarField C
-(
-    IOobject
-    (
-        "C",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
     ),
-    mesh
+    mesh,
+    epsScalar
 );
 
-Info<< "Reading porosity value eps\n" << endl;
-dimensionedScalar eps
+//- Looking for 2nd order time-scheme for source term
+bool isBackwardScheme = false;
+if (word(mesh.ddtScheme("source")) == "backward")
+{
+    isBackwardScheme = true;
+}
+
+//- list that receives event files for active event-based boundary conditions
+List<patchEventFile*> patchEventList;
+eventFlux::setEventFileRegistry(patchEventList);
+
+List<sourceEventFile*> sourceEventList;
+
+wordList speciesNames(transportProperties.lookupOrDefault("species", wordList(1, "C")));
+
+Info<< "Reading composition\n" << endl;
+
+multiscalarMixture composition
 (
-    transportProperties.lookupOrDefault("eps",dimensionedScalar("eps_default",dimless,1))
+    transportProperties,
+    speciesNames,
+    mesh,
+    word::null,
+    eps,
+    isBackwardScheme,
+    &sourceEventList
 );
 
-Info<< "Reading porous transport properties" << endl;
-dictionary porousTransport(transportProperties.subDict("porousTransport"));
-word phaseName(porousTransport.lookupOrDefault<word>("phaseName",""));
-dimensionedScalar Kd(porousTransport.lookupOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
-dimensionedScalar rs(porousTransport.lookupOrDefault("rs",dimensionedScalar("rs_default",dimensionSet(1,-3,0,0,0),0.)));
-dimensionedScalar epsTotal(porousTransport.lookupOrDefault("epsTotal",dimensionedScalar("epsTotal_default",dimless,0.)));
-dimensionedScalar lambda(porousTransport.lookupOrDefault("lambda",dimensionedScalar("lambda_default",dimensionSet(0,0,-1,0,0),0.)));
 
-Info << nl << "porousTransport parameters" << nl << "{" << endl;
-Info << "    " << "phaseName " << " : " << phaseName << endl;
-Info << "    " << Kd.name() << " : " << Kd.value() << endl;
-Info << "    " << rs.name() << " : " << rs.value() << endl;
-Info << "    " << epsTotal.name() << " : " << epsTotal.value() << endl;
-Info << "    " << lambda.name() << " : " << lambda.value() << endl;
-Info << "}" << endl;
-
-Info << nl << "Computing retard coefficient R = ";
-scalar R =  1 + (1-epsTotal.value()) * rs.value() * Kd.value() / eps.value();
-Info << R << endl;
+Info<< "Reading phaseName" << endl;
+word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDefault<word>("phaseName",""));
 
 ///////////////////////////////////////////////////////////////////
 ////////////////////// POTENTIAL-SATURATION ///////////////////////
@@ -160,50 +155,31 @@ else
     Info<< nl << "Computing field phi" << phaseName << " from field U" << phaseName << endl;
 }
 
-//- creation of dispersion model
-autoPtr<dispersionModel> DeffModel= dispersionModel::New("DeffModel",transportProperties,mesh);
-
-///////////////////////////////////////////////////////////////////
-////////////////////////// FORCING TERMS //////////////////////////
-///////////////////////////////////////////////////////////////////
-
-//- Source term
-volScalarField sourceTerm
-(
-    IOobject
-    (
-        "sourceTerm",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("",dimMass/(dimVol*dimTime),0)
-);
-
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
 
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////
 ////////////////////////////////////////////////////
 
 bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
-OFstream CmassBalanceCSV("CmassBalance.csv");
+PtrList<OFstream> CmassBalanceCSVs;
 if (CSVoutput)
 {
-    CmassBalanceCSV << "#Time TotalMass(kg)";
-    forAll(mesh.boundaryMesh(),patchi)
+    CmassBalanceCSVs.resize(composition.Y().size());
+
+    forAll(composition.Y(), speciesi)
     {
-        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        CmassBalanceCSVs.set(speciesi, new OFstream(composition.species()[speciesi] + "massBalance.csv"));
+
+        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
+
+        CmassBalanceCSV << "#Time TotalMass(kg)";
+        forAll(mesh.boundaryMesh(),patchi)
         {
-            CmassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            if (mesh.boundaryMesh()[patchi].type() == "patch")
+            {
+                CmassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            }
         }
+        CmassBalanceCSV << endl;
     }
-    CmassBalanceCSV << endl;
 }

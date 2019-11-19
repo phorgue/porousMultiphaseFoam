@@ -7,24 +7,10 @@ if (sourceEventIsPresent)
     sourceEvent.storeOldValues();
 }
 
-List<patchEventFile*> patchEventList;
-bool patchEventIsPresent = false;
-if (patchEventFiles.size() > 0)
+forAll(patchEventList,patchEventi)
 {
-    patchEventIsPresent = true;
-    if(patchEventFiles.found("eventInfiltration"))
-    {
-        patchEventList.append(new patchEventFile(patchEventFiles["eventInfiltration"]));
-    }
-}
-
-if (patchEventIsPresent)
-{
-    forAll(patchEventList,patchEventi)
-    {
-        patchEventList[patchEventi]->update(runTime.startTime().value());
-        patchEventList[patchEventi]->storeOldValues();
-    }
+    patchEventList[patchEventi]->update(runTime.startTime().value());
+    patchEventList[patchEventi]->storeOldValues();
 }
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");

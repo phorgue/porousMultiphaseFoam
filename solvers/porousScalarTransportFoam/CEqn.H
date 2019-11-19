@@ -1,23 +1,30 @@
+forAll(composition.Y(), speciesi)
 {
-    //- update dispersion tensor coefficient
-    DeffModel->correct(C,U,Saturation,eps);
-
-    volTensorField Deff = eps*Saturation*DeffModel->Deff();
+    const auto& speciesName = composition.species()[speciesi];
+    
+    auto& C = composition.Y(speciesi);
+    const auto& R = composition.R(speciesi);
+    const auto& Deff = composition.Deff(speciesi, U, Saturation, eps);
+    const auto& lambda = composition.lambda(speciesi);
+    const auto& sourceTerm = composition.sourceTerm(speciesi);
 
     fvScalarMatrix CEqn
         (
             eps * R * Saturation * fvm::ddt(C)
             + fvm::div(phi, C, "div(phi,C)")
-            - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
+            - fvm::laplacian(eps*Saturation*Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm
             - eps * R * Saturation * fvm::Sp(lambda,C)
         );
 
-    CEqn.solve();
+    CEqn.solve("C");
 
-    dCdTmax = max(mag(fvc::ddt(C))).value();
+    dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
 
-    Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " mass(C) = " << fvc::domainIntegrate(R*C*Saturation*eps).value() << endl;
+    Info<< "Concentration Min(" << speciesName << ") = " << min(C).value() 
+        << " Max(" << speciesName << ") = " << max(C).value() 
+        << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*Saturation*eps).value() 
+        << endl;
 
 }

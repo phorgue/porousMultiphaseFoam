@@ -98,7 +98,7 @@ public:
             dkradS_ *= kramax_;
 
             dkrbdS_ = 0.5 * (1-pow((1-pow(Se_,1/m_)),m_));
-            dkrbdS_ *= ( 4 * pow(Se_,1/m_-1/2) * pow( (1-pow(Se_,1/m_)) , m_-1)) - ( pow((1-pow(Se_,1/m_)),m_) -1) / pow(Se_,0.5);
+            dkrbdS_ *= ( 4 * pow(Se_,1/m_-0.5) * pow( (1-pow(Se_,1/m_)) , m_-1)) - ( pow((1-pow(Se_,1/m_)),m_) -1) / pow(Se_,0.5);
             dkrbdS_ *= 1/(Smax_ - Smin_);
             dkrbdS_ *= krbmax_;
         }

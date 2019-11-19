@@ -87,7 +87,14 @@ scalar dCresidual =
     runTime.controlDict().lookupOrDefault<scalar>("dCresidual",1e-6);
 scalar dCmax =
     runTime.controlDict().lookupOrDefault<scalar>("dCmax",0.01);
-scalar dCdTmax = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
+
+scalarList dCdTmax(composition.Y().size());
+forAll(composition.Y(), speciesi)
+{
+    const auto& C = composition.Y(speciesi);
+    dCdTmax[speciesi] = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
+}
+
 scalar dCrelative = 0;
 
 // ************************************************************************* //
