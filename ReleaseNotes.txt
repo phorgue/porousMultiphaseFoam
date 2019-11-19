@@ -37,12 +37,14 @@
   directly from transportProperties). This support has also been extended to 
   all transport solvers in the toolbox.
   - epsTotal now defaults to 1
+  - eps can now be passed either as a scalar or as a field
 
 - porousScalarTransport2DFoam
 
   - support for multiple transported species in a single case (see the notes
   for porousScalarTransportFoam)
   - epsTotal now defaults to 1
+  - eps can now be passed either as a scalar or as a field
   
 - groundwaterTransportFoam
 
@@ -56,6 +58,7 @@
     - support for multiple transported species in a single case (see the notes
   for porousScalarTransportFoam)
   - epsTotal now defaults to 1
+  - eps can now be passed either as a scalar or as a field
 
 - groundwaterTransport2DFoam
 
