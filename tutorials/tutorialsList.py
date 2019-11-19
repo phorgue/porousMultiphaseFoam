@@ -15,6 +15,7 @@ tutorials = [{'solver' : "impesFoam", 'case' : "Buckley-Leverett/BrooksAndCorey"
              {'solver' : "darcyFoam", 'case' : "SPE10"}, \
              {'solver' : "porousScalarTransportFoam", 'case' : "1DeventFlux"}, \
              {'solver' : "porousScalarTransportFoam", 'case' : "alphaDispersion"}, \
+             {'solver' : "porousScalarTransportFoam", 'case' : "1DeventFlux_multispecies"}, \
              {'solver' : "porousScalarTransport2DFoam", 'case' : "alphaDispersion"}, \
              {'solver' : "groundwater2DFoam", 'case' : "1Dwave_hFixed"}, \
              {'solver' : "groundwater2DFoam", 'case' : "1Dwave_UFixed"}, \

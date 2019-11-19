@@ -27,6 +27,14 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "surfaceFields.H"
 
+
+Foam::List<Foam::patchEventFile*>* Foam::eventInfiltration::eventFileRegistry_ = NULL;
+
+void Foam::eventInfiltration::setEventFileRegistry(List<patchEventFile*>& eventFileRegistry)
+{
+    eventFileRegistry_ = &eventFileRegistry;
+}
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::eventInfiltration::
@@ -69,9 +77,9 @@ eventInfiltration
     if (eventFileName != "")
     {
         //- Check if patchEventFile
-        if (this->db().foundObject<IOdictionary>("patchEventFiles"))
+        if (eventFileRegistry_)
         {
-            this->db().lookupObjectRef<IOdictionary>("patchEventFiles").add("eventInfiltration",eventFileName);
+            eventFileRegistry_->append(&eventFile_);
         }
         else
         {

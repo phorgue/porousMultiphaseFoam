@@ -35,11 +35,13 @@ Developer
 #include "fvCFD.H"
 #include "fixedValueFvPatchField.H"
 #include "MNTfile.H"
-#include "dispersionModel.H"
+#include "multiscalarMixture.H"
 #include "infiltrationEventFile.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
 #include "patchEventFile.H"
+#include "eventInfiltration.H"
+#include "eventFlux.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -62,17 +64,16 @@ int main(int argc, char *argv[])
     {
         if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
         if (infiltrationEventIsPresent) infiltrationEvent.update(runTime.timeOutputValue());
-        if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
-        if (patchEventIsPresent) forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
+        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->update(runTime.timeOutputValue());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Update water infiltration and tracer injection source term
+        //- Update water infiltration
         #include "computeInfiltration.H"
-        #include "computeSourceTerm.H"
 
         //- Solve potential equation
         #include "potentialEqn.H"

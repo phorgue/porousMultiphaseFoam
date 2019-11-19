@@ -8,16 +8,6 @@ if (infiltrationEventIsPresent)
     infiltrationEvent.storeOldValues();
 }
 
-//- Tracer injection event
-bool sourceEventIsPresent = transportProperties.found("eventFileTracerSource");
-word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileTracerSource","");
-sourceEventFile sourceEvent(sourceEventFileName);
-if (sourceEventIsPresent)
-{
-    sourceEvent.update(runTime.startTime().value());
-    sourceEvent.storeOldValues();
-}
-
 //- Updating infiltration value using event file
 if (infiltrationEventIsPresent)
 {
@@ -41,41 +31,11 @@ if (infiltrationEventIsPresent)
     }
 }
 
-//- determining cell id corresponding tracer injection points
-labelList idCoordinates(sourceEvent.ncoordinates());
-if (sourceEventIsPresent)
-{
-    sourceTerm.primitiveFieldRef() = 0;
-    forAll(sourceEvent.coordinates(),pointi)
-    {
-        idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);
-        sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
-    }
-}
-
 //- patch event reader for time step managing
-List<patchEventFile*> patchEventList;
-bool patchEventIsPresent = false;
-if (patchEventFiles.size() > 0)
+forAll(patchEventList,patchEventi)
 {
-    patchEventIsPresent = true;
-    if(patchEventFiles.found("eventInfiltration"))
-    {
-        patchEventList.append(new patchEventFile(patchEventFiles["eventInfiltration"]));
-    }
-    if(patchEventFiles.found("eventFlux"))
-    {
-        patchEventList.append(new patchEventFile(patchEventFiles["eventFlux"]));
-    }
-}
-
-if (patchEventIsPresent)
-{
-    forAll(patchEventList,patchEventi)
-    {
-        patchEventList[patchEventi]->update(runTime.startTime().value());
-        patchEventList[patchEventi]->storeOldValues();
-    }
+    patchEventList[patchEventi]->update(runTime.startTime().value());
+    patchEventList[patchEventi]->storeOldValues();
 }
 
 //- Output event reading
