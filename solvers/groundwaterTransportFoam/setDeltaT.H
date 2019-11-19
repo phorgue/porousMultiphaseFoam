@@ -45,7 +45,16 @@ if(adjustTimeStep)
     else
     {
         //- C-variation control
-        scalar dtForC =  max(dCmax*gMax(C),dCresidual)/(dCdTmax+SMALL);
+        scalar dtForC = VGREAT;
+        forAll(composition.Y(), speciesi)
+        {
+            const auto& C = composition.Y(speciesi);
+            dtForC = min
+            (
+                dtForC,
+                max(dCmax*gMax(C),dCresidual)/(dCdTmax[speciesi]+SMALL)
+            );
+        }
 
         //- Timestep using number of Picard's iterations
         if (timeStepControl == "Picard")
@@ -104,7 +113,7 @@ if(adjustTimeStep)
     if (eventTimeTracking)
     {
         if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
-        if (eventIsPresent_tracer) timeOfNextEvent = min(timeOfNextEvent,event_tracer.currentEventEndTime());
+        forAll(tracerSourceEventList,tracerSourceEventi) timeOfNextEvent = min(timeOfNextEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime());
     }
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
@@ -129,21 +138,18 @@ if(adjustTimeStep)
                     timeToCloseEvent = min(timeToCloseEvent,event_water.currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
-            if (eventIsPresent_tracer)
+            forAll(tracerSourceEventList,tracerSourceEventi)
             {
-                if (event_tracer.currentEventEndTime() != runTime.timeOutputValue())
+                if (tracerSourceEventList[tracerSourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    timeToCloseEvent = min(timeToCloseEvent,event_tracer.currentEventEndTime()-runTime.timeOutputValue());
+                    timeToCloseEvent = min(timeToCloseEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
-            if (patchEventIsPresent)
+            forAll(patchEventList,patchEventi)
             {
-                forAll(patchEventList,patchEventi)
+                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
-                    {
-                        timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
-                    }
+                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
         }

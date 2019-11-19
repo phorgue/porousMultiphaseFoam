@@ -38,10 +38,12 @@ Developers
 #include "incompressiblePhase.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
-#include "dispersionModel.H"
+#include "multiscalarMixture.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
 #include "patchEventFile.H"
+#include "eventInfiltration.H"
+#include "eventFlux.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -68,8 +70,8 @@ int main(int argc, char *argv[])
     {
         if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
         if (eventIsPresent_water)  event_water.update(runTime.timeOutputValue());
-        if (eventIsPresent_tracer) event_tracer.update(runTime.timeOutputValue());
-        if (patchEventIsPresent) forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
+        forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->update(runTime.timeOutputValue());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;
@@ -77,8 +79,8 @@ int main(int argc, char *argv[])
 noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Compute source terms
-        #include "computeSourceTerms.H"
+        //- Compute source term
+        #include "computeSourceTerm.H"
 
         //- 1) Richard's equation
         scalar resPicard=GREAT;
@@ -114,7 +116,17 @@ noConvergence :
 
         //- 2) scalar transport
         #include "CEqn.H"
-        dCrelative = dCdTmax*runTime.deltaTValue()/(gMax(C)+SMALL);
+        dCrelative = 0;
+        forAll(composition.Y(), speciesi)
+        {
+            const auto& C = composition.Y(speciesi);
+
+            dCrelative = max
+            (   
+                dCrelative,
+                dCdTmax[speciesi]*runTime.deltaTValue()/(gMax(C)+SMALL)
+            );
+        }
 
         //- C and water mass balance computation
         #include "computeMassBalance.H"
