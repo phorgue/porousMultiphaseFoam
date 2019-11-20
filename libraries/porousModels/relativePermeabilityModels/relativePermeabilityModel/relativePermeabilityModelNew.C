@@ -45,8 +45,7 @@ Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::
     {
         FatalErrorIn
             (
-                "relativePermeabilityModel::New(const volVectorField&, "
-                "const surfaceScalarField&)"
+                "relativePermeabilityModel::New(const word&,const dictionary&,const volScalarField&)"
             )   << "Unknown relativePermeabilityModel type "
                 << modelType << nl << nl
                 << "Valid relativePermeabilityModels are : " << endl
