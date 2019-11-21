@@ -8,6 +8,13 @@ if (infiltrationEventIsPresent)
     infiltrationEvent.storeOldValues();
 }
 
+//- Tracer injection event
+forAll(sourceEventList,sourceEventi)
+{
+    sourceEventList[sourceEventi]->update(runTime.startTime().value());
+    sourceEventList[sourceEventi]->storeOldValues();
+}
+
 //- Updating infiltration value using event file
 if (infiltrationEventIsPresent)
 {

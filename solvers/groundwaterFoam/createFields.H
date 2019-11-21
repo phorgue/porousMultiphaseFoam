@@ -135,13 +135,6 @@ volScalarField sourceTerm
     dimensionedScalar("",dimless/dimTime,0)
 );
 
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
-
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////
 ////////////////////////////////////////////////////
