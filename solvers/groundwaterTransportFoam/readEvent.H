@@ -17,17 +17,7 @@ volScalarField sourceTerm_water
     dimensionedScalar("",dimless/dimTime,0)
 );
 
-labelList idCoordinates_water(event_water.ncoordinates());
-label currentEvent_water = 0;
-if (eventIsPresent_water)
-{
-    sourceTerm_water = dimensionedScalar("",dimless/dimTime,0);
-    forAll(event_water.coordinates(),pointi)
-    {
-        idCoordinates_water[pointi] = mesh.findNearestCell(event_water.coordinates()[pointi]);
-        sourceTerm_water[idCoordinates_water[pointi]] = event_water.datas()[currentEvent_water][pointi]/mesh.V()[idCoordinates_water[pointi]];
-    }
-}
+event_water.setFieldProperties(mesh, sourceTerm_water.dimensions());
 
 //- patch event reader for time step managing
 forAll(patchEventList,patchEventi)

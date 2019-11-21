@@ -1,3 +1,9 @@
+forAll(sourceEventList,sourceEventi)
+{
+	sourceEventList[sourceEventi]->update(runTime.startTime().value());
+	sourceEventList[sourceEventi]->storeOldValues();
+}
+
 forAll(patchEventList,patchEventi)
 {
     patchEventList[patchEventi]->update(runTime.startTime().value());

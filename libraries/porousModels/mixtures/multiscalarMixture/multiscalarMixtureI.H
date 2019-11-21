@@ -30,7 +30,6 @@ Foam::multiscalarMixture::multiscalarMixture
     const fvMesh& mesh,
     const word& phaseName,
     const EpsType& eps,
-    bool isBackwardScheme,
     List<sourceEventFile*>* events,
     const dimensionSet& dimSourceTerm
 )
@@ -40,8 +39,6 @@ Foam::multiscalarMixture::multiscalarMixture
     lambdas_(speciesNames.size()),
     dispersionModels_(speciesNames.size()),
     sourceEvents_(speciesNames.size()),
-    sourceEventCoordinateIds_(speciesNames.size()),
-    isBackwardScheme_(isBackwardScheme),
     zeroSourceTerm_
     (
         IOobject
@@ -108,32 +105,15 @@ Foam::multiscalarMixture::multiscalarMixture
         //- read source event if present
         if(speciesDict.found("eventFileTracerSource"))
         {
-
             word sourceEventFileName = speciesDict.lookupOrDefault<word>("eventFileTracerSource","");
             sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
 
-            auto& sourceEvent = sourceEvents_[speciesi];
-            const auto& runTime = mesh.time();
-
-            sourceEvent.update(runTime.startTime().value());
-            sourceEvent.storeOldValues();
-
-            //- determining cell id corresponding to datas
-            auto& idCoordinates = sourceEventCoordinateIds_[speciesi];
-
-            idCoordinates = labelList(sourceEvent.ncoordinates());
-
-            //sourceTerm.primitiveFieldRef() = 0;
-            forAll(sourceEvent.coordinates(),pointi)
-            {
-                idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);
-                //sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
-            }
+            sourceEvents_.last().setFieldProperties(mesh, dimSourceTerm);
 
             //- report found event to caller
             if(events)
             {
-                events->append(&sourceEvents_[speciesi]);
+                events->append(&sourceEvents_.last());
             }
             else
             {
@@ -201,33 +181,7 @@ inline Foam::tmp<Foam::volScalarField> Foam::multiscalarMixture::sourceTerm(cons
 {
     if (sourceEvents_(speciesi))
     {
-        const auto& sourceEvent = sourceEvents_[speciesi];
-        const auto& idCoordinates = sourceEventCoordinateIds_[speciesi];
-        const auto& mesh = Y(speciesi).mesh();
-        const auto& runTime = mesh.time();
-
-        //- compute source term
-        tmp<volScalarField> tSourceTerm(new volScalarField(zeroSourceTerm_));
-        auto& sourceTerm = tSourceTerm.ref();
-        if (isBackwardScheme_)
-        {
-            scalar coefft0_00 = runTime.deltaTValue()/(runTime.deltaTValue() + runTime.deltaT0Value());
-            scalar coefftn_0 = 1 + coefft0_00;
-
-            forAll(sourceEvent.coordinates(),pointi)
-            {
-                sourceTerm[idCoordinates[pointi]] += (coefftn_0*sourceEvent.currentValue(pointi) - coefft0_00*sourceEvent.oldValue(pointi))/mesh.V()[idCoordinates[pointi]];
-            }
-        }
-        else
-        {
-            forAll(sourceEvent.coordinates(),pointi)
-            {
-                sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
-            }
-        }
-
-        return tSourceTerm;
+        return sourceEvents_[speciesi].dtValuesAsField();
     }
     else return zeroSourceTerm_;
 }

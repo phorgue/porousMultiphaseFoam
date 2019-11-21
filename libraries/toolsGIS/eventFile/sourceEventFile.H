@@ -75,6 +75,9 @@ private:
     label ncoordinates_;
     List<point> coordinates_;
 
+    autoPtr<volScalarField> zeroField_;
+    labelList idCoordinates_;
+
 public:
 
     // Constructors    
@@ -100,6 +103,11 @@ public:
     //- Access function
     const label& ncoordinates() const {return ncoordinates_;}
     const List<point>& coordinates() const {return coordinates_;}
+
+
+    //- Access as a volScalarField
+    void setFieldProperties(const fvMesh& mesh, const dimensionSet& dim);
+    tmp<volScalarField> dtValuesAsField() const;
 
 };
 
