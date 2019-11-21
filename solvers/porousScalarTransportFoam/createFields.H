@@ -31,13 +31,6 @@ volScalarField eps
     epsScalar
 );
 
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
-
 //- list that receives event files for active event-based boundary conditions
 List<patchEventFile*> patchEventList;
 eventFlux::setEventFileRegistry(patchEventList);
@@ -55,7 +48,6 @@ multiscalarMixture composition
     mesh,
     word::null,
     eps,
-    isBackwardScheme,
     &sourceEventList
 );
 

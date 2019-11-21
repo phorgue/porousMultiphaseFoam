@@ -46,7 +46,6 @@ eventInfiltration
     :
     fixedValueFvPatchVectorField(h, iF),
     fixedInfiltrationValue_(0.),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -62,17 +61,11 @@ eventInfiltration
     :
     fixedValueFvPatchVectorField(h, iF, dict, false),
     fixedInfiltrationValue_(dict.lookupOrDefault<scalar>("constantValue",0.)),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {
     word eventFileName = dict.lookupOrDefault<word>("eventFile","");
     Info << nl << "eventFileName " << eventFileName << endl;
-    //- Read if backward time scheme is used
-    if (word(internalField().mesh().ddtScheme("source")) == "backward")
-    {
-        isBackwardScheme_ = true;
-    }
 
     if (eventFileName != "")
     {
@@ -114,13 +107,6 @@ eventInfiltration
     {
         Info << "eventInfiltration boundary condition without event file" << endl;
     }
-
-    //- Read if backward time scheme is used
-    if (word(internalField().mesh().ddtScheme("source")) == "backward")
-    {
-        isBackwardScheme_ = true;
-    }
-
 }
 
 
@@ -135,7 +121,6 @@ eventInfiltration
 :
     fixedValueFvPatchVectorField(ptf, h, iF, mapper),
     fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -149,7 +134,6 @@ eventInfiltration
 :
     fixedValueFvPatchVectorField(ptf),
     fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -164,7 +148,6 @@ eventInfiltration
 :
     fixedValueFvPatchVectorField(ptf, iF),
     fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -183,18 +166,8 @@ void Foam::eventInfiltration::updateCoeffs()
 
     if (patchEventID_ != -1)
     {
-        if (isBackwardScheme_)
-        {
-            scalar deltaT =this->db().time().deltaT().value();
-            scalar deltaT0 =this->db().time().deltaT0().value();
-            scalar coefft0_00 = deltaT/(deltaT + deltaT0);
-            scalar coefftn_0 = 1 + coefft0_00;
-            valueEvent = coefftn_0*eventFile_.currentValue(patchEventID_) - coefft0_00*eventFile_.oldValue(patchEventID_);
-        }
-        else
-        {
-            valueEvent = eventFile_.currentValue(patchEventID_);
-        }
+
+        valueEvent = eventFile_.dtValue(patchEventID_, this->db().time(), this->internalField().mesh().ddtScheme("source"));
 
         //- Updating event value
         eventFile_.update(this->db().time().value());
