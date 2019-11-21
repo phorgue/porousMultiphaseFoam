@@ -73,7 +73,6 @@ public:
             const fvMesh& mesh,
             const word& phaseName,
             const EpsType& eps,
-            bool isBackwardScheme = false,
             List<sourceEventFile*>* events = nullptr,
             const dimensionSet& dimSourceTerm = dimMass/(dimVol*dimTime)
         );
@@ -115,9 +114,7 @@ private:
     List<dimensionedScalar> lambdas_;
     mutable PtrList<dispersionModel> dispersionModels_;
     PtrList<sourceEventFile> sourceEvents_;
-    List<labelList> sourceEventCoordinateIds_;
 
-    bool isBackwardScheme_;
     const volScalarField zeroSourceTerm_;
 };
 

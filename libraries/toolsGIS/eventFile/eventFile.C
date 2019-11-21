@@ -144,3 +144,51 @@ void Foam::eventFile::addIntermediateTimeSteps(const scalar& smallDeltaT)
     }
     ndates_ = (ndates_-2)*3+2;
 }
+
+
+Foam::scalar Foam::eventFile::dtValue
+(
+    const label& id,
+    const TimeState& time,
+    const word& ddtScheme
+) const
+{
+
+    if (ddtScheme == "backward")
+    {
+        scalar deltaT = time.deltaT().value();
+        scalar deltaT0 = time.deltaT0().value();
+        
+        scalar coefft0_00 = deltaT/(deltaT + deltaT0);
+        scalar coefftn_0 = 1 + coefft0_00;
+        
+        return coefftn_0*this->currentValue(id) - coefft0_00*this->oldValue(id);
+    }
+    else if (ddtScheme == "Euler")
+    {
+        return this->currentValue(id);
+    }
+
+    FatalErrorIn("events.C")
+        << "ddtScheme " << ddtScheme << " unsupported"
+        << abort(FatalError);
+    return 0;
+}
+
+Foam::scalarList Foam::eventFile::dtValues
+(
+    const TimeState& time,
+    const word& ddtScheme
+) const
+{
+
+    scalarList ret(currentValues().size());
+    
+    forAll(ret, id)
+    {
+        ret[id] = dtValue(id, time, ddtScheme);
+    }
+
+    return ret;
+}
+

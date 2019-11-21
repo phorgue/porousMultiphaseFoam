@@ -34,13 +34,6 @@ volScalarField eps
 Info<< "Reading phaseName" << endl;
 word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDefault<word>("phaseName",""));
 
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
-
 //- list that receives pointers to the event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
 eventFlux::setEventFileRegistry(patchEventList);
@@ -56,7 +49,6 @@ multiscalarMixture composition
     mesh,
     word::null,
     eps,
-    isBackwardScheme,
     &sourceEventList,
     dimMass*dimLength/(dimVol*dimTime)
 );

@@ -86,9 +86,6 @@ protected:
     //- Fixed flux value
     scalar fixedInfiltrationValue_;
 
-    //- time scheme selector
-    bool isBackwardScheme_;
-
     //- Event list (optional)
     label patchEventID_;
     patchEventFile eventFile_;
