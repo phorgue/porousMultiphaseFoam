@@ -66,9 +66,6 @@ protected:
     
 public:
 
-    //- Runtime type information
-    TypeName("EulerD3dt3Scheme");
-
     // Constructors
 
         //- Construct from mesh
