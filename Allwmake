@@ -3,7 +3,7 @@ cd ${0%/*} || exit 1    # run from this directory
 set -x
 
 # Compiling libraries
-wmake libraries/finiteVolume
+wmake libraries/numericalMethods
 wmake libraries/porousModels
 wmake libraries/toolsGIS
 wmake libraries/porousBoundaryConditions
