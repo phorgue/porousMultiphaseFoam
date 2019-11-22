@@ -254,7 +254,7 @@ if (CSVoutput)
                 CmassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
             }
         }
-        CmassBalanceCSV << endl;
+        CmassBalanceCSV << " flux(fixedPoint)" << endl;
     }
 
 }
