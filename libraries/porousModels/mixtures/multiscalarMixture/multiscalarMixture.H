@@ -73,7 +73,8 @@ public:
             const fvMesh& mesh,
             const word& phaseName,
             const EpsType& eps,
-            List<sourceEventFile*>* events = nullptr,
+            List<sourceEventFile*>* eventFileRegistry = nullptr,
+            const word& dtFieldNameOverride = "",
             const dimensionSet& dimSourceTerm = dimMass/(dimVol*dimTime)
         );
 

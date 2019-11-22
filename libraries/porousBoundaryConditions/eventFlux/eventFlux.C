@@ -28,11 +28,17 @@ License
 #include "surfaceFields.H"
 
 
-Foam::List<Foam::patchEventFile*>* Foam::eventFlux::eventFileRegistry_ = NULL;
+Foam::List<Foam::patchEventFile*>* Foam::eventFlux::eventFileRegistry_ = nullptr;
+Foam::word Foam::eventFlux::dtFieldNameOverride_ = "";
 
-void Foam::eventFlux::setEventFileRegistry(List<patchEventFile*>& eventFileRegistry)
+void Foam::eventFlux::setEventFileRegistry
+(
+    List<patchEventFile*>* eventFileRegistry,
+    const word& dtFieldNameOverride
+)
 {
-    eventFileRegistry_ = &eventFileRegistry;
+    eventFileRegistry_ = eventFileRegistry;
+    dtFieldNameOverride_ = dtFieldNameOverride;
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -93,6 +99,9 @@ eventFlux
         eventFile_.read(eventFileName,true);
         eventFile_.update(this->db().time().startTime().value());
         eventFile_.storeOldValues();
+
+        const word& dtFieldName = dtFieldNameOverride_.empty() ? iF.name() : dtFieldNameOverride_;
+        eventFile_.setTimeScheme(dtFieldName, iF.mesh());
 
         //- Reading patch event file and adding intermediate time step
         scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",0);
@@ -189,18 +198,7 @@ void Foam::eventFlux::updateCoeffs()
 
     if (patchEventID_ != -1)
     {
-        if (isBackwardScheme_)
-        {
-            scalar deltaT =this->db().time().deltaT().value();
-            scalar deltaT0 =this->db().time().deltaT0().value();
-            scalar coefft0_00 = deltaT/(deltaT + deltaT0);
-            scalar coefftn_0 = 1 + coefft0_00;
-            valueEvent = coefftn_0*eventFile_.currentValue(patchEventID_) - coefft0_00*eventFile_.oldValue(patchEventID_);
-        }
-        else
-        {
-            valueEvent = eventFile_.currentValue(patchEventID_);
-        }
+        valueEvent = eventFile_.dtValue(patchEventID_);
 
         //- Updating event value
         eventFile_.update(this->db().time().value());
