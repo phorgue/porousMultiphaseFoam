@@ -175,6 +175,7 @@ Foam::scalar Foam::eventFile::dtValue(const label& id) const
     using Euler = fv::EulerDdtScheme<scalar>;
     using steadyState = fv::steadyStateDdtScheme<scalar>;
     using backward = fv::backwardDdtScheme<scalar>;
+    using CrankNicolson = fv::CrankNicolsonDdtScheme<scalar>;
 
     if (dynamic_cast<const backward*>(&scheme))
     {
@@ -186,7 +187,13 @@ Foam::scalar Foam::eventFile::dtValue(const label& id) const
         
         return coefftn_0*this->currentValue(id) - coefft0_00*this->oldValue(id);
     }
-    else if (dynamic_cast<const Euler*>(&scheme))
+    else if (const auto CNscheme = dynamic_cast<const CrankNicolson*>(&scheme))
+    {
+        const auto& ocCoeff = CNscheme->ocCoeff();
+
+        return (1 + ocCoeff)*this->currentValue(id) - ocCoeff*this->oldValue(id);
+    }
+    else if (dynamic_cast<const Euler*>(&scheme) || dynamic_cast<const steadyState*>(&scheme))
     {
         return this->currentValue(id);
     }
