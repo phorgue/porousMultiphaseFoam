@@ -23,7 +23,7 @@ License
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<typename EpsType>
-Foam::multiscalarMixture::multiscalarMixture
+inline Foam::multiscalarMixture::multiscalarMixture
 (
     const dictionary& dict,
     const wordList& speciesNames,
@@ -40,6 +40,7 @@ Foam::multiscalarMixture::multiscalarMixture
     lambdas_(speciesNames.size()),
     dispersionModels_(speciesNames.size()),
     sourceEvents_(speciesNames.size()),
+    sourceTerms_(speciesNames.size()),
     zeroSourceTerm_
     (
         IOobject
@@ -150,43 +151,54 @@ inline const Foam::dimensionedScalar& Foam::multiscalarMixture::lambda(const lab
 
 
 template<typename ThetaType>
-Foam::tmp<Foam::volTensorField> Foam::multiscalarMixture::Deff
+inline void Foam::multiscalarMixture::correct
 (
-    const label speciesi,
     const volVectorField& U,
     const ThetaType& theta
-) const
+)
 {
-    auto& dispersionModel = dispersionModels_[speciesi];
+    forAll(Y(), speciesi)
+    {
+        dispersionModels_[speciesi].correct(Y(speciesi), U, theta);
 
-    dispersionModel.correct(Y(speciesi), U, theta);
-
-    return dispersionModel.Deff();
+        if(sourceEvents_(speciesi))
+        {
+            sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
+        }
+    }
 }
 
-
 template<typename SaturationType, typename EpsType>
-Foam::tmp<Foam::volTensorField> Foam::multiscalarMixture::Deff
+inline void Foam::multiscalarMixture::correct
 (
-    const label speciesi,
     const volVectorField& U,
     const SaturationType& saturation,
     const EpsType& eps
-) const
+)
 {
-    auto& dispersionModel = dispersionModels_[speciesi];
+    forAll(Y(), speciesi)
+    {
+        dispersionModels_[speciesi].correct(Y(speciesi), U, saturation, eps);
 
-    dispersionModel.correct(Y(speciesi), U, saturation, eps);
-
-    return dispersionModel.Deff();
+        if(sourceEvents_(speciesi))
+        {
+            sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
+        }
+    }
 }
 
 
-inline Foam::tmp<Foam::volScalarField> Foam::multiscalarMixture::sourceTerm(const label speciesi) const
+inline const Foam::volTensorField& Foam::multiscalarMixture::Deff(const label speciesi) const
+{
+    return dispersionModels_[speciesi].Deff();
+}
+
+
+inline const Foam::volScalarField& Foam::multiscalarMixture::sourceTerm(const label speciesi) const
 {
     if (sourceEvents_(speciesi))
     {
-        return sourceEvents_[speciesi].dtValuesAsField();
+        return sourceTerms_[speciesi];
     }
     else return zeroSourceTerm_;
 }
