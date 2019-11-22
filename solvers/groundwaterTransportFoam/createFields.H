@@ -36,8 +36,8 @@ IOdictionary transportProperties
 
 //- list that receives event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventInfiltration::setEventFileRegistry(patchEventList);
-eventFlux::setEventFileRegistry(patchEventList);
+eventInfiltration::setEventFileRegistry(&patchEventList, h.name());
+eventFlux::setEventFileRegistry(&patchEventList, "C");
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////// PHASE MODEL CREATION ////////////////////////////
@@ -153,7 +153,8 @@ multiscalarMixture composition
     mesh,
     word::null,
     eps,
-    &tracerSourceEventList
+    &tracerSourceEventList,
+    "C"
 );
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////

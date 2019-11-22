@@ -72,7 +72,7 @@ IOdictionary transportProperties
 
 //- list that receives event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventInfiltration::setEventFileRegistry(patchEventList);
+eventInfiltration::setEventFileRegistry(&patchEventList, Sb.name());
 
 dimensionedScalar Sbmin(transportProperties.lookupOrDefault("Sbmin",dimensionedScalar("Sbmin",dimless,0)));
 

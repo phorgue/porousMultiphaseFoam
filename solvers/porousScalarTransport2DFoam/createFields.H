@@ -36,7 +36,7 @@ word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDe
 
 //- list that receives pointers to the event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventFlux::setEventFileRegistry(patchEventList);
+eventFlux::setEventFileRegistry(&patchEventList, "C");
 
 Info<< "Reading composition\n" << endl;
 wordList speciesNames(transportProperties.lookupOrDefault("species", wordList(1, "C")));
@@ -50,6 +50,7 @@ multiscalarMixture composition
     word::null,
     eps,
     &sourceEventList,
+    "C",
     dimMass*dimLength/(dimVol*dimTime)
 );
 

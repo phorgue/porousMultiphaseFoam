@@ -17,8 +17,8 @@ IOdictionary transportProperties
 
 //- list that receives event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventInfiltration::setEventFileRegistry(patchEventList);
-eventFlux::setEventFileRegistry(patchEventList);
+eventInfiltration::setEventFileRegistry(&patchEventList, "potential");
+eventFlux::setEventFileRegistry(&patchEventList, "C");
 
 const dimensionedScalar rho(transportProperties.lookup("rho"));
 const dimensionedScalar mu(transportProperties.lookup("mu"));
@@ -212,6 +212,7 @@ multiscalarMixture composition
     word::null,
     eps,
     &sourceEventList,
+    "C",
     dimMass*dimLength/(dimVol*dimTime)
 );
 

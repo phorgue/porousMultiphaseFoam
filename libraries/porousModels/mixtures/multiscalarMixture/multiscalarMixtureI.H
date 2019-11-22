@@ -30,7 +30,8 @@ Foam::multiscalarMixture::multiscalarMixture
     const fvMesh& mesh,
     const word& phaseName,
     const EpsType& eps,
-    List<sourceEventFile*>* events,
+    List<sourceEventFile*>* sourceEventFileRegistry,
+    const word& sourceEventDtFieldNameOverride,
     const dimensionSet& dimSourceTerm
 )
 :
@@ -108,12 +109,16 @@ Foam::multiscalarMixture::multiscalarMixture
             word sourceEventFileName = speciesDict.lookupOrDefault<word>("eventFileTracerSource","");
             sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
 
-            sourceEvents_.last().setFieldProperties(mesh, dimSourceTerm);
+            const word& dtFieldName = 
+                sourceEventDtFieldNameOverride.empty() ? Y(speciesi).name() : sourceEventDtFieldNameOverride;
+
+            sourceEvents_.last().setTimeScheme(dtFieldName, mesh);
+            sourceEvents_.last().setFieldDimensions(dimSourceTerm);
 
             //- report found event to caller
-            if(events)
+            if(sourceEventFileRegistry)
             {
-                events->append(&sourceEvents_.last());
+                sourceEventFileRegistry->append(&sourceEvents_.last());
             }
             else
             {

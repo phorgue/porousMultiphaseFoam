@@ -75,8 +75,11 @@ private:
     label ncoordinates_;
     List<point> coordinates_;
 
-    autoPtr<volScalarField> zeroField_;
     labelList idCoordinates_;
+    dimensionSet fieldDims_ = dimless;
+
+protected:
+    void onMeshChanged() override;
 
 public:
 
@@ -106,7 +109,7 @@ public:
 
 
     //- Access as a volScalarField
-    void setFieldProperties(const fvMesh& mesh, const dimensionSet& dim);
+    void setFieldDimensions(const dimensionSet& dims);
     tmp<volScalarField> dtValuesAsField() const;
 
 };

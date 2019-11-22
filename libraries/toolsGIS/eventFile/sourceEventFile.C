@@ -169,55 +169,62 @@ Foam::sourceEventFile::sourceEventFile
 
 }
 
-void Foam::sourceEventFile::setFieldProperties(const fvMesh& mesh, const dimensionSet& dims) 
+void Foam::sourceEventFile::onMeshChanged()
 {
-    zeroField_.reset
-    (
-        new volScalarField
-        (
-            IOobject
-            (
-                "source",
-                mesh.time().timeName(),
-                mesh,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh,
-            dimensionedScalar("zero", dims, 0)
-        )
-    );
+    eventFile::onMeshChanged();
 
-    idCoordinates_.resize(this->ncoordinates());
-
-    forAll(this->coordinates(),pointi)
+    if(mesh_)
     {
-        idCoordinates_[pointi] = mesh.findNearestCell(this->coordinates()[pointi]);
+        idCoordinates_.resize(this->ncoordinates());
+
+        forAll(this->coordinates(),pointi)
+        {
+            idCoordinates_[pointi] = mesh_->findNearestCell(this->coordinates()[pointi]);
+        }
     }
+    else
+    {
+        idCoordinates_.clear();
+    }
+}
+
+void Foam::sourceEventFile::setFieldDimensions(const dimensionSet& dims)
+{
+    fieldDims_.reset(dims);
 }
 
 
 Foam::tmp<Foam::volScalarField> Foam::sourceEventFile::dtValuesAsField() const
 {
-    if(zeroField_.empty())
+    if(!mesh_)
     {
         FatalErrorIn("sourceEventFile.C")
-            << "you must call setFieldProperties(...) before being able to use valuesAsField()"
+            << "You must call setTimeScheme(...) before being able to use dtValuesAsField()"
             << abort(FatalError);
     }
 
-    if (idCoordinates_.empty()) return *zeroField_;
+    tmp<volScalarField> tSourceTerm
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "sourceTerm",
+                mesh_->time().timeName(),
+                *mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            *mesh_,
+            dimensionedScalar("zero", fieldDims_, 0)
+        )      
+    );
 
-    tmp<volScalarField> tSourceTerm(new volScalarField(zeroField_));
     auto& sourceTerm = tSourceTerm.ref();
-
-    const auto& time = zeroField_->time();
-    const auto& mesh = zeroField_->mesh();
-    const word& ddtScheme = mesh.ddtScheme("source");
 
     forAll(this->coordinates(), pointi)
     {
-        sourceTerm[idCoordinates_[pointi]] += this->dtValue(pointi, time, ddtScheme)/mesh.V()[idCoordinates_[pointi]];
+        sourceTerm[idCoordinates_[pointi]] += this->dtValue(pointi)/mesh_->V()[idCoordinates_[pointi]];
     }
 
     return tSourceTerm;

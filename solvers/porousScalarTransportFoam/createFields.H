@@ -33,7 +33,7 @@ volScalarField eps
 
 //- list that receives event files for active event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventFlux::setEventFileRegistry(patchEventList);
+eventFlux::setEventFileRegistry(&patchEventList, "C");
 
 List<sourceEventFile*> sourceEventList;
 
@@ -48,7 +48,8 @@ multiscalarMixture composition
     mesh,
     word::null,
     eps,
-    &sourceEventList
+    &sourceEventList,
+    "C"
 );
 
 

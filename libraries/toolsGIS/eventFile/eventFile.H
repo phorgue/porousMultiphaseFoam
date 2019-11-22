@@ -44,6 +44,7 @@ Author
 
 #include "fvMesh.H"
 #include "TimeState.H"
+#include "ddtScheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,6 +67,11 @@ protected:
     scalarList currentValues_;
     scalarList oldValues_;
     label iterator_;
+
+    tmp<fv::ddtScheme<scalar>> ddtScheme_;
+    const fvMesh* mesh_ = nullptr;
+
+    virtual void onMeshChanged() {};
 
 public:
 
@@ -107,16 +113,11 @@ public:
     void addIntermediateTimeSteps(const scalar& smallDT);
 
     //- Compute values from current and old considering the time discretization
-    scalar dtValue(
-        const label& id,
-        const TimeState& time,
-        const word& ddtScheme
-    ) const;
 
-    scalarList dtValues(
-        const TimeState& time,
-        const word& ddtScheme
-    ) const;
+    void setTimeScheme(const word& dtFieldName, const fvMesh& mesh);
+
+    scalar dtValue(const label& id) const;
+    scalarList dtValues() const;
 
 };
 

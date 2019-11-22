@@ -28,11 +28,17 @@ License
 #include "surfaceFields.H"
 
 
-Foam::List<Foam::patchEventFile*>* Foam::eventInfiltration::eventFileRegistry_ = NULL;
+Foam::List<Foam::patchEventFile*>* Foam::eventInfiltration::eventFileRegistry_ = nullptr;
+Foam::word Foam::eventInfiltration::dtFieldNameOverride_ = "";
 
-void Foam::eventInfiltration::setEventFileRegistry(List<patchEventFile*>& eventFileRegistry)
+void Foam::eventInfiltration::setEventFileRegistry
+(
+    List<patchEventFile*>* eventFileRegistry,
+    const word& dtFieldNameOverride
+)
 {
-    eventFileRegistry_ = &eventFileRegistry;
+    eventFileRegistry_ = eventFileRegistry;
+    dtFieldNameOverride_ = dtFieldNameOverride;
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -85,6 +91,9 @@ eventInfiltration
         eventFile_.read(eventFileName,true);
         eventFile_.update(this->db().time().startTime().value());
         eventFile_.storeOldValues();
+
+        const word& dtFieldName = dtFieldNameOverride_.empty() ? iF.name() : dtFieldNameOverride_;
+        eventFile_.setTimeScheme(dtFieldName, iF.mesh());
 
         //- Reading patch event file and adding intermediate time step
         scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",0);
@@ -167,7 +176,7 @@ void Foam::eventInfiltration::updateCoeffs()
     if (patchEventID_ != -1)
     {
 
-        valueEvent = eventFile_.dtValue(patchEventID_, this->db().time(), this->internalField().mesh().ddtScheme("source"));
+        valueEvent = eventFile_.dtValue(patchEventID_);
 
         //- Updating event value
         eventFile_.update(this->db().time().value());
