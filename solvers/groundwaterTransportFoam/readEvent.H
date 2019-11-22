@@ -17,7 +17,11 @@ volScalarField sourceTerm_water
     dimensionedScalar("",dimless/dimTime,0)
 );
 
-event_water.setFieldProperties(mesh, sourceTerm_water.dimensions());
+if (eventIsPresent_water)
+{
+    event_water.setTimeScheme(h.name(), mesh);
+    event_water.setFieldDimensions(sourceTerm_water.dimensions());
+}
 
 //- patch event reader for time step managing
 forAll(patchEventList,patchEventi)

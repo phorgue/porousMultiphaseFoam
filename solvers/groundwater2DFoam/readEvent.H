@@ -21,6 +21,8 @@ if (eventTimeStep > 0)
 //- Updating infiltration value using event file
 if (infiltrationEventIsPresent)
 {
+    infiltrationEvent.setTimeScheme(potential.name(), mesh);
+
     if (infiltrationEvent.isUniform())
     {
         infiltration.primitiveFieldRef() = infiltrationEvent.currentValue(0);
