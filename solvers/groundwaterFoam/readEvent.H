@@ -3,7 +3,8 @@ word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileW
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)
 {
-    sourceEvent.setFieldProperties(mesh, sourceTerm.dimensions());
+    sourceEvent.setTimeScheme(h.name(), mesh);
+    sourceEvent.setFieldDimensions(sourceTerm.dimensions());
 
     sourceEvent.update(runTime.startTime().value());
     sourceEvent.storeOldValues();
