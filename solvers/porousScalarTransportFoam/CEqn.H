@@ -1,10 +1,13 @@
+//- update dispersion tensor coefficients and source terms
+composition.correct(U, Saturation, eps);
+
 forAll(composition.Y(), speciesi)
 {
     const auto& speciesName = composition.species()[speciesi];
     
     auto& C = composition.Y(speciesi);
     const auto& R = composition.R(speciesi);
-    const auto& Deff = composition.Deff(speciesi, U, Saturation, eps);
+    const auto& Deff = composition.Deff(speciesi);
     const auto& lambda = composition.lambda(speciesi);
     const auto& sourceTerm = composition.sourceTerm(speciesi);
 

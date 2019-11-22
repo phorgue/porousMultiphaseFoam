@@ -66,15 +66,15 @@ public:
 
         //- Construct from dictionary, species names, mesh and phase name
         template<typename EpsType>
-        multiscalarMixture
+        inline multiscalarMixture
         (
             const dictionary& dict,
             const wordList& speciesNames,
             const fvMesh& mesh,
             const word& phaseName,
             const EpsType& eps,
-            List<sourceEventFile*>* eventFileRegistry = nullptr,
-            const word& dtFieldNameOverride = "",
+            List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
+            const word& sourceEventDtFieldNameOverride = "",
             const dimensionSet& dimSourceTerm = dimMass/(dimVol*dimTime)
         );
 
@@ -88,33 +88,37 @@ public:
         inline const dimensionedScalar& lambda(const label speciesi) const;
 
 
-        //- Effective diffusivity [m^2/s]
+
+        //- Update effective diffusivities and source terms
         template<typename ThetaType>
-        tmp<volTensorField> Deff
+        inline void correct
         (
-            const label speciesi,
             const volVectorField& U,
             const ThetaType& theta
-        ) const;
+        );
 
         template<typename SaturationType, typename EpsType>
-        tmp<volTensorField> Deff
+        inline void correct
         (
-            const label speciesi,
             const volVectorField& U,
             const SaturationType& saturation,
             const EpsType& eps
-        ) const;
+        );
+
+
+        //- Effective diffusivity [m^2/s]
+        inline const volTensorField& Deff(const label speciesi) const;
 
 
         //- Source term [dimSourceTerm]
-        inline tmp<volScalarField> sourceTerm(const label speciesi) const;
+        inline const volScalarField& sourceTerm(const label speciesi) const;
 
 private:
     PtrList<volScalarField> R_;
     List<dimensionedScalar> lambdas_;
-    mutable PtrList<dispersionModel> dispersionModels_;
+    PtrList<dispersionModel> dispersionModels_;
     PtrList<sourceEventFile> sourceEvents_;
+    PtrList<volScalarField> sourceTerms_;
 
     const volScalarField zeroSourceTerm_;
 };
