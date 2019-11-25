@@ -36,17 +36,44 @@ Description
 
 if (adjustTimeStep)
 {
-    //- C-variation control
+
     scalar dtForC = VGREAT;
-    forAll(composition.Y(), speciesi)
+    if (timeScheme == "backward")
     {
-        const auto& C = composition.Y(speciesi);
-        dtForC = min
-        (
-            dtForC,
-            max(dCmax*gMax(C),dCresidual)/(dCdTmax[speciesi]+SMALL)
-        );
+        forAll(composition.Y(), speciesi)
+        {
+            dtForC = min
+                (
+                    dtForC,
+                    Foam::pow(3*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                );
+        }
+        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
     }
+    else if (timeScheme == "CrankNicolson")
+    {
+        forAll(composition.Y(), speciesi)
+        {
+            dtForC = min
+                (
+                    dtForC,
+                    Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                );
+        }
+        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+    }
+    else if (timeScheme == "Euler")
+    {
+        forAll(composition.Y(), speciesi)
+        {
+            dtForC = min
+                (
+                    dtForC,
+                    Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
+                );
+        }
+    }
+
     scalar newDeltaT = min(dtForC, 1.2*runTime.deltaTValue());
     runTime.setDeltaT
         (

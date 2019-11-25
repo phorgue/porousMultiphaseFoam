@@ -6,7 +6,8 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
     -I../../libraries/porousBoundaryConditions/lnInclude \
     -I../../libraries/porousModels/lnInclude \
-    -I../../libraries/toolsGIS/lnInclude
+    -I../../libraries/toolsGIS/lnInclude \
+    -I../../libraries/numericalMethods/lnInclude
 
 EXE_LIBS = \
     -lfiniteVolume \
@@ -14,6 +15,7 @@ EXE_LIBS = \
     -lfluidThermophysicalModels \
     -lreactionThermophysicalModels \
     -L$(FOAM_USER_LIBBIN) \
+    -lPMFnumericalMethods \
     -lporousBoundaryConditions \
     -lporousModels \
     -ltoolsGIS
