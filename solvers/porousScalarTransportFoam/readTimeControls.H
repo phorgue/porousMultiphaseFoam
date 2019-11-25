@@ -32,22 +32,48 @@ Description
 bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
 
-scalar dCresidual =
-    runTime.controlDict().lookupOrDefault<scalar>("dCresidual",1e-6);
+scalar truncationError =
+    runTime.controlDict().lookupOrDefault<scalar>("truncationError",0.01);
 
-scalar dCmax =
-    runTime.controlDict().lookupOrDefault<scalar>("dCmax",0.01);
+word timeScheme = mesh.ddtScheme("ddt(" + composition.Y(0).name() + ')');
 
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
+EulerD3dt3Scheme d3dt3Operator(mesh,runTime.deltaTValue());
+Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
 scalarList dCdTmax(composition.Y().size());
-forAll(composition.Y(), speciesi)
+scalarList dC2dT2max(composition.Y().size());
+scalarList dC3dT3max(composition.Y().size());
+scalarList Cmax(composition.Y().size());
+//- Derivative initialisation to keep 1st user-defined time step
+if (timeScheme == "backward")
 {
-    const auto& C = composition.Y(speciesi);
-    dCdTmax[speciesi] = max(dCmax*gMax(C),dCresidual)/runTime.deltaTValue();
+    forAll(composition.Y(), speciesi)
+    {
+        const auto& C = composition.Y(speciesi);
+        Cmax[speciesi] = gMax(C);
+        dC3dT3max[speciesi] = 3*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+    }
 }
-
+else if  (timeScheme == "CrankNicolson")
+{
+    forAll(composition.Y(), speciesi)
+    {
+        const auto& C = composition.Y(speciesi);
+        Cmax[speciesi] = gMax(C);
+        dC3dT3max[speciesi] = 12*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+    }
+}
+else if (timeScheme == "Euler")
+{
+    forAll(composition.Y(), speciesi)
+    {
+        const auto& C = composition.Y(speciesi);
+        Cmax[speciesi] = gMax(C);
+        dC2dT2max[speciesi] = 2*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
+    }
+}
 const bool eventTimeTracking =
-     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
+    runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 // ************************************************************************* //
