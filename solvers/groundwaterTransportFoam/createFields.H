@@ -36,8 +36,8 @@ IOdictionary transportProperties
 
 //- list that receives event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventInfiltration::setEventFileRegistry(patchEventList);
-eventFlux::setEventFileRegistry(patchEventList);
+eventInfiltration::setEventFileRegistry(&patchEventList, h.name());
+eventFlux::setEventFileRegistry(&patchEventList, "C");
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////// PHASE MODEL CREATION ////////////////////////////
@@ -122,13 +122,6 @@ surfaceScalarField Kf = fvc::interpolate(K,"K");
 dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
 Info << nl << "Reading speficic storage : Ss = " << Ss.value() << endl;
 
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
-
 ///////////////////////////////////////////////////////////////////////
 ////////////////////////// SCALAR TRANSPORT  //////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -160,8 +153,8 @@ multiscalarMixture composition
     mesh,
     word::null,
     eps,
-    isBackwardScheme,
-    &tracerSourceEventList
+    &tracerSourceEventList,
+    "C"
 );
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////

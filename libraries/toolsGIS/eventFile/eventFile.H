@@ -43,6 +43,8 @@ Author
 #define eventFile_H
 
 #include "fvMesh.H"
+#include "TimeState.H"
+#include "ddtScheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,6 +67,11 @@ protected:
     scalarList currentValues_;
     scalarList oldValues_;
     label iterator_;
+
+    tmp<fv::ddtScheme<scalar>> ddtScheme_;
+    const fvMesh* mesh_ = nullptr;
+
+    virtual void onMeshChanged() {};
 
 public:
 
@@ -104,6 +111,13 @@ public:
     void storeOldValues() {oldValues_ = currentValues_;}
     void update(const scalar& currentTime);
     void addIntermediateTimeSteps(const scalar& smallDT);
+
+    //- Compute values from current and old considering the time discretization
+
+    void setTimeScheme(const word& dtFieldName, const fvMesh& mesh);
+
+    scalar dtValue(const label& id) const;
+    scalarList dtValues() const;
 
 };
 

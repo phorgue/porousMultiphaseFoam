@@ -21,7 +21,7 @@ forAll(composition.Y(), speciesi)
     {
         auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
         
-        volTensorField Deff = eps*hwater*composition.Deff(speciesi, U, eps);
+        volTensorField Deff = eps*hwater*composition.Deff(speciesi);
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
             CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*hwater*C*eps).value()/zScale;

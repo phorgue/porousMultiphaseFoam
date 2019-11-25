@@ -82,12 +82,10 @@ protected:
 
     // Protected data
     static List<patchEventFile*>* eventFileRegistry_;
+    static word dtFieldNameOverride_;
     
     //- Fixed flux value
     scalar fixedInfiltrationValue_;
-
-    //- time scheme selector
-    bool isBackwardScheme_;
 
     //- Event list (optional)
     label patchEventID_;
@@ -98,7 +96,11 @@ public:
     //- Runtime type information
     TypeName("eventInfiltration");
 
-    static void setEventFileRegistry(List<patchEventFile*>& eventFileRegistry);
+    static void setEventFileRegistry
+    (
+        List<patchEventFile*>* eventFileRegistry, 
+        const word& dtFieldNameOverride = ""
+    );
 
     // Constructors
 

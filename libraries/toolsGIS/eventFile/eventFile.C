@@ -24,7 +24,10 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "eventFile.H"
-#include "IFstream.H"
+#include "EulerDdtScheme.H"
+#include "steadyStateDdtScheme.H"
+#include "backwardDdtScheme.H"
+#include "CrankNicolsonDdtScheme.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -144,3 +147,73 @@ void Foam::eventFile::addIntermediateTimeSteps(const scalar& smallDeltaT)
     }
     ndates_ = (ndates_-2)*3+2;
 }
+
+
+void Foam::eventFile::setTimeScheme(const word& dtFieldName, const fvMesh& mesh)
+{
+    ddtScheme_ = fv::ddtScheme<scalar>::New
+    ( 
+        mesh,
+        mesh.ddtScheme("ddt(" + dtFieldName + ')')
+    );
+
+    mesh_ = &mesh;
+    onMeshChanged();
+}
+
+Foam::scalar Foam::eventFile::dtValue(const label& id) const
+{
+    if(ddtScheme_.empty())
+    {
+        FatalErrorIn("eventFile.C")
+            << "You must call setTimeScheme(...) before being able to use dtValue(s)()"
+            << abort(FatalError);
+    }
+
+    const fv::ddtScheme<scalar>& scheme = ddtScheme_.ref();
+
+    using Euler = fv::EulerDdtScheme<scalar>;
+    using steadyState = fv::steadyStateDdtScheme<scalar>;
+    using backward = fv::backwardDdtScheme<scalar>;
+    using CrankNicolson = fv::CrankNicolsonDdtScheme<scalar>;
+
+    if (dynamic_cast<const backward*>(&scheme))
+    {
+        scalar deltaT = mesh_->time().deltaT().value();
+        scalar deltaT0 = mesh_->time().deltaT0().value();
+        
+        scalar coefft0_00 = deltaT/(deltaT + deltaT0);
+        scalar coefftn_0 = 1 + coefft0_00;
+        
+        return coefftn_0*this->currentValue(id) - coefft0_00*this->oldValue(id);
+    }
+    else if (const auto CNscheme = dynamic_cast<const CrankNicolson*>(&scheme))
+    {
+        const auto& ocCoeff = CNscheme->ocCoeff();
+
+        return (1 + ocCoeff)*this->currentValue(id) - ocCoeff*this->oldValue(id);
+    }
+    else if (dynamic_cast<const Euler*>(&scheme) || dynamic_cast<const steadyState*>(&scheme))
+    {
+        return this->currentValue(id);
+    }
+
+    FatalErrorIn("events.C")
+        << "ddtScheme " << scheme.type() << " unsupported"
+        << abort(FatalError);
+    return 0;
+}
+
+Foam::scalarList Foam::eventFile::dtValues() const
+{
+
+    scalarList ret(currentValues().size());
+    
+    forAll(ret, id)
+    {
+        ret[id] = dtValue(id);
+    }
+
+    return ret;
+}
+
