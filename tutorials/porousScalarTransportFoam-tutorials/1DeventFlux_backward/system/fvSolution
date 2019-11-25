@@ -11,47 +11,19 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "system";
-    object      controlDict;
+    object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     porousScalarTransport2DFoam;
+solvers
+{   
+    C
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-12;
+        relTol          0;
+    }
+}
 
-startFrom       startTime;
-
-startTime       0;
-
-stopAt          endTime;
-
-endTime         864000;
-
-deltaT          1;
-
-writeControl    adjustableRunTime;
-
-writeInterval   72000;
-
-purgeWrite      0;
-
-writeFormat     ascii;
-
-writePrecision  6;
-
-writeCompression uncompressed;
-
-timeFormat      general;
-
-timePrecision   6;
-
-adjustTimeStep yes;
-
-runTimeModifiable true;
-
-truncationError 0.001;
-
-maxDeltaT       1e8;
-
-CSVoutput       true;
-
-eventTimeTracking true;
 // ************************************************************************* //

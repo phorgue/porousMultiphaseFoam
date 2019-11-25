@@ -41,6 +41,8 @@ Author
 #include "patchEventFile.H"
 #include "outputEventFile.H"
 #include "eventFlux.H"
+#include "EulerD3dt3Scheme.H"
+#include "EulerD2dt2Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -58,7 +60,6 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "CourantNo.H"
-        Info << "Cvariation max = " << max(dCdTmax)*runTime.deltaTValue() << endl;
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
         if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
         forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->update(runTime.timeOutputValue());
