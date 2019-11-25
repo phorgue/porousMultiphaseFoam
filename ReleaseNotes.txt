@@ -23,7 +23,7 @@
 - groundwater2DFoam
 
   - solver adapted to handle uniform or non-uniform infiltration event (also
-  accept mesh conformal event => consider as uniform infiltration)
+  accept non-conformal mesh event => consider as uniform infiltration)
 
 - porousScalarTransportFoam
   
@@ -35,9 +35,14 @@
   of a list of species is taken to mean a single species with name "C", and
   species without their own sub-dictionaries have their properties read
   directly from transportProperties). This support has also been extended to 
-  all transport solvers in the toolbox.
+  all transport solvers in the toolbox
   - epsTotal now defaults to 1
   - eps can now be passed either as a scalar or as a field
+  - time-stepping is based on the truncation error related ot the time scheme
+  used (Euler, backward or CrankNicolson) and specified by the "truncationError"
+  keyword in system/controlDict. The relative numerical error is computed using
+  dC3/dt3 or dC2/dt2 (depending on the time-scheme) and maintained below the
+  user-defined value
 
 - porousScalarTransport2DFoam
 
@@ -45,6 +50,8 @@
   for porousScalarTransportFoam)
   - epsTotal now defaults to 1
   - eps can now be passed either as a scalar or as a field
+  - time-stepping is now based on the truncation error (see the notes for
+  porousScalarTransportFoam)
   
 - groundwaterTransportFoam
 
@@ -116,6 +123,9 @@
 - fix event keywords in several tutorials
 
 - cleaning configuration files removing useless keywords/dictionaries
+
+- new 1D_eventFlux test case for time scheme efficiency comparison (Euler,
+  backward, CrankNicolson)
 
 ************************
 *** PMFv1906

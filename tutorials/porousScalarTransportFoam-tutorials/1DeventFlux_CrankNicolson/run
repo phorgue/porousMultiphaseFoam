@@ -7,3 +7,5 @@ cp 0/C.org 0/C
 runApplication blockMesh
 runApplication porousScalarTransportFoam
 
+grep "deltaT = " log.porousScalarTransportFoam > deltaT.csv
+sed -i 's/deltaT = //g' deltaT.csv

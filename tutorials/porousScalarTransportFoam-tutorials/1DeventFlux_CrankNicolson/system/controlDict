@@ -47,9 +47,7 @@ adjustTimeStep yes;
 
 runTimeModifiable true;
 
-dCmax       0.01;
-
-dCresidual      1e-3:
+truncationError 0.0001;
 
 maxDeltaT       1e+9;
 
