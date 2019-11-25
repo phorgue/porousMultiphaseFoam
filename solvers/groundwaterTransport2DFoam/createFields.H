@@ -17,8 +17,8 @@ IOdictionary transportProperties
 
 //- list that receives event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventInfiltration::setEventFileRegistry(patchEventList);
-eventFlux::setEventFileRegistry(patchEventList);
+eventInfiltration::setEventFileRegistry(&patchEventList, "potential");
+eventFlux::setEventFileRegistry(&patchEventList, "C");
 
 const dimensionedScalar rho(transportProperties.lookup("rho"));
 const dimensionedScalar mu(transportProperties.lookup("mu"));
@@ -196,13 +196,6 @@ volScalarField seepageTerm
 
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
 
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
-
 ///////////////////////////////////////////////////////////////////////
 ////////////////////////// TRACER PART ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -218,8 +211,8 @@ multiscalarMixture composition
     mesh,
     word::null,
     eps,
-    isBackwardScheme,
     &sourceEventList,
+    "C",
     dimMass*dimLength/(dimVol*dimTime)
 );
 
@@ -262,7 +255,7 @@ if (CSVoutput)
                 CmassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
             }
         }
-        CmassBalanceCSV << endl;
+        CmassBalanceCSV << " flux(fixedPoint)" << endl;
     }
 
 }
