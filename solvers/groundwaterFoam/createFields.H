@@ -35,7 +35,7 @@ IOdictionary transportProperties
 
 //- list that receives event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventInfiltration::setEventFileRegistry(patchEventList);
+eventInfiltration::setEventFileRegistry(&patchEventList, h.name());
 
 /////////////////////////////////////////////////////////////////////////////
 //////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
@@ -134,13 +134,6 @@ volScalarField sourceTerm
     mesh,
     dimensionedScalar("",dimless/dimTime,0)
 );
-
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
 
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////

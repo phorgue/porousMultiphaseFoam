@@ -3,6 +3,9 @@ word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileW
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)
 {
+    sourceEvent.setTimeScheme(h.name(), mesh);
+    sourceEvent.setFieldDimensions(sourceTerm.dimensions());
+
     sourceEvent.update(runTime.startTime().value());
     sourceEvent.storeOldValues();
 }
@@ -17,15 +20,3 @@ bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
 if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
-
-//- determining cell id corresponding to datas
-labelList idCoordinates(sourceEvent.ncoordinates());
-if (sourceEventIsPresent)
-{
-    sourceTerm.primitiveFieldRef() = 0;
-    forAll(sourceEvent.coordinates(),pointi)
-    {
-        idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);
-        sourceTerm[idCoordinates[pointi]] = sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
-    }
-}

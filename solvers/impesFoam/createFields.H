@@ -72,7 +72,7 @@ IOdictionary transportProperties
 
 //- list that receives event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
-eventInfiltration::setEventFileRegistry(patchEventList);
+eventInfiltration::setEventFileRegistry(&patchEventList, Sb.name());
 
 dimensionedScalar Sbmin(transportProperties.lookupOrDefault("Sbmin",dimensionedScalar("Sbmin",dimless,0)));
 
@@ -176,10 +176,3 @@ volScalarField sourceTerm
     mesh,
     dimensionedScalar("",dimless/dimTime,0)
 );
-
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
