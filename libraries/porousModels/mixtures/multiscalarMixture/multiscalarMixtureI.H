@@ -23,15 +23,15 @@ License
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<typename EpsType>
-Foam::multiscalarMixture::multiscalarMixture
+inline Foam::multiscalarMixture::multiscalarMixture
 (
     const dictionary& dict,
     const wordList& speciesNames,
     const fvMesh& mesh,
     const word& phaseName,
     const EpsType& eps,
-    bool isBackwardScheme,
-    List<sourceEventFile*>* events,
+    List<sourceEventFile*>* sourceEventFileRegistry,
+    const word& sourceEventDtFieldNameOverride,
     const dimensionSet& dimSourceTerm
 )
 :
@@ -40,8 +40,7 @@ Foam::multiscalarMixture::multiscalarMixture
     lambdas_(speciesNames.size()),
     dispersionModels_(speciesNames.size()),
     sourceEvents_(speciesNames.size()),
-    sourceEventCoordinateIds_(speciesNames.size()),
-    isBackwardScheme_(isBackwardScheme),
+    sourceTerms_(speciesNames.size()),
     zeroSourceTerm_
     (
         IOobject
@@ -108,32 +107,19 @@ Foam::multiscalarMixture::multiscalarMixture
         //- read source event if present
         if(speciesDict.found("eventFileTracerSource"))
         {
-
             word sourceEventFileName = speciesDict.lookupOrDefault<word>("eventFileTracerSource","");
             sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
 
-            auto& sourceEvent = sourceEvents_[speciesi];
-            const auto& runTime = mesh.time();
+            const word& dtFieldName = 
+                sourceEventDtFieldNameOverride.empty() ? Y(speciesi).name() : sourceEventDtFieldNameOverride;
 
-            sourceEvent.update(runTime.startTime().value());
-            sourceEvent.storeOldValues();
-
-            //- determining cell id corresponding to datas
-            auto& idCoordinates = sourceEventCoordinateIds_[speciesi];
-
-            idCoordinates = labelList(sourceEvent.ncoordinates());
-
-            //sourceTerm.primitiveFieldRef() = 0;
-            forAll(sourceEvent.coordinates(),pointi)
-            {
-                idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);
-                //sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
-            }
+            sourceEvents_.last().setTimeScheme(dtFieldName, mesh);
+            sourceEvents_.last().setFieldDimensions(dimSourceTerm);
 
             //- report found event to caller
-            if(events)
+            if(sourceEventFileRegistry)
             {
-                events->append(&sourceEvents_[speciesi]);
+                sourceEventFileRegistry->append(&sourceEvents_.last());
             }
             else
             {
@@ -165,69 +151,54 @@ inline const Foam::dimensionedScalar& Foam::multiscalarMixture::lambda(const lab
 
 
 template<typename ThetaType>
-Foam::tmp<Foam::volTensorField> Foam::multiscalarMixture::Deff
+inline void Foam::multiscalarMixture::correct
 (
-    const label speciesi,
     const volVectorField& U,
     const ThetaType& theta
-) const
+)
 {
-    auto& dispersionModel = dispersionModels_[speciesi];
+    forAll(Y(), speciesi)
+    {
+        dispersionModels_[speciesi].correct(Y(speciesi), U, theta);
 
-    dispersionModel.correct(Y(speciesi), U, theta);
-
-    return dispersionModel.Deff();
+        if(sourceEvents_(speciesi))
+        {
+            sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
+        }
+    }
 }
 
-
 template<typename SaturationType, typename EpsType>
-Foam::tmp<Foam::volTensorField> Foam::multiscalarMixture::Deff
+inline void Foam::multiscalarMixture::correct
 (
-    const label speciesi,
     const volVectorField& U,
     const SaturationType& saturation,
     const EpsType& eps
-) const
+)
 {
-    auto& dispersionModel = dispersionModels_[speciesi];
+    forAll(Y(), speciesi)
+    {
+        dispersionModels_[speciesi].correct(Y(speciesi), U, saturation, eps);
 
-    dispersionModel.correct(Y(speciesi), U, saturation, eps);
-
-    return dispersionModel.Deff();
+        if(sourceEvents_(speciesi))
+        {
+            sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
+        }
+    }
 }
 
 
-inline Foam::tmp<Foam::volScalarField> Foam::multiscalarMixture::sourceTerm(const label speciesi) const
+inline const Foam::volTensorField& Foam::multiscalarMixture::Deff(const label speciesi) const
+{
+    return dispersionModels_[speciesi].Deff();
+}
+
+
+inline const Foam::volScalarField& Foam::multiscalarMixture::sourceTerm(const label speciesi) const
 {
     if (sourceEvents_(speciesi))
     {
-        const auto& sourceEvent = sourceEvents_[speciesi];
-        const auto& idCoordinates = sourceEventCoordinateIds_[speciesi];
-        const auto& mesh = Y(speciesi).mesh();
-        const auto& runTime = mesh.time();
-
-        //- compute source term
-        tmp<volScalarField> tSourceTerm(new volScalarField(zeroSourceTerm_));
-        auto& sourceTerm = tSourceTerm.ref();
-        if (isBackwardScheme_)
-        {
-            scalar coefft0_00 = runTime.deltaTValue()/(runTime.deltaTValue() + runTime.deltaT0Value());
-            scalar coefftn_0 = 1 + coefft0_00;
-
-            forAll(sourceEvent.coordinates(),pointi)
-            {
-                sourceTerm[idCoordinates[pointi]] += (coefftn_0*sourceEvent.currentValue(pointi) - coefft0_00*sourceEvent.oldValue(pointi))/mesh.V()[idCoordinates[pointi]];
-            }
-        }
-        else
-        {
-            forAll(sourceEvent.coordinates(),pointi)
-            {
-                sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
-            }
-        }
-
-        return tSourceTerm;
+        return sourceTerms_[speciesi];
     }
     else return zeroSourceTerm_;
 }
