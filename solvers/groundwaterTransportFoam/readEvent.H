@@ -20,13 +20,16 @@ volScalarField sourceTerm_water
 if (eventIsPresent_water)
 {
     event_water.setTimeScheme(h.name(), mesh);
+    event_water.updateIndex(runTime.startTime().value());
+    event_water.updateValue(runTime);
     event_water.setFieldDimensions(sourceTerm_water.dimensions());
 }
 
 //- patch event reader for time step managing
 forAll(patchEventList,patchEventi)
 {
-    patchEventList[patchEventi]->update(runTime.startTime().value());
+    patchEventList[patchEventi]->updateIndex(runTime.startTime().value());
+    patchEventList[patchEventi]->updateValue(runTime);
     patchEventList[patchEventi]->storeOldValues();
 }
 
@@ -34,5 +37,5 @@ forAll(patchEventList,patchEventi)
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
 

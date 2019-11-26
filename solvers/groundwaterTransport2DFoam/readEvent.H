@@ -4,14 +4,16 @@ word infiltrationEventFileName = transportProperties.lookupOrDefault<word>("even
 infiltrationEventFile infiltrationEvent(infiltrationEventFileName);
 if (infiltrationEventIsPresent)
 {
-    infiltrationEvent.update(runTime.startTime().value());
+    infiltrationEvent.updateIndex(runTime.startTime().value());
+    infiltrationEvent.updateValue(runTime);
     infiltrationEvent.storeOldValues();
 }
 
 //- Tracer injection event
 forAll(sourceEventList,sourceEventi)
 {
-    sourceEventList[sourceEventi]->update(runTime.startTime().value());
+    sourceEventList[sourceEventi]->updateIndex(runTime.startTime().value());
+    sourceEventList[sourceEventi]->updateValue(runTime);
     sourceEventList[sourceEventi]->storeOldValues();
 }
 
@@ -43,7 +45,8 @@ if (infiltrationEventIsPresent)
 //- patch event reader for time step managing
 forAll(patchEventList,patchEventi)
 {
-    patchEventList[patchEventi]->update(runTime.startTime().value());
+    patchEventList[patchEventi]->updateIndex(runTime.startTime().value());
+    patchEventList[patchEventi]->updateValue(runTime);
     patchEventList[patchEventi]->storeOldValues();
 }
 
@@ -51,7 +54,7 @@ forAll(patchEventList,patchEventi)
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
 
 scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
 if (eventTimeStep > 0)
