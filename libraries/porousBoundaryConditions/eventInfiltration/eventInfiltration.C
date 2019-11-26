@@ -89,7 +89,7 @@ eventInfiltration
 
         //- reading patch event file, compute current value, store to old values
         eventFile_.read(eventFileName,true);
-        eventFile_.update(this->db().time().startTime().value());
+        eventFile_.updateIndex(this->db().time().startTime().value());
         eventFile_.storeOldValues();
 
         const word& dtFieldName = dtFieldNameOverride_.empty() ? iF.name() : dtFieldNameOverride_;
@@ -175,11 +175,7 @@ void Foam::eventInfiltration::updateCoeffs()
 
     if (patchEventID_ != -1)
     {
-
         valueEvent = eventFile_.dtValue(patchEventID_);
-
-        //- Updating event value
-        eventFile_.update(this->db().time().value());
     }
 
     //- Computing fixed value

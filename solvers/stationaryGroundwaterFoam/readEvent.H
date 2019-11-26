@@ -6,17 +6,19 @@ if (sourceEventIsPresent)
     sourceEvent.setTimeScheme(h.name(), mesh);
     sourceEvent.setFieldDimensions(sourceTerm.dimensions());
 
-    sourceEvent.update(runTime.startTime().value());
+    sourceEvent.updateIndex(runTime.startTime().value());
+    sourceEvent.updateValue(runTime);
     sourceEvent.storeOldValues();
 }
 
 forAll(patchEventList,patchEventi)
 {
-    patchEventList[patchEventi]->update(runTime.startTime().value());
+    patchEventList[patchEventi]->updateIndex(runTime.startTime().value());
+    patchEventList[patchEventi]->updateValue(runTime);
     patchEventList[patchEventi]->storeOldValues();
 }
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
