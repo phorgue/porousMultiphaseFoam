@@ -3,14 +3,15 @@ word infiltrationEventFileName = transportProperties.lookupOrDefault<word>("even
 infiltrationEventFile infiltrationEvent(infiltrationEventFileName);
 if (infiltrationEventIsPresent)
 {
-    infiltrationEvent.update(runTime.startTime().value());
+    infiltrationEvent.updateIndex(runTime.startTime().value());
+    infiltrationEvent.updateValue(runTime);
     infiltrationEvent.storeOldValues();
 }
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
 
 scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
 if (eventTimeStep > 0)

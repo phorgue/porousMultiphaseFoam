@@ -114,7 +114,8 @@ public:
         oldOldValues_ = oldValues_;
         oldValues_ = currentValues_;
     }
-    void update(const scalar& currentTime);
+    void updateIndex(const scalar& currentTime);
+    void updateValue(const TimeState& currentTime);
     void addIntermediateTimeSteps(const scalar& smallDT);
 
     //- Compute values from current and old considering the time discretization

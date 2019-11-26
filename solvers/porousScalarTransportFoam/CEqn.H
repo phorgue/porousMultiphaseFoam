@@ -1,6 +1,9 @@
 //- update dispersion tensor coefficients and source terms
 composition.correct(U, Saturation, eps);
 
+forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateValue(runTime);
+
 forAll(composition.Y(), speciesi)
 {
     const auto& speciesName = composition.species()[speciesi];

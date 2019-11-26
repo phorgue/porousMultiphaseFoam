@@ -1,16 +1,18 @@
 forAll(sourceEventList,sourceEventi)
 {
-	sourceEventList[sourceEventi]->update(runTime.startTime().value());
+	sourceEventList[sourceEventi]->updateIndex(runTime.startTime().value());
+	sourceEventList[sourceEventi]->updateValue(runTime);
 	sourceEventList[sourceEventi]->storeOldValues();
 }
 
 forAll(patchEventList,patchEventi)
 {
-    patchEventList[patchEventi]->update(runTime.startTime().value());
+    patchEventList[patchEventi]->updateIndex(runTime.startTime().value());
+    patchEventList[patchEventi]->updateValue(runTime);
     patchEventList[patchEventi]->storeOldValues();
 }
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());

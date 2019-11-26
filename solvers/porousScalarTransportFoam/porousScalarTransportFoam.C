@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "CourantNo.H"
-        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->update(runTime.timeOutputValue());
-        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
-        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->update(runTime.timeOutputValue());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
+        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
+        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
         runTime++;
 

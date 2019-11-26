@@ -3,6 +3,7 @@ word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileW
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)
 {
-    sourceEvent.update(runTime.startTime().value());
+    sourceEvent.updateIndex(runTime.startTime().value());
+    sourceEvent.updateValue(runTime);
     sourceEvent.storeOldValues();
 }
