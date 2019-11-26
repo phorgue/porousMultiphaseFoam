@@ -93,24 +93,68 @@ const Foam::scalar& Foam::eventFile::currentEventEndTime() const
     }
 }
 
-void Foam::eventFile::update(const scalar& currentTime)
+void Foam::eventFile::updateIndex(const scalar& currentTime)
+{
+    if  (iterator_ < ndates_-1)
+    {
+        while (currentEventEndTime() <= currentTime)
+        {
+            iterator_++;
+            if (iterator_ == ndates_-1) break;
+        }
+    }
+}
+
+void Foam::eventFile::updateValue(const TimeState& runTime)
 {
     storeOldValues();
-    while (currentEventEndTime() <= currentTime)
-    {
-        iterator_++;
-        if (iterator_ == ndates_-1) break;
-    }
-    if (currentTime < dates_[0])
+    if (runTime.timeOutputValue() < dates_[0])
     {
         currentValues_ = 0.0;
     }
-    else if (iterator_ < ndates_-1)
+    else if (runTime.timeOutputValue() > dates_[0] && iterator_ == -1)
     {
-        scalar interpolateFactor_ = (currentTime - dates_[iterator_]) / (dates_[iterator_+1] - dates_[iterator_]);
+        scalar dt2 = runTime.timeOutputValue() - dates_[0];
         forAll(currentValues_,id)
         {
-            currentValues_[id] = (1.0 - interpolateFactor_) * datas_[iterator_][id] + interpolateFactor_ * datas_[iterator_+1][id];
+            scalar value2 = datas_[0][id] + dt2 * (datas_[1][id]-datas_[0][id])/(dates_[1]-dates_[0]);
+            currentValues_[id] = dt2 * value2 / runTime.deltaTValue();
+        }
+    }
+    else if (iterator_ < ndates_-1)
+    {
+        if (runTime.timeOutputValue() <= dates_[iterator_+1])
+        {
+            //- T and T+deltaT in the same event
+            scalar interpolateFactor = (runTime.timeOutputValue() - runTime.deltaTValue()/2. - dates_[iterator_]) / (dates_[iterator_+1] - dates_[iterator_]);
+            forAll(currentValues_,id)
+            {
+                currentValues_[id] = (1.0 - interpolateFactor) * datas_[iterator_+1][id] + interpolateFactor * datas_[iterator_][id];
+            }
+        }
+        else
+        {
+            //- T and T+deltaT in different events
+            scalar dt1 = dates_[iterator_+1] - (runTime.timeOutputValue()-runTime.deltaTValue());
+            scalarList value1(currentValues_.size(),0.);
+            forAll(currentValues_,id) value1[id] = datas_[iterator_+1][id] + dt1 * (datas_[iterator_][id]-datas_[iterator_+1][id])/(dates_[iterator_]-dates_[iterator_+1]);
+            scalar dt2 = 0;
+            scalarList value2(currentValues_.size(),0.);
+            if (iterator_ < ndates_-2)
+            {
+                //- handling same dates with different values (heavy-side functions)
+                label iteratorNext = iterator_+1;
+                if (dates_[iteratorNext] == dates_[iteratorNext+1]) iteratorNext++;
+
+                if (iteratorNext == ndates_-1) FatalErrorIn("eventFile.C") << "event file : " << this->name() << " finished by two same dates, remove the last one" << abort(FatalError);
+
+                scalar dt2 = runTime.timeOutputValue() - dates_[iteratorNext];
+                forAll(currentValues_,id) value2[id] = datas_[iteratorNext][id] + dt2 * (datas_[iteratorNext+1][id]-datas_[iteratorNext][id])/(dates_[iteratorNext+1]-dates_[iteratorNext]);
+            }
+            forAll(currentValues_,id)
+            {
+                currentValues_[id] = (dt1 * value1[id] + dt2 * value2[id]) / runTime.deltaTValue();
+            }
         }
     }
     else
