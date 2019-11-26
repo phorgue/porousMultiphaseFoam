@@ -199,12 +199,9 @@ void Foam::eventFlux::updateCoeffs()
     if (patchEventID_ != -1)
     {
         valueEvent = eventFile_.dtValue(patchEventID_);
-
-        //- Updating event value
-        eventFile_.update(this->db().time().value());
     }
 
-    if ((mag(valueEvent + eventFluxValue_) > SMALL) && (mag(sum(phip_)) < SMALL))
+    if ((mag(valueEvent + eventFluxValue_) > SMALL) && (mag(sum(phip_)) < VSMALL))
     {
         FatalErrorIn("eventFlux.C")
             << "non-zero fixed flux for C with zero flux field phi" << abort(FatalError);
@@ -212,7 +209,7 @@ void Foam::eventFlux::updateCoeffs()
 
     //- Computing fixed value
     scalarField results(patch().patch().faceCentres().size());    
-    results = (eventFluxValue_+valueEvent)/sum(phip_+SMALL);
+    results = (eventFluxValue_+valueEvent)/sum(phip_+VSMALL);
     operator== (results);
     fixedValueFvPatchScalarField::updateCoeffs();
 }

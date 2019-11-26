@@ -42,6 +42,7 @@ Foam::eventFile::eventFile
     datas_(eventFileToCopy.datas_),
     currentValues_(eventFileToCopy.currentValues_),
     oldValues_(eventFileToCopy.oldValues_),
+    oldOldValues_(eventFileToCopy.oldOldValues_),
     iterator_(eventFileToCopy.iterator_)
 {
 }
@@ -57,6 +58,7 @@ Foam::eventFile::eventFile
     datas_(),
     currentValues_(),
     oldValues_(),
+    oldOldValues_(),
     iterator_(-1)
 {}
 
@@ -94,13 +96,10 @@ const Foam::scalar& Foam::eventFile::currentEventEndTime() const
 void Foam::eventFile::update(const scalar& currentTime)
 {
     storeOldValues();
-    if (currentEventEndTime() <= currentTime)
+    while (currentEventEndTime() <= currentTime)
     {
         iterator_++;
-        while ((currentEventEndTime() <= currentTime) && (iterator_ < ndates_-2))
-        {
-            iterator_++;
-        }
+        if (iterator_ == ndates_-1) break;
     }
     if (currentTime < dates_[0])
     {
@@ -184,21 +183,20 @@ Foam::scalar Foam::eventFile::dtValue(const label& id) const
         
         scalar coefft0_00 = deltaT/(deltaT + deltaT0);
         scalar coefftn_0 = 1 + coefft0_00;
-        
+
         return coefftn_0*this->currentValue(id) - coefft0_00*this->oldValue(id);
     }
     else if (const auto CNscheme = dynamic_cast<const CrankNicolson*>(&scheme))
     {
         const auto& ocCoeff = CNscheme->ocCoeff();
-
-        return (1 + ocCoeff)*this->currentValue(id) - ocCoeff*this->oldValue(id);
+        return (1 + ocCoeff)*this->currentValue(id) - ocCoeff*(1+ocCoeff) * this->oldValue(id) + ocCoeff*ocCoeff*this->oldOldValue(id);
     }
     else if (dynamic_cast<const Euler*>(&scheme) || dynamic_cast<const steadyState*>(&scheme))
     {
         return this->currentValue(id);
     }
 
-    FatalErrorIn("events.C")
+    FatalErrorIn("eventFile.C")
         << "ddtScheme " << scheme.type() << " unsupported"
         << abort(FatalError);
     return 0;
