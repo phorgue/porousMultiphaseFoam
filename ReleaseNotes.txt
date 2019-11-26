@@ -83,7 +83,13 @@
   infiltration for groundwater2DFoam can be uniform or non-uniform (value
   specified at each time for each cell in event file)
 
+- eventFile
+
+  - now accepts two successive identical dates with different values for
+  imposing step variation.
+
 - eventFlux
+
   - now accept zero flux field (phi=0)
   - FatalError is handle if fixed flux > 0 and phi = 0
   - new static function through wich solvers can designate a list to be
@@ -93,6 +99,7 @@
   eventFlux condition with an event file will trigger a fatal error.
 
 - eventInfiltration
+
   - new static function through wich solvers can designate a list to be
   populated with non-owning pointers to patchEventFiles associated with
   instances of this BC. This scheme replaces the previous method which used an
