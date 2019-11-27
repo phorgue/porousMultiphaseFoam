@@ -1,4 +1,6 @@
 //- update dispersion tensor coefficients and source terms
+forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
 composition.correct(Utheta, theta);
 
 forAll(composition.Y(), speciesi)
