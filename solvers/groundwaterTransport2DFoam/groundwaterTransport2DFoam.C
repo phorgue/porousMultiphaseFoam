@@ -42,6 +42,8 @@ Developer
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
 #include "eventFlux.H"
+#include "EulerD3dt3Scheme.H"
+#include "EulerD2dt2Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;

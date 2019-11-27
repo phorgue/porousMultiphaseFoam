@@ -46,14 +46,49 @@ if(adjustTimeStep)
     {
         //- C-variation control
         scalar dtForC = VGREAT;
-        forAll(composition.Y(), speciesi)
+        if (timeScheme == "backward")
         {
-            const auto& C = composition.Y(speciesi);
-            dtForC = min
-            (
-                dtForC,
-                max(dCmax*gMax(C),dCresidual)/(dCdTmax[speciesi]+SMALL)
-            );
+            forAll(composition.Y(), speciesi)
+            {
+                if (Cmax[speciesi] > SMALL)
+                {
+                    dtForC = min
+                        (
+                            dtForC,
+                            Foam::pow(3*truncationError*(Cmax[speciesi])/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                        );
+                }
+            }
+            d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+        }
+        else if (timeScheme == "CrankNicolson")
+        {
+            forAll(composition.Y(), speciesi)
+            {
+                if (Cmax[speciesi] > SMALL)
+                {
+                    dtForC = min
+                        (
+                            dtForC,
+                            Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                        );
+                }
+            }
+            d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+        }
+        else if (timeScheme == "Euler")
+        {
+            forAll(composition.Y(), speciesi)
+            {
+                if (Cmax[speciesi] > SMALL)
+                {
+                    dtForC = min
+                        (
+                            dtForC,
+                            Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
+                        );
+                }
+            }
         }
 
         //- Timestep using number of Picard's iterations
@@ -164,8 +199,7 @@ if(adjustTimeStep)
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue()
-        << " ; dtheta = " << dtheta
-        << " ; dCrelative = " << dCrelative << endl;
+        << " ; dtheta = " << dtheta << endl;
 
 }
 

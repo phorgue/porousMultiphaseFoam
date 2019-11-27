@@ -44,6 +44,8 @@ Developers
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
 #include "eventFlux.H"
+#include "EulerD3dt3Scheme.H"
+#include "EulerD2dt2Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -116,17 +118,6 @@ noConvergence :
 
         //- 2) scalar transport
         #include "CEqn.H"
-        dCrelative = 0;
-        forAll(composition.Y(), speciesi)
-        {
-            const auto& C = composition.Y(speciesi);
-
-            dCrelative = max
-            (   
-                dCrelative,
-                dCdTmax[speciesi]*runTime.deltaTValue()/(gMax(C)+SMALL)
-            );
-        }
 
         //- C and water mass balance computation
         #include "computeMassBalance.H"
