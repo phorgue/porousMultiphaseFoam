@@ -40,11 +40,14 @@ if (adjustTimeStep)
     {
         forAll(composition.Y(), speciesi)
         {
-            dtForC = min
-                (
-                    dtForC,
-                    Foam::pow(3*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
-                );
+            if (Cmax[speciesi] > SMALL)
+            {
+                dtForC = min
+                    (
+                        dtForC,
+                        Foam::pow(3*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                    );
+            }
         }
         d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
     }
@@ -52,11 +55,14 @@ if (adjustTimeStep)
     {
         forAll(composition.Y(), speciesi)
         {
-            dtForC = min
-                (
-                    dtForC,
-                    Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
-                );
+            if (Cmax[speciesi] > SMALL)
+            {
+                dtForC = min
+                    (
+                        dtForC,
+                        Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                    );
+            }
         }
         d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
     }
@@ -64,11 +70,14 @@ if (adjustTimeStep)
     {
         forAll(composition.Y(), speciesi)
         {
-            dtForC = min
-                (
-                    dtForC,
-                    Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
-                );
+            if (Cmax[speciesi] > SMALL)
+            {
+                dtForC = min
+                    (
+                        dtForC,
+                        Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
+                    );
+            }
         }
     }
 
