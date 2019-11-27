@@ -61,8 +61,7 @@ minIter 3;
 //dthetamax           0.005;
 
 //- for tracer time step control
-dCmax       0.01;
-dCresidual      1e-3;
+truncationError 0.01;
 
 CSVoutput  true;
 
