@@ -47,9 +47,7 @@ adjustTimeStep yes;
 
 runTimeModifiable true;
 
-dCmax           0.1;
-
-dCresidual      1e-4;
+truncationError 0.01;
 
 dhmax           0.01;
 
