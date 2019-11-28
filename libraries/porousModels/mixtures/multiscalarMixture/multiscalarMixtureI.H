@@ -32,7 +32,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
     const EpsType& eps,
     List<sourceEventFile*>* sourceEventFileRegistry,
     const word& sourceEventDtFieldNameOverride,
-    const dimensionSet& dimSourceTerm
+    const dimensionSet& sourceTermDimFactor
 )
 :
     basicMultiComponentMixture(dict, speciesNames, mesh, phaseName),
@@ -40,20 +40,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
     lambdas_(speciesNames.size()),
     dispersionModels_(speciesNames.size()),
     sourceEvents_(speciesNames.size()),
-    sourceTerms_(speciesNames.size()),
-    zeroSourceTerm_
-    (
-        IOobject
-        (
-            "zeroSourceTerm",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar("zero", dimSourceTerm, 0)
-    )
+    sourceTerms_(speciesNames.size())
 {
     forAll(speciesNames, speciesi)
     {
@@ -103,6 +90,9 @@ inline Foam::multiscalarMixture::multiscalarMixture
         //- creation of dispersion model
         dispersionModels_.set(speciesi, dispersionModel::New("DeffModel", speciesDict, mesh));
 
+        //Handle source events
+
+        const dimensionSet dimSourceTerm = Y(speciesi).dimensions()*sourceTermDimFactor/dimTime;
 
         //- read source event if present
         if(speciesDict.found("eventFileTracerSource"))
@@ -128,6 +118,27 @@ inline Foam::multiscalarMixture::multiscalarMixture
                     << abort(FatalError);
             }
 
+        }
+        else//- otherwise, create a zero source term of the appropiate dimensions
+        {
+            sourceTerms_.set
+            (
+                speciesi, 
+                new volScalarField
+                (
+                    IOobject
+                    (
+                        "zeroSourceTerm",
+                        mesh.time().timeName(),
+                        mesh,
+                        IOobject::NO_READ,
+                        IOobject::NO_WRITE
+                    ),
+                    mesh,
+                    dimensionedScalar("zero", dimSourceTerm, 0)
+                )
+
+            );
         }
 
     } 
@@ -196,11 +207,7 @@ inline const Foam::volTensorField& Foam::multiscalarMixture::Deff(const label sp
 
 inline const Foam::volScalarField& Foam::multiscalarMixture::sourceTerm(const label speciesi) const
 {
-    if (sourceEvents_(speciesi))
-    {
-        return sourceTerms_[speciesi];
-    }
-    else return zeroSourceTerm_;
+    return sourceTerms_[speciesi];
 }
 
 
