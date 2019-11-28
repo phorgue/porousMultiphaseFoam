@@ -75,7 +75,7 @@ public:
             const EpsType& eps,
             List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
             const word& sourceEventDtFieldNameOverride = "",
-            const dimensionSet& dimSourceTerm = dimMass/(dimVol*dimTime)
+            const dimensionSet& sourceTermDimFactor = dimless
         );
 
     // Member Functions
@@ -110,7 +110,7 @@ public:
         inline const volTensorField& Deff(const label speciesi) const;
 
 
-        //- Source term [dimSourceTerm]
+        //- Source term [Y(speciesi).dimensions()*sourceTermDimFactor/s]
         inline const volScalarField& sourceTerm(const label speciesi) const;
 
 private:
@@ -119,8 +119,6 @@ private:
     PtrList<dispersionModel> dispersionModels_;
     PtrList<sourceEventFile> sourceEvents_;
     PtrList<volScalarField> sourceTerms_;
-
-    const volScalarField zeroSourceTerm_;
 };
 
 

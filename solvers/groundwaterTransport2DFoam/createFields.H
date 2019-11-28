@@ -213,7 +213,7 @@ multiscalarMixture composition
     eps,
     &sourceEventList,
     "C",
-    dimMass*dimLength/(dimVol*dimTime)
+    dimLength
 );
 
 
