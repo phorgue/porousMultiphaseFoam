@@ -28,16 +28,13 @@ Description
 
 if (adjustTimeStep)
 {
-    //- h-variation control
-    scalar dtForH = min(
-        dhmax/(dhdTmax+SMALL),
-        1.2*runTime.deltaTValue()
-    );
 
     //- C-variation control
     scalar dtForC = VGREAT;
+    scalar dtForhwater = VGREAT;
     if (timeScheme == "backward")
     {
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(3*truncationError*(hwatermax+VSMALL)/(dhwater3dT3max+VSMALL),1./3.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
@@ -53,6 +50,7 @@ if (adjustTimeStep)
     }
     else if (timeScheme == "CrankNicolson")
     {
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(12*truncationError*(hwatermax+VSMALL)/(dhwater3dT3max+VSMALL),1./3.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
@@ -68,6 +66,7 @@ if (adjustTimeStep)
     }
     else if (timeScheme == "Euler")
     {
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(2*truncationError*(hwatermax+VSMALL)/(dhwater2dT2max+VSMALL),1./2.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
@@ -81,7 +80,7 @@ if (adjustTimeStep)
         }
     }
 
-    scalar newDeltaT = min(min(dtForH,dtForC), 1.2*runTime.deltaTValue());
+    scalar newDeltaT = min(min(dtForhwater,dtForC), 1.2*runTime.deltaTValue());
     runTime.setDeltaT
         (
             min

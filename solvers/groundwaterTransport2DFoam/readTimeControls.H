@@ -37,17 +37,16 @@ scalar maxDeltaT =
 const bool eventTimeTracking =
      runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
-//- water time step control
-scalar dhmax =
-    runTime.controlDict().lookupOrDefault<scalar>("dhmax",1e-6);
-scalar dhdTmax = dhmax/runTime.deltaTValue();
-
-//- tracer timestep control
+//- tracer and hwater timestep control
 scalar truncationError =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError",0.01);
 word timeScheme = mesh.ddtScheme("ddt(" + composition.Y(0).name() + ')');
 EulerD3dt3Scheme d3dt3Operator(mesh,runTime.deltaTValue());
 Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
+scalar dhwaterdTmax = 0;
+scalar dhwater2dT2max = 0;
+scalar dhwater3dT3max = 0;
+scalar hwatermax = 0;
 scalarList dCdTmax(composition.Y().size());
 scalarList dC2dT2max(composition.Y().size());
 scalarList dC3dT3max(composition.Y().size());
@@ -61,6 +60,8 @@ if (timeScheme == "backward")
         Cmax[speciesi] = gMax(C);
         dC3dT3max[speciesi] = 3*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
     }
+    hwatermax = gMax(hwater);
+    dhwater3dT3max = 3*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
 }
 else if  (timeScheme == "CrankNicolson")
 {
@@ -70,6 +71,8 @@ else if  (timeScheme == "CrankNicolson")
         Cmax[speciesi] = gMax(C);
         dC3dT3max[speciesi] = 12*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
     }
+    hwatermax = gMax(hwater);
+    dhwater3dT3max = 12*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
 }
 else if (timeScheme == "Euler")
 {
@@ -79,6 +82,8 @@ else if (timeScheme == "Euler")
         Cmax[speciesi] = gMax(C);
         dC2dT2max[speciesi] = 2*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
     }
+    hwatermax = gMax(hwater);
+    dhwater2dT2max = 2*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
 }
 
 // ************************************************************************* //
