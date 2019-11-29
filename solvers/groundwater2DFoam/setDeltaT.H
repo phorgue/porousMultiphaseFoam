@@ -22,18 +22,51 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Timestep for porousShallowWaterFoam solver 
+    Timestep for groundwater2DFoam solver
 
 \*---------------------------------------------------------------------------*/
 
 if (adjustTimeStep)
 {
-    scalar newDeltaT = min(
-        dhmax/(dhdTmax+SMALL),
-        1.2*runTime.deltaTValue()
-    );
+    scalar dtForhwater = VGREAT;
+    if (timeScheme == "backward")
+    {
+            if (hwatermax > SMALL)
+            {
+                dtForhwater = min
+                    (
+                        dtForhwater,
+                        Foam::pow(3*truncationError*(hwatermax+VSMALL)/(dhwater3dT3max+VSMALL),1./3.)
+                    );
+            }
+        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+    }
+    else if (timeScheme == "CrankNicolson")
+    {
+            if (hwatermax > SMALL)
+            {
+                dtForhwater = min
+                    (
+                        dtForhwater,
+                        Foam::pow(12*truncationError*(hwatermax+VSMALL)/(dhwater3dT3max+VSMALL),1./3.)
+                    );
+            }
+        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+    }
+    else if (timeScheme == "Euler")
+    {
+            if (hwatermax > SMALL)
+            {
+                dtForhwater = min
+                    (
+                        dtForhwater,
+                        Foam::pow(2*truncationError*(hwatermax+VSMALL)/(dhwater2dT2max+VSMALL),1./2.)
+                    );
+            }
+    }
 
-   
+    scalar newDeltaT = min(dtForhwater,1.2*runTime.deltaTValue());
+
     runTime.setDeltaT
         (
             min

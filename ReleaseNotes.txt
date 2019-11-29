@@ -24,6 +24,8 @@
 
   - solver adapted to handle uniform or non-uniform infiltration event (also
   accept non-conformal mesh event => consider as uniform infiltration)
+  - time-stepping is now based on the truncation error (see the notes for
+  porousScalarTransportFoam)
 
 - porousScalarTransportFoam
   
@@ -62,10 +64,12 @@
   - adding by default the mass-conservative terms to head pressure equation
   (mixed-formulation). The old head-pressure formulation can be now obtained
   adding "massConservative false;" in transportProperties
-    - support for multiple transported species in a single case (see the notes
+  - support for multiple transported species in a single case (see the notes
   for porousScalarTransportFoam)
   - epsTotal now defaults to 1
   - eps can now be passed either as a scalar or as a field
+  - time-stepping is now based on the truncation error for the species
+   (see the notes for porousScalarTransportFoam)
 
 - groundwaterTransport2DFoam
 
