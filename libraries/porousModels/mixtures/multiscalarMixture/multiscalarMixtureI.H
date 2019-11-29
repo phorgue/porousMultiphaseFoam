@@ -113,7 +113,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
             }
             else
             {
-                FatalErrorIn("multiscalarMixture.C")
+                FatalErrorIn("multiscalarMixtureI.H")
                     << "eventFileTracerSource used with an incompatible solver"
                     << abort(FatalError);
             }
