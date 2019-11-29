@@ -38,6 +38,8 @@ Developer
 #include "MNTfile.H"
 #include "infiltrationEventFile.H"
 #include "outputEventFile.H"
+#include "EulerD3dt3Scheme.H"
+#include "EulerD2dt2Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -46,9 +48,9 @@ int main(int argc, char *argv[])
 {
     #include "setRootCase.H"
     #include "createTime.H"
-    #include "readTimeControls.H"  
     #include "createMesh.H"
     #include "createFields.H"
+    #include "readTimeControls.H"
     #include "readFixedPoints.H"
     #include "readEvent.H"
 

@@ -47,7 +47,7 @@ adjustTimeStep  yes;
 
 runTimeModifiable yes;
 
-dhmax           0.01;
+truncationError  0.01;
 
 maxDeltaT	1000;
 
