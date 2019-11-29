@@ -49,8 +49,6 @@ runTimeModifiable true;
 
 truncationError 0.01;
 
-dhmax           0.01;
-
 maxDeltaT       1e8;
 
 CSVoutput       true;
