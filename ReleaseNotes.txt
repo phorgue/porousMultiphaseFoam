@@ -78,6 +78,8 @@
   - support for multiple transported species in a single case (see the notes
   for porousScalarTransportFoam)
   - epsTotal now defaults to 1
+  - time-stepping is now based on the truncation error for the species and
+  hwater variations (see the notes for porousScalarTransportFoam)
 
 ### Libraries
 
