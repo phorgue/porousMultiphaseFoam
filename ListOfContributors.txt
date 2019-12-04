@@ -1,0 +1,12 @@
+# Developers
+Pierre Horgue (phorgue@imft.fr)
+Jacques Franc
+Gabriel Gerlero
+
+# Bug track/fix and beta tester
+avlmachado (github)
+Mohammed Elwardi Fadeli
+Romain Guibert
+Lachlan Mason
+François Renard
+Cyprien Soulaine

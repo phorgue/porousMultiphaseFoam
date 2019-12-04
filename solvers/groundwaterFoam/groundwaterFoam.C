@@ -43,6 +43,7 @@ Developers
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
 #include "patchEventFile.H"
+#include "eventInfiltration.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -56,6 +57,7 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "createthetaFields.H"
     #include "readPicardControls.H"
+    #include "readTimeControls.H"
     #include "readEvent.H"
     #include "readForcing.H"
 
@@ -66,28 +68,39 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
-        if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
-        if (patchEventIsPresent) patchEvent.update(runTime.timeOutputValue());
+        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
+        if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;
 
+noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "computeSourceTerm.H"
         scalar resPicard=GREAT;
         iterPicard = 0;
-        while (resPicard > tolPicard)
+        while ((resPicard > tolPicard) && (iterPicard != maxIterPicard))
         {
             iterPicard++;
             #include "hEqn.H"
             #include "updateProperties.H"
-            if (iterPicard == maxIterPicard)
-            {
-                Warning() <<  " Max iteration reached in Picard loop" << endl;
-                break;
-            }
+        }
+        if (resPicard > tolPicard)
+        {
+            Info << endl;
+            Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            iterPicard++;
+            h = h.oldTime();
+            //- rewind time
+            runTime.setTime(runTime.timeOutputValue()-runTime.deltaTValue(),runTime.timeIndex());
+            //- recompute time step
+            #include "setDeltaT.H"
+            //- Update new time
+            runTime.setTime(runTime.timeOutputValue()+runTime.deltaTValue(),runTime.timeIndex());
+            #include "updateProperties.H"
+            goto noConvergence;
         }
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;

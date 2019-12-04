@@ -57,9 +57,6 @@ class pcVanGenuchten
     volScalarField Smin_,Smax_;
     volScalarField m_,n_,alpha_;
     volScalarField pc0_;
-
-    // effective saturation of phase b
-    volScalarField Se_;
         
 public:
 
@@ -85,8 +82,8 @@ public:
     //- Correct the capillary pressure
     void correct()
         {
-            Se_ == (Sb_+SMALL-Smin_)/(Smax_-Smin_);
-            pc_ == pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
+            Se_ = (Sb_+SMALL-Smin_)/(Smax_-Smin_);
+            pc_ = pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
             dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smax_-Smin_)) * pow(pow(Se_,-1/m_)-1,(1/n_)-1) * pow(Se_,-(1+m_)/m_);
         }
 
@@ -100,7 +97,7 @@ public:
 
             //- Update effective saturation and capillary capacity
             Ch_.dimensions().reset(dimless);
-            Ch_ == alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
+            Ch_ = alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
             Ch_.dimensions().reset(dimless/dimLength);
 
             //- Update saturation

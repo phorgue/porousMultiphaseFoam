@@ -28,20 +28,20 @@
     Info << endl;
 
     //- CSV output
-    if (CSVactive)
+    if (CSVoutput)
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
-            massBalanceCSV << runTime.timeName() << " " <<  (fvc::domainIntegrate(infiltration).value()/zScale)*(mesh.nCells()-
+            waterMassBalanceCSV << runTime.timeName() << " " <<  (fvc::domainIntegrate(infiltration).value()/zScale)*(mesh.nCells()-
             fixedPotentialIDList.size())/mesh.nCells() << " " << flowOutFixedPoints << " ";
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    massBalanceCSV << " " << sum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi])/zScale << " ; ";
+                    waterMassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi])/zScale << " ; ";
                 }
             }
-            massBalanceCSV << endl;
+            waterMassBalanceCSV << endl;
         }
     }
 

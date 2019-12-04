@@ -91,6 +91,8 @@ class eventFlux
 protected:
 
     // Protected data
+    static List<patchEventFile*>* eventFileRegistry_;
+    static word dtFieldNameOverride_;
     
     //- Fixed flux value
     scalar eventFluxValue_;
@@ -108,6 +110,11 @@ public:
     //- Runtime type information
     TypeName("eventFlux");
 
+    static void setEventFileRegistry
+    (
+        List<patchEventFile*>* eventFileRegistry, 
+        const word& dtFieldNameOverride = ""
+    );
 
     // Constructors
 

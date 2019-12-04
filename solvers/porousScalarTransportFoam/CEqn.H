@@ -1,23 +1,61 @@
-{
-    //- update dispersion tensor coefficient
-    DeffModel->correct(C,U,Saturation,eps);
+//- update dispersion tensor coefficients and source terms
+forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateValue(runTime);
+composition.correct(U, Saturation, eps);
 
-    volTensorField Deff = eps*Saturation*DeffModel->Deff();
+forAll(composition.Y(), speciesi)
+{
+    const auto& speciesName = composition.species()[speciesi];
+    
+    auto& C = composition.Y(speciesi);
+    const auto& R = composition.R(speciesi);
+    const auto& Deff = composition.Deff(speciesi);
+    const auto& lambda = composition.lambda(speciesi);
+    const auto& sourceTerm = composition.sourceTerm(speciesi);
 
     fvScalarMatrix CEqn
         (
             eps * R * Saturation * fvm::ddt(C)
             + fvm::div(phi, C, "div(phi,C)")
-            - fvm::laplacian(Deff, C, "laplacian(Deff,C)")
+            - fvm::laplacian(eps*Saturation*Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm
             - eps * R * Saturation * fvm::Sp(lambda,C)
         );
 
-    CEqn.solve();
+    CEqn.solve("C");
 
-    dCdTmax = max(mag(fvc::ddt(C))).value();
-
-    Info << "Concentration Min(C) = " << min(C).value() << " Max(C) = " << max(C).value() << " mass(C) = " << fvc::domainIntegrate(R*C*Saturation*eps).value() << endl;
+    dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
+    if (timeScheme == "Euler")
+    {
+        volScalarField dC2dT2 = d2dt2Operator.fvcD2dt2(C);
+        dC2dT2max[speciesi] = 0;
+        forAll(dC2dT2, celli)
+        {
+            if(mag(dC2dT2[celli]) > dC2dT2max[speciesi])
+            {
+                Cmax[speciesi] = C[celli];
+                dC2dT2max[speciesi] = mag(dC2dT2[celli]);
+            }
+        }
+    }
+    else
+    {
+        volScalarField dC3dT3 = d3dt3Operator.d3dt3(C);
+        dC3dT3max[speciesi] = 0;
+        forAll(dC3dT3, celli)
+        {
+            if(mag(dC3dT3[celli]) > dC3dT3max[speciesi])
+            {
+                Cmax[speciesi] = C[celli];
+                dC3dT3max[speciesi] = mag(dC3dT3[celli]);
+            }
+        }
+    }
+    Info<< "Concentration Min(" << speciesName << ") = " << min(C).value() 
+        << " Max(" << speciesName << ") = " << max(C.internalField()).value()
+        << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*Saturation*eps).value()
+        << " dCmax = " << dCdTmax[speciesi]*runTime.deltaTValue()
+        << endl;
 
 }

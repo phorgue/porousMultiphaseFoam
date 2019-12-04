@@ -2,7 +2,7 @@
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////////
 
-Info<< "Reading transportProperties\n" << endl;
+Info<< "Reading transportProperties" << endl;
 
 IOdictionary transportProperties
 (
@@ -19,11 +19,11 @@ IOdictionary transportProperties
 const dimensionedScalar rho(transportProperties.lookup("rho"));
 const dimensionedScalar mu(transportProperties.lookup("mu"));
 
-//////////////////////////////////////////////////////////////////
-////////////////////// Height - Potential ///////////////////////
-//////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+////////////////////// HEIGHT - POTENTIAL ///////////////////////
+/////////////////////////////////////////////////////////////////
 
-Info<< "Reading field potential\n" << endl;
+Info << nl << "Reading field potential" << endl;
 volScalarField potential
 (
     IOobject
@@ -37,7 +37,7 @@ volScalarField potential
     mesh
 );
 
-Info<< "Reading field z0" << endl;
+Info << nl << "Reading elevation field z0" << endl;
 volScalarField z0
 (
     IOobject
@@ -50,9 +50,9 @@ volScalarField z0
     ),
     mesh
 );
-Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << nl << endl;
+Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << endl;
 
-Info << "Computing hwater" << endl;
+Info << nl << "Computing hwater" << endl;
 volScalarField hwater
 (
     IOobject
@@ -65,7 +65,7 @@ volScalarField hwater
     ),
     potential
 );
-hwater == potential - z0;
+hwater = potential - z0;
 
 dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01)));
 scalar cumulativeWaterAdded = 0;
@@ -73,7 +73,7 @@ scalar cumulativeWaterAdded = 0;
 #include "correctInitialPotential.H"
 
 Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value()
-<< " ; hwaterMin = " << hwaterMin.value() << nl << endl;
+<< " ; hwaterMin = " << hwaterMin.value() << endl;
 
 hwater.write();
 
@@ -81,9 +81,8 @@ hwater.write();
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-Info<< "Reading Porous Media Properties \n" << endl;
-
 // Porosity
+Info << nl << "Reading porosity field eps (if present)" << endl;
 dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
 
 volScalarField eps
@@ -103,7 +102,7 @@ volScalarField eps
 if (max(eps).value() <= 0) FatalErrorIn("createFields.H") << " porosity eps equal to 0" << exit(FatalError);
 
 // Intrinsic permeability
-Info<< "Reading field K" << endl;
+Info<< nl << "Reading permeability field K" << endl;
 volScalarField K
 (
     IOobject
@@ -128,7 +127,7 @@ surfaceScalarField Mf("Mf",Kf*g*rho/mu);
 ////////////////////////// VELOCITY - FLUXES ////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-Info<< "Reading field U\n" << endl;
+Info<< "Reading field U" << nl << endl;
 volVectorField U
 (
     IOobject
@@ -143,7 +142,7 @@ volVectorField U
 );
 
 #include "createPhi.H"
-phi == (-Mf * fvc::snGrad(potential)) * mesh.magSf();
+phi = (-Mf * fvc::snGrad(potential)) * mesh.magSf();
 forAll(mesh.boundary(),patchi)
 {
     if (isA< fixedValueFvPatchField<vector> >(U.boundaryField()[patchi]))
@@ -157,8 +156,11 @@ surfaceScalarField transmissivity("transmissivity",Mf*fvc::interpolate(hwater));
 surfaceScalarField phiG("phiG",0*phi);
 surfaceScalarField phiPc("phiPc",0*phi);
 
-//-
-Info << "Reading field infiltration (if present)" << endl;
+///////////////////////////////////////////////////////////////////
+////////////////////////// FORCING TERMS //////////////////////////
+///////////////////////////////////////////////////////////////////
+
+Info << "Reading field infiltration field (if present)" << endl;
 dimensionedScalar infiltrationScalar(transportProperties.lookupOrDefault("infiltration",dimensionedScalar("",dimLength/dimTime,0.)));
 volScalarField infiltration
 (
@@ -168,7 +170,7 @@ volScalarField infiltration
         runTime.timeName(),
         mesh,
         IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
+        IOobject::AUTO_WRITE
     ),
     mesh,
     infiltrationScalar
@@ -190,29 +192,21 @@ volScalarField seepageTerm
 
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
 
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
-
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////
 ////////////////////////////////////////////////////
 
-bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
-word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","waterMassBalance.csv");
-OFstream massBalanceCSV(CSVoutput);
-if (CSVactive)
+bool CSVoutput = runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
+OFstream waterMassBalanceCSV("waterMassBalance.csv");
+if (CSVoutput)
 {
-    massBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
+    waterMassBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
     forAll(mesh.boundaryMesh(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
         }
     }
-    massBalanceCSV << endl;
+    waterMassBalanceCSV << endl;
 }
