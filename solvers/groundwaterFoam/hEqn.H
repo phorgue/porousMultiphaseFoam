@@ -13,7 +13,14 @@
 
     fvScalarMatrix hEqn
         (
-            pcModel->Ch() * fvm::ddt(h)
+            //- accumulation terms
+            (Ss*pcModel->Se() + pcModel->Ch()) * fvm::ddt(h)
+            //-mass conservative terms
+            + massConservativeTerms * (
+                pcModel->Ch()*(h.oldTime()-h.prevIter())
+                + ( theta - theta.oldTime()))
+            /runTime.deltaT()
+            //- transport terms
             - fvm::laplacian(Mf,h)
             + fvc::div(phiG)
             ==
@@ -23,11 +30,11 @@
     #include "updateForcing.H"
 
     hEqn.solve();
-    
+
     resPicard = gMax((mag(h-h.prevIter()))->internalField());
     Info << "Picard iteration : " << iterPicard << " residual = " << resPicard << endl; 
 
-    phi == phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
+    phi = phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
     Utheta = fvc::reconstruct(phi);
 
 }

@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -23,13 +23,13 @@ startTime       0.0;
 
 stopAt          endTime;
 
-endTime         864000;//86400000;
+endTime         864000;
 
-deltaT          600;
+deltaT          86400;
 
 writeControl    adjustableRunTime;
 
-writeInterval   864000;//8640000;
+writeInterval   864000;
 
 purgeWrite      0;
 
@@ -50,12 +50,14 @@ runTimeModifiable yes;
 maxDeltaT	1e9;
 
 //- for Picard time step control
-// timeStepControl Picard;
-// dTFactIncrease  1.1;
-// dTFactDecrease  0.9;
+timeStepControl Picard;
+dTFactIncrease  1.1;
+dTFactDecrease  0.9;
+nIterStability  5;
+minIter         3;
 
 //- for h variation time step control
-timeStepControl dthetamax;
-dthetamax           0.01;
+// timeStepControl dthetamax;
+// dthetamax           0.01;
 
 // ************************************************************************* //

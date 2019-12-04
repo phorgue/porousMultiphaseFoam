@@ -25,6 +25,7 @@ License
 
 #include "sourceEventFile.H"
 #include "IFstream.H"
+#include "fvCFD.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -166,6 +167,67 @@ Foam::sourceEventFile::sourceEventFile
         oldValues_.setSize(ncoordinates_,0);
     }
 
+}
+
+void Foam::sourceEventFile::onMeshChanged()
+{
+    eventFile::onMeshChanged();
+
+    if(mesh_)
+    {
+        idCoordinates_.resize(this->ncoordinates());
+
+        forAll(this->coordinates(),pointi)
+        {
+            idCoordinates_[pointi] = mesh_->findNearestCell(this->coordinates()[pointi]);
+        }
+    }
+    else
+    {
+        idCoordinates_.clear();
+    }
+}
+
+void Foam::sourceEventFile::setFieldDimensions(const dimensionSet& dims)
+{
+    fieldDims_.reset(dims);
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::sourceEventFile::dtValuesAsField() const
+{
+    if(!mesh_)
+    {
+        FatalErrorIn("sourceEventFile.C")
+            << "You must call setTimeScheme(...) before being able to use dtValuesAsField()"
+            << abort(FatalError);
+    }
+
+    tmp<volScalarField> tSourceTerm
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "sourceTerm",
+                mesh_->time().timeName(),
+                *mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            *mesh_,
+            dimensionedScalar("zero", fieldDims_, 0)
+        )      
+    );
+
+    auto& sourceTerm = tSourceTerm.ref();
+
+    forAll(this->coordinates(), pointi)
+    {
+        sourceTerm[idCoordinates_[pointi]] += this->dtValue(pointi)/mesh_->V()[idCoordinates_[pointi]];
+    }
+
+    return tSourceTerm;
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

@@ -1,4 +1,146 @@
 ************************
+*** PMFv1912
+*** Multi-species transport and timestep management
+************************
+
+### Solvers
+
+- Global:
+
+  -patchEvent are now automatically read by solvers inside fields file
+  -keyword "eventTimeTracking" is used to constraint the solver to
+  explictly compute solution at event time (source/patch events)
+
+- groundwaterFoam
+
+  - The non-convergence of the Picard's algorithm now forces the solver to
+  recompute the time iteration reducing the time step
+  - add specific storage term (Ss) to the Richards' formulation
+  - adding by default the mass-conservative terms to head pressure equation
+  (mixed-formulation). The old head-pressure formulation can be now obtained
+  adding "massConservative false;" in transportProperties
+
+- groundwater2DFoam
+
+  - solver adapted to handle uniform or non-uniform infiltration event (also
+  accept non-conformal mesh event => consider as uniform infiltration)
+  - time-stepping is now based on the truncation error (see the notes for
+  porousScalarTransportFoam)
+
+- porousScalarTransportFoam
+  
+  - support for multiple transported species in a single case. Species are
+  listed in a "species" wordList in the transportProperties dictionary. 
+  Each species can have its own porousTransport parameters and dispersion
+  model. These are found in sub-dictionaries of transportProperties, each 
+  named the same as a species. The change is backward compatible (the absence
+  of a list of species is taken to mean a single species with name "C", and
+  species without their own sub-dictionaries have their properties read
+  directly from transportProperties). This support has also been extended to 
+  all transport solvers in the toolbox
+  - epsTotal now defaults to 1
+  - eps can now be passed either as a scalar or as a field
+  - time-stepping is based on the truncation error related ot the time scheme
+  used (Euler, backward or CrankNicolson) and specified by the "truncationError"
+  keyword in system/controlDict. The relative numerical error is computed using
+  dC3/dt3 or dC2/dt2 (depending on the time-scheme) and maintained below the
+  user-defined value
+
+- porousScalarTransport2DFoam
+
+  - support for multiple transported species in a single case (see the notes
+  for porousScalarTransportFoam)
+  - epsTotal now defaults to 1
+  - eps can now be passed either as a scalar or as a field
+  - time-stepping is now based on the truncation error (see the notes for
+  porousScalarTransportFoam)
+  
+- groundwaterTransportFoam
+
+  - The non-convergence of the Picard's algorithm now forces the solver to
+  recompute the time iteration reducing the time step
+  - CSV output fixed
+  - add specific storage term (Ss) to the Richards' formulation
+  - adding by default the mass-conservative terms to head pressure equation
+  (mixed-formulation). The old head-pressure formulation can be now obtained
+  adding "massConservative false;" in transportProperties
+  - support for multiple transported species in a single case (see the notes
+  for porousScalarTransportFoam)
+  - epsTotal now defaults to 1
+  - eps can now be passed either as a scalar or as a field
+  - time-stepping is now based on the truncation error for the species
+   (see the notes for porousScalarTransportFoam)
+
+- groundwaterTransport2DFoam
+
+  - new solver coupling 2D water modeling (groundwater2DFoam) with 2D scalar
+  transport (porousScalarTransport2DFoam)
+  - support for multiple transported species in a single case (see the notes
+  for porousScalarTransportFoam)
+  - epsTotal now defaults to 1
+  - time-stepping is now based on the truncation error for the species and
+  hwater variations (see the notes for porousScalarTransportFoam)
+
+### Libraries
+
+- toolsGIS
+
+  - uniformInfiltrationEventFile replaced by infiltrationEventFile
+  infiltration for groundwater2DFoam can be uniform or non-uniform (value
+  specified at each time for each cell in event file)
+
+- eventFile
+
+  - now accepts two successive identical dates with different values for
+  imposing step variation.
+
+- eventFlux
+
+  - now accept zero flux field (phi=0)
+  - FatalError is handle if fixed flux > 0 and phi = 0
+  - new static function through wich solvers can designate a list to be
+  populated with non-owning pointers to patchEventFiles associated with
+  instances of this BC. This scheme replaces the previous method which used an
+  IODictionary to communicate with solvers. If no list is passed, any
+  eventFlux condition with an event file will trigger a fatal error.
+
+- eventInfiltration
+
+  - new static function through wich solvers can designate a list to be
+  populated with non-owning pointers to patchEventFiles associated with
+  instances of this BC. This scheme replaces the previous method which used an
+  IODictionary to communicate with solvers. If no list is passed, any
+  eventInfiltration condition with an event file will trigger a fatal error.
+
+- porousModels
+
+  - relativePermeabilityModel/capillarityModel has new function Se() which
+  return effective saturation.
+
+- multiscalarMixture
+
+  - new class developed to support multiple species in transport solvers.
+  Objects of this class can read the properties for all species in a case,
+  and also contain their concentration fields. They also do most of the work
+  required to support species source events ("eventFileTracerSource" entries); 
+  however, time tracking cannot be handled internally by this class and 
+  therefore solvers that support this type of events have to, on construction,
+  refer to a list that will be populated with non-owning pointers to any event
+  files that are found (otherwise the solver will be deemed incompatible with 
+  this type of events and the presence of any "eventFileTracerSource" entry 
+  will raise a fatal error).
+
+
+### Tutorials
+
+- fix event keywords in several tutorials
+
+- cleaning configuration files removing useless keywords/dictionaries
+
+- new 1D_eventFlux test case for time scheme efficiency comparison (Euler,
+  backward, CrankNicolson)
+
+************************
 *** PMFv1906
 *** Event file generalization + seepage/forcing term for 2D solvers
 ************************
@@ -57,7 +199,7 @@
   - eventInfiltration
     new BC to impose event variable velocity in impesFoam, anisoImpesFoam
     and groundwaterFoam. Patch event file is directly given in the BC
-    dictionary using the keyword "eventFile" (as for fixedFlux).
+    dictionary using the keyword "eventFile" (as for fixedFlux)
 
   - eventFlux
     replace old fixedFlux BC for porousScalarTransportFoam
