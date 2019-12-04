@@ -6,46 +6,54 @@
 
 - The current branches (last version of the toolbox)
 
-  - branch "openfoam-v1812" > PMFv1906
-  - branch "openfoam-v6"    > PMFv1906
+  - branch "openfoam-v1906" > PMFv1912
+  - branch "openfoam-v7"    > PMFv1912
 
 - Old branches not updated
 
-   - branch "openfoam-v5"     > PMFv1809
-   - branch "foam-extend-4.0" >	PMFv1809
-   - branch "openfoam-v1806"  > PMFv1809
-   - branch "openfoam-v1712"  > PMFv1805
+  - branch "openfoam-v1812"  > PMFv1906
+  - branch "openfoam-v6"     > PMFv1906
+  - branch "openfoam-v5"     > PMFv1809
+  - branch "foam-extend-4.0" > PMFv1809
+  - branch "openfoam-v1806"  > PMFv1809
+  - branch "openfoam-v1712"  > PMFv1805
 
 - Older version (no branches)
 
-    - OpenFOAM 4.0	PMFv1.4.1
-    - OpenFOAM 3.0	PMFv1.2
+  - OpenFOAM 4.0	PMFv1.4.1
+  - OpenFOAM 3.0	PMFv1.2
 
-  - version no supported:
-    - OpenFOAM 2.4 and older
-    - foam-extend 3.2 and older
-    - OpenFOAM v1706 and older
+- version not supported:
 
-- This toolbox needs only a standard OpenFOAM installation (see www.openfoam.org
-  or openfoam.com)
+  - OpenFOAM 2.4 and older
+  - foam-extend 3.2 and older
+  - OpenFOAM v1706 and older
 
-- Please cite the related paper in the "doc" folder if you are using this toolbox.
+- This toolbox needs only a standard OpenFOAM installation
+  (see www.openfoam.org or openfoam.com)
 
-- Read the COPYING_OPENFOAM file for information about OpenFOAM and this toolbox Copyrights.
+- Please cite the related paper in the "doc" folder if you are using this
+  toolbox.
 
-* Installation instructions : 
+- Read the COPYING_OPENFOAM file for information about OpenFOAM and this
+  toolbox Copyrights.
 
-- First, source the OpenFOAM configuration file, i.e. (example for ubuntu version) : 
-   source /opt/openfoamv6/etc/bashrc
+* Installation instructions :
+
+- First, source the OpenFOAM configuration file, i.e. (example for ubuntu
+  version) :
+
+  	  source /opt/openfoamv6/etc/bashrc
 
 - then in the "porousMultiphaseFoam" directory, run :
 
-	./Allwmake
+       	  ./Allwmake
 
   to install the package.
 
-- Dynamic libraries, "libporousBoundaryConditions.so" and "libporousModels.so"
-  are compiled in the standard OpenFOAM user directory : $FOAM_USER_LIBBIN;
+- Dynamic libraries are compiled in the standard OpenFOAM user directory :
+
+  $FOAM_USER_LIBBIN
 
 - The executable solver "impesFoam" is placed in the standard OpenFOAM user
   directory $FOAM_USER_APPBIN.
@@ -61,4 +69,4 @@
 
 - see the ReleaseNotes.txt file for detailed information about the toolbox.
 
-**************************************************************************
+********************************************************************************

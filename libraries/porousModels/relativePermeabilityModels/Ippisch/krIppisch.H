@@ -60,9 +60,6 @@ class krIppisch
     dictionary krIppischCoeffs_;
     volScalarField m_,n_,alpha_,tau_,he_;
 
-    //- effective saturation of phase b
-    volScalarField Se_;
-
     //- cut-off point saturation (computed with entry pressure)
     volScalarField Sc_;
 

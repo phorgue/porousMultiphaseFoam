@@ -1,25 +1,45 @@
-bool uniformInfiltrationEventIsPresent = transportProperties.found("eventFileInfiltration");
-word uniformInfiltrationEventFileName = transportProperties.lookupOrDefault<word>("eventFileInfiltration","");
-uniformInfiltrationEventFile uniformInfiltrationEvent(uniformInfiltrationEventFileName);
-if (uniformInfiltrationEventIsPresent)
+bool infiltrationEventIsPresent = transportProperties.found("eventFileInfiltration");
+word infiltrationEventFileName = transportProperties.lookupOrDefault<word>("eventFileInfiltration","");
+infiltrationEventFile infiltrationEvent(infiltrationEventFileName);
+if (infiltrationEventIsPresent)
 {
-    uniformInfiltrationEvent.update(runTime.startTime().value());
-    uniformInfiltrationEvent.storeOldValues();
+    infiltrationEvent.updateIndex(runTime.startTime().value());
+    infiltrationEvent.updateValue(runTime);
+    infiltrationEvent.storeOldValues();
 }
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
 
 scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
 if (eventTimeStep > 0)
 {
-    if (uniformInfiltrationEventIsPresent) uniformInfiltrationEvent.addIntermediateTimeSteps(eventTimeStep);
+    if (infiltrationEventIsPresent) infiltrationEvent.addIntermediateTimeSteps(eventTimeStep);
 }
 
 //- Updating infiltration value using event file
-if (uniformInfiltrationEventIsPresent)
+if (infiltrationEventIsPresent)
 {
-    infiltration.primitiveFieldRef() = uniformInfiltrationEvent.currentValue();
+    infiltrationEvent.setTimeScheme(potential.name(), mesh);
+
+    if (infiltrationEvent.isUniform())
+    {
+        infiltration.primitiveFieldRef() = infiltrationEvent.currentValue(0);
+    }
+    else
+    {
+        if (infiltrationEvent.currentValues().size() != mesh.C().size())
+        {
+            Warning() << "Number of infiltration values does not correspond to the mesh size, first value is used as uniform infiltration" << endl;
+            infiltrationEvent.setInfiltrationAsUniform();
+            infiltration.primitiveFieldRef() = infiltrationEvent.currentValue(0);
+        }
+        else
+        {
+            infiltration.primitiveFieldRef() = infiltrationEvent.currentValues();
+        }
+
+    }
 }

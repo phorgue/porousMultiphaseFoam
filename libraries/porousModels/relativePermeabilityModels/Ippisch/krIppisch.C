@@ -127,15 +127,16 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             "he",
             Sb_.time().timeName(),
             Sb_.db(),
+
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
         dimensionedScalar("he",dimless,krIppischCoeffs_.lookupOrDefault<scalar>("he",0.))
     ),
-    Se_((Sb_-Smin_)/(Smax_-Smin_)),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
+    Se_ = (Sb_-Smin_)/(Smax_-Smin_);
     if (gMin(m_) <= 0)
     {
         FatalErrorIn

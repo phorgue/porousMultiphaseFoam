@@ -1,10 +1,9 @@
-
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  4.1                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -18,47 +17,21 @@ FoamFile
 
 defaultFieldValues
 (
-	volScalarFieldValue Sb 0.002
-	volScalarFieldValue Winj 0
-	volScalarFieldValue Wext 0
-        volScalarFieldValue n 3
+    volScalarFieldValue Sb 0.002
+    volScalarFieldValue n 3
 );
-
-
 
 regions
 (
-    // injection
-   boxToCell
-   {
-     box (4.9 8 0) (5.1 8.2 1);
-     fieldValues
-	(
-	   volScalarFieldValue Winj 1 
-     	);
-   }   
-
-   // extraction
+    // to test heterogeneous BrooksAndCorey parameters
     boxToCell
-   {
-     box (4.9 0.8 0) (5.1 1 1);
-     fieldValues
-        (
-           volScalarFieldValue Wext 1 
-        );
-   }
-
-   // to test heterogeneous BrooksAndCorey parameters
-    boxToCell
-   {
-     box (0 0 0) (5 10 1);
-     fieldValues
-        (
-           volScalarFieldValue n 4
-        );
-   }      
-
+    {
+        box (0 0 0) (5 10 1);
+        fieldValues
+            (
+                volScalarFieldValue n 4
+            );
+    }
 );
 
-
-
+// ************************************************************************* //

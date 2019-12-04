@@ -36,8 +36,10 @@ Developer
 #include "harmonic.H"
 #include "fixedValueFvPatchField.H"
 #include "MNTfile.H"
-#include "uniformInfiltrationEventFile.H"
+#include "infiltrationEventFile.H"
 #include "outputEventFile.H"
+#include "EulerD3dt3Scheme.H"
+#include "EulerD2dt2Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -46,9 +48,9 @@ int main(int argc, char *argv[])
 {
     #include "setRootCase.H"
     #include "createTime.H"
-    #include "readTimeControls.H"  
     #include "createMesh.H"
     #include "createFields.H"
+    #include "readTimeControls.H"
     #include "readFixedPoints.H"
     #include "readEvent.H"
 
@@ -58,12 +60,16 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
+        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
+        if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
-        #include "updateEvent.H"
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
+
+        //- Update infiltration term
+        #include "computeInfiltration.H"
 
         //- Solve potential equation
         #include "potentialEqn.H"

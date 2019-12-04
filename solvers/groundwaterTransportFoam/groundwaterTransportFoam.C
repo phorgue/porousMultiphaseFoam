@@ -38,8 +38,14 @@ Developers
 #include "incompressiblePhase.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
-#include "dispersionModel.H"
+#include "multiscalarMixture.H"
 #include "sourceEventFile.H"
+#include "outputEventFile.H"
+#include "patchEventFile.H"
+#include "eventInfiltration.H"
+#include "eventFlux.H"
+#include "EulerD3dt3Scheme.H"
+#include "EulerD2dt2Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -52,6 +58,7 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createthetaFields.H"
+    #include "readPicardControls.H"
     #include "readTimeControls.H"
     #include "readEvent.H"
     #include "readForcing.H"
@@ -63,49 +70,59 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
+        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
+        if (eventIsPresent_water)  event_water.updateIndex(runTime.timeOutputValue());
+        forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateIndex(runTime.timeOutputValue());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
-        #include "updateEvent.H"
 
         runTime++;
 
+noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Update Event
-        #include "updateEvent.H"
+        //- Compute source term
+        #include "computeSourceTerm.H"
 
         //- 1) Richard's equation
         scalar resPicard=GREAT;
         iterPicard = 0;
         theta.storeOldTime();
-        while (resPicard > tolPicard)
+        while ((resPicard > tolPicard) && (iterPicard != maxIterPicard))
         {
             iterPicard++;
             #include "hEqn.H"
             #include "updateProperties.H"
-            if (iterPicard == maxIterPicard)
-            {
-                Warning() <<  " Max iteration reached in Picard loop" << endl;
-                break;
-            }
+        }
+        if (resPicard > tolPicard)
+        {
+            Info << endl;
+            Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            iterPicard++;
+            h = h.oldTime();
+            //- rewind time
+            runTime.setTime(runTime.timeOutputValue()-runTime.deltaTValue(),runTime.timeIndex());
+            //- recompute time step
+            #include "setDeltaT.H"
+            //- Update new time
+            runTime.setTime(runTime.timeOutputValue()+runTime.deltaTValue(),runTime.timeIndex());
+            #include "updateProperties.H"
+            goto noConvergence;
         }
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
         Info << "Head pressure h  " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
-        volScalarField dtheta_tmp = mag(theta-theta.oldTime());
+        scalarField dtheta_tmp = mag(theta.internalField()-theta.oldTime().internalField());
         dtheta = gMax(dtheta_tmp);
         dthetadTmax = dtheta/runTime.deltaTValue();
-        dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
-        
+
         //- 2) scalar transport
         #include "CEqn.H"
-        
-        runTime.write();
 
-        //- write solution and eventTime
-        if (event.dates()[currentEvent+1] == runTime.timeOutputValue())
-        {
-            runTime.writeNow();
-        }
+        //- C and water mass balance computation
+        #include "computeMassBalance.H"
+
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

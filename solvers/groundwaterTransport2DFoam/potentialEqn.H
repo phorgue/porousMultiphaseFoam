@@ -1,0 +1,1 @@
+../groundwater2DFoam/potentialEqn.H
