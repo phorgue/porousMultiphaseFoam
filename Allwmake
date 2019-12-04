@@ -2,10 +2,12 @@
 cd ${0%/*} || exit 1    # run from this directory
 set -x
 
-# Compiling libraries 
+# Compiling libraries
+wmake libraries/numericalMethods
 wmake libraries/porousModels
 wmake libraries/toolsGIS
 wmake libraries/porousBoundaryConditions
+
 # Compiling solvers 
 wmake solvers/impesFoam
 wmake solvers/anisoImpesFoam
@@ -13,7 +15,8 @@ wmake solvers/groundwaterFoam
 wmake solvers/porousScalarTransportFoam
 wmake solvers/porousScalarTransport2DFoam
 wmake solvers/groundwater2DFoam
-#wmake solvers/groundwaterTransportFoam
+wmake solvers/groundwaterTransport2DFoam
+wmake solvers/groundwaterTransportFoam
 wmake solvers/stationaryGroundwater2DFoam
 wmake solvers/stationaryGroundwaterFoam
 

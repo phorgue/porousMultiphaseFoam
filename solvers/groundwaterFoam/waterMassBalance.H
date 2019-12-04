@@ -11,19 +11,19 @@
     Info << endl;
 
     //- CSV output
-    if (CSVactive)
+    if (CSVoutput)
     {
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
-            massBalanceCSV << runTime.timeName() << " ";
+            waterMassBalanceCSV << runTime.timeName() << " ";
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    massBalanceCSV << " " << sum(phi.boundaryField()[patchi]);
+                    waterMassBalanceCSV << " " << sum(phi.boundaryField()[patchi]);
                 }
             }
-            massBalanceCSV << endl;
+            waterMassBalanceCSV << endl;
         }
     }
 

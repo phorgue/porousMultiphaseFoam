@@ -28,27 +28,12 @@ Description
 
 if(adjustTimeStep)
 {
-
-    //- Timestep using number of Picard's iterations
-    if (timeStepControl == "Picard")
+    scalar deltaTFact=1;
+    //- in case of non convergence of the Picard's algorithm
+    if (iterPicard == maxIterPicard+1)
     {
-        scalar deltaTFact=1;
-        if(iterPicard == maxIterPicard)
-        {
-            deltaTFact = dTFactDecrease;
-            iterStability=0;
-        }
-        else if (iterPicard <= minIterPicard)
-        {
-            iterStability++;
-        }
-
-        if (iterStability == nIterStability)
-        {
-            deltaTFact = dTFactIncrease;
-            iterStability = 0;
-        }
-
+        deltaTFact = dTFactDecrease;
+        iterStability=0;
         runTime.setDeltaT
             (
                 min(
@@ -57,27 +42,56 @@ if(adjustTimeStep)
                 )
             );
     }
-
-    //- Timestep using h variation
-    else if(timeStepControl == "dthetamax")
+    else
     {
-        scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
+        //- Timestep using number of Picard's iterations
+        if (timeStepControl == "Picard")
+        {
+            scalar deltaTFact=1;
+            if (iterPicard <= minIterPicard)
+            {
+                iterStability++;
+            }
 
-        runTime.setDeltaT
-            (
-                min(
-                    dtForTheta,
+            if (iterStability == nIterStability)
+            {
+                deltaTFact = dTFactIncrease;
+                iterStability = 0;
+            }
+
+            runTime.setDeltaT
+                (
                     min(
-                        1.2*runTime.deltaTValue(),
+                        deltaTFact*runTime.deltaTValue(),
                         maxDeltaT
                     )
-                )
-            );
+                );
+        }
+
+        //- Timestep using h variation
+        else if(timeStepControl == "dthetamax")
+        {
+            scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
+
+            runTime.setDeltaT
+                (
+                    min(
+                        dtForTheta,
+                        min(
+                            1.2*runTime.deltaTValue(),
+                            maxDeltaT
+                        )
+                    )
+                );
+        }
     }
 
     scalar timeOfNextEvent = GREAT;
-    if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
-    if (patchEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,patchEvent.currentEventEndTime());
+    if (eventTimeTracking)
+    {
+        if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
+        forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
+    }
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
@@ -93,18 +107,21 @@ if(adjustTimeStep)
     if (nSteps == 0)
     {
         scalar timeToCloseEvent = GREAT;
-        if (sourceEventIsPresent)
+        if (eventTimeTracking)
         {
-            if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
+            if (sourceEventIsPresent)
             {
-                timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+                if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
-        }
-        if (patchEventIsPresent)
-        {
-            if (patchEvent.currentEventEndTime() != runTime.timeOutputValue())
+            forAll(patchEventList,patchEventi)
             {
-                timeToCloseEvent = min(timeToCloseEvent,patchEvent.currentEventEndTime()-runTime.timeOutputValue());
+                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
         }
         if (outputEventIsPresent)

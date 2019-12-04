@@ -68,6 +68,9 @@ protected:
     volScalarField kra_,krb_;
     volScalarField dkradS_,dkrbdS_;
 
+    //- Effective saturation of phase b
+    volScalarField Se_;
+
     //- Disallow copy construct
     relativePermeabilityModel(const relativePermeabilityModel&);
 
@@ -143,7 +146,7 @@ public:
             return krb_;
         }
 
-    //- return the derivatives of relative permeabilities
+    //- Return the derivatives of relative permeabilities
     tmp<volScalarField> dkradS() const
         {
             return dkradS_;
@@ -152,7 +155,13 @@ public:
         {
             return dkrbdS_;
         }
-      
+
+    //- Return effective saturation
+    tmp<volScalarField> Se() const
+        {
+            return Se_;
+        }
+
     //- Correct the relative permeabilities
     virtual void correct() = 0; 
 
