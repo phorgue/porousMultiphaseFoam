@@ -38,10 +38,10 @@ scalar meanCoNum = 0.0;
             fvc::surfaceSum(mag(phi))().primitiveField()
         );
     
-    CoNum = 0.5*gMax(sumPhi/(eps.value()*Saturation.field()*mesh.V().field()))*runTime.deltaTValue();
+    CoNum = 0.5*gMax(sumPhi/(eps.field()*Saturation.field()*mesh.V().field()))*runTime.deltaTValue();
     
     meanCoNum =
-        0.5*(gSum(sumPhi)/gSum(eps.value()*Saturation.field()*mesh.V().field()))*runTime.deltaTValue();
+        0.5*(gSum(sumPhi)/gSum(eps.field()*Saturation.field()*mesh.V().field()))*runTime.deltaTValue();
 }
     
 Info<< "Courant Number mean: " << meanCoNum << " max: " << CoNum << endl;

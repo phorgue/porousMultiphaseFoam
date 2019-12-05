@@ -1,5 +1,5 @@
 word phaseName("");
-if (args.optionFound("phase")) phaseName = args.optionRead<word>("phase");
+if (args.found("phase")) phaseName = args.opt("phase");
 
 Info << nl << "Reading field p\n" << endl;
 volScalarField p

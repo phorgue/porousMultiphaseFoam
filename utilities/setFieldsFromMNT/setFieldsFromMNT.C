@@ -55,9 +55,9 @@ int main(int argc, char *argv[])
     Foam::argList args(argc,argv); 
 
     word nameMNT = "default";
-    if (args.optionFound("file"))
+    if (args.found("file"))
     {
-        nameMNT = args.optionRead<word>("file");
+        nameMNT = args.opt("file");
     }
     else
     {
@@ -67,9 +67,9 @@ int main(int argc, char *argv[])
     }
 
     word nameField = "default";
-    if (args.optionFound("field"))
+    if (args.found("field"))
     {
-        nameField = args.optionRead<word>("field");
+        nameField = args.opt("field");
     }
     else
     {
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
             << exit(FatalError);
     }
     
-    scalar offset = args.optionLookupOrDefault<scalar>("offset",0.);
+    scalar offset = args.opt("offset",0.);
 
     #include "createTime.H"
     #include "createMesh.H"
@@ -89,9 +89,9 @@ int main(int argc, char *argv[])
     MNTfile sourceFile(nameMNT);
 
     word fileDir = "constant";
-    if (args.optionFound("folder"))
+    if (args.found("folder"))
     {
-        fileDir = args.optionRead<word>("folder");
+        fileDir = args.opt("folder");
     }
 
     volScalarField outputFile

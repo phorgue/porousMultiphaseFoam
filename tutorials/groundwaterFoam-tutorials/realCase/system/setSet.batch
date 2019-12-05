@@ -1,4 +1,3 @@
-
 faceSet X0 new boundaryToFace
 faceSet X0 delete normalToFace (1 0 0) 1e-10
 faceSet X0 delete normalToFace (0 -1 0) 1e-10
