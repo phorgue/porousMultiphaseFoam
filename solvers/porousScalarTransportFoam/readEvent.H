@@ -1,41 +1,18 @@
-bool sourceEventIsPresent = transportProperties.found("eventFileSource");
-word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileSource","");
-sourceEventFile sourceEvent(sourceEventFileName);
-if (sourceEventIsPresent)
+forAll(sourceEventList,sourceEventi)
 {
-    sourceEvent.update(runTime.startTime().value());
-    sourceEvent.storeOldValues();
+	sourceEventList[sourceEventi]->updateIndex(runTime.startTime().value());
+	sourceEventList[sourceEventi]->updateValue(runTime);
+	sourceEventList[sourceEventi]->storeOldValues();
 }
 
-bool patchEventIsPresent =  transportProperties.found("eventFilePatch");
-word patchEventFileName = transportProperties.lookupOrDefault<word>("eventFilePatch","");
-patchEventFile patchEvent(patchEventFileName,false);
-if (patchEventIsPresent)
+forAll(patchEventList,patchEventi)
 {
-    patchEvent.update(runTime.startTime().value());
-    patchEvent.storeOldValues();
+    patchEventList[patchEventi]->updateIndex(runTime.startTime().value());
+    patchEventList[patchEventi]->updateValue(runTime);
+    patchEventList[patchEventi]->storeOldValues();
 }
 
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.update(runTime.startTime().value());
-
-scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
-if (eventTimeStep > 0)
-{
-    if (patchEventIsPresent) patchEvent.addIntermediateTimeSteps(eventTimeStep);
-    if (sourceEventIsPresent) sourceEvent.addIntermediateTimeSteps(eventTimeStep);
-}
-
-//- determining cell id corresponding to datas
-labelList idCoordinates(sourceEvent.ncoordinates());
-if (sourceEventIsPresent)
-{
-    sourceTerm.primitiveFieldRef() = 0;
-    forAll(sourceEvent.coordinates(),pointi)
-    {
-        idCoordinates[pointi] = mesh.findNearestCell(sourceEvent.coordinates()[pointi]);
-        sourceTerm[idCoordinates[pointi]] += sourceEvent.currentValue(pointi)/mesh.V()[idCoordinates[pointi]];
-    }
-}
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());

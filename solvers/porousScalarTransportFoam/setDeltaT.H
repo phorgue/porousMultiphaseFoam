@@ -36,8 +36,52 @@ Description
 
 if (adjustTimeStep)
 {
-    //- C-variation control
-    scalar dtForC =  max(dCmax*gMax(C),dCresidual)/(dCdTmax+SMALL);
+    scalar dtForC = VGREAT;
+    if (timeScheme == "backward")
+    {
+        forAll(composition.Y(), speciesi)
+        {
+            if (Cmax[speciesi] > SMALL)
+            {
+                dtForC = min
+                    (
+                        dtForC,
+                        Foam::pow(3*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                    );
+            }
+        }
+        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+    }
+    else if (timeScheme == "CrankNicolson")
+    {
+        forAll(composition.Y(), speciesi)
+        {
+            if (Cmax[speciesi] > SMALL)
+            {
+                dtForC = min
+                    (
+                        dtForC,
+                        Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                    );
+            }
+        }
+        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+    }
+    else if (timeScheme == "Euler")
+    {
+        forAll(composition.Y(), speciesi)
+        {
+            if (Cmax[speciesi] > SMALL)
+            {
+                dtForC = min
+                    (
+                        dtForC,
+                        Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
+                    );
+            }
+        }
+    }
+
     scalar newDeltaT = min(dtForC, 1.2*runTime.deltaTValue());
     runTime.setDeltaT
         (
@@ -49,8 +93,11 @@ if (adjustTimeStep)
         );
 
     scalar timeOfNextEvent = GREAT;
-    if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
-    if (patchEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,patchEvent.currentEventEndTime());
+    if (eventTimeTracking)
+    {
+        forAll(sourceEventList,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList[sourceEventi]->currentEventEndTime());
+        forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
+    }
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
@@ -66,18 +113,21 @@ if (adjustTimeStep)
     if (nSteps == 0)
     {
         scalar timeToCloseEvent = GREAT;
-        if (sourceEventIsPresent)
+        if (eventTimeTracking)
         {
-            if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
+            forAll(sourceEventList,sourceEventi)
             {
-                timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+                if (sourceEventList[sourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,sourceEventList[sourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
-        }
-        if (patchEventIsPresent)
-        {
-            if (patchEvent.currentEventEndTime() != runTime.timeOutputValue())
+            forAll(patchEventList,patchEventi)
             {
-                timeToCloseEvent = min(timeToCloseEvent,patchEvent.currentEventEndTime()-runTime.timeOutputValue());
+                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
         }
         if (outputEventIsPresent)

@@ -15,8 +15,8 @@
 
     phi = phiP+phiG+phiPc*activateCapillarity;
 
-    phib == Fbf*phiP + (Lbf/Lf)*phiG + phiPc*activateCapillarity;
-    phia == phi - phib;
+    phib = Fbf*phiP + (Lbf/Lf)*phiG + phiPc*activateCapillarity;
+    phia = phi - phib;
 
     U = fvc::reconstruct(phi);
     U.correctBoundaryConditions();

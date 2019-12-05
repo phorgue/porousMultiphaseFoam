@@ -38,8 +38,8 @@ Foam::incompressiblePhase::incompressiblePhase
 )
 :
     fluidPhase(mesh,transportProperties,phaseName),
-    mu_(dict_.lookup("mu")),
-    rho_(dict_.lookup("rho"))
+    mu_("mu",dict_),
+    rho_("rho",dict_)
 {   
     const word phiName = "phi" + phaseName;
 

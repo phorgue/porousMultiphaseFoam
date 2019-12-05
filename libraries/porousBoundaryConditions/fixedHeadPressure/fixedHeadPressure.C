@@ -117,7 +117,7 @@ void Foam::fixedHeadPressure::updateCoeffs()
 void Foam::fixedHeadPressure::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
-    writeEntry("value", os);
+    this->writeEntry("value", os);
 }
 
 

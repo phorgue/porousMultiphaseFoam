@@ -119,9 +119,9 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
         ),
         Sb.mesh(),
         pcVanGenuchtenCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0.))
-    ),
-    Se_((Sb_- Smin_)/(Smax_-Smin_))
+    )
 {
+    Se_ = ((Sb_-Smin_)/(Smax_-Smin_));
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m = 0 in pcVanGenuchten" << abort(FatalError);
     Info << "Van Genuchten parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    m ";

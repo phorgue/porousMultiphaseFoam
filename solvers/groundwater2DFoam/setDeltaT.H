@@ -22,18 +22,30 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Description
-    Timestep for porousShallowWaterFoam solver 
+    Timestep for groundwater2DFoam solver
 
 \*---------------------------------------------------------------------------*/
 
 if (adjustTimeStep)
 {
-    scalar newDeltaT = min(
-        dhmax/(dhdTmax+SMALL),
-        1.2*runTime.deltaTValue()
-    );
+    scalar dtForhwater = VGREAT;
+    if (timeScheme == "backward")
+    {
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(3*truncationError*(hwatermax+VSMALL)/(dhwater3dT3max+VSMALL),1./3.);
+        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+    }
+    else if (timeScheme == "CrankNicolson")
+    {
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(12*truncationError*(hwatermax+VSMALL)/(dhwater3dT3max+VSMALL),1./3.);
+        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
+    }
+    else if (timeScheme == "Euler")
+    {
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(2*truncationError*(hwatermax+VSMALL)/(dhwater2dT2max+VSMALL),1./2.);
+    }
 
-   
+    scalar newDeltaT = min(dtForhwater,1.2*runTime.deltaTValue());
+
     runTime.setDeltaT
         (
             min
@@ -44,7 +56,10 @@ if (adjustTimeStep)
         );
 
     scalar timeOfNextEvent = GREAT;
-    if (uniformInfiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,uniformInfiltrationEvent.currentEventEndTime());
+    if (eventTimeTracking)
+    {
+        if (infiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,infiltrationEvent.currentEventEndTime());
+    }
     if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
@@ -59,11 +74,14 @@ if (adjustTimeStep)
     if (nSteps == 0)
     {
         scalar timeToCloseEvent = GREAT;
-        if (uniformInfiltrationEventIsPresent)
+        if (eventTimeTracking)
         {
-            if (uniformInfiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
+            if (infiltrationEventIsPresent)
             {
-                timeToCloseEvent = min(timeToCloseEvent,uniformInfiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
+                if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
+                {
+                    timeToCloseEvent = min(timeToCloseEvent,infiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
+                }
             }
         }
         if (outputEventIsPresent)

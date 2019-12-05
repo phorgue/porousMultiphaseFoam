@@ -14,14 +14,14 @@
         );
  
     //-- Reading patch information
-    word patchName = args.optionRead<word>("patch");
+    word patchName = args.opt("patch");
     label patchID = mesh.boundaryMesh().findPatchID(patchName);
     fvPatchScalarField& potentialPatch = potential.boundaryFieldRef()[patchID];
     const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
   
 
     //- reading MNT informations
-    MNTfile fixedPotentialMNT(args.optionRead<word>("file"));
+    MNTfile fixedPotentialMNT(args.opt("file"));
 
     //- computing and writing local potential
     forAll(potentialPatch,facei)

@@ -57,9 +57,6 @@ class pcIppisch
     volScalarField Smin_,Smax_;
     volScalarField m_,n_,alpha_,tau_,he_;
 
-    // effective saturation of phase b
-    volScalarField Se_;
-
     //- cut-off point saturation (computed with entry pressure)
     volScalarField Sc_;
     
@@ -101,7 +98,7 @@ public:
 
             //- Update capillary capacity
             Ch_.dimensions().reset(dimless);
-            Ch_ == alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
+            Ch_ = alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
             Ch_.dimensions().reset(dimless/dimLength);
 
             //- Update saturation

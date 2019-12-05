@@ -93,7 +93,6 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
         Sb.mesh(),
         dimensionedScalar("n",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0))
     ),
-    Se_((Sb_-Smin_)/(Smax_-Smin_)),
     kramax_
     (
         IOobject
@@ -121,7 +120,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
         dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     )
 {
-
+    Se_ = (Sb_-Smin_)/(Smax_-Smin_);
     if (gMin(n_) <= 0)
     {
         FatalErrorIn

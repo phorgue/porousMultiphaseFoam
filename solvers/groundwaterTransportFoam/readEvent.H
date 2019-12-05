@@ -1,12 +1,13 @@
-word eventFileName = transportProperties.lookupOrDefault<word>("eventFileFlowRate","");
-bool eventIsPresent = transportProperties.found("eventFileFlowRate");
-sourceEventFile event(eventFileName);
+//- Water source event reading
+word eventFileName_water = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
+bool eventIsPresent_water = transportProperties.found("eventFileWaterSource");
+sourceEventFile event_water(eventFileName_water);
 
-volScalarField sourceTerm
+volScalarField sourceTerm_water
 (
     IOobject
     (
-        "sourceTerm",
+        "sourceTerm_water",
         runTime.timeName(),
         mesh,
         IOobject::READ_IF_PRESENT,
@@ -16,15 +17,25 @@ volScalarField sourceTerm
     dimensionedScalar("",dimless/dimTime,0)
 );
 
-//- determining cell id corresponding to datas
-labelList idCoordinates(event.ncoordinates());
-label currentEvent = 0;
-if (eventIsPresent)
+if (eventIsPresent_water)
 {
-    sourceTerm = dimensionedScalar("",dimless/dimTime,0);
-    forAll(event.coordinates(),pointi)
-    {
-        idCoordinates[pointi] = mesh.findNearestCell(event.coordinates()[pointi]);
-        sourceTerm[idCoordinates[pointi]] = event.datas()[currentEvent][pointi]/mesh.V()[idCoordinates[pointi]];
-    }
+    event_water.setTimeScheme(h.name(), mesh);
+    event_water.updateIndex(runTime.startTime().value());
+    event_water.updateValue(runTime);
+    event_water.setFieldDimensions(sourceTerm_water.dimensions());
 }
+
+//- patch event reader for time step managing
+forAll(patchEventList,patchEventi)
+{
+    patchEventList[patchEventi]->updateIndex(runTime.startTime().value());
+    patchEventList[patchEventi]->updateValue(runTime);
+    patchEventList[patchEventi]->storeOldValues();
+}
+
+//- Output event reading
+bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+outputEventFile outputEvent(outputEventFileName);
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
+
