@@ -14,16 +14,16 @@
         );
 
     //-- Reading patch information
-    word patchName = args.optionRead<word>("patch");
+    word patchName = args.opt("patch");
     label patchID = mesh.boundaryMesh().findPatchID(patchName);
     fvPatchScalarField& hPatch = h.boundaryFieldRef()[patchID];
     const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
   
     //-- Compute and set up head pressure
-    if (args.optionFound("file"))
+    if (args.found("file"))
     {
         //- reading STL informations
-        MNTfile fixedPotentialMNT(args.optionRead<word>("file"));
+        MNTfile fixedPotentialMNT(args.opt("file"));
         Info << nl << "Potential fixed using MNT " << endl;
       
         //- computing local potential
@@ -34,7 +34,7 @@
     }  
     else
     {
-        scalar potential = args.optionLookupOrDefault<scalar>("value",0.);
+        scalar potential = args.opt("value",0.);
         Info << nl << "Uniform potential fixed = " << potential << " m " << endl;
         forAll(faces,facei)
         {

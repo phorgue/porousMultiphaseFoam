@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -17,22 +17,19 @@ FoamFile
 
 solvers
 {
-    "theta|h"
+    h
     {
         solver          PCG;
         preconditioner  DIC;
         tolerance       1e-12;
         relTol          0;
     }
-
 }
 
 Picard
 {
-    tolerance 1e-2;
-    maxIter 10; // 10 by default
-    minIter 3; // 3 by default 
-    nIterStability 5; // 5 by default
+    tolerance 1e-3;
+    maxIter 10;
 }
 
 // ************************************************************************* //

@@ -65,7 +65,7 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar(alphaDispersionCoeffs_.lookup("tau"))
+        dimensionedScalar("tau",alphaDispersionCoeffs_)
     ),
     alphaL_
     (
@@ -78,7 +78,7 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaL"))
+        dimensionedScalar("alphaL",alphaDispersionCoeffs_)
     ),
     alphaT_
     (
@@ -91,7 +91,7 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
             IOobject::NO_WRITE
         ),
         mesh_,
-        dimensionedScalar(alphaDispersionCoeffs_.lookup("alphaT"))
+        dimensionedScalar("alphaT",alphaDispersionCoeffs_)
     )
 {
     Info << "Parameters for alpha dispersion model" << nl << "{" << endl;

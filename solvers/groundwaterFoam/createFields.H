@@ -1,8 +1,8 @@
-//////////////////////////////////////////////////////////////////
-////////////////////// PRESSURE SATURATION ///////////////////////
-//////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////// POTENTIAL READING ///////////////////////
+///////////////////////////////////////////////////////////////
 
-Info << "Reading Pressure head h \n" << endl;
+Info << "Reading Pressure head h" << endl;
 volScalarField h
 (
     IOobject
@@ -20,8 +20,7 @@ volScalarField h
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////////
 
-Info<< "Reading transportProperties\n" << endl;
-
+Info << nl << "Reading transportProperties" << endl;
 IOdictionary transportProperties
 (
     IOobject
@@ -34,16 +33,48 @@ IOdictionary transportProperties
     )
 );
 
+//- list that receives event files of event-based boundary conditions
+List<patchEventFile*> patchEventList;
+eventInfiltration::setEventFileRegistry(&patchEventList, h.name());
+
 /////////////////////////////////////////////////////////////////////////////
-/////////////////////////// PHASE MODEL CREATION ////////////////////////////
+//////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
 /////////////////////////////////////////////////////////////////////////////
+
+//- theta temporary initialisation
+volScalarField theta
+(
+    IOobject
+    (
+        "theta",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimless,
+    calculatedFvPatchScalarField::typeName
+);
+theta.dimensions().reset(dimless);
+
+// Relative permeability / Capillary pressure models
+autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,theta);
+autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,theta);
+
+Info << nl << "Computing saturation field theta" << endl;
+theta = pcModel->correctAndSb(h);
+theta.write();
+
+////////////////////////////////////////////////////////////////////
+/////////////////////////// PHASE MODEL ////////////////////////////
+////////////////////////////////////////////////////////////////////
 
 autoPtr<incompressiblePhase> phasetheta = incompressiblePhase::New(mesh,transportProperties,"theta");
 volVectorField& Utheta = phasetheta->U();
 const dimensionedScalar& rhotheta = phasetheta->rho();
 const dimensionedScalar& mutheta = phasetheta->mu();    
 phasetheta->phi().writeOpt()=IOobject::NO_WRITE;
-
 
 surfaceScalarField phi
 (
@@ -59,44 +90,11 @@ surfaceScalarField phi
 );
 
 /////////////////////////////////////////////////////////////////////////////
-///////////////////////// SATURATION INITIALIZATION /////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-//Minimal and Maximal saturation (physical condition)
-volScalarField theta
-(
-    IOobject
-    (
-        "theta",
-        runTime.timeName(),
-        mesh,
-        IOobject::NO_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh,
-    dimless
-);
-theta.dimensions().reset(dimless);
-theta = 0.0; // temporary initialisation
-
-/////////////////////////////////////////////////////////////////////////////
-//////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-// Relative permeability model 
-autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,theta);
-autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,theta);
-
-Info<< "Computing field theta \n" << endl;
-theta == pcModel->correctAndSb(h);
-theta.write();
-
-/////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
 /////////////////////////////////////////////////////////////////////////////
    
 // Intrinsic permeability       
-Info<< "Reading permeability field K\n" << endl;
+Info  << nl << "Reading permeability field K" << endl;
 volScalarField K
 (
     IOobject
@@ -110,8 +108,16 @@ volScalarField K
     mesh
 );
 
-// permeability interpolation (harmonic by default)
+// permeability interpolation
 surfaceScalarField Kf = fvc::interpolate(K,"K");
+
+// specific storage
+dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
+Info << nl << "Reading speficic storage : Ss = " << Ss.value() << endl;
+
+///////////////////////////////////////////////////////////////////
+////////////////////////// FORCING TERMS //////////////////////////
+///////////////////////////////////////////////////////////////////
 
 //- For constant or event source injection/extraction
 volScalarField sourceTerm
@@ -128,29 +134,21 @@ volScalarField sourceTerm
     dimensionedScalar("",dimless/dimTime,0)
 );
 
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}
-
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////
 ////////////////////////////////////////////////////
 
-bool CSVactive=runTime.controlDict().lookupOrDefault<bool>("CSVactive",true);
-word CSVoutput=runTime.controlDict().lookupOrDefault<word>("CSVoutput","waterMassBalance.csv");
-OFstream massBalanceCSV(CSVoutput);
-if (CSVactive)
+bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
+OFstream waterMassBalanceCSV("waterMassBalance.csv");
+if (CSVoutput)
 {
-    massBalanceCSV << "#Time ";
+    waterMassBalanceCSV << "#Time ";
     forAll(mesh.boundaryMesh(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
         }
     }
-    massBalanceCSV << endl;
+    waterMassBalanceCSV << endl;
 }

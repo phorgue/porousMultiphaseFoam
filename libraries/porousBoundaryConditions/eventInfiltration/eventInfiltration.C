@@ -27,6 +27,20 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "surfaceFields.H"
 
+
+Foam::List<Foam::patchEventFile*>* Foam::eventInfiltration::eventFileRegistry_ = nullptr;
+Foam::word Foam::eventInfiltration::dtFieldNameOverride_ = "";
+
+void Foam::eventInfiltration::setEventFileRegistry
+(
+    List<patchEventFile*>* eventFileRegistry,
+    const word& dtFieldNameOverride
+)
+{
+    eventFileRegistry_ = eventFileRegistry;
+    dtFieldNameOverride_ = dtFieldNameOverride;
+}
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::eventInfiltration::
@@ -38,7 +52,6 @@ eventInfiltration
     :
     fixedValueFvPatchVectorField(h, iF),
     fixedInfiltrationValue_(0.),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -54,24 +67,33 @@ eventInfiltration
     :
     fixedValueFvPatchVectorField(h, iF, dict, false),
     fixedInfiltrationValue_(dict.lookupOrDefault<scalar>("constantValue",0.)),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {
     word eventFileName = dict.lookupOrDefault<word>("eventFile","");
     Info << nl << "eventFileName " << eventFileName << endl;
-    //- Read if backward time scheme is used
-    if (word(internalField().mesh().ddtScheme("source")) == "backward")
-    {
-        isBackwardScheme_ = true;
-    }
 
     if (eventFileName != "")
     {
+        //- Check if patchEventFile
+        if (eventFileRegistry_)
+        {
+            eventFileRegistry_->append(&eventFile_);
+        }
+        else
+        {
+            FatalErrorIn("eventInfiltration.C")
+                << "eventInfiltration BC is used with an incompatible solver"
+                    << abort(FatalError);
+        }
+
         //- reading patch event file, compute current value, store to old values
         eventFile_.read(eventFileName,true);
-        eventFile_.update(this->db().time().startTime().value());
+        eventFile_.updateIndex(this->db().time().startTime().value());
         eventFile_.storeOldValues();
+
+        const word& dtFieldName = dtFieldNameOverride_.empty() ? iF.name() : dtFieldNameOverride_;
+        eventFile_.setTimeScheme(dtFieldName, iF.mesh());
 
         //- Reading patch event file and adding intermediate time step
         scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",0);
@@ -94,13 +116,6 @@ eventInfiltration
     {
         Info << "eventInfiltration boundary condition without event file" << endl;
     }
-
-    //- Read if backward time scheme is used
-    if (word(internalField().mesh().ddtScheme("source")) == "backward")
-    {
-        isBackwardScheme_ = true;
-    }
-
 }
 
 
@@ -115,7 +130,6 @@ eventInfiltration
 :
     fixedValueFvPatchVectorField(ptf, h, iF, mapper),
     fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -129,7 +143,6 @@ eventInfiltration
 :
     fixedValueFvPatchVectorField(ptf),
     fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -144,7 +157,6 @@ eventInfiltration
 :
     fixedValueFvPatchVectorField(ptf, iF),
     fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
-    isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -163,21 +175,7 @@ void Foam::eventInfiltration::updateCoeffs()
 
     if (patchEventID_ != -1)
     {
-        if (isBackwardScheme_)
-        {
-            scalar deltaT =this->db().time().deltaT().value();
-            scalar deltaT0 =this->db().time().deltaT0().value();
-            scalar coefft0_00 = deltaT/(deltaT + deltaT0);
-            scalar coefftn_0 = 1 + coefft0_00;
-            valueEvent = coefftn_0*eventFile_.currentValue(patchEventID_) - coefft0_00*eventFile_.oldValue(patchEventID_);
-        }
-        else
-        {
-            valueEvent = eventFile_.currentValue(patchEventID_);
-        }
-
-        //- Updating event value
-        eventFile_.update(this->db().time().value());
+        valueEvent = eventFile_.dtValue(patchEventID_);
     }
 
     //- Computing fixed value
@@ -191,7 +189,7 @@ void Foam::eventInfiltration::updateCoeffs()
 void Foam::eventInfiltration::write(Ostream& os) const
 {
     fvPatchVectorField::write(os);
-    writeEntry("value", os);
+    this->writeEntry("value", os);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

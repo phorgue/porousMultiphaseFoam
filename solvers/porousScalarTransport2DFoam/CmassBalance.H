@@ -1,6 +1,12 @@
+forAll(composition.Y(), speciesi)
 {
+    const auto& speciesName = composition.species()[speciesi];
+    const auto& C = composition.Y(speciesi);
+    const auto& R = composition.R(speciesi);
+    const auto& sourceTerm = composition.sourceTerm(speciesi);
+
     //- terminal display
-    Info << "C mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value()/zScale << " ; ";
+    Info << speciesName << " mass balance (kg/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value()/zScale << " ; ";
     forAll(phiWater.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
@@ -11,22 +17,24 @@
     Info << " fixed points = " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
 
     //- CSV output
-    if (CSVactive)
+    if (CSVoutput)
     {
-        volTensorField Deff = eps*hwater*DeffModel->Deff();
+        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
+        
+        volTensorField Deff = eps*hwater*composition.Deff(speciesi);
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
-            massBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*hwater*C*eps).value()/zScale;
+            CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*hwater*C*eps).value()/zScale;
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
                     scalarField dispersiveFlux = ((Deff.boundaryField()[patchi] & mesh.boundary()[patchi].nf()) & mesh.boundary()[patchi].Sf());
                     scalarField convectiveFlux = phiWater.boundaryField()[patchi]*C.boundaryField()[patchi];
-                    massBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
+                    CmassBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
                 }
             }
-            massBalanceCSV << " " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
+            CmassBalanceCSV << " " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
         }
     }
 }

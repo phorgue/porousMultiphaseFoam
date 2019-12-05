@@ -36,10 +36,13 @@ Author
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "dispersionModel.H"
+#include "multiscalarMixture.H"
 #include "sourceEventFile.H"
 #include "patchEventFile.H"
 #include "outputEventFile.H"
+#include "eventFlux.H"
+#include "EulerD3dt3Scheme.H"
+#include "EulerD2dt2Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,7 +52,7 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
-    #include "createTimeControls.H"
+    #include "readTimeControls.H"
     #include "readEvent.H"
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -57,10 +60,9 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         #include "CourantNo.H"
-        Info << "Cvariation max = " << dCdTmax*runTime.deltaTValue() << endl;
-        if (patchEventIsPresent)  patchEvent.update(runTime.timeOutputValue());
-        if (outputEventIsPresent) outputEvent.update(runTime.timeOutputValue());
-        if (sourceEventIsPresent) sourceEvent.update(runTime.timeOutputValue());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
+        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
+        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;
@@ -68,7 +70,6 @@ int main(int argc, char *argv[])
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         //- Compute transport
-        #include "computeSourceTerm.H"
         #include "CEqn.H"
         #include "CmassBalance.H"
 

@@ -75,6 +75,12 @@ private:
     label ncoordinates_;
     List<point> coordinates_;
 
+    labelList idCoordinates_;
+    dimensionSet fieldDims_ = dimless;
+
+protected:
+    void onMeshChanged() override;
+
 public:
 
     // Constructors    
@@ -100,6 +106,11 @@ public:
     //- Access function
     const label& ncoordinates() const {return ncoordinates_;}
     const List<point>& coordinates() const {return coordinates_;}
+
+
+    //- Access as a volScalarField
+    void setFieldDimensions(const dimensionSet& dims);
+    tmp<volScalarField> dtValuesAsField() const;
 
 };
 
