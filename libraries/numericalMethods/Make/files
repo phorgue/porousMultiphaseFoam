@@ -1,0 +1,3 @@
+EulerD3dt3Scheme/EulerD3dt3Scheme.C
+
+LIB = $(FOAM_USER_LIBBIN)/libPMFnumericalMethods

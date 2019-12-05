@@ -27,8 +27,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "fvPatchFieldMapper.H"
 #include "volFields.H"
-#include "uniformDimensionedFields.H"
-
+#include "gravityMeshObject.H"
 #include "linear.H"
 #include "fvCFD.H"
 
@@ -133,8 +132,8 @@ void Foam::darcyGradPressureAniso::updateCoeffs()
     const fvsPatchField<vector>& gradpc=
         patch().lookupPatchField<surfaceVectorField, vector>(gradpcName_);
 
-    //Extract the dictionary from database
-    uniformDimensionedVectorField g(db().lookupObject<IOobject>("g"));
+    const uniformDimensionedVectorField& g =
+        meshObjects::gravity::New(db().time());
 
     //Activate or not capillarity term
     scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").lookupOrDefault<scalar>("activateCapillarity",0.));
@@ -155,7 +154,7 @@ void Foam::darcyGradPressureAniso::write(Ostream& os) const
     os.writeEntryIfDifferent<word>("phi", "phi", phiName_);
     os.writeEntryIfDifferent<word>("Lf", "Lf", LfName_);  
     os.writeEntryIfDifferent<word>("gradpc", "gradpc", gradpcName_);
-    writeEntry("value", os);
+    this->writeEntry("value", os);
 }
 
 

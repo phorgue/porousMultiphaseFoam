@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  5.0                                   |
-|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
-|    \\/     M anipulation  |                                                 |
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -47,14 +47,11 @@ adjustTimeStep yes;
 
 runTimeModifiable true;
 
-dCmax           0.1;
-
-dCresidual      1e-4;
+truncationError 0.001;
 
 maxDeltaT       1e8;
 
-CSVactive       true;
+CSVoutput       true;
 
-CSVoutput       "CmassBalance.csv";
-
+eventTimeTracking true;
 // ************************************************************************* //

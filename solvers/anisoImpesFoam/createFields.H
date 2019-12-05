@@ -1,6 +1,6 @@
-//////////////////////////////////////////////////////////////////
-////////////////////// PRESSURE SATURATION ///////////////////////
-//////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+////////////////////// TIMESTEP CONTROL ///////////////////////
+///////////////////////////////////////////////////////////////
 
 word CFL =  runTime.controlDict().lookupOrDefault<word>("CFL", "Coats");
 if (adjustTimeStep) adjustTimeStep=true; // to remove warnings at compilation
@@ -17,7 +17,11 @@ else
             << exit(FatalError);
 }
 
-Info<< "Reading field p\n" << endl;
+//////////////////////////////////////////////////////////////////
+////////////////////// PRESSURE SATURATION ///////////////////////
+//////////////////////////////////////////////////////////////////
+
+Info << nl << "Reading field p" << endl;
 volScalarField p
 (
     IOobject
@@ -31,7 +35,7 @@ volScalarField p
     mesh
 );
 
-Info<< "Reading field Sb \n" << endl;
+Info << nl << "Reading field Sb" << endl;
 volScalarField Sb
 (
     IOobject
@@ -51,7 +55,7 @@ scalar dSmax(runTime.controlDict().lookupOrDefault<scalar>("dSmax",0.));
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////////
 
-Info<< "Reading transportProperties\n" << endl;
+Info << nl << "Reading transportProperties" << endl;
 
 IOdictionary transportProperties
 (
@@ -64,6 +68,10 @@ IOdictionary transportProperties
         IOobject::NO_WRITE
     )
 );
+
+//- list that receives event files of event-based boundary conditions
+List<patchEventFile*> patchEventList;
+eventInfiltration::setEventFileRegistry(&patchEventList, Sb.name());
 
 dimensionedScalar Sbmin(transportProperties.lookupOrDefault("Sbmin",dimensionedScalar("Sbmin",dimless,0)));
 
@@ -84,19 +92,19 @@ const dimensionedScalar& rhob = phaseb->rho();
 const dimensionedScalar& mub = phaseb->mu();	
 
 dimensionedScalar Mmu(mub/mua);//viscosity ratio
-
-// Relative permeability model 
+ 
+// Relative permeability / Capillary pressure models 
 autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,Sb);
+scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
+autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,Sb);
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-Info<< "Reading Porous Media Properties \n" << endl;
-
-// Porosity	
+// Porosity
+Info << nl << "Reading porosity field eps (if present)" << endl;
 dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
-   
 volScalarField eps
 (
     IOobject
@@ -112,7 +120,7 @@ volScalarField eps
 );
 
 // Intrinsic permeability       
-Info<< "Reading field K\n" << endl;
+Info << nl << "Reading permeability field K" << endl;
 volTensorField K
 (
     IOobject
@@ -133,7 +141,7 @@ surfaceTensorField Kf(fvc::interpolate(K,"K"));
 ////////////////////////// VELOCITY - FLUXES ////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-Info<< "Reading field U\n" << endl;
+Info << nl << "Reading field U" << nl << endl;
 volVectorField U
 (
     IOobject
@@ -150,12 +158,9 @@ volVectorField U
 #include "createPhi.H"
 surfaceScalarField phiP = phi;
 
-/////////////////////////////////////////////////////////////////////////////
-////////////////////////// CAPILLARY PRESSURE ///////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
-autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,Sb);
+///////////////////////////////////////////////////////////////////
+////////////////////////// FORCING TERMS //////////////////////////
+///////////////////////////////////////////////////////////////////
 
 volScalarField sourceTerm
 (
@@ -170,10 +175,3 @@ volScalarField sourceTerm
     mesh,
     dimensionedScalar("",dimless/dimTime,0)
 );
-
-//- Looking for 2nd order time-scheme for source term
-bool isBackwardScheme = false;
-if (word(mesh.ddtScheme("source")) == "backward")
-{
-    isBackwardScheme = true;
-}

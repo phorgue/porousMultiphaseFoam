@@ -43,6 +43,8 @@ Author
 #define eventFile_H
 
 #include "fvMesh.H"
+#include "TimeState.H"
+#include "ddtScheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,7 +66,13 @@ protected:
     RectangularMatrix<scalar> datas_;
     scalarList currentValues_;
     scalarList oldValues_;
+    scalarList oldOldValues_;
     label iterator_;
+
+    tmp<fv::ddtScheme<scalar>> ddtScheme_;
+    const fvMesh* mesh_ = nullptr;
+
+    virtual void onMeshChanged() {};
 
 public:
 
@@ -96,12 +104,26 @@ public:
     const RectangularMatrix<scalar>& datas() const {return datas_;}
     const scalar& lastValue(const label& id) const {return datas_[iterator_][id];}
     const scalar& oldValue(const label& id) const {return oldValues_[id];}
+    const scalar& oldOldValue(const label& id) const {return oldOldValues_[id];}
+    const scalarList& oldValues() const {return oldValues_;}
     const scalar& currentValue(const label& id) const {return currentValues_[id];}
+    const scalarList& currentValues() const {return currentValues_;}
     scalar currentEventStartTime() const;
     const scalar& currentEventEndTime() const;
-    void storeOldValues() {oldValues_ = currentValues_;}
-    void update(const scalar& currentTime);
+    void storeOldValues() {
+        oldOldValues_ = oldValues_;
+        oldValues_ = currentValues_;
+    }
+    void updateIndex(const scalar& currentTime);
+    void updateValue(const TimeState& currentTime);
     void addIntermediateTimeSteps(const scalar& smallDT);
+
+    //- Compute values from current and old considering the time discretization
+
+    void setTimeScheme(const word& dtFieldName, const fvMesh& mesh);
+
+    scalar dtValue(const label& id) const;
+    scalarList dtValues() const;
 
 };
 

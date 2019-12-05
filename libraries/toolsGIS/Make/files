@@ -5,7 +5,7 @@ eventFile/eventFile.C
 eventFile/outputEventFile.C
 eventFile/sourceEventFile.C
 eventFile/patchEventFile.C
-eventFile/uniformInfiltrationEventFile.C
+eventFile/infiltrationEventFile.C
 
 LIB = $(FOAM_USER_LIBBIN)/libtoolsGIS
 

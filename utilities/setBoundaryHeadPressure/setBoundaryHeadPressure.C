@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
     Foam::argList args(argc,argv); 
 
-    if (!args.optionFound("patch"))
+    if (!args.found("patch"))
     {
         FatalError << "no patch specified" 
             << nl << " use option -patch"
@@ -66,9 +66,9 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
 
     word version("3D");
-    if (args.optionFound("version"))
+    if (args.found("version"))
     {
-        version = args.optionRead<word>("version");
+        version = args.opt("version");
     }
 
     if(version == "3D")

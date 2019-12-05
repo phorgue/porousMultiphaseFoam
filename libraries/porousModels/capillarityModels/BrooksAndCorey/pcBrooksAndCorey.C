@@ -105,9 +105,9 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       ),
       Sb.mesh(),
       dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0))
-  ),
-  Se_((Sb_- Smin_)/(Smax_-Smin_))
+  )
 {
+    Se_ = ((Sb_-Smin_)/(Smax_-Smin_));
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
 
     Info << "Brooks and Corey parameters for capillary pressure model" << nl << "{" << endl;
