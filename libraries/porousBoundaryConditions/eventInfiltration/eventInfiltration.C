@@ -180,7 +180,7 @@ void Foam::eventInfiltration::updateCoeffs()
 
     //- Computing fixed value
     
-    vectorField updatedFixedValue = (fixedInfiltrationValue_+valueEvent)*patch().nf();
+    vectorField updatedFixedValue((fixedInfiltrationValue_+valueEvent)*patch().nf());
     operator== (updatedFixedValue);
     fixedValueFvPatchVectorField::updateCoeffs();
 }

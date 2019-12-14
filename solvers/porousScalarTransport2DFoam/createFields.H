@@ -161,7 +161,7 @@ else
     phi.write();
 }
 
-surfaceScalarField phiWater = phi * fvc::interpolate(hwater);
+surfaceScalarField phiWater(phi * fvc::interpolate(hwater));
 
 ///////////////////////////////////////////////////////////////////
 ////////////////////////// FORCING TERMS //////////////////////////

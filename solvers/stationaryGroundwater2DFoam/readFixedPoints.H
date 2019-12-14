@@ -1,5 +1,5 @@
 //- Read the global MNT mode : fixedMNT, fixed or seepage
-word forcingPotential=transportProperties.lookupOrDefault<word>("forcingPotential","none");
+word forcingPotential = transportProperties.lookupOrDefault<word>("forcingPotential","none");
 Info << nl << "Forcing potential mode is : " << forcingPotential << endl;
 
 //- Reading MNT file and computing potentialMNT field if required
@@ -67,7 +67,7 @@ List<Tuple2<point,scalar> > fixedPotentialList(transportProperties.lookupOrDefau
 );
 labelList fixedPotentialIDList(fixedPotentialList.size());
 scalarList fixedPotentialValueList(fixedPotentialList.size());
-volScalarField seepTerm = 0*potentialMNT/runTime.deltaT();
+volScalarField seepTerm(0.0*potentialMNT/runTime.deltaT());
 
 if (forcingPotential.substr(0,5) == "fixed")
 {
