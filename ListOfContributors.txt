@@ -7,6 +7,7 @@ Gabriel Gerlero
 avlmachado (github)
 Mohammed Elwardi Fadeli
 Romain Guibert
+Matteo Icardi
 Lachlan Mason
 François Renard
 Cyprien Soulaine
