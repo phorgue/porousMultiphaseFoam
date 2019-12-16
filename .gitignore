@@ -6,3 +6,4 @@
 linux64GccDPOpt/
 linux64GccDPInt32Opt/
 lnInclude/
+darwin*
