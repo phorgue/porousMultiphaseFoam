@@ -6,7 +6,7 @@ composition.correct(Utheta, theta);
 forAll(composition.Y(), speciesi)
 {
     const auto& speciesName = composition.species()[speciesi];
-    
+
     auto& C = composition.Y(speciesi);
     const auto& R = composition.R(speciesi);
     const auto& Deff = composition.Deff(speciesi);
@@ -28,7 +28,7 @@ forAll(composition.Y(), speciesi)
     dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
     if (timeScheme == "Euler")
     {
-        volScalarField dC2dT2 = d2dt2Operator.fvcD2dt2(C);
+        volScalarField dC2dT2(d2dt2Operator.fvcD2dt2(C));
         dC2dT2max[speciesi] = 0;
         forAll(dC2dT2, celli)
         {
@@ -41,7 +41,7 @@ forAll(composition.Y(), speciesi)
     }
     else
     {
-        volScalarField dC3dT3 = d3dt3Operator.d3dt3(C);
+        volScalarField dC3dT3(d3dt3Operator.d3dt3(C));
         dC3dT3max[speciesi] = 0;
         forAll(dC3dT3, celli)
         {

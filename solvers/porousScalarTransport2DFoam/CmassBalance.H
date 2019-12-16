@@ -20,8 +20,8 @@ forAll(composition.Y(), speciesi)
     if (CSVoutput)
     {
         auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-        
-        volTensorField Deff = eps*hwater*composition.Deff(speciesi);
+
+        volTensorField Deff(eps*hwater*composition.Deff(speciesi));
         if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
         {
             CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R*hwater*C*eps).value()/zScale;
@@ -29,8 +29,8 @@ forAll(composition.Y(), speciesi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    scalarField dispersiveFlux = ((Deff.boundaryField()[patchi] & mesh.boundary()[patchi].nf()) & mesh.boundary()[patchi].Sf());
-                    scalarField convectiveFlux = phiWater.boundaryField()[patchi]*C.boundaryField()[patchi];
+                    scalarField dispersiveFlux(((Deff.boundaryField()[patchi] & mesh.boundary()[patchi].nf()) & mesh.boundary()[patchi].Sf()));
+                    scalarField convectiveFlux(phiWater.boundaryField()[patchi]*C.boundaryField()[patchi]);
                     CmassBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
                 }
             }

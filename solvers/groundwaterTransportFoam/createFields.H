@@ -46,7 +46,7 @@ eventFlux::setEventFileRegistry(&patchEventList, "C");
 autoPtr<incompressiblePhase> phasetheta = incompressiblePhase::New(mesh,transportProperties,"theta");
 volVectorField& Utheta = phasetheta->U();
 const dimensionedScalar& rhotheta = phasetheta->rho();
-const dimensionedScalar& mutheta = phasetheta->mu();    
+const dimensionedScalar& mutheta = phasetheta->mu();
 phasetheta->phi().writeOpt()=IOobject::NO_WRITE;
 
 surfaceScalarField phi
@@ -88,7 +88,7 @@ theta = 0; // temporary initialisation
 //////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-// Relative permeability model 
+// Relative permeability model
 autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,theta);
 autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,theta);
 
@@ -99,8 +99,8 @@ theta.write();
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-   
-// Intrinsic permeability       
+
+// Intrinsic permeability
 Info<< "Reading permeability field K\n" << endl;
 volScalarField K
 (
@@ -116,7 +116,7 @@ volScalarField K
 );
 
 // permeability interpolation (harmonic by default)
-surfaceScalarField Kf = fvc::interpolate(K,"K");
+surfaceScalarField Kf(fvc::interpolate(K,"K"));
 
 // specific storage
 dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));

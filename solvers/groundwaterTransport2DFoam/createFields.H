@@ -123,7 +123,7 @@ Info << "min(K) = " << min(K).value() << " ; max(K) = " << max(K).value() << nl 
 // permeability/mobility field
 dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
 volScalarField M(K*rho*g/mu);
-surfaceScalarField Kf = fvc::interpolate(K,"K");
+surfaceScalarField Kf(fvc::interpolate(K,"K"));
 surfaceScalarField Mf("Mf",Kf*g*rho/mu);
 
 /////////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ forAll(mesh.boundary(),patchi)
     }
 }
 surfaceScalarField transmissivity("transmissivity",Mf*fvc::interpolate(hwater));
-surfaceScalarField phiWater = phi * fvc::interpolate(hwater);
+surfaceScalarField phiWater(phi * fvc::interpolate(hwater));
 
 // field necessary for darcyGradPressure boundary condition
 surfaceScalarField phiG("phiG",0*phi);

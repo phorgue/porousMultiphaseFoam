@@ -20,7 +20,7 @@
     dhwaterdTmax = max(mag(fvc::ddt(hwater))).value();
     if (timeScheme == "Euler")
     {
-        volScalarField dhwater2dT2 = d2dt2Operator.fvcD2dt2(hwater);
+        volScalarField dhwater2dT2(d2dt2Operator.fvcD2dt2(hwater));
         dhwater2dT2max = 0;
         forAll(dhwater2dT2, celli)
         {
@@ -33,7 +33,7 @@
     }
     else
     {
-        volScalarField dhwater3dT3 = d3dt3Operator.d3dt3(hwater);
+        volScalarField dhwater3dT3(d3dt3Operator.d3dt3(hwater));
         dhwater3dT3max = 0;
         forAll(dhwater3dT3, celli)
         {
