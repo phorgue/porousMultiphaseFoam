@@ -1,4 +1,17 @@
 ************************
+*** PMFvXXXX
+*** 
+************************
+
+### Bug fixes
+
+- solved ambiguous calls for compatibility with CLANG and OSX
+- fix dimensions in ToddNo.H
+- fix interpolateFactor for event value computation
+- 3rd time derivative computed on potential (instead of hwater) to avoid
+instabilities when hwater tends to 0
+
+************************
 *** PMFv1912
 *** Multi-species transport and timestep management
 ************************
