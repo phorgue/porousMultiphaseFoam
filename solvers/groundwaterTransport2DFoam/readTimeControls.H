@@ -43,9 +43,9 @@ scalar truncationError =
 word timeScheme = mesh.ddtScheme("ddt(" + composition.Y(0).name() + ')');
 EulerD3dt3Scheme d3dt3Operator(mesh,runTime.deltaTValue());
 Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
-scalar dhwaterdTmax = 0;
-scalar dhwater2dT2max = 0;
-scalar dhwater3dT3max = 0;
+scalar dpotentialdTmax = 0;
+scalar dpotential2dT2max = 0;
+scalar dpotential3dT3max = 0;
 scalar hwatermax = 0;
 scalarList dCdTmax(composition.Y().size());
 scalarList dC2dT2max(composition.Y().size());
@@ -61,7 +61,7 @@ if (timeScheme == "backward")
         dC3dT3max[speciesi] = 3*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
     }
     hwatermax = gMax(hwater);
-    dhwater3dT3max = 3*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+    dpotential3dT3max = 3*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
 }
 else if  (timeScheme == "CrankNicolson")
 {
@@ -72,7 +72,7 @@ else if  (timeScheme == "CrankNicolson")
         dC3dT3max[speciesi] = 12*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
     }
     hwatermax = gMax(hwater);
-    dhwater3dT3max = 12*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+    dpotential3dT3max = 12*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
 }
 else if (timeScheme == "Euler")
 {
@@ -83,7 +83,7 @@ else if (timeScheme == "Euler")
         dC2dT2max[speciesi] = 2*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
     }
     hwatermax = gMax(hwater);
-    dhwater2dT2max = 2*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
+    dpotential2dT2max = 2*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
 }
 
 // ************************************************************************* //

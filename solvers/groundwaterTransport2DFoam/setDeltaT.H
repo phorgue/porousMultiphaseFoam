@@ -34,7 +34,7 @@ if (adjustTimeStep)
     scalar dtForhwater = VGREAT;
     if (timeScheme == "backward")
     {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(3*truncationError*(hwatermax+VSMALL)/(dhwater3dT3max+VSMALL),1./3.);
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(3*truncationError*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
@@ -50,7 +50,7 @@ if (adjustTimeStep)
     }
     else if (timeScheme == "CrankNicolson")
     {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(12*truncationError*(hwatermax+VSMALL)/(dhwater3dT3max+VSMALL),1./3.);
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(12*truncationError*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
@@ -66,7 +66,7 @@ if (adjustTimeStep)
     }
     else if (timeScheme == "Euler")
     {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(2*truncationError*(hwatermax+VSMALL)/(dhwater2dT2max+VSMALL),1./2.);
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(2*truncationError*(hwatermax+VSMALL)/(dpotential2dT2max+VSMALL),1./2.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
