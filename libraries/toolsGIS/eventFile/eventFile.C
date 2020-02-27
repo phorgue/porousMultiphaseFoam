@@ -112,7 +112,7 @@ void Foam::eventFile::updateValue(const TimeState& runTime)
     {
         currentValues_ = 0.0;
     }
-    else if (runTime.timeOutputValue() > dates_[0] && iterator_ == -1)
+    else if (iterator_ == -1)
     {
         scalar dt2 = runTime.timeOutputValue() - dates_[0];
         forAll(currentValues_,id)
@@ -129,7 +129,7 @@ void Foam::eventFile::updateValue(const TimeState& runTime)
             scalar interpolateFactor = (runTime.timeOutputValue() - runTime.deltaTValue()/2. - dates_[iterator_]) / (dates_[iterator_+1] - dates_[iterator_]);
             forAll(currentValues_,id)
             {
-                currentValues_[id] = (1.0 - interpolateFactor) * datas_[iterator_+1][id] + interpolateFactor * datas_[iterator_][id];
+                currentValues_[id] = (1.0 - interpolateFactor) * datas_[iterator_][id] + interpolateFactor * datas_[iterator_+1][id];
             }
         }
         else

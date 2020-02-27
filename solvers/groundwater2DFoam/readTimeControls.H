@@ -42,25 +42,25 @@ scalar maxDeltaT =
 
 EulerD3dt3Scheme d3dt3Operator(mesh,runTime.deltaTValue());
 Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
-scalar dhwaterdTmax = 0;
-scalar dhwater2dT2max = 0;
-scalar dhwater3dT3max = 0;
+scalar dpotentialdTmax = 0;
+scalar dpotential2dT2max = 0;
+scalar dpotential3dT3max = 0;
 scalar hwatermax = 0;
 //- Derivative initialisation to keep 1st user-defined time step
 if (timeScheme == "backward")
 {
         hwatermax = gMax(hwater);
-        dhwater3dT3max = 3*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+        dpotential3dT3max = 3*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
 }
 else if  (timeScheme == "CrankNicolson")
 {
         hwatermax = gMax(hwater);
-        dhwater3dT3max = 12*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+        dpotential3dT3max = 12*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
 }
 else if (timeScheme == "Euler")
 {
         hwatermax = gMax(hwater);
-        dhwater2dT2max = 2*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
+        dpotential2dT2max = 2*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
 }
 
 const bool eventTimeTracking =
