@@ -11,3 +11,5 @@ Lf = rhotheta*Kf*krthetaf/mutheta;
 
 //- compute fluxes
 phiG = (Lf * g) & mesh.Sf();
+phi = phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
+Utheta = fvc::reconstruct(phi);

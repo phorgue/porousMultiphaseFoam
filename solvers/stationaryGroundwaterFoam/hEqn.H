@@ -22,7 +22,4 @@
     hEqn.solve();
     h.relax();
 
-    phi = phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
-    Utheta = fvc::reconstruct(phi);
-
 }

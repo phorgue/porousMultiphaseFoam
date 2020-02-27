@@ -85,16 +85,20 @@ noConvergence :
         #include "computeSourceTerm.H"
 
         //- 1) Richard's equation
-        scalar resPicard=GREAT;
+        scalar deltah = GREAT;
+        scalar hEqnResidual = GREAT;
         iterPicard = 0;
         theta.storeOldTime();
-        while ((resPicard > tolPicard) && (iterPicard != maxIterPicard))
+        while ((deltah > tolerancePicard) && (iterPicard != maxIterPicard))
         {
             iterPicard++;
             #include "hEqn.H"
             #include "updateProperties.H"
+            volScalarField ResiduN = Ss*pcModel->Se() * fvc::ddt(h) + fvc::ddt(theta) - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm_water;
+            hEqnResidual = gMax(mag(ResiduN.internalField())());
+            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltah << ", residual = " << hEqnResidual << endl;
         }
-        if (resPicard > tolPicard)
+        if (deltah > tolerancePicard)
         {
             Info << endl;
             Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
