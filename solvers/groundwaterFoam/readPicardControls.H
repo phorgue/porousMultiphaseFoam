@@ -36,7 +36,7 @@ if (!PicardDict.found("tolerance"))
         << "Missing keyword tolerance in system/fvSolution.Picard"
             << abort(FatalError);
 }
-const scalar tolPicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1.);
+const scalar tolerancePicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1.);
 if (!PicardDict.found("maxIter"))
 {
     FatalErrorIn("readPicardControls.H")
