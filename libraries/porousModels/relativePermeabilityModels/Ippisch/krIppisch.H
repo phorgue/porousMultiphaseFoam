@@ -85,7 +85,15 @@ public:
     // Member Functions
 
     //- Correct the relative permeabilities
-    void correct()
+     void correct()
+        {
+            FatalErrorIn("krIppisch.H") << " Ippisch model can be used only with groundwater solvers" << abort(FatalError);
+        }
+    void correcta()
+        {
+            FatalErrorIn("krIppisch.H") << " Ippisch model can be used only with groundwater solvers" << abort(FatalError);
+        }
+    void correctb()
         {
             Se_==(Sb_-Smin_)/(Smax_-Smin_);
             krb_ = pow(Se_,tau_) * pow(
