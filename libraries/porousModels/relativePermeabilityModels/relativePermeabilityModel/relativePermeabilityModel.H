@@ -163,7 +163,9 @@ public:
         }
 
     //- Correct the relative permeabilities
-    virtual void correct() = 0; 
+    virtual void correct() = 0;
+    virtual void correcta() = 0;
+    virtual void correctb() = 0;
 
 };
 

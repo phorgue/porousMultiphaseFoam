@@ -2,7 +2,7 @@
 theta = pcModel->correctAndSb(h);
 
 //- relative permeability computation
-krModel->correct();
+krModel->correctb();
 krthetaf = fvc::interpolate(krtheta,"krtheta");
 
 //- mobility computation 
