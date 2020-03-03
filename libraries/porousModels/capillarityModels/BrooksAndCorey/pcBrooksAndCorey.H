@@ -84,9 +84,9 @@ public:
     //- Correct the capillary pressure
     void correct()
         {
-            Se_ = (Sb_+SMALL-Smin_)/(Smax_ - Smin_);
+            Se_ = (Sb_-Smin_)/(Smax_ - Smin_);
             pc_ = pc0_ * pow(Se_,-alpha_);
-            dpcdS_= -alpha_*pc0_*(pow(Se_,-alpha_-1))/(Smax_-Smin_);
+            dpcdS_= -alpha_*pc0_*(pow(Se_+VSMALL,-alpha_-1))/(Smax_-Smin_);
         }
 
     //- Compute Moisture from head pressure (Richards' model)

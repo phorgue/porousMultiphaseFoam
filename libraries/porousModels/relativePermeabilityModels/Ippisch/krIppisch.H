@@ -95,7 +95,7 @@ public:
         }
     void correctb()
         {
-            Se_==(Sb_-Smin_)/(Smax_-Smin_);
+            Se_= (Sb_-Smin_)/(Smax_-Smin_);
             krb_ = pow(Se_,tau_) * pow(
                 (1-pow(1-pow(Sc_*Se_,1/m_),m_)) /
                 (1-pow(1-pow(Sc_,1/m_),m_))
