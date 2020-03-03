@@ -102,7 +102,7 @@ public:
             Ch_.dimensions().reset(dimless/dimLength);
 
             //- Update saturation
-            volScalarField Stmp_(Smin_+(Smax_-Smin_)*(Se_-SMALL));
+            volScalarField Stmp_(Smin_+(Smax_-Smin_)*Se_);
     
             return Stmp_;
         }

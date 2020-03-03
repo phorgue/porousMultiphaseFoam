@@ -87,7 +87,7 @@ public:
     //- Correct the relative permeabilities
     void correct()
         {
-            Se_==(Sb_-Smin_)/(Smax_-Smin_);
+            Se_= (Sb_-Smin_)/(Smax_-Smin_);
             kra_ = kramax_* pow((scalar(1)-Se_),n_);
             krb_ = krbmax_ * pow(Se_,n_);
             dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
@@ -95,13 +95,13 @@ public:
         }
     void correcta()
         {
-            Se_==(Sb_-Smin_)/(Smax_-Smin_);
+            Se_= (Sb_-Smin_)/(Smax_-Smin_);
             kra_ = kramax_* pow((scalar(1)-Se_),n_);
             dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
         }
     void correctb()
         {
-            Se_==(Sb_-Smin_)/(Smax_-Smin_);
+            Se_= (Sb_-Smin_)/(Smax_-Smin_);
             krb_ = krbmax_ * pow(Se_,n_);
             dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
         }
