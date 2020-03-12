@@ -58,6 +58,7 @@ class pcBrooksAndCorey
     volScalarField Smin_;
     volScalarField Smax_;
     volScalarField pc0_;
+    volScalarField hd_;
     volScalarField alpha_;
         
 public:
@@ -92,17 +93,32 @@ public:
     //- Compute Moisture from head pressure (Richards' model)
     volScalarField correctAndSb(volScalarField h) 
         {
-            FatalErrorIn("volScalarField MoistureFromHeadPressure(volScalarField h) const")
-                << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
+            if (gMax(hd_) == 0)
+            {
+                FatalErrorIn("pcBrooksAndCorey.H")
+                    << "hd equal to zero in Brooks and Corey capillary pressure model"
+                        << abort(FatalError);
+            }
+
+            //- Compute Saturation from! head pressure
+            h.dimensions().reset(dimless);
+            Se_ = neg(h-hd_) * pow(hd_/(h+VSMALL),alpha_) + pos(h-hd_+VSMALL);
+            h.dimensions().reset(dimLength);
+
+            //- Update effective saturation and capillary capacity
+            Ch_.dimensions().reset(dimless);
+            Ch_ = neg(h-hd_) * (alpha_ * (Smax_-Smin_) / mag(hd_)) * pow(hd_/(h+VSMALL),alpha_+1) + pos(h-hd_+VSMALL);
+            Ch_.dimensions().reset(dimless/dimLength);
+
+            //- Update saturation
+            volScalarField Stmp_(Smin_+(Smax_-Smin_)*Se_);
             return Se_;
         };
 
     //- Capillary capacity (Richards' model)
     tmp<volScalarField> Ch() const
         {
-            FatalErrorIn("tmp<volScalarField> Ch() const")
-                << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
-            return Se_;
+            return Ch_;
         };
 
 };
