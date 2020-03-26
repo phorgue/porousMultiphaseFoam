@@ -19,6 +19,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 \*---------------------------------------------------------------------------*/
 
+#include "zeroGradientFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -40,7 +41,10 @@ inline Foam::multiscalarMixture::multiscalarMixture
     lambdas_(speciesNames.size()),
     dispersionModels_(speciesNames.size()),
     sourceEvents_(speciesNames.size()),
-    sourceTerms_(speciesNames.size())
+    sourceTerms_(speciesNames.size()),
+    Kd_(speciesNames.size()),
+    rs_(speciesNames.size()),
+    epsTotal_(speciesNames.size())
 {
     forAll(speciesNames, speciesi)
     {
@@ -51,8 +55,11 @@ inline Foam::multiscalarMixture::multiscalarMixture
         dictionary porousTransport(speciesDict.subDict("porousTransport"));
 
         dimensionedScalar Kd(porousTransport.lookupOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
+        Kd_[speciesi] = Kd.value();
         dimensionedScalar rs(porousTransport.lookupOrDefault("rs",dimensionedScalar("rs_default",dimensionSet(1,-3,0,0,0),0.)));
+        rs_[speciesi] = rs.value();
         dimensionedScalar epsTotal(porousTransport.lookupOrDefault("epsTotal",dimensionedScalar("epsTotal_default",dimless,1.)));
+        epsTotal_[speciesi] = epsTotal.value();
 
         lambdas_[speciesi].dimensions().reset(dimensionSet(0,0,-1,0,0));
         lambdas_[speciesi] = porousTransport.lookupOrDefault("lambda",dimensionedScalar("lambda_default",dimensionSet(0,0,-1,0,0),0.));
@@ -64,7 +71,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
         Info << "    " << lambdas_[speciesi].name() << " : " << lambdas_[speciesi].value() << endl;
         Info << "}" << endl;
 
-        Info << nl << "Computing retard coefficient: ";
+        Info << nl << "Computing initial retard coefficient (saturated): ";
 
         R_.set
         (
@@ -80,11 +87,13 @@ inline Foam::multiscalarMixture::multiscalarMixture
                     IOobject::NO_WRITE
                 ),
                 mesh,
-                dimless
+                dimless,
+                // calculatedFvPatchField<scalar>::typeName
+                zeroGradientFvPatchField<scalar>::typeName
             )
         );
 
-        R_[speciesi] =  1 + (1-epsTotal) * rs * Kd / eps;
+        R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / eps;
         Info << "Min(R) = " << gMin(R_[speciesi]) << " Max(R) = " << gMax(R_[speciesi]) << endl;
 
         //- creation of dispersion model
@@ -171,7 +180,7 @@ inline void Foam::multiscalarMixture::correct
     forAll(Y(), speciesi)
     {
         dispersionModels_[speciesi].correct(Y(speciesi), U, theta);
-
+        R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / theta;
         if(sourceEvents_(speciesi))
         {
             sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
@@ -187,10 +196,11 @@ inline void Foam::multiscalarMixture::correct
     const EpsType& eps
 )
 {
+
     forAll(Y(), speciesi)
     {
         dispersionModels_[speciesi].correct(Y(speciesi), U, saturation, eps);
-
+        R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / (eps*saturation);
         if(sourceEvents_(speciesi))
         {
             sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());

@@ -119,6 +119,10 @@ private:
     PtrList<dispersionModel> dispersionModels_;
     PtrList<sourceEventFile> sourceEvents_;
     PtrList<volScalarField> sourceTerms_;
+    List<dimensionedScalar> Kd_;
+    List<dimensionedScalar> rs_;
+    List<dimensionedScalar> epsTotal_;
+
 };
 
 
