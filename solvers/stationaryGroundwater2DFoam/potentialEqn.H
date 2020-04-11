@@ -12,11 +12,26 @@
 
     potentialEqn.solve();
     potential.relax();
-    Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", diff = " << max(mag(potential-potential.oldTime())).value() << endl;
 
     //- updating flow properties
     hwater = potential - z0;
-    if (min(hwater).value() <= 0) FatalErrorIn("potentialEqn.H") << " Computed hwater fields has negative values" << exit(FatalError);
+
+    //- Checking for dry cells
+    if (min(hwater).value() <= hwaterMin.value())
+    {
+        label ndryCells = 0;
+        forAll(hwater, celli)
+        {
+            if (hwater[celli] <= hwaterMin.value())
+            {
+                ndryCells++;
+                hwater[celli] = hwaterMin.value();
+            }
+        }
+        Warning() << "Number of dry cells = " << ndryCells << endl;
+    }
+
+    Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", diff = " << max(mag(potential-potential.oldTime())).value() << endl;
 
     transmissivity = Mf*fvc::interpolate(hwater);
     phi = (-Mf * fvc::snGrad(potential)) * mesh.magSf();
