@@ -29,21 +29,21 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-const dictionary& PicardDict = mesh.solutionDict().subDict("Picard");
+const dictionary& PicardDict = mesh.solutionDict().subOrEmptyDict("Picard");
+const scalar tolerancePicard = PicardDict.lookupOrDefault<scalar>("tolerance", 100);
+const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
+
+Info << nl << "Picard loop control" << nl << "{"
+<< nl << "    tolerance = " << tolerancePicard
+<< "    maximum number of iteration = " << maxIterPicard
+<< nl << "}" << endl;
+
 if (!PicardDict.found("tolerance"))
 {
     FatalErrorIn("readPicardControls.H")
         << "Missing keyword tolerance in system/fvSolution.Picard"
             << abort(FatalError);
 }
-const scalar tolerancePicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1.);
-if (!PicardDict.found("maxIter"))
-{
-    FatalErrorIn("readPicardControls.H")
-        << "Missing keyword maxIter in system/fvSolution.Picard"
-            << abort(FatalError);
-}
-const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
 
 //- to switch between conservative mixed formulation (by default) and head pressure (non conservative)
 bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
