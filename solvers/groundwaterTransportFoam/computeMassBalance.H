@@ -1,6 +1,6 @@
 {
     //- water mass balance terminal display
-    Info << "Water mass balance (m3/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm_water).value() << " ; ";
+    Info << "Water mass balance (m3/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
     forAll(phi.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")

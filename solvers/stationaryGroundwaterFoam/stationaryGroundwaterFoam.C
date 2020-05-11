@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "computeSourceTerm.H"
-        #include "hEqn.H"
+        #include "hEqnPicard.H"
         #include "updateProperties.H"
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
