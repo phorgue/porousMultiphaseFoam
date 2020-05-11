@@ -19,3 +19,6 @@ if (mag(g).value() == 0)
 
 //- null Pc field for darcy velocity boundary conditions
 surfaceScalarField phiPcNull("phiPc",0*phiG);
+
+//- residual field
+volScalarField ResiduN = Ss*pcModel->Se() * fvc::ddt(h) + fvc::ddt(theta) - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;
