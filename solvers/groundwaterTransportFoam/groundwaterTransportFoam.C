@@ -84,33 +84,23 @@ noConvergence :
         //- Compute source term
         #include "computeSourceTerm.H"
 
-        //- 1) Richard's equation
-        scalar deltah = GREAT;
+        //- 1) Richard's equation (Picard loop)
+        scalar deltahIter = GREAT;
         scalar hEqnResidual = GREAT;
         iterPicard = 0;
-        theta.storeOldTime();
-        while ((deltah > tolerancePicard) && (iterPicard != maxIterPicard))
+        while ( deltahIter > tolerancePicard && iterPicard != maxIterPicard )
         {
             iterPicard++;
-            #include "hEqn.H"
+            #include "hEqnPicard.H"
             #include "updateProperties.H"
-            volScalarField ResiduN = Ss*pcModel->Se() * fvc::ddt(h) + fvc::ddt(theta) - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm_water;
-            hEqnResidual = gMax(mag(ResiduN.internalField())());
-            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltah << ", residual = " << hEqnResidual << endl;
+            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
-        if (deltah > tolerancePicard)
+        if ( deltahIter > tolerancePicard )
         {
             Info << endl;
             Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
             iterPicard++;
-            h = h.oldTime();
-            //- rewind time
-            runTime.setTime(runTime.timeOutputValue()-runTime.deltaTValue(),runTime.timeIndex());
-            //- recompute time step
-            #include "setDeltaT.H"
-            //- Update new time
-            runTime.setTime(runTime.timeOutputValue()+runTime.deltaTValue(),runTime.timeIndex());
-            #include "updateProperties.H"
+            #include "rewindTime.H"
             goto noConvergence;
         }
 
