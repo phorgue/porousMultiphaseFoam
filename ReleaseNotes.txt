@@ -3,6 +3,12 @@
 *** 
 ************************
 
+### Libraries
+
+- numericalMethods
+
+  - new Jacobian Matrix class for handling Newton algorithm
+
 ### Bug fixes
 
 - solved ambiguous calls for compatibility with CLANG and OSX
