@@ -91,7 +91,7 @@ public:
             dpcdS_ =  pc0_ - pcMax_;
         }
 
-    //- Compute Moisture from head pressure (Richards' model)
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
     volScalarField correctAndSb(volScalarField h)
         {
             FatalErrorIn("volScalarField correctAndSb(volScalarField h) const")
@@ -99,12 +99,12 @@ public:
             return Se_;
         };
 
-    //- Capillary capacity (Richards' model)
-    tmp<volScalarField> Ch() const
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    scalar correctAndSb(const volScalarField& h, const label& celli)
         {
-            FatalErrorIn("tmp<volScalarField> Ch() const")
+            FatalErrorIn("scalar correctOneCell(const volScalarField& h, const label& celli)")
                 << "Not implemented in pcLinear.H " << abort(FatalError);
-            return Se_;
+            return 0;
         };
 
 };

@@ -152,14 +152,30 @@ public:
             return Se_;
         }
 
+    //- Capillary capacity (Richards' model)
+    tmp<volScalarField> Ch() const
+        {
+            return Ch_;
+        };
+
+    //- Capillary capacity (one cell)
+    const scalar& Ch(const label& celli) const
+        {
+            return Ch_[celli];
+        }
+
+    //- To set specific value of Ch
+    void setCh(const label& celli, const scalar& ChValue)
+        {
+            Ch_[celli] = ChValue;
+        }
+    
     //- Correct the capillary pressure
     virtual void correct() = 0; 
 
-    //- Compute Moisture from head pressure (Richards' model)
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
     virtual volScalarField correctAndSb(volScalarField h) = 0;
-
-    //- Capillary capacity (Richards' model)
-    virtual tmp<volScalarField> Ch() const = 0;
+    virtual scalar correctAndSb(const volScalarField& h, const label& celli) = 0;
 
 };
 
