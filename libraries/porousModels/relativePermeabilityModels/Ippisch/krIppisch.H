@@ -101,7 +101,14 @@ public:
                 (1-pow(1-pow(Sc_,1/m_),m_))
                 ,2);
         }
-        
+    void correctb(const label& celli)
+        {
+            scalar Se = (Sb_[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
+            krb_[celli] = pow(Se_[celli],tau_[celli]) * pow(
+                (1-pow(1-pow(Sc_[celli]*Se,1/m_[celli]),m_[celli])) /
+                (1-pow(1-pow(Sc_[celli],1/m_[celli]),m_[celli]))
+                ,2);
+        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
