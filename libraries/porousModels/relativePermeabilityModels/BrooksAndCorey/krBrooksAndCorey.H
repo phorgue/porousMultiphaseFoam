@@ -105,6 +105,11 @@ public:
             krb_ = krbmax_ * pow(Se_,n_);
             dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
         }
+    void correctb(const label& celli)
+        {
+            scalar Se = (Sb_[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
+            krb_[celli] = krbmax_[celli] * pow(Se,n_[celli]);
+        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
