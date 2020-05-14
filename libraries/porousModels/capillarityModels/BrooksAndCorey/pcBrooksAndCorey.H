@@ -90,7 +90,7 @@ public:
             dpcdS_= -alpha_*pc0_*(pow(Se_+VSMALL,-alpha_-1))/(Smax_-Smin_);
         }
 
-    //- Compute Moisture from head pressure (Richards' model)
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
     volScalarField correctAndSb(volScalarField h) 
         {
             if (gMax(hd_) == 0)
@@ -100,12 +100,12 @@ public:
                         << abort(FatalError);
             }
 
-            //- Compute Saturation from! head pressure
+            //- Compute saturation from! head pressure
             h.dimensions().reset(dimless);
             Se_ = neg(h-hd_) * pow(hd_/(h+VSMALL),alpha_) + pos(h-hd_+VSMALL);
             h.dimensions().reset(dimLength);
 
-            //- Update effective saturation and capillary capacity
+            //- Update  capillary capacity
             Ch_.dimensions().reset(dimless);
             Ch_ = neg(h-hd_) * (alpha_ * (Smax_-Smin_) / mag(hd_)) * pow(hd_/(h+VSMALL),alpha_+1) + pos(h-hd_+VSMALL);
             Ch_.dimensions().reset(dimless/dimLength);
@@ -115,11 +115,18 @@ public:
             return Se_;
         };
 
-    //- Capillary capacity (Richards' model)
-    tmp<volScalarField> Ch() const
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    scalar correctAndSb(const volScalarField& h, const label& celli)
         {
-            return Ch_;
-        };
+            //- Compute saturation from head pressure
+            scalar Se = neg(h[celli]-hd_[celli]) * pow(hd_[celli]/(h[celli]+VSMALL),alpha_[celli]) + pos(h[celli]-hd_[celli]+VSMALL);
+
+            //- Update capillary capacity
+            Ch_[celli] = neg(h[celli]-hd_[celli]) * (alpha_[celli] * (Smax_[celli]-Smin_[celli]) / mag(hd_[celli])) * pow(hd_[celli]/(h[celli]+VSMALL),alpha_[celli]+1) + pos(h[celli]-hd_[celli]+VSMALL);
+
+            //- Return moisture value
+            return Smin_[celli]+(Smax_[celli]-Smin_[celli])*Se;
+        }
 
 };
 
