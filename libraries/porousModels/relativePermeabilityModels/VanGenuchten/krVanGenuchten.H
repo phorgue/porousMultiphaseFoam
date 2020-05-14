@@ -120,7 +120,11 @@ public:
             dkrbdS_ *= 1/(Smax_ - Smin_);
             dkrbdS_ *= krbmax_;
         }
-
+    void correctb(const label& celli)
+        {
+            scalar Se = (Sb_[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
+            krb_[celli] = krbmax_[celli] * pow(Se,0.5) * pow(1-pow(1-pow(Se,1/m_[celli]),m_[celli]),2);
+        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
