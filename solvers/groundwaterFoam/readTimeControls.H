@@ -38,7 +38,6 @@ const word timeStepControl =
 const bool eventTimeTracking =
      runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
-
 //- if dtFromPicard used
 const label nIterStability = runTime.controlDict().lookupOrDefault<label>("nIterStability",5);
 const label minIterPicard = runTime.controlDict().lookupOrDefault<label>("minIter",3);
@@ -69,7 +68,7 @@ if (adjustTimeStep)
     {
         Info << "Timestepping is based on theta variation with :"
             << nl << "{"
-            << nl << "    dthetamax   = " << dthetamax
+            << nl << "    dthetamax = " << dthetamax
             << nl << "}"
             << endl;
     }
