@@ -6,8 +6,8 @@ krModel->correctb();
 krthetaf = fvc::interpolate(krtheta,"krtheta");
 
 //- mobility computation 
-Mf = rhotheta*mag(g)*Kf*krthetaf/mutheta;
 Lf = rhotheta*Kf*krthetaf/mutheta;
+Mf = mag(g)*Lf;
 
 //- compute fluxes
 phiG = (Lf * g) & mesh.Sf();

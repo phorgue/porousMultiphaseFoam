@@ -22,26 +22,33 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Global
-    readPicardControls
+    readPicardNewtonControls
 
 Description
-    Read control for Picard's iterations
+    Read control for Picard and Newton's iterations
 
 \*---------------------------------------------------------------------------*/
 
 const dictionary& PicardDict = mesh.solutionDict().subOrEmptyDict("Picard");
-const scalar tolerancePicard = PicardDict.lookupOrDefault<scalar>("tolerance", 100);
+const scalar tolerancePicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1);
 const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
+const dictionary& NewtonDict = mesh.solutionDict().subOrEmptyDict("Newton");
+const scalar toleranceNewton = NewtonDict.lookupOrDefault<scalar>("tolerance", GREAT);
+const label maxIterNewton = NewtonDict.lookupOrDefault<label>("maxIter",10);
 
 Info << nl << "Picard loop control" << nl << "{"
 << nl << "    tolerance = " << tolerancePicard
 << "    maximum number of iteration = " << maxIterPicard
 << nl << "}" << endl;
+Info << nl << "Newton loop control" << nl << "{"
+<< nl << "    tolerance = " << toleranceNewton
+<< "    maximum number of iteration = " << maxIterNewton
+<< nl << "}" << nl << endl;
 
-if (!PicardDict.found("tolerance"))
+if (!PicardDict.found("tolerance") && !NewtonDict.found("tolerance"))
 {
-    FatalErrorIn("readPicardControls.H")
-        << "Missing keyword tolerance in system/fvSolution.Picard"
+    FatalErrorIn("readPicardNewtonControls.H")
+        << "Missing keyword tolerance in system/fvSolution.Picard or system/fvSolution.Newton"
             << abort(FatalError);
 }
 
