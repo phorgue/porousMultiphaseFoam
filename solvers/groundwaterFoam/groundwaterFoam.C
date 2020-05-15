@@ -44,6 +44,7 @@ Developers
 #include "outputEventFile.H"
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
+#include "JacobianMatrix.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -66,9 +67,11 @@ int main(int argc, char *argv[])
     Info<< "\nStarting time loop\n" << endl;
     label iterPicard=0;
     label iterNewton=0;
+    JacobianMatrix jacobian(deltah);
 
     while (runTime.run())
     {
+        // if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
         if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
@@ -79,22 +82,39 @@ noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "computeSourceTerm.H"
-        scalar deltahIter = GREAT;
-        scalar hEqnResidual = GREAT;
+        scalar deltahIter = 0;
+        scalar hEqnResidual = 1.00001;
 
         //--- 1) Picard loop
         iterPicard = 0;
-        while ( deltahIter > tolerancePicard && iterPicard != maxIterPicard )
+        while ( hEqnResidual > tolerancePicard && iterPicard != maxIterPicard )
         {
             iterPicard++;
             #include "hEqnPicard.H"
-            #include "updateProperties.H"
+            #include "checkResidual.H"
             Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
-        if ( deltahIter > tolerancePicard )
+        if (  hEqnResidual > tolerancePicard )
         {
             Info << endl;
             Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            #include "rewindTime.H"
+            goto noConvergence;
+        }
+
+        //--- 2) Newton loop
+        iterNewton = 0;
+        while ( hEqnResidual > toleranceNewton && iterNewton != maxIterNewton)
+        {
+            iterNewton++;
+            #include "hEqnNewton.H"
+            #include "checkResidual.H"
+            Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
+        }
+        if ( hEqnResidual > toleranceNewton )
+        {
+            Info << endl;
+            Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
             #include "rewindTime.H"
             goto noConvergence;
         }
@@ -105,6 +125,7 @@ noConvergence :
         dtheta = gMax(dtheta_tmp);
         dthetadTmax = dtheta/runTime.deltaTValue();
         dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
+
         #include "waterMassBalance.H"
         #include "eventWrite.H"
 
