@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createthetaFields.H"
-    #include "readPicardControls.H"
+    #include "readPicardNewtonControls.H"
     #include "readTimeControls.H"
     #include "readEvent.H"
     #include "readForcing.H"
@@ -65,10 +65,10 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
     label iterPicard=0;
+    label iterNewton=0;
 
     while (runTime.run())
     {
-        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
         if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"

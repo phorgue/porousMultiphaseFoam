@@ -28,11 +28,10 @@ Description
 
 if(adjustTimeStep)
 {
-    scalar deltaTFact=1;
-    //- in case of non convergence of the Picard's algorithm
+    //- in case of non convergence of the Picard algorithm
     if (iterPicard == maxIterPicard+1)
     {
-        deltaTFact = dTFactDecrease;
+        scalar deltaTFact = dTFactDecrease;
         iterStability=0;
         runTime.setDeltaT
             (
@@ -72,7 +71,6 @@ if(adjustTimeStep)
         else if(timeStepControl == "dthetamax")
         {
             scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
-
             runTime.setDeltaT
                 (
                     min(
@@ -92,7 +90,6 @@ if(adjustTimeStep)
         if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
         forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
     }
-    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
@@ -124,14 +121,6 @@ if(adjustTimeStep)
                 }
             }
         }
-        if (outputEventIsPresent)
-        {
-            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
-            }
-        }
-        runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << " ; dtheta avg = " << dtheta_avg << endl;
