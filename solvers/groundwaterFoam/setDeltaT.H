@@ -28,8 +28,8 @@ Description
 
 if(adjustTimeStep)
 {
-    //- in case of non convergence of the Picard algorithm
-    if (iterPicard == maxIterPicard+1)
+    //- in case of non convergence of the Picard or Newton  algorithm
+    if (iterPicard == maxIterPicard+1 || iterNewton == maxIterNewton+1)
     {
         scalar deltaTFact = dTFactDecrease;
         iterStability=0;
