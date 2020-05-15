@@ -30,7 +30,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 const dictionary& PicardDict = mesh.solutionDict().subOrEmptyDict("Picard");
-const scalar tolerancePicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1);
+const scalar tolerancePicard = PicardDict.lookupOrDefault<scalar>("tolerance", GREAT);
 const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
 const dictionary& NewtonDict = mesh.solutionDict().subOrEmptyDict("Newton");
 const scalar toleranceNewton = NewtonDict.lookupOrDefault<scalar>("tolerance", GREAT);
