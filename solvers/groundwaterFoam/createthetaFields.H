@@ -3,9 +3,9 @@ krModel->correctb();
 const volScalarField& krtheta = krModel->krb();
 surfaceScalarField krthetaf ("krthetaf",fvc::interpolate(krtheta,"krtheta"));
 
-//- mobility and fractional flow 
-surfaceScalarField Mf ("Mf",rhotheta*mag(g)*Kf*krthetaf/mutheta);
+//- mobility and fractional flow
 surfaceScalarField Lf ("Lf",rhotheta*Kf*krthetaf/mutheta);
+surfaceScalarField Mf ("Mf",mag(g)*Lf);
 
 //- fluxes depending on saturation
 surfaceScalarField phiG("phiG",(Lf * g) & mesh.Sf());
@@ -20,5 +20,6 @@ if (mag(g).value() == 0)
 //- null Pc field for darcy velocity boundary conditions
 surfaceScalarField phiPcNull("phiPc",0*phiG);
 
-//- residual field
+//- h equation residual
+
 volScalarField ResiduN = Ss*pcModel->Se() * fvc::ddt(h) + fvc::ddt(theta) - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;
