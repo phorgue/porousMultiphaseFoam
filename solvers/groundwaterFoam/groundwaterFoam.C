@@ -82,7 +82,7 @@ noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "computeSourceTerm.H"
-        scalar deltahIter = 0;
+        scalar deltahIter = 1;
         scalar hEqnResidual = 1.00001;
 
         //--- 1) Picard loop
@@ -104,14 +104,14 @@ noConvergence :
 
         //--- 2) Newton loop
         iterNewton = 0;
-        while ( hEqnResidual > toleranceNewton && iterNewton != maxIterNewton)
+        while ( hEqnResidual > toleranceNewton && deltahIter > toleranceNewton && iterNewton != maxIterNewton)
         {
             iterNewton++;
             #include "hEqnNewton.H"
             #include "checkResidual.H"
             Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
-        if ( hEqnResidual > toleranceNewton )
+        if ( hEqnResidual > toleranceNewton && deltahIter > toleranceNewton )
         {
             Info << endl;
             Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
