@@ -1,47 +1,37 @@
 {
     h.storePrevIter();
     
-    scalar epsilon = 1e-5;
-    forAll(h,celli)
-    {
-        //- small variation of pressure head
-        h[celli] -= epsilon;
+    const volScalarField& dkrthetadS = krModel ->dkrbdS();
+    volScalarField LdS = pcModel->Ch() * rhotheta * K * dkrthetadS / mutheta;
+    volScalarField MdS = mag(g) * LdS;
 
-        //- update moisture/Ch for considered cell
-        scalar theta_backup = theta[celli];
-        scalar Ch_backup = pcModel->Ch(celli);
-        theta[celli] = pcModel->correctAndSb(h,celli);
-        
-        //- update relative permeability for considered cell
-        scalar kr_backup = krModel->krb(celli);
-        krModel->correctb(celli);
+    fvScalarMatrix deltahEqn_hGrad(MdS  * fvm::div(fvc::snGrad(h) * mesh.magSf(),deltah));
+    deltahEqn_hGrad.diag() *= -1;
 
-        krthetaf = fvc::interpolate(krtheta,"krtheta");
-        Lf = rhotheta*Kf*krthetaf/mutheta;
-        Mf = mag(g)*Lf;
-        phiG = (Lf * g) & mesh.Sf();
-            
-        //- Compute new F_epsilon value
-        volScalarField Feps =  Ss*pcModel->Se() * fvc::ddt(h)
-             + massConservativeTerms * fvc::ddt(theta)
-             + (1 - massConservativeTerms) * pcModel->Ch() * fvc::ddt(h)
-            - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;
-        volScalarField dF = (ResiduN - Feps) / epsilon;
+    fvScalarMatrix deltahEqn
+        (
+            fvm::Sp(
+                (
+                    (Ss*pcModel->Ch()) * (h - h.oldTime())
+                    + Ss*pcModel->Se()
+                    + pcModel->Ch()
+                )/runTime.deltaT()
+                ,deltah)
+            - fvm::laplacian(Mf,deltah)
+            + deltahEqn_hGrad
+            + LdS * fvm::div(-g & mesh.Sf(),deltah)
+            ==
+            - ResiduN
+        );
 
-        //- store derivative values
-        jacobian.storeColumn(dF,celli);
+    scalarField forInversion = deltahEqn.upper();
+    deltahEqn.upper() = deltahEqn.lower();
+    deltahEqn.lower() = forInversion;
 
-        //- restore values
-        pcModel->setCh(celli,Ch_backup);
-        krModel->setKrb(celli,kr_backup);
-        theta[celli] = theta_backup;
-        h[celli] += epsilon;
+    deltahEqn.solve();
 
-    }
-    
-    jacobian.matrix().source() = -ResiduN;
-    jacobian.matrix().solve();
     deltahIter = max(mag(deltah.internalField())).value();
     h = h.prevIter() + deltah;
+    h.correctBoundaryConditions();
 
 }
