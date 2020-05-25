@@ -1,13 +1,26 @@
 ************************
 *** PMFvXXXX
-*** 
+*** Newton Algorithm for unsaturated solvers (groundwater)
 ************************
+
+### Solvers
+
+- groundwaterFoam
+
+  - pressure head equation can be solved using Newton algorithm to handle
+  strong non linearities. Convergence is faster than Picard's algorithm and can
+  handle complex cases where Picard does not converge, for example flow close
+  to the saturated point.
+  - pressure head equation is first solved using Picard formulation until the
+  Picard tolerance is reached (specified in system/fvSolution) and then equation
+  is solver using Newton method until the Newton tolerance.
 
 ### Libraries
 
 - numericalMethods
 
-  - new Jacobian Matrix class for handling Newton algorithm
+  - new Jacobian Matrix class for handling FD Newton algorithm (finite
+  difference method, for debugging only)
 
 ### Bug fixes
 
