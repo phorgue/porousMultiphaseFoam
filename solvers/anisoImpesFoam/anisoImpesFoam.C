@@ -83,8 +83,6 @@ int main(int argc, char *argv[])
         //- Solve pressure equation (implicit)
         #include "pEqn.H"
 
-        runTime.write();
-
         #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
