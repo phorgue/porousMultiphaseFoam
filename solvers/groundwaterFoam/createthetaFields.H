@@ -29,5 +29,4 @@ if (mag(g).value() == 0)
 surfaceScalarField phiPcNull("phiPc",0*phiG);
 
 //- h equation residual
-
 volScalarField ResiduN = Ss*pcModel->Se() * fvc::ddt(h) + fvc::ddt(theta) - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;

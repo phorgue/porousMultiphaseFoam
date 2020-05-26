@@ -93,7 +93,6 @@ if(adjustTimeStep)
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
-
     if ((nSteps < labelMax) && (nSteps != 0))
     {
         const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
@@ -121,6 +120,7 @@ if(adjustTimeStep)
                 }
             }
         }
+        runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << " ; dtheta avg = " << dtheta_avg << endl;
