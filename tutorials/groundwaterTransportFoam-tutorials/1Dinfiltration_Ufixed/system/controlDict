@@ -65,6 +65,6 @@ truncationError 0.01;
 
 CSVoutput  true;
 
-eventTimeTracking true;
+//eventTimeTracking true;
 
 // ************************************************************************* //
