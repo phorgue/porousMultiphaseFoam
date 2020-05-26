@@ -87,7 +87,7 @@ noConvergence :
 
         //--- 1) Picard loop
         iterPicard = 0;
-        while ( hEqnResidual > tolerancePicard && iterPicard != maxIterPicard )
+        while ( hEqnResidual > tolerancePicard && deltahIter > tolerancePicard && iterPicard != maxIterPicard )
         {
             iterPicard++;
             #include "hEqnPicard.H"
@@ -96,10 +96,17 @@ noConvergence :
         }
         if (  hEqnResidual > tolerancePicard )
         {
-            Info << endl;
-            Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-            #include "rewindTime.H"
-            goto noConvergence;
+            if ( deltahIter > tolerancePicard )
+            {
+                Info << endl;
+                Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+                #include "rewindTime.H"
+                goto noConvergence;
+            }
+            else
+            {
+                Warning() << " Picard's algorithm has converged but not residual" << endl;
+            }
         }
 
         //--- 2) Newton loop
@@ -111,12 +118,19 @@ noConvergence :
             #include "checkResidual.H"
             Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
-        if ( hEqnResidual > toleranceNewton && deltahIter > toleranceNewton )
+        if ( hEqnResidual > toleranceNewton )
         {
+            if ( deltahIter > toleranceNewton )
+            {
             Info << endl;
             Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
             #include "rewindTime.H"
             goto noConvergence;
+            }
+            else
+            {
+                Warning() << " Newton's algorithm has converged but not residual" << endl;
+            }
         }
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
