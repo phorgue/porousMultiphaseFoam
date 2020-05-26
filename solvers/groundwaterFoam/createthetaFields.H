@@ -9,6 +9,14 @@ surfaceScalarField Mf ("Mf",mag(g)*Lf);
 
 //- fluxes depending on saturation
 surfaceScalarField phiG("phiG",(Lf * g) & mesh.Sf());
+Utheta.correctBoundaryConditions();
+forAll(mesh.boundary(),patchi)
+{
+    if (isA< fixedValueFvPatchField<vector> >(Utheta.boundaryField()[patchi]))
+    {
+        phi.boundaryFieldRef()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+    }
+}
 
 //- Test if gravity is present
 if (mag(g).value() == 0)
