@@ -98,7 +98,6 @@ if (adjustTimeStep)
         forAll(sourceEventList,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList[sourceEventi]->currentEventEndTime());
         forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
     }
-    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
@@ -128,13 +127,6 @@ if (adjustTimeStep)
                 {
                     timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
-            }
-        }
-        if (outputEventIsPresent)
-        {
-            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
             }
         }
         runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
