@@ -16,6 +16,21 @@ volScalarField h
     mesh
 );
 
+Info << "Creating deltah field (for Newton loop)" << endl;
+volScalarField deltah
+(
+    IOobject
+    (
+        "deltah",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    h
+);
+deltah == dimensionedScalar("",dimLength,0);
+
 //////////////////////////////////////////////////////////////////
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////////
