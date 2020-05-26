@@ -44,7 +44,6 @@ Developers
 #include "outputEventFile.H"
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
-#include "JacobianMatrix.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -67,11 +66,9 @@ int main(int argc, char *argv[])
     Info<< "\nStarting time loop\n" << endl;
     label iterPicard=0;
     label iterNewton=0;
-    JacobianMatrix jacobian(deltah);
 
     while (runTime.run())
     {
-        // if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
         if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
@@ -141,7 +138,14 @@ noConvergence :
         dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
 
         #include "waterMassBalance.H"
-        #include "eventWrite.H"
+        if (outputEventIsPresent)
+        {
+            #include "outputEventWriteWater.H"
+        }
+        else
+        {
+            runTime.write();
+        }
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
