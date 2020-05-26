@@ -138,15 +138,9 @@ noConvergence :
         dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
 
         #include "waterMassBalance.H"
-        if (outputEventIsPresent)
-        {
-            #include "outputEventWriteWater.H"
-        }
-        else
-        {
-            runTime.write();
-        }
 
+        #include "eventWrite.H"
+ 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
             << nl << endl;
