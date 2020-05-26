@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createthetaFields.H"
-    #include "readPicardControls.H"
+    #include "readPicardNewtonControls.H"
     #include "readTimeControls.H"
     #include "readEvent.H"
     #include "readForcing.H"
@@ -67,10 +67,10 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
     label iterPicard=0;
+    label iterNewton=0;
 
     while (runTime.run())
     {
-        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
         if (eventIsPresent_water)  event_water.updateIndex(runTime.timeOutputValue());
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateIndex(runTime.timeOutputValue());
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
@@ -83,25 +83,56 @@ noConvergence :
 
         //- Compute source term
         #include "computeSourceTerm.H"
+        scalar deltahIter = 1;
+        scalar hEqnResidual = 1.00001;
 
         //- 1) Richard's equation (Picard loop)
-        scalar deltahIter = GREAT;
-        scalar hEqnResidual = GREAT;
         iterPicard = 0;
-        while ( deltahIter > tolerancePicard && iterPicard != maxIterPicard )
+        while (hEqnResidual > tolerancePicard && deltahIter > tolerancePicard && iterPicard != maxIterPicard )
         {
             iterPicard++;
             #include "hEqnPicard.H"
             #include "updateProperties.H"
             Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
-        if ( deltahIter > tolerancePicard )
+        if ( hEqnResidual > tolerancePicard )
         {
+            if ( deltahIter > tolerancePicard )
+            {
+                Info << endl;
+                Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+                iterPicard++;
+                    #include "rewindTime.H"
+                goto noConvergence;
+            }
+            else
+            {
+                Warning() << " Picard's algorithm has converged but not residual" << endl;
+            }
+        }
+
+        //--- 2) Newton loop
+        iterNewton = 0;
+        while ( hEqnResidual > toleranceNewton && deltahIter > toleranceNewton && iterNewton != maxIterNewton)
+        {
+            iterNewton++;
+            #include "hEqnNewton.H"
+            #include "checkResidual.H"
+            Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
+        }
+        if ( hEqnResidual > toleranceNewton )
+        {
+            if ( deltahIter > toleranceNewton )
+            {
             Info << endl;
-            Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-            iterPicard++;
+            Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
             #include "rewindTime.H"
             goto noConvergence;
+            }
+            else
+            {
+                Warning() << " Newton's algorithm has converged but not residual" << endl;
+            }
         }
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
@@ -110,13 +141,19 @@ noConvergence :
         dtheta = gMax(dtheta_tmp);
         dthetadTmax = dtheta/runTime.deltaTValue();
 
-        //- 2) scalar transport
+        //- 3) scalar transport
         #include "CEqn.H"
 
         //- C and water mass balance computation
         #include "computeMassBalance.H"
-
-        #include "eventWrite.H"
+        if (outputEventIsPresent)
+        {
+               #include "outputEventWriteWater.H"
+        }
+        else
+        {
+            runTime.write();
+        }
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

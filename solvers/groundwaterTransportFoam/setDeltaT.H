@@ -28,11 +28,10 @@ Description
 
 if(adjustTimeStep)
 {
-    scalar deltaTFact=1;
-    //- in case of non convergence of the Picard's algorithm
-    if (iterPicard == maxIterPicard+1)
+    //- in case of non convergence of the Picard or Newton  algorithm
+    if (iterPicard == maxIterPicard+1 || iterNewton == maxIterNewton+1)
     {
-        deltaTFact = dTFactDecrease;
+        scalar deltaTFact = dTFactDecrease;
         iterStability=0;
         runTime.setDeltaT
             (
@@ -150,7 +149,6 @@ if(adjustTimeStep)
         if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
         forAll(tracerSourceEventList,tracerSourceEventi) timeOfNextEvent = min(timeOfNextEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime());
     }
-    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
@@ -186,13 +184,6 @@ if(adjustTimeStep)
                 {
                     timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
-            }
-        }
-        if (outputEventIsPresent)
-        {
-            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
             }
         }
         runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
