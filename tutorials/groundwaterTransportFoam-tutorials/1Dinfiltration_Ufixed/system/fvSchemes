@@ -17,7 +17,11 @@ FoamFile
 
 ddtSchemes
 {
-    default         Euler;
+    default         backward;
+    // ddt(theta,C)    backward;
+    // ddt(C)          backward;
+    ddt(h)          Euler;
+    ddt(theta)      Euler;
 }
 
 gradSchemes
