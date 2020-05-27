@@ -11,7 +11,7 @@
   interpolation to avoid time step instabilities. Time interpolated fields are
   also used for CSV outputs.
 
-- groundwaterFoam
+- groundwaterFoam/groundwaterTransportFoam
 
   - pressure head equation can be solved using Newton algorithm to handle
   strong non linearities. Convergence is faster than Picard's algorithm and can
