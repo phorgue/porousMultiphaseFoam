@@ -9,7 +9,7 @@ if (outputEventIsPresent)
             const auto& C = composition.Y(speciesi);
             const auto& R = composition.R(speciesi);
             volScalarField C_interpolated = outputEvent.timeInterpolate(C, runTime);
-            volScalarField R_interpolated = outputEvent.timeInterpolate(R, runTime);
+            volScalarField R_interpolated = outputEvent.timeInterpolate(R, runTime,false);
 
             //- CSV output at given times only
             if (CSVoutput)
