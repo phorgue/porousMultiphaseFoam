@@ -146,14 +146,8 @@ noConvergence :
 
         //- C and water mass balance computation
         #include "computeMassBalance.H"
-        if (outputEventIsPresent)
-        {
-               #include "outputEventWriteWater.H"
-        }
-        else
-        {
-            runTime.write();
-        }
+       
+        #include "eventWrite.H"
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
