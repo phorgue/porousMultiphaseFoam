@@ -69,6 +69,8 @@ hwater = potential - z0;
 
 dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01)));
 scalar cumulativeWaterAdded = 0;
+scalar flowOutFixedPoints = 0;
+scalar flowOutFixedPointsPrev = 0;
 
 #include "correctInitialPotential.H"
 

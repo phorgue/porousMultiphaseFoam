@@ -3,39 +3,18 @@ if (outputEventIsPresent)
 {
     if (outputEvent.currentEventEndTime() < runTime.timeOutputValue())
     {
-        scalar interpolateFactor = (runTime.timeOutputValue()-outputEvent.currentEventEndTime())/ runTime.deltaTValue();
-        scalar timeOutputBackup = runTime.timeOutputValue();
-        runTime.setTime(outputEvent.currentEventEndTime(),runTime.timeIndex());
-
         forAll(composition.Y(), speciesi)
         {
-            //- Write C fields at given times only
-            const auto& speciesName = composition.species()[speciesi];
+            //- compute and write time interpolated fields
             const auto& C = composition.Y(speciesi);
             const auto& R = composition.R(speciesi);
-
-            volScalarField C_interpolated
-                (
-                    IOobject
-                    (
-                        speciesName,
-                        runTime.timeName(),
-                        mesh,
-                        IOobject::NO_READ,
-                        IOobject::NO_WRITE
-                    ),
-                    C
-                );
-            C_interpolated = interpolateFactor*C+(1.0-interpolateFactor)*C.oldTime();
-            C_interpolated.write();
-
-            volScalarField R_interpolated = interpolateFactor*R+(1.0-interpolateFactor)*R.oldTime();
+            volScalarField C_interpolated = outputEvent.timeInterpolate(C, runTime);
+            volScalarField R_interpolated = outputEvent.timeInterpolate(R, runTime);
 
             //- CSV output at given times only
             if (CSVoutput)
             {
                 auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-                Info << "passe ici" << endl;
                 CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R_interpolated*C_interpolated*Saturation*eps).value();
                 forAll(mesh.boundaryMesh(),patchi)
                 {
@@ -49,7 +28,6 @@ if (outputEventIsPresent)
             }
         }
 
-        runTime.setTime(timeOutputBackup,runTime.timeIndex());
         outputEvent.updateIndex(runTime.timeOutputValue());
     }
 }
