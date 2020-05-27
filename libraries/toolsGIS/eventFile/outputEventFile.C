@@ -155,7 +155,8 @@ Foam::scalar Foam::outputEventFile::timeInterpolate
 Foam::volScalarField Foam::outputEventFile::timeInterpolate
 (
     const volScalarField& vfield,
-    Time& runTime
+    Time& runTime,
+    bool writeField
 )
 {
     //- compute interpolation factor
@@ -178,7 +179,7 @@ Foam::volScalarField Foam::outputEventFile::timeInterpolate
             vfield
         );
     ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
-    ifield.write();
+    if (writeField) ifield.write();
 
     runTime.setTime(timeOutputBackup,runTime.timeIndex());
     return ifield;
@@ -187,7 +188,8 @@ Foam::volScalarField Foam::outputEventFile::timeInterpolate
 Foam::volVectorField Foam::outputEventFile::timeInterpolate
 (
     const volVectorField& vfield,
-    Time& runTime
+    Time& runTime,
+    bool writeField
 )
 {
     //- compute interpolation factor
@@ -210,7 +212,7 @@ Foam::volVectorField Foam::outputEventFile::timeInterpolate
             vfield
         );
     ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
-    ifield.write();
+    if (writeField) ifield.write();
 
     runTime.setTime(timeOutputBackup,runTime.timeIndex());
     return ifield;
@@ -219,7 +221,8 @@ Foam::volVectorField Foam::outputEventFile::timeInterpolate
 Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
 (
     const surfaceScalarField& vfield,
-    Time& runTime
+    Time& runTime,
+    bool writeField
 )
 {
     //- compute interpolation factor
@@ -243,7 +246,7 @@ Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
         );
 
     ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
-    ifield.write();
+    if (writeField) ifield.write();
 
     runTime.setTime(timeOutputBackup,runTime.timeIndex());
     return ifield;
