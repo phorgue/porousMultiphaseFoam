@@ -1,11 +1,12 @@
 {
     scalar hEqnResidualPrev = hEqnResidual;
+    scalar hEqnResidualSignedPrev = hEqnResidualSigned;
 
     #include "updateProperties.H"
 
     if (hEqnResidual < 1)
     {
-        if ( hEqnResidualPrev < hEqnResidual )
+        if ( hEqnResidualPrev < hEqnResidual && (hEqnResidualSignedPrev * hEqnResidualSigned) > 0 )
         {
             label relaxation_iterator = 0;
             while (relaxation_iterator < 3 && hEqnResidual > hEqnResidualPrev)
