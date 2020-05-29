@@ -21,6 +21,7 @@ forAll(mesh.boundary(),patchi)
         phi.boundaryFieldRef()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
     }
 }
+h.correctBoundaryConditions();
 
 //- Compute h equation residual
 ResiduN = Ss*pcModel->Se() * fvc::ddt(h)
@@ -29,5 +30,15 @@ ResiduN = Ss*pcModel->Se() * fvc::ddt(h)
     - fvc::laplacian(Mf,h)
     + fvc::div(phiG)
     + sourceTerm;
-hEqnResidual = gMax(mag(ResiduN.internalField())());
-
+scalar hEqnResidualMax = gMax(ResiduN.internalField());
+scalar hEqnResidualMin = gMin(ResiduN.internalField());
+if (mag(hEqnResidualMax) < mag(hEqnResidualMin))
+{
+    hEqnResidual = mag(hEqnResidualMin);
+    hEqnResidualSigned = hEqnResidualMin;
+}
+else
+{
+    hEqnResidual = mag(hEqnResidualMax);
+    hEqnResidualSigned = hEqnResidualMax;
+}
