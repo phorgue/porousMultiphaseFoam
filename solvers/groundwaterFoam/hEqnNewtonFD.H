@@ -1,4 +1,5 @@
-{       
+{
+    h.storePrevIter();
     scalar epsilon = 1e-5;
     forAll(h,celli)
     {
@@ -40,6 +41,8 @@
     }
 
     jacobian.matrix().source() = -ResiduN;
-
     jacobian.matrix().solve();
+
+    deltahIter = max(mag(deltah.internalField())).value();
+    h = h.prevIter() + deltah;
 }
