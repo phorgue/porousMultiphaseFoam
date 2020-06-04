@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
     simpleControl simple(mesh);
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
+    scalar massConservativeTerms = 1; // useless, just for createthetaFields.H re-use
     #include "createthetaFields.H"
     #include "readEvent.H"
 

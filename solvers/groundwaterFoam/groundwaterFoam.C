@@ -55,9 +55,9 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
-    #include "createthetaFields.H"
     #include "readPicardNewtonControls.H"
     #include "readTimeControls.H"
+    #include "createthetaFields.H"
     #include "readEvent.H"
     #include "readForcing.H"
 
@@ -85,7 +85,7 @@ noConvergence :
 
         //--- 1) Picard loop
         iterPicard = 0;
-        while ( hEqnResidual > tolerancePicard && deltahIter > tolerancePicard && iterPicard != maxIterPicard )
+        while ( hEqnResidual > tolerancePicard && iterPicard != maxIterPicard )
         {
             iterPicard++;
             #include "hEqnPicard.H"
@@ -94,22 +94,15 @@ noConvergence :
         }
         if (  hEqnResidual > tolerancePicard )
         {
-            if ( deltahIter > tolerancePicard )
-            {
                 Info << endl;
                 Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
                 #include "rewindTime.H"
                 goto noConvergence;
-            }
-            else
-            {
-                Warning() << " Picard's algorithm has converged but not residual" << endl;
-            }
         }
 
         //--- 2) Newton loop
         iterNewton = 0;
-        while ( hEqnResidual > toleranceNewton && deltahIter > toleranceNewton && iterNewton != maxIterNewton)
+        while ( hEqnResidual > toleranceNewton && iterNewton != maxIterNewton)
         {
             iterNewton++;
             #include "hEqnNewton.H"
@@ -118,17 +111,10 @@ noConvergence :
         }
         if ( hEqnResidual > toleranceNewton )
         {
-            if ( deltahIter > toleranceNewton )
-            {
             Info << endl;
             Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
             #include "rewindTime.H"
             goto noConvergence;
-            }
-            else
-            {
-                Warning() << " Newton's algorithm has converged but not residual" << endl;
-            }
         }
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
