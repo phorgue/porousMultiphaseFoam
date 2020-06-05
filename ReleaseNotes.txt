@@ -20,6 +20,8 @@
   - pressure head equation is first solved using Picard formulation until the
   Picard tolerance is reached (specified in system/fvSolution) and then equation
   is solver using Newton method until the Newton tolerance.
+  - the equations residual is now signed and under-relaxation occurs only when
+  residual increases without changing sign
 
 ### Libraries
 
