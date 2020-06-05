@@ -1,7 +1,7 @@
 //- write using event file
 if (outputEventIsPresent)
 {
-    if (outputEvent.currentEventEndTime() < runTime.timeOutputValue())
+    if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
     {
         forAll(composition.Y(), speciesi)
         {
