@@ -1,7 +1,7 @@
 //- write using event file
 if (outputEventIsPresent)
 {
-    if (outputEvent.currentEventEndTime() < runTime.timeOutputValue())
+    if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
     {
         //- compute and write time interpolated fields
         volScalarField p_interpolated = outputEvent.timeInterpolate(p, runTime);

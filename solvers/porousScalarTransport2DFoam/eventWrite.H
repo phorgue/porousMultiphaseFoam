@@ -1,8 +1,7 @@
 //- write using event file
 if (outputEventIsPresent)
 {
-    Info << outputEvent.currentEventEndTime() << " and " << runTime.timeOutputValue() << endl;
-    if (outputEvent.currentEventEndTime() < runTime.timeOutputValue())
+    if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
     {
         volScalarField hwater_interpolated = outputEvent.timeInterpolate(hwater, runTime);
         surfaceScalarField phiWater_interpolated =  outputEvent.timeInterpolate(phiWater, runTime);
