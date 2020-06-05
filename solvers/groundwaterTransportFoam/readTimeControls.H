@@ -44,8 +44,8 @@ const bool eventTimeTracking =
 const label nIterStability = runTime.controlDict().lookupOrDefault<label>("nIterStability",5);
 const label minIterPicard = runTime.controlDict().lookupOrDefault<label>("minIter",3);
 label iterStability = 0;
-const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",0);
-const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0);
+const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",1.2);
+const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.8);
 
 //- if dtFromtheta used
 const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
