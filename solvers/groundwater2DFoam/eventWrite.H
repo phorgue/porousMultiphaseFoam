@@ -15,7 +15,7 @@ if (outputEventIsPresent)
         if (CSVoutput)
         {
             scalar flowOutFixedPoints_interpolated = outputEvent.timeInterpolate(flowOutFixedPointsPrev,flowOutFixedPoints,runTime);
-            waterMassBalanceCSV << runTime.timeName() << " " <<  (fvc::domainIntegrate(infiltration_interpolated).value()/zScale)*
+            waterMassBalanceCSV << outputEvent.currentEventEndTime() << " " <<  (fvc::domainIntegrate(infiltration_interpolated).value()/zScale)*
                 (mesh.nCells() - fixedPotentialIDList.size())/mesh.nCells() << " " << flowOutFixedPoints_interpolated << " ";
             forAll(mesh.boundaryMesh(),patchi)
             {

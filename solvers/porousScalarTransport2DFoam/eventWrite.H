@@ -20,7 +20,7 @@ if (outputEventIsPresent)
 
                 volTensorField Deff(eps*hwater_interpolated*composition.Deff(speciesi));
 
-                CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R_interpolated*hwater_interpolated*C_interpolated*eps).value()/zScale;
+                CmassBalanceCSV << outputEvent.currentEventEndTime() << " " << fvc::domainIntegrate(R_interpolated*hwater_interpolated*C_interpolated*eps).value()/zScale;
                 forAll(mesh.boundaryMesh(),patchi)
                 {
                     if (mesh.boundaryMesh()[patchi].type() == "patch")
