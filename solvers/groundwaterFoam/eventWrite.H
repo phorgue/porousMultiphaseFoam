@@ -12,7 +12,7 @@ if (outputEventIsPresent)
         //- CSV output
         if (CSVoutput)
         {
-            waterMassBalanceCSV << runTime.timeName() << " ";
+            waterMassBalanceCSV << outputEvent.currentEventEndTime() << " ";
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")

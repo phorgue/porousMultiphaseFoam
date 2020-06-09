@@ -12,7 +12,7 @@ if (outputEventIsPresent)
         //- water CSV output
         if (CSVoutput)
         {
-            waterMassBalanceCSV << runTime.timeName() << " ";
+            waterMassBalanceCSV << outputEvent.currentEventEndTime() << " ";
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
@@ -36,7 +36,7 @@ if (outputEventIsPresent)
             if (CSVoutput)
             {
                 auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-                CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R_interpolated*C_interpolated*theta_interpolated).value();
+                CmassBalanceCSV << outputEvent.currentEventEndTime() << " " << fvc::domainIntegrate(R_interpolated*C_interpolated*theta_interpolated).value();
                 forAll(mesh.boundaryMesh(),patchi)
                 {
                     if (mesh.boundaryMesh()[patchi].type() == "patch")

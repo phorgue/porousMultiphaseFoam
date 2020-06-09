@@ -15,7 +15,7 @@ if (outputEventIsPresent)
         if (CSVoutput)
         {
             scalar flowOutFixedPoints_interpolated = outputEvent.timeInterpolate(flowOutFixedPointsPrev,flowOutFixedPoints,runTime);
-            waterMassBalanceCSV << runTime.timeName() << " " <<  (fvc::domainIntegrate(infiltration_interpolated).value()/zScale)*
+            waterMassBalanceCSV << outputEvent.currentEventEndTime() << " " <<  (fvc::domainIntegrate(infiltration_interpolated).value()/zScale)*
                 (mesh.nCells() - fixedPotentialIDList.size())/mesh.nCells() << " " << flowOutFixedPoints_interpolated << " ";
             forAll(mesh.boundaryMesh(),patchi)
             {
@@ -43,7 +43,7 @@ if (outputEventIsPresent)
 
                 volTensorField Deff(eps*hwater_interpolated*composition.Deff(speciesi));
 
-                CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R_interpolated*hwater_interpolated*C_interpolated*eps).value()/zScale;
+                CmassBalanceCSV << outputEvent.currentEventEndTime() << " " << fvc::domainIntegrate(R_interpolated*hwater_interpolated*C_interpolated*eps).value()/zScale;
                 forAll(mesh.boundaryMesh(),patchi)
                 {
                     if (mesh.boundaryMesh()[patchi].type() == "patch")

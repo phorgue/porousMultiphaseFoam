@@ -15,7 +15,7 @@ if (outputEventIsPresent)
             if (CSVoutput)
             {
                 auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-                CmassBalanceCSV << runTime.timeName() << " " << fvc::domainIntegrate(R_interpolated*C_interpolated*Saturation*eps).value();
+                CmassBalanceCSV << outputEvent.currentEventEndTime() << " " << fvc::domainIntegrate(R_interpolated*C_interpolated*Saturation*eps).value();
                 forAll(mesh.boundaryMesh(),patchi)
                 {
                     if (mesh.boundaryMesh()[patchi].type() == "patch")
