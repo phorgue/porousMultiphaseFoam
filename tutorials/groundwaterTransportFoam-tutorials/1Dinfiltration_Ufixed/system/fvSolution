@@ -36,6 +36,11 @@ solvers
 
 Picard
 {
+    tolerance 1e-1;
+}
+
+Newton
+{
     tolerance 1e-6;
     maxIter 10;
 }
