@@ -46,7 +46,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(3*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                        Foam::pow(3*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
                     );
             }
         }
@@ -61,7 +61,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                        Foam::pow(12*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
                     );
             }
         }
@@ -76,7 +76,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
+                        Foam::pow(2*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
                     );
             }
         }
