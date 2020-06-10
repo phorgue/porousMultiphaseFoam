@@ -32,7 +32,6 @@ if(adjustTimeStep)
     if (iterPicard == maxIterPicard+1 || iterNewton == maxIterNewton+1)
     {
         scalar deltaTFact = dTFactDecrease;
-        iterStability=0;
         runTime.setDeltaT
             (
                 min(
@@ -43,45 +42,15 @@ if(adjustTimeStep)
     }
     else
     {
-        //- Timestep using number of Picard's iterations
-        if (timeStepControl == "Picard")
-        {
-            scalar deltaTFact=1;
-            if (iterPicard <= minIterPicard)
-            {
-                iterStability++;
-            }
-
-            if (iterStability == nIterStability)
-            {
-                deltaTFact = dTFactIncrease;
-                iterStability = 0;
-            }
-
+            scalar dtForh = Foam::pow(2*truncationError_h*(hmax+VSMALL)/(dh2dT2max+VSMALL),1./2.);
+            scalar newDeltaT = min(dtForh, 1.2*runTime.deltaTValue());
             runTime.setDeltaT
                 (
                     min(
-                        deltaTFact*runTime.deltaTValue(),
+                        newDeltaT,
                         maxDeltaT
                     )
                 );
-        }
-
-        //- Timestep using h variation
-        else if(timeStepControl == "dthetamax")
-        {
-            scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
-            runTime.setDeltaT
-                (
-                    min(
-                        dtForTheta,
-                        min(
-                            1.2*runTime.deltaTValue(),
-                            maxDeltaT
-                        )
-                    )
-                );
-        }
     }
 
     scalar timeOfNextEvent = GREAT;
@@ -123,7 +92,7 @@ if(adjustTimeStep)
         runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
     }
 
-    Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << " ; dtheta avg = " << dtheta_avg << endl;
+    Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << endl;
 
 }
 

@@ -32,8 +32,11 @@ Description
 bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
 
-scalar truncationError =
+scalar truncationError_global =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError",0.01);
+
+scalar truncationError_potential =
+    runTime.controlDict().lookupOrDefault<scalar>("truncationError_potential",truncationError_global);
 
 word timeScheme = mesh.ddtScheme("ddt(potential)");
 
@@ -46,24 +49,34 @@ scalar dpotentialdTmax = 0;
 scalar dpotential2dT2max = 0;
 scalar dpotential3dT3max = 0;
 scalar hwatermax = 0;
-//- Derivative initialisation to keep 1st user-defined time step
-if (timeScheme == "backward")
+
+if (adjustTimeStep)
 {
+    //- Derivative initialisation to keep 1st user-defined time step
+    if (timeScheme == "backward")
+    {
         hwatermax = gMax(hwater);
-        dpotential3dT3max = 3*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
-}
-else if  (timeScheme == "CrankNicolson")
-{
+        dpotential3dT3max = 3*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+    }
+    else if  (timeScheme == "CrankNicolson")
+    {
         hwatermax = gMax(hwater);
-        dpotential3dT3max = 12*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
-}
-else if (timeScheme == "Euler")
-{
+        dpotential3dT3max = 12*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+    }
+    else if (timeScheme == "Euler")
+    {
         hwatermax = gMax(hwater);
-        dpotential2dT2max = 2*truncationError*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
+        dpotential2dT2max = 2*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
+    }
+
+    Info << "Timestepping is based on time-scheme truncation error with :"
+        << nl << "{"
+        << nl << "    truncationError = " << truncationError_potential
+        << nl << "}"
+        << endl;
 }
 
 const bool eventTimeTracking =
-    runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
+   runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
 // ************************************************************************* //
