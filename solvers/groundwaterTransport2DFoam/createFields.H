@@ -156,7 +156,7 @@ forAll(mesh.boundary(),patchi)
     }
 }
 surfaceScalarField transmissivity("transmissivity",Mf*fvc::interpolate(hwater));
-surfaceScalarField phiWater(phi * fvc::interpolate(hwater));
+surfaceScalarField phihwater("phihwater", phi * fvc::interpolate(hwater));
 
 // field necessary for darcyGradPressure boundary condition
 surfaceScalarField phiG("phiG",0*phi);
