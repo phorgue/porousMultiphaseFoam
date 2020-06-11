@@ -4,7 +4,7 @@ if (outputEventIsPresent)
     if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
     {
         volScalarField hwater_interpolated = outputEvent.timeInterpolate(hwater, runTime);
-        surfaceScalarField phiWater_interpolated =  outputEvent.timeInterpolate(phiWater, runTime);
+        surfaceScalarField phihwater_interpolated =  outputEvent.timeInterpolate(phihwater, runTime);
         forAll(composition.Y(), speciesi)
         {
             //- compute and write time interpolated fields
@@ -26,7 +26,7 @@ if (outputEventIsPresent)
                     if (mesh.boundaryMesh()[patchi].type() == "patch")
                     {
                         scalarField dispersiveFlux(((Deff.boundaryField()[patchi] & mesh.boundary()[patchi].nf()) & mesh.boundary()[patchi].Sf()));
-                        scalarField convectiveFlux(phiWater_interpolated.boundaryField()[patchi]*C_interpolated.boundaryField()[patchi]);
+                        scalarField convectiveFlux(phihwater_interpolated.boundaryField()[patchi]*C_interpolated.boundaryField()[patchi]);
                         CmassBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C_interpolated)+convectiveFlux)/zScale;
                     }
                 }
@@ -59,7 +59,7 @@ else
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
                     scalarField dispersiveFlux(((Deff.boundaryField()[patchi] & mesh.boundary()[patchi].nf()) & mesh.boundary()[patchi].Sf()));
-                    scalarField convectiveFlux(phiWater.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                    scalarField convectiveFlux(phihwater.boundaryField()[patchi]*C.boundaryField()[patchi]);
                     CmassBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
                 }
             }

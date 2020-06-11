@@ -94,7 +94,7 @@ else
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
                     scalarField dispersiveFlux(((Deff.boundaryField()[patchi] & mesh.boundary()[patchi].nf()) & mesh.boundary()[patchi].Sf()));
-                    scalarField convectiveFlux(phiWater.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                    scalarField convectiveFlux(phihwater.boundaryField()[patchi]*C.boundaryField()[patchi]);
                     CmassBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
                 }
             }

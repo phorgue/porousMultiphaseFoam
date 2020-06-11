@@ -14,12 +14,12 @@ forAll(composition.Y(), speciesi)
     const auto& sourceTerm = composition.sourceTerm(speciesi);
 
     //- update water flux
-    phiWater = phi * fvc::interpolate(hwater);
+    phihwater = phi * fvc::interpolate(hwater);
 
     fvScalarMatrix CEqn
         (
             eps * R * fvm::ddt(hwater,C)
-            + fvm::div(phiWater, C, "div(phi,C)")
+            + fvm::div(phihwater, C, "div(phi,C)")
             - fvm::laplacian(eps*hwater*Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm * zScale

@@ -161,7 +161,7 @@ else
     phi.write();
 }
 
-surfaceScalarField phiWater(phi * fvc::interpolate(hwater));
+surfaceScalarField phihwater("phihwater", phi * fvc::interpolate(hwater));
 
 ///////////////////////////////////////////////////////////////////
 ////////////////////////// FORCING TERMS //////////////////////////
@@ -219,7 +219,7 @@ if (CSVoutput)
         {
             if (mesh.boundaryMesh()[patchi].type() == "patch")
             {
-                CmassBalanceCSV << " flux(" << phiWater.boundaryField()[patchi].patch().name() << ")";
+                CmassBalanceCSV << " flux(" << phihwater.boundaryField()[patchi].patch().name() << ")";
             }
         }
         CmassBalanceCSV << " flux(fixedPoint)" << endl;
