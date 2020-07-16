@@ -20,7 +20,7 @@
     const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
   
     //- reading MNT informations
-    MNTfile fixedPotentialMNT(args.option("file"));
+    MNTfile fixedPotentialMNT(args.option("STL"));
 
     //- computing and writing local potential
     forAll(potentialPatch,facei)
