@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
-    #include "readPicardControls.H"
+    #include "readConvergenceControls.H"
     scalar massConservativeTerms = 1; // useless, just for createthetaFields.H re-use
     #include "createthetaFields.H"
     #include "readEvent.H"
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     Info<< "\nStarting time loop\n" << endl;
     scalar hEqnResidual = GREAT;
 
-    while (hEqnResidual > tolerancePicard && runTime.value() < runTime.endTime().value()  )
+    while (hEqnResidual > tolerance && runTime.value() < runTime.endTime().value()  )
     {
         runTime++;
         Info << "Time = " << runTime.timeName() << nl << endl;
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
             << nl << endl;
     }
 
-    if (hEqnResidual > tolerancePicard)
+    if (hEqnResidual > tolerance)
     {
         WarningIn("stationaryGroundwaterFoam.C") << "Solution not converged, final residual is : "
             << hEqnResidual << " increase the end time for convergence" << nl  << endl;
