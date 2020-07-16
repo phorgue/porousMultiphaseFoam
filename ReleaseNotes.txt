@@ -28,8 +28,7 @@
 
 - stationaryGroundwaterFoam
 
-  - convergence and time control are now based on Picard's tolerance value
-  in system/fvSolution (SIMPLE dictionary in fvSolution is obsolete).
+  - convergence and time control is now based on hEqn residual.
   - additional under-relaxation has been added (based on residual decrease)
   to improve convergence rate.
 
