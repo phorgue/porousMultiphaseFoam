@@ -21,10 +21,17 @@
   Picard tolerance is reached (specified in system/fvSolution) and then equation
   is solver using Newton method until the Newton tolerance.
   - the equations residual is now signed and under-relaxation occurs only when
-  residual increases without changing sign
+  residual increases without changing sign.
   - timestep is managed using time scheme for truncation error. Only the Euler
   timescheme is currently handled for the pressure head equation but 2nd order
-  schemes can be used for C equation (see tutorials)
+  schemes can be used for C equation (see tutorials).
+
+- stationaryGroundwaterFoam
+
+  - convergence and time control are now based on Picard's tolerance value
+  in system/fvSolution (SIMPLE dictionary in fvSolution is obsolete).
+  - additional under-relaxation has been added (based on residual decrease)
+  to improve convergence rate.
 
 ### Libraries
 
