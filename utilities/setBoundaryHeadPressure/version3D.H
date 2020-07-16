@@ -20,16 +20,41 @@
     const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
   
     //-- Compute and set up head pressure
-    if (args.optionFound("file"))
+    if (args.optionFound("MNT"))
     {
-        //- reading STL informations
-        MNTfile fixedPotentialMNT(args.option("file"));
+        //- reading MNT informations
+        MNTfile fixedPotentialMNT(args.option("MNT"));
         Info << nl << "Potential fixed using MNT " << endl;
       
         //- computing local potential
         forAll(hPatch,facei)
         {
             hPatch[facei] = fixedPotentialMNT.interpolate(faces[facei]) - faces[facei].z();
+        }
+    }
+    else if (args.optionFound("STL"))
+    {
+        //- reading STL informations
+        word STLfile = args.option("STL");
+        triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
+        pointField pPoints = potentialSTL.points();
+        Info << nl << "Potential fixed using STL = " << STLfile << endl;
+      
+        //- computing local potential
+        forAll(hPatch,facei)
+        {
+            scalar xy_distance = GREAT;
+            label id_point = -1;
+            forAll(pPoints,pointi)
+            {
+                scalar tmp_dist = Foam::sqrt(pow(pPoints[pointi].x()-faces[facei].x(),2)+pow(pPoints[pointi].y()-faces[facei].y(),2));
+                if (tmp_dist < xy_distance)
+                {
+                    xy_distance = tmp_dist;
+                    id_point = pointi;
+                }
+            }
+            hPatch[facei] = pPoints[id_point].z() - faces[facei].z();    
         }
     }  
     else
