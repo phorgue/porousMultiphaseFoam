@@ -22,21 +22,21 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Global
-    readPicardControls
+    readConcergenceControls
 
 Description
-    Read control for Picard's iterations
+    Read control for unsaturated stationary solver 
 
 \*---------------------------------------------------------------------------*/
 
-const dictionary& PicardDict = mesh.solutionDict().subOrEmptyDict("Picard");
-const scalar tolerancePicard = PicardDict.lookupOrDefault<scalar>("tolerance", GREAT);
+const dictionary& residualDict = mesh.solutionDict().subDict("SIMPLE").subDict("residualControl");
+const scalar tolerance = residualDict.lookupOrDefault<scalar>("h", GREAT);
 
-if (!PicardDict.found("tolerance"))
+if (!residualDict.found("h"))
 {
-    FatalErrorIn("readPicardControls.H")
-        << "Missing keyword tolerance in system/fvSolution.Picard"
+    FatalErrorIn("readConvergenceControls.H")
+        << "Missing keyword h in system/fvSolution.SIMPLE.residualControl"
             << abort(FatalError);
 }
 
-Info << nl << "Residual tolerance for convergence = " << tolerancePicard << endl;
+Info << nl << "Residual tolerance for convergence = " << tolerance << endl;
