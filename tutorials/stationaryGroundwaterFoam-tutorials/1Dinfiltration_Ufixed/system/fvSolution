@@ -26,20 +26,17 @@ solvers
     }
 }
 
-SIMPLE
-{
-    residualControl
-    {
-        h          1e-10;
-    }
-}
-
 relaxationFactors
 {
     fields
     {
         h          0.1;
     }
+}
+
+Picard
+{
+    tolerance     1e-12;
 }
 
 // ************************************************************************* //

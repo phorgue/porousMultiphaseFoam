@@ -21,3 +21,7 @@ forAll(mesh.boundary(),patchi)
         phi.boundaryFieldRef()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
     }
 }
+
+//- Compute h equation residual
+ResiduN = - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;
+hEqnResidual = gMax(mag(ResiduN)().internalField());
