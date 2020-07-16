@@ -20,6 +20,5 @@
         );
 
     hEqn.solve();
-    h.relax();
 
 }
