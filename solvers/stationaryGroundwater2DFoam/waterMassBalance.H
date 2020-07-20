@@ -1,12 +1,11 @@
 {
     //- Compute infiltration removing fixed cells
-    Info << "Water mass balance (m3/s) : infiltration = " << (fvc::domainIntegrate(infiltration).value()/zScale)*(mesh.nCells()-fixedPotentialIDList.size())/mesh.nCells() << " ; ";
+    Info << "Water mass balance (m3/s) : infiltration = " << (fvc::domainIntegrate(infiltration).value()/zScale) << " ; ";
 
     seepageTerm = dimensionedScalar("",dimLength/dimTime,0);
 
     if (fixedPotentialIDList.size() > 0)
     {
-        cellFlux = fvc::div(phi*fvc::interpolate(hwater));
         scalar flowOutFixedPoints = 0;
         forAll(fixedPotentialIDList,pointi)
         {

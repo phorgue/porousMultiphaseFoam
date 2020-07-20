@@ -16,6 +16,19 @@
     //- updating flow properties
     hwater = potential - z0;
 
+    transmissivity = Mf*fvc::interpolate(hwater);
+    phi = (-Mf * fvc::snGrad(potential)) * mesh.magSf();
+    forAll(mesh.boundary(),patchi)
+    {
+        if (isA< fixedValueFvPatchField<vector> >(U.boundaryField()[patchi]))
+        {
+            phi.boundaryFieldRef()[patchi] = U.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
+        }
+    }
+    U = fvc::reconstruct(phi);
+    U.correctBoundaryConditions();
+    cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration;
+
     //- Checking for dry cells
     if (min(hwater).value() <= hwaterMin.value())
     {
@@ -32,17 +45,5 @@
     }
 
     Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", diff = " << max(mag(potential-potential.oldTime())).value() << endl;
-
-    transmissivity = Mf*fvc::interpolate(hwater);
-    phi = (-Mf * fvc::snGrad(potential)) * mesh.magSf();
-    forAll(mesh.boundary(),patchi)
-    {
-        if (isA< fixedValueFvPatchField<vector> >(U.boundaryField()[patchi]))
-        {
-            phi.boundaryFieldRef()[patchi] = U.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
-        }
-    }
-    U = fvc::reconstruct(phi);
-    U.correctBoundaryConditions();
 
 }
