@@ -101,4 +101,5 @@ if (forcingPotential.substr(0,5) == "fixed")
     Info << nl << "}" << endl;
 }
 
+labelList dryCellIDList(0);
 volScalarField cellFlux(fvc::div(phi*fvc::interpolate(hwater)));
