@@ -23,8 +23,5 @@ else if (forcingPotential == "seepage")
     }
     
     Info << "Number of seepage cells = " << fixedPotentialIDList.size() << endl;
-    if (fixedPotentialIDList.size() > 0)
-    {
-        potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
-    }
+    if (fixedPotentialIDList.size() > 0) potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
 }
