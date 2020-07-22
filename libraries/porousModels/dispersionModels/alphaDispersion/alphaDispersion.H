@@ -99,7 +99,12 @@ public:
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patch where flux is fixed
-                if (C.boundaryField().types()[patchi] == "eventFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+                if (C.boundaryField().types()[patchi] == "eventFlux" ||
+                    C.boundaryField().types()[patchi] == "inletOutlet"
+                )
+                {
+                    Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+                }
             }
         }
 
@@ -112,7 +117,11 @@ public:
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patches
-                if (C.boundaryField().types()[patchi] == "eventFlux") Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+                if (C.boundaryField().types()[patchi] == "eventFlux" ||
+                C.boundaryField().types()[patchi] == "inletOutlet")
+                {
+                    Deff_.boundaryFieldRef()[patchi] = tensor(zero());
+                }
             }
         }
 };
