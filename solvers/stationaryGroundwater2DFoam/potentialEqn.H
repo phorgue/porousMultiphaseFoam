@@ -16,6 +16,21 @@
     //- updating flow properties
     hwater = potential - z0;
 
+    //- Checking for dry cells
+    if (min(hwater).value() <= hwaterMin.value())
+    {
+        dryCellIDList.clear();
+        forAll(hwater, celli)
+        {
+            if (hwater[celli] <= hwaterMin.value())
+            {
+                dryCellIDList.append(celli);
+                hwater[celli] = hwaterMin.value();
+            }
+        }
+        Info << "Number of dry cells = " << dryCellIDList.size() << endl;
+    }
+
     transmissivity = Mf*fvc::interpolate(hwater);
     phi = (-Mf * fvc::snGrad(potential)) * mesh.magSf();
     forAll(mesh.boundary(),patchi)
@@ -28,21 +43,6 @@
     U = fvc::reconstruct(phi);
     U.correctBoundaryConditions();
     cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration;
-
-    //- Checking for dry cells
-    if (min(hwater).value() <= hwaterMin.value())
-    {
-        label ndryCells = 0;
-        forAll(hwater, celli)
-        {
-            if (hwater[celli] <= hwaterMin.value())
-            {
-                ndryCells++;
-                hwater[celli] = hwaterMin.value();
-            }
-        }
-        Warning() << "Number of dry cells = " << ndryCells << endl;
-    }
 
     Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", diff = " << max(mag(potential-potential.oldTime())).value() << endl;
 
