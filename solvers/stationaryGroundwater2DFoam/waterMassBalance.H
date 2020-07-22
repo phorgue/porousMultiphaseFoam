@@ -1,5 +1,5 @@
 {
-    //- Compute infiltration removing fixed cells
+    //- Compute infiltration
     Info << "Water mass balance (m3/s) : infiltration = " << (fvc::domainIntegrate(infiltration).value()/zScale) << " ; ";
 
     seepageTerm = dimensionedScalar("",dimLength/dimTime,0);
@@ -11,7 +11,7 @@
         {
             label currentCell = fixedPotentialIDList[pointi];
             scalar area = mesh.V()[currentCell]/zScale;
-            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell]/area;
+            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
             flowOutFixedPoints -= cellFlux.internalField()[currentCell]*area;
         }
         Info << " fixed points = " << flowOutFixedPoints << " ; ";
@@ -25,4 +25,9 @@
         }
     }
     Info << endl;
+
+    //- Residual computation
+    scalarField ResiduN = -fvc::laplacian(transmissivity,potential,"laplacian(transmissivity,potential)") + infiltration + seepageTerm;
+    forAll(dryCellIDList, celli)  ResiduN[dryCellIDList[celli]] = 0;
+    Info << "Potential equation residual = " << gMax(mag(ResiduN)) << endl;
 }

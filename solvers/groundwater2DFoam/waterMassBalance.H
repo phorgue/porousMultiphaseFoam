@@ -13,7 +13,7 @@
         {
             label currentCell = fixedPotentialIDList[pointi];
             scalar area = mesh.V()[currentCell]/zScale;
-            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell]/area;
+            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
             flowOutFixedPoints -= cellFlux.internalField()[currentCell]*area;
         }
         Info << "fixed points = " << flowOutFixedPoints << " ; ";
