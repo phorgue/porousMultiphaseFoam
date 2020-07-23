@@ -43,7 +43,7 @@
 
 - solved ambiguous calls for compatibility with CLANG and OSX
 - fix dimensions in ToddNo.H
-- fix interpolateFactor for event value computation
+- fix interpolation functions for event value computation
 - 3rd time derivative computed on potential (instead of hwater) to avoid
 instabilities when hwater tends to 0
 - fix retard coefficient for unsaturated (depends on saturation flow)
