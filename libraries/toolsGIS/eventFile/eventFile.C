@@ -148,7 +148,7 @@ void Foam::eventFile::updateValue(const TimeState& runTime)
 
                 if (iteratorNext == ndates_-1) FatalErrorIn("eventFile.C") << "event file : " << this->name() << " finished by two same dates, remove the last one" << abort(FatalError);
 
-                scalar dt2 = runTime.timeOutputValue() - dates_[iteratorNext];
+                dt2 = runTime.timeOutputValue() - dates_[iteratorNext];
                 forAll(currentValues_,id) value2[id] = datas_[iteratorNext][id] + dt2 * (datas_[iteratorNext+1][id]-datas_[iteratorNext][id])/(dates_[iteratorNext+1]-dates_[iteratorNext]);
             }
             forAll(currentValues_,id)
@@ -224,7 +224,7 @@ Foam::scalar Foam::eventFile::dtValue(const label& id) const
     {
         scalar deltaT = mesh_->time().deltaT().value();
         scalar deltaT0 = mesh_->time().deltaT0().value();
-        
+
         scalar coefft0_00 = deltaT/(deltaT + deltaT0);
         scalar coefftn_0 = 1 + coefft0_00;
 
