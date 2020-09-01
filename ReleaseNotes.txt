@@ -5,7 +5,7 @@
 
 ### Solvers
 
-- Global:
+- Global
 
   - output event value are not explictly computed but constructed by
   interpolation to avoid time step instabilities. Time interpolated fields are
@@ -31,6 +31,12 @@
   - convergence and time control is now based on hEqn residual.
   - additional under-relaxation has been added (based on residual decrease)
   to improve convergence rate.
+
+### Utilities
+
+- setBoundaryHeadPressure
+
+  - add uniform potential option for 2D solvers (potential field)
 
 ### Libraries
 
