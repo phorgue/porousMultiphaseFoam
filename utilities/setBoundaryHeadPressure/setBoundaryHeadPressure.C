@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     argList::addOption("STL","fileName","specify the STL file");
     argList::addOption("MNT","fileName","specify the MNT file");
     argList::addOption("value","0","uniform potential value");
-    argList::addOption("version","3D","2D (h) or 3D (potential)");
+    argList::addOption("version","3D","3D (h) or 2D (potential)");
 
     Foam::argList args(argc,argv); 
 
