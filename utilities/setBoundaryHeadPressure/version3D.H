@@ -59,6 +59,7 @@
     }  
     else
     {
+        //- uniform potential
         scalar potential = args.optionLookupOrDefault<scalar>("value",0.);
         Info << nl << "Uniform potential fixed = " << potential << " m " << endl;
         forAll(faces,facei)
