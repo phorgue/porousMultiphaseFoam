@@ -1,8 +1,4 @@
-//- Read the global MNT mode : fixedMNT, fixed or seepage
-word forcingPotential = transportProperties.lookupOrDefault<word>("forcingPotential","none");
-Info << nl << "Forcing potential mode is : " << forcingPotential << endl;
-
-//- Reading MNT file and computing potentialMNT field if required
+//- Reading MNT file (for seepage) if present
 volScalarField potentialMNT(
     IOobject
     (
@@ -16,12 +12,15 @@ volScalarField potentialMNT(
     dimensionedScalar("default_potential",dimLength,0),
     zeroGradientFvPatchField<scalar>::typeName
 );
-if ((forcingPotential == "fixedMNT") || (forcingPotential == "seepage"))
+
+//- initialization of seepage option
+bool seepageActive = transportProperties.lookupOrDefault("seepage", false);
+if (seepageActive) Info << nl << "Seepage option is active" << endl;
+else Info << nl << "no Seepage option" << endl;
+
+if (seepageActive)
 {
-    if (potentialMNT.headerOk())
-    {
-        Info << nl << "Reading precomputed potentialMNT file in constant/" << endl;
-    }
+    if (potentialMNT.headerOk()) Info << nl << "Reading precomputed potentialMNT file in constant/" << endl;
     else
     {
         word MNTfileName(transportProperties.lookupOrDefault<word>("fileMNT",""));
@@ -40,11 +39,7 @@ if ((forcingPotential == "fixedMNT") || (forcingPotential == "seepage"))
             Info << "OK" << endl;
             potentialMNT.write();
         }
-        else
-        {
-            FatalErrorIn("readFixedPoints.H") << nl << "no potentialMNT file neither MNT file for forcing potential mode : "
-                << forcingPotential << endl;
-        }
+        else FatalErrorIn("readFixedPoints.H") << nl << "no potentialMNT file neither MNT file while seepage is active " << endl;
     }
 
     //- checking that potentialMNT in superior to z0)
@@ -57,39 +52,19 @@ if ((forcingPotential == "fixedMNT") || (forcingPotential == "seepage"))
         }
     }
 }
-else if ((forcingPotential != "fixedValue") && (forcingPotential != "none"))
-{
-    FatalErrorIn("readFixedPoint.H") << "forcingPotential word unknown : " << forcingPotential << abort(FatalError);
-}
 
+//- reading fixed potential list
 List<Tuple2<point,scalar> > fixedPotentialList(transportProperties.lookupOrDefault
 ("fixedPotentialList",List<Tuple2<point,scalar> >())
 );
 labelList fixedPotentialIDList(fixedPotentialList.size());
 scalarList fixedPotentialValueList(fixedPotentialList.size());
-volScalarField seepTerm(0.0*potentialMNT/runTime.deltaT());
-
-if (forcingPotential.substr(0,5) == "fixed")
+if (fixedPotentialList.size() > 0)
 {
-    //- find nearest cell
     forAll(fixedPotentialList,pointi)
     {
         fixedPotentialIDList[pointi] = mesh.findNearestCell(fixedPotentialList[pointi].first());
-    }
-
-    if (forcingPotential == "fixedValue")
-    {
-        forAll(fixedPotentialList,pointi)
-        {
-            fixedPotentialValueList[pointi] = fixedPotentialList[pointi].second();
-        }
-    }
-    else if (forcingPotential == "fixedMNT")
-    {
-        forAll(fixedPotentialList,pointi)
-        {
-            fixedPotentialValueList[pointi] =  potentialMNT[fixedPotentialIDList[pointi]];
-        }
+        fixedPotentialValueList[pointi] = fixedPotentialList[pointi].second();
     }
 
     //- Display information about fixed values
@@ -101,5 +76,8 @@ if (forcingPotential.substr(0,5) == "fixed")
     Info << nl << "}" << endl;
 }
 
+//- creating seepage and dryCell lists
 labelList dryCellIDList(0);
+labelList seepageIDList(0);
+scalarList seepageValueList(0);
 volScalarField cellFlux(fvc::div(phi*fvc::interpolate(hwater)));

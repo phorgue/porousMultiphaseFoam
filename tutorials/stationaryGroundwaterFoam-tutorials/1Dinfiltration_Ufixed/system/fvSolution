@@ -34,9 +34,12 @@ relaxationFactors
     }
 }
 
-Picard
+SIMPLE
 {
-    tolerance     1e-12;
+    residualControl
+    {
+        h 1e-12;
+    }
 }
 
 // ************************************************************************* //
