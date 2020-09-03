@@ -31,6 +31,9 @@
   - convergence and time control is now based on hEqn residual.
   - additional under-relaxation has been added (based on residual decrease)
   to improve convergence rate.
+  - seepage option is now independant from fixedPotentialList and is activated
+  in transportProperties as:
+     seepage yes;
 
 ### Utilities
 
