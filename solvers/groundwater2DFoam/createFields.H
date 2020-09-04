@@ -71,6 +71,8 @@ dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dime
 scalar cumulativeWaterAdded = 0;
 scalar flowOutFixedPoints = 0;
 scalar flowOutFixedPointsPrev = 0;
+scalar flowOutSeepage = 0;
+scalar flowOutSeepagePrev = 0;
 
 #include "correctInitialPotential.H"
 
@@ -193,22 +195,3 @@ volScalarField seepageTerm
 );
 
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
-
-////////////////////////////////////////////////////
-//////////////////// OUTPUT CSV ////////////////////
-////////////////////////////////////////////////////
-
-bool CSVoutput = runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
-OFstream waterMassBalanceCSV("waterMassBalance.csv");
-if (CSVoutput)
-{
-    waterMassBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
-    forAll(mesh.boundaryMesh(),patchi)
-    {
-        if (mesh.boundaryMesh()[patchi].type() == "patch")
-        {
-            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
-        }
-    }
-    waterMassBalanceCSV << endl;
-}

@@ -75,6 +75,8 @@ dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dime
 scalar cumulativeWaterAdded = 0;
 scalar flowOutFixedPoints = 0;
 scalar flowOutFixedPointsPrev = 0;
+scalar flowOutSeepage = 0;
+scalar flowOutSeepagePrev = 0;
 
 #include "correctInitialPotential.H"
 
@@ -217,47 +219,3 @@ multiscalarMixture composition
     "C",
     dimLength
 );
-
-
-////////////////////////////////////////////////////
-//////////////////// OUTPUT CSV ////////////////////
-////////////////////////////////////////////////////
-
-bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
-OFstream waterMassBalanceCSV("waterMassBalance.csv");
-if (CSVoutput)
-{
-    waterMassBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
-    forAll(mesh.boundaryMesh(),patchi)
-    {
-        if (mesh.boundaryMesh()[patchi].type() == "patch")
-        {
-            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
-        }
-    }
-    waterMassBalanceCSV << endl;
-}
-
-PtrList<OFstream> CmassBalanceCSVs;
-if (CSVoutput)
-{
-    CmassBalanceCSVs.resize(composition.Y().size());
-
-    forAll(composition.Y(), speciesi)
-    {
-        CmassBalanceCSVs.set(speciesi, new OFstream(composition.species()[speciesi] + "massBalance.csv"));
-
-        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-
-        CmassBalanceCSV << "#Time TotalMass(kg)";
-        forAll(mesh.boundaryMesh(),patchi)
-        {
-            if (mesh.boundaryMesh()[patchi].type() == "patch")
-            {
-                CmassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
-            }
-        }
-        CmassBalanceCSV << " flux(fixedPoint)" << endl;
-    }
-
-}

@@ -2,21 +2,34 @@
     //- terminal display
     Info << "Water mass balance (m3/s) : infiltration = " << fvc::domainIntegrate(infiltration).value()/zScale << " ; ";
 
-    //- computing seepageTerm fields and flowOutFixedPoints
+    //- computing seepageTerm fields and global flow in/out (for fixed/seepage)
     seepageTerm = dimensionedScalar("",dimLength/dimTime,0);
+
     flowOutFixedPointsPrev = flowOutFixedPoints;
     flowOutFixedPoints = 0;
-
     if (fixedPotentialIDList.size() > 0)
     {
         forAll(fixedPotentialIDList,pointi)
         {
             label currentCell = fixedPotentialIDList[pointi];
             scalar area = mesh.V()[currentCell]/zScale;
-            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
             flowOutFixedPoints -= cellFlux.internalField()[currentCell]*area;
         }
         Info << "fixed points = " << flowOutFixedPoints << " ; ";
+    }
+
+    flowOutSeepagePrev = flowOutSeepage;
+    flowOutSeepage = 0;
+    if (seepageActive)
+    {
+        forAll(seepageIDList,pointi)
+        {
+            label currentCell = seepageIDList[pointi];
+            scalar area = mesh.V()[currentCell]/zScale;
+            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
+            flowOutSeepage -= cellFlux.internalField()[currentCell]*area;
+        }
+        Info << " seepage cells = " << flowOutSeepage << " ; ";
     }
 
     //- compute/display flow at boundaries
