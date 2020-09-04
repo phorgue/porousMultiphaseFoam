@@ -14,9 +14,18 @@ if (outputEventIsPresent)
         //- CSV output
         if (CSVoutput)
         {
-            scalar flowOutFixedPoints_interpolated = outputEvent.timeInterpolate(flowOutFixedPointsPrev,flowOutFixedPoints,runTime);
             waterMassBalanceCSV << outputEvent.currentEventEndTime() << " " <<  (fvc::domainIntegrate(infiltration_interpolated).value()/zScale)*
-                (mesh.nCells() - fixedPotentialIDList.size())/mesh.nCells() << " " << flowOutFixedPoints_interpolated << " ";
+                (mesh.nCells() - fixedPotentialIDList.size())/mesh.nCells() << " ";
+            if (fixedPotentialIDList.size() > 0)
+            {
+                scalar flowOutFixedPoints_interpolated = outputEvent.timeInterpolate(flowOutFixedPointsPrev,flowOutFixedPoints,runTime);
+                waterMassBalanceCSV << flowOutFixedPoints_interpolated << " ";
+            }
+            if (seepageActive)
+            {
+                scalar flowOutSeepage_interpolated = outputEvent.timeInterpolate(flowOutSeepagePrev,flowOutSeepage,runTime);
+                waterMassBalanceCSV << flowOutSeepage_interpolated << " ";
+            }
             forAll(mesh.boundaryMesh(),patchi)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
@@ -39,7 +48,9 @@ else
     if (CSVoutput)
     {
         waterMassBalanceCSV << runTime.timeName() << " " <<  (fvc::domainIntegrate(infiltration).value()/zScale)*(mesh.nCells()-
-        fixedPotentialIDList.size())/mesh.nCells() << " " << flowOutFixedPoints << " ";
+        fixedPotentialIDList.size())/mesh.nCells() << " ";
+        if (fixedPotentialIDList.size() > 0) Info << flowOutFixedPoints << " ";
+        if (seepageActive) Info << flowOutSeepage << " ";
         forAll(mesh.boundaryMesh(),patchi)
         {
             if (mesh.boundaryMesh()[patchi].type() == "patch")
