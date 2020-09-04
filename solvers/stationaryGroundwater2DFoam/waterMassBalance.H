@@ -14,7 +14,19 @@
             seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
             flowOutFixedPoints -= cellFlux.internalField()[currentCell]*area;
         }
-        Info << " fixed points = " << flowOutFixedPoints << " ; ";
+        Info << " fixed cells = " << flowOutFixedPoints << " ; ";
+    }
+    if (seepageActive)
+    {
+        scalar flowOutSeepage = 0;
+        forAll(seepageIDList,pointi)
+        {
+            label currentCell = seepageIDList[pointi];
+            scalar area = mesh.V()[currentCell]/zScale;
+            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
+            flowOutSeepage -= cellFlux.internalField()[currentCell]*area;
+        }
+        Info << " seepage cells = " << flowOutSeepage << " ; ";
     }
 
     forAll(phi.boundaryField(),patchi)
