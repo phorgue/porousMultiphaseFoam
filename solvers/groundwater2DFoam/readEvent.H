@@ -43,3 +43,24 @@ if (infiltrationEventIsPresent)
 
     }
 }
+
+////////////////////////////////////////////////////
+//////////////////// OUTPUT CSV ////////////////////
+////////////////////////////////////////////////////
+
+bool CSVoutput = runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
+OFstream waterMassBalanceCSV("waterMassBalance.csv");
+if (CSVoutput)
+{
+    waterMassBalanceCSV << "#Time flux(Infiltration)";
+    if (fixedPotentialIDList.size() > 0) waterMassBalanceCSV << " flux(fixedPoints)";
+    if (seepageActive) waterMassBalanceCSV << " flux(seepage)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    waterMassBalanceCSV << endl;
+}

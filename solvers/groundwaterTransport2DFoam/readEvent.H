@@ -61,3 +61,48 @@ if (eventTimeStep > 0)
 {
     if (infiltrationEventIsPresent) infiltrationEvent.addIntermediateTimeSteps(eventTimeStep);
 }
+
+////////////////////////////////////////////////////
+//////////////////// OUTPUT CSV ////////////////////
+////////////////////////////////////////////////////
+
+bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
+OFstream waterMassBalanceCSV("waterMassBalance.csv");
+if (CSVoutput)
+{
+    waterMassBalanceCSV << "#Time flux(Infiltration)";
+    if (fixedPotentialIDList.size() > 0) waterMassBalanceCSV << " flux(fixedPoints)";
+    if (seepageActive) waterMassBalanceCSV << " flux(seepage)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    waterMassBalanceCSV << endl;
+}
+
+PtrList<OFstream> CmassBalanceCSVs;
+if (CSVoutput)
+{
+    CmassBalanceCSVs.resize(composition.Y().size());
+
+    forAll(composition.Y(), speciesi)
+    {
+        CmassBalanceCSVs.set(speciesi, new OFstream(composition.species()[speciesi] + "massBalance.csv"));
+
+        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
+
+        CmassBalanceCSV << "#Time TotalMass(kg)";
+        forAll(mesh.boundaryMesh(),patchi)
+        {
+            if (mesh.boundaryMesh()[patchi].type() == "patch")
+            {
+                CmassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            }
+        }
+        CmassBalanceCSV << " flux(fixedPoint)" << endl;
+    }
+
+}
