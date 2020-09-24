@@ -63,6 +63,7 @@ List<Tuple2<point,scalar> > fixedPotentialList(transportProperties.lookupOrDefau
 );
 labelList fixedPotentialIDList(fixedPotentialList.size());
 scalarList fixedPotentialValueList(fixedPotentialList.size());
+bool useMNTtoFixPotential(transportProperties.lookupOrDefault<bool>("useMNTtoFixPotential",false));
 if (fixedPotentialList.size() > 0)
 {
     //- find closest cell to fixed points
@@ -71,7 +72,7 @@ if (fixedPotentialList.size() > 0)
         fixedPotentialIDList[pointi] = mesh.findNearestCell(fixedPotentialList[pointi].first());
     }
 
-    if (potentialMNT.headerOk())
+    if (useMNTtoFixPotential)
     {
         Info << nl << "potentialMNT used for fixedPotentialList" << endl;
         forAll(fixedPotentialList,pointi)
@@ -92,7 +93,8 @@ if (fixedPotentialList.size() > 0)
     Info << nl << "Fixed potential positions and values are " << nl << "{";
     forAll(fixedPotentialList,pointi)
     {
-        Info << nl << "  " << fixedPotentialList[pointi].first() << " corresponding to cellID = " << fixedPotentialIDList[pointi] << " with value " << fixedPotentialValueList[pointi] << " (user value = " <<  fixedPotentialList[pointi].second() << ")";
+        Info << nl << "  " << fixedPotentialList[pointi].first() <<  " : value " << fixedPotentialValueList[pointi]
+            << "  (cellID = " << fixedPotentialIDList[pointi] << ", distance with cell-center = " << mag(mesh.C()[fixedPotentialIDList[pointi]]-fixedPotentialList[pointi].first()) << ")";
     }
     Info << nl << "}" << endl;
 }
