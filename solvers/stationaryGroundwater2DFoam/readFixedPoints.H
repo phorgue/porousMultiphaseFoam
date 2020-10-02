@@ -93,8 +93,10 @@ if (fixedPotentialList.size() > 0)
     Info << nl << "Fixed potential positions and values are " << nl << "{";
     forAll(fixedPotentialList,pointi)
     {
+        scalar distance_to_centre = Foam::sqrt(pow(mesh.C()[fixedPotentialIDList[pointi]].x()-fixedPotentialList[pointi].first().x(),2)
+        +pow(mesh.C()[fixedPotentialIDList[pointi]].y()-fixedPotentialList[pointi].first().y(),2));
         Info << nl << "  " << fixedPotentialList[pointi].first() <<  " : value " << fixedPotentialValueList[pointi]
-            << "  (cellID = " << fixedPotentialIDList[pointi] << ", distance with cell-center = " << mag(mesh.C()[fixedPotentialIDList[pointi]]-fixedPotentialList[pointi].first()) << ")";
+            << "  (cellID = " << fixedPotentialIDList[pointi] << ", distance with cell-center = " << distance_to_centre << ")";
     }
     Info << nl << "}" << endl;
 }

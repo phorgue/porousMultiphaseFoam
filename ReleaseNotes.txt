@@ -41,6 +41,12 @@
 
   - add uniform potential option for 2D solvers (potential field)
 
+- setFieldsFromXY
+
+  - user can specify the number of points for interpolation (default = 3):
+    1 => use closest point value
+    0 => use number of neighbour faces for each cell
+
 ### Libraries
 
 - numericalMethods
