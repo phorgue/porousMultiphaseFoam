@@ -96,7 +96,6 @@ Foam::XYfile::XYfile
             {
                 FatalErrorIn("XYfile.C")
                     << "wrong number of elements in XY file :" << fileName
-                    //        << nl << " found " << split.size() << " elements instead of 3 at line " << mnt_data.size()+1
                         << nl << "List of read elements : " << split
                         << abort(FatalError);
             }
@@ -131,48 +130,46 @@ Foam::XYfile::~XYfile()
 {}
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
-Foam::scalar Foam::XYfile::interpolate(const point& location)
+Foam::scalar Foam::XYfile::interpolate(const point& location, label npoints=3)
 {
-    label id1=-1;
-    label id2=-1;
-    label id3=-1;     
-    scalar dist1 = GREAT;
-    scalar dist2 = GREAT;
-    scalar dist3 = GREAT;
+    labelList id(npoints);
+    id = -1;
+    scalarList dist(npoints);
+    dist = GREAT;
 
-    for(label i=0;i<x_.size();i++)
+    for(label pointi=0;pointi<x_.size();pointi++)
     {
-        scalar dist = Foam::sqrt(pow(x_[i]-location.x(),2)+pow(y_[i]-location.y(),2));
-        if ( dist < dist1)
+        scalar current_dist = Foam::sqrt(pow(x_[pointi]-location.x(),2)+pow(y_[pointi]-location.y(),2));
+
+        //- finding point position in distance list
+        label position = 0;
+        forAll(dist, close_pointi)
         {
-             id3 = id2;
-            dist3 = dist2;
-            id2 = id1;
-            dist2 = dist1;
-            id1 = i;
-            dist1 = dist;
+            if (current_dist > dist[close_pointi]) position++;
         }
-        else if ( dist < dist2)
-        {   
-            id3 = id2;
-            dist3 = dist2;
-            id2 = i;
-            dist2 = dist;                
-        }
-        else if ( dist < dist3)
+        if (position < npoints)
         {
-                 id3 = i;
-            dist3 = dist;                
+            for(label iter=npoints-1;iter>position;iter--)
+            {
+                id[iter] = id[iter-1];
+                dist[iter] = dist[iter-1];
+            }
+            id[position] = pointi;
+            dist[position] = current_dist+SMALL;
         }
     }
-
         
-    if ( (id1 == -1) || (id2 == -1) || (id3 == -1))
+    if ( min(id) < 0 )
     {
-        Info << nl << "Error : three point are not found for interpolation"
-            << nl << id1 << " / " << id2 << " / " << id3 << endl;
+        FatalErrorIn("XYfile.C") << nl << "Error : somepoint are not found for interpolation"
+            << nl << id << abort(FatalError);
     }
 
-    scalar interpolatedValue_ =  (dist1*values_[id1] + dist2*values_[id2] + dist3*values_[id3] ) / (dist1+dist2+dist3);
+    scalar interpolatedValue_ = 0;
+    scalarList coeffs_(npoints);
+    coeffs_ = 1/dist;
+    scalar total_coeffs_ = sum(coeffs_);
+
+    forAll(id,pointi) interpolatedValue_ += coeffs_[pointi]*values_[id[pointi]] / total_coeffs_;
     return interpolatedValue_;
 }

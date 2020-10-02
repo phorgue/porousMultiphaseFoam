@@ -36,6 +36,11 @@ Description
 
 Usage
     setPermeabilityFieldFromXY -file inputFile_file -field fieldName
+    Options are:
+    -folder can be used to specify time folder
+    -offset to add value to interpolated data
+    -npoints to specify number of points (1: closest point, 0: number of faces
+    or each cell)
 
 \*---------------------------------------------------------------------------*/
 
@@ -49,6 +54,7 @@ int main(int argc, char *argv[])
     argList::addOption("field","fieldName","specify the output file");
     argList::addOption("folder","constant","specify the folder");
     argList::addOption("offset","0","add offset to interpolated value");
+    argList::addOption("npoints","3","number of points used for interpolation (0 => number of cell faces");
 
     Foam::argList args(argc,argv); 
 
@@ -77,6 +83,7 @@ int main(int argc, char *argv[])
     }
 
     scalar offset = args.optionLookupOrDefault<scalar>("offset",0.);
+    label npoints = args.optionLookupOrDefault<label>("npoints",3);
 
     #include "createTime.H"
     #include "createMesh.H"
@@ -107,7 +114,14 @@ int main(int argc, char *argv[])
 
     forAll(outputFile,celli)
     {
-        outputFile[celli] = sourceFile.interpolate(mesh.C()[celli]) + offset;
+        if (npoints == 0)
+        {
+            outputFile[celli] = sourceFile.interpolate(mesh.C()[celli],mesh.cells()[celli].size()-2) + offset;
+        }
+        else
+        {
+            outputFile[celli] = sourceFile.interpolate(mesh.C()[celli],npoints) + offset;
+        }
     }
 
     outputFile.write();
