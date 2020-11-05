@@ -100,8 +100,7 @@ noConvergence :
         {
                 Info << endl;
                 Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-                iterPicard++;
-                    #include "rewindTime.H"
+                #include "rewindTime.H"
                 goto noConvergence;
         }
 
