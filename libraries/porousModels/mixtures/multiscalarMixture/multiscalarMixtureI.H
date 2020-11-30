@@ -35,7 +35,9 @@ inline Foam::multiscalarMixture::multiscalarMixture
     const dimensionSet& sourceTermDimFactor
 )
 :
-    basicMultiComponentMixture(dict, speciesNames, mesh, phaseName),
+    basicMixture(dict, mesh, phaseName),
+    species_(speciesNames),
+    Y_(species_.size()),
     R_(speciesNames.size()),
     lambdas_(speciesNames.size()),
     dispersionModels_(speciesNames.size()),
@@ -46,6 +48,23 @@ inline Foam::multiscalarMixture::multiscalarMixture
     {
 
         Info<< "Species " << speciesNames[speciesi] << endl;
+
+        Y_.set
+        (
+            speciesi,
+            new volScalarField
+            (
+                IOobject
+                (
+                    IOobject::groupName(species_[speciesi], phaseName),
+                    mesh.time().timeName(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh
+            )
+        );
 
         dictionary speciesDict(dict.optionalSubDict(speciesNames[speciesi]));
         dictionary porousTransport(speciesDict.subDict("porousTransport"));
@@ -73,7 +92,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
             (
                 IOobject
                 (
-                    Y(speciesi).name() + "_R",
+                    Y_[speciesi].name() + "_R",
                     mesh.time().timeName(),
                     mesh,
                     IOobject::NO_READ,
@@ -92,7 +111,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
 
         //Handle source events
 
-        const dimensionSet dimSourceTerm = Y(speciesi).dimensions()*sourceTermDimFactor/dimTime;
+        const dimensionSet dimSourceTerm = Y_[speciesi].dimensions()*sourceTermDimFactor/dimTime;
 
         //- read source event if present
         if(speciesDict.found("eventFileTracerSource"))
@@ -101,7 +120,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
             sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
 
             const word& dtFieldName = 
-                sourceEventDtFieldNameOverride.empty() ? Y(speciesi).name() : sourceEventDtFieldNameOverride;
+                sourceEventDtFieldNameOverride.empty() ? Y_[speciesi].name() : sourceEventDtFieldNameOverride;
 
             sourceEvents_.last().setTimeScheme(dtFieldName, mesh);
             sourceEvents_.last().setFieldDimensions(dimSourceTerm);
@@ -145,21 +164,72 @@ inline Foam::multiscalarMixture::multiscalarMixture
 
 }
 
-
 // * * * * * * * * * * * * * Member Functions * * * * * * * * * * * * //
 
+inline const Foam::speciesTable&
+Foam::multiscalarMixture::species() const
+{
+    return species_;
+}
+
+inline bool Foam::multiscalarMixture::contains
+(
+    const word& specieName
+) const
+{
+    return species_.found(specieName);
+}
+
+inline Foam::PtrList<Foam::volScalarField>&
+Foam::multiscalarMixture::Y()
+{
+    return Y_;
+}
+
+inline const Foam::PtrList<Foam::volScalarField>&
+Foam::multiscalarMixture::Y() const
+{
+    return Y_;
+}
+
+inline Foam::volScalarField& Foam::multiscalarMixture::Y(const label i)
+{
+    return Y_[i];
+}
+
+inline const Foam::volScalarField& Foam::multiscalarMixture::Y
+(
+    const label i
+) const
+{
+    return Y_[i];
+}
+
+inline Foam::volScalarField& Foam::multiscalarMixture::Y
+(
+    const word& specieName
+)
+{
+    return Y_[species_[specieName]];
+}
+
+inline const Foam::volScalarField& Foam::multiscalarMixture::Y
+(
+    const word& specieName
+) const
+{
+    return Y_[species_[specieName]];
+}
 
 inline const Foam::volScalarField& Foam::multiscalarMixture::R(const label speciesi) const
 {
     return R_[speciesi];
 }
 
-
 inline const Foam::dimensionedScalar& Foam::multiscalarMixture::lambda(const label speciesi) const
 {
     return lambdas_[speciesi];
 }
-
 
 template<typename ThetaType>
 inline void Foam::multiscalarMixture::correct
@@ -168,9 +238,9 @@ inline void Foam::multiscalarMixture::correct
     const ThetaType& theta
 )
 {
-    forAll(Y(), speciesi)
+    forAll(Y_, speciesi)
     {
-        dispersionModels_[speciesi].correct(Y(speciesi), U, theta);
+        dispersionModels_[speciesi].correct(Y_[speciesi], U, theta);
 
         if(sourceEvents_(speciesi))
         {
@@ -187,9 +257,9 @@ inline void Foam::multiscalarMixture::correct
     const EpsType& eps
 )
 {
-    forAll(Y(), speciesi)
+    forAll(Y_, speciesi)
     {
-        dispersionModels_[speciesi].correct(Y(speciesi), U, saturation, eps);
+        dispersionModels_[speciesi].correct(Y_[speciesi], U, saturation, eps);
 
         if(sourceEvents_(speciesi))
         {
@@ -209,7 +279,5 @@ inline const Foam::volScalarField& Foam::multiscalarMixture::sourceTerm(const la
 {
     return sourceTerms_[speciesi];
 }
-
-
 
 // ************************************************************************* //

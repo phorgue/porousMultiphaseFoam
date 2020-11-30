@@ -28,12 +28,11 @@ SourceFiles
 #ifndef multiscalarMixture_H
 #define multiscalarMixture_H
 
-#include "basicMultiComponentMixture.H"
+#include "basicMixture.H"
 
 #include "volFields.H"
 #include "PtrList.H"
 #include "speciesTable.H"
-#include "typeInfo.H"
 
 #include "dispersionModel.H"
 #include "sourceEventFile.H"
@@ -49,7 +48,7 @@ namespace Foam
 
 class multiscalarMixture
 :
-    public basicMultiComponentMixture
+    public basicMixture
 {
 
 public:
@@ -78,16 +77,40 @@ public:
             const dimensionSet& sourceTermDimFactor = dimless
         );
 
+        virtual ~multiscalarMixture()
+        {}
+
     // Member Functions
+
+        //- Return the table of species
+        inline const speciesTable& species() const;
+
+        //- Does the mixture include this specie?
+        inline bool contains(const word& specieName) const;
+
+        //- Return the mass-fraction fields
+        inline PtrList<volScalarField>& Y();
+
+        //- Return the const mass-fraction fields
+        inline const PtrList<volScalarField>& Y() const;
+
+        //- Return the mass-fraction field for a specie given by index
+        inline volScalarField& Y(const label i);
+
+        //- Return the const mass-fraction field for a specie given by index
+        inline const volScalarField& Y(const label i) const;
+
+        //- Return the mass-fraction field for a specie given by name
+        inline volScalarField& Y(const word& specieName);
+
+        //- Return the const mass-fraction field for a specie given by name
+        const volScalarField& Y(const word& specieName) const;
 
         //- Retard coefficient [-]
         inline const volScalarField& R(const label speciesi) const;
 
-
         //- Decay coefficient [1/s]
         inline const dimensionedScalar& lambda(const label speciesi) const;
-
-
 
         //- Update effective diffusivities and source terms
         template<typename ThetaType>
@@ -114,6 +137,8 @@ public:
         inline const volScalarField& sourceTerm(const label speciesi) const;
 
 private:
+    speciesTable species_;
+    PtrList<volScalarField> Y_;
     PtrList<volScalarField> R_;
     List<dimensionedScalar> lambdas_;
     PtrList<dispersionModel> dispersionModels_;
