@@ -10,12 +10,15 @@ if (outputEventIsPresent)
         surfaceScalarField phi_interpolated = outputEvent.timeInterpolate(phi, runTime);
         volScalarField infiltration_interpolated = outputEvent.timeInterpolate(infiltration, runTime);
         volScalarField seepageTerm_interpolated = outputEvent.timeInterpolate(seepageTerm, runTime);
+        volScalarField waterSourceTerm_interpolated = outputEvent.timeInterpolate(waterSourceTerm, runTime);
         
         //- water CSV output
         if (CSVoutput)
         {
             waterMassBalanceCSV << outputEvent.currentEventEndTime() << " " <<  (fvc::domainIntegrate(infiltration_interpolated).value()/zScale)*
                 (mesh.nCells() - fixedPotentialIDList.size())/mesh.nCells() << " ";
+
+            if (waterSourceEventIsPresent) waterMassBalanceCSV << fvc::domainIntegrate(waterSourceTerm_interpolated).value() << " ";
             if (fixedPotentialIDList.size() > 0)
             {
                 scalar flowOutFixedPoints_interpolated = outputEvent.timeInterpolate(flowOutFixedPointsPrev,flowOutFixedPoints,runTime);
@@ -82,6 +85,7 @@ else
         //
         waterMassBalanceCSV << runTime.timeName() << " " <<  (fvc::domainIntegrate(infiltration).value()/zScale)*(mesh.nCells()-
         fixedPotentialIDList.size())/mesh.nCells() << " " ;
+        if (waterSourceEventIsPresent) waterMassBalanceCSV << fvc::domainIntegrate(waterSourceTerm).value() << " ";
         if (fixedPotentialIDList.size() > 0) Info << flowOutFixedPoints << " ";
         if (seepageActive) Info << flowOutSeepage << " ";
 
