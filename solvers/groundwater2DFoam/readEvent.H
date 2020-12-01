@@ -74,6 +74,7 @@ OFstream waterMassBalanceCSV("waterMassBalance.csv");
 if (CSVoutput)
 {
     waterMassBalanceCSV << "#Time flux(Infiltration)";
+    if (waterSourceEventIsPresent) waterMassBalanceCSV << " flux(waterSource)";
     if (fixedPotentialIDList.size() > 0) waterMassBalanceCSV << " flux(fixedPoints)";
     if (seepageActive) waterMassBalanceCSV << " flux(seepage)";
     forAll(mesh.boundaryMesh(),patchi)

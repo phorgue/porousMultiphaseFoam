@@ -9,5 +9,4 @@ if (waterSourceEventIsPresent)
 {
     waterSourceEvent.updateValue(runTime);
     waterSourceTerm = waterSourceEvent.dtValuesAsField();
-    Info << nl << "waterSourceTerm min " << min(waterSourceTerm).value() << ", max = " << max(waterSourceTerm).value() << endl;
 }
