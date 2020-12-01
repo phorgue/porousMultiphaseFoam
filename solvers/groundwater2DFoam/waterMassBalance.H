@@ -2,6 +2,9 @@
     //- terminal display
     Info << "Water mass balance (m3/s) : infiltration = " << fvc::domainIntegrate(infiltration).value()/zScale << " ; ";
 
+    //- compute source term
+    if (waterSourceEventIsPresent) Info << "source = " << fvc::domainIntegrate(waterSourceTerm).value() << " ; ";
+
     //- computing seepageTerm fields and global flow in/out (for fixed/seepage)
     seepageTerm = dimensionedScalar("",dimLength/dimTime,0);
 

@@ -37,6 +37,7 @@ Developer
 #include "fixedValueFvPatchField.H"
 #include "MNTfile.H"
 #include "infiltrationEventFile.H"
+#include "sourceEventFile.H"
 #include "outputEventFile.H"
 #include "EulerD3dt3Scheme.H"
 #include "EulerD2dt2Scheme.H"
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
         if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.timeOutputValue());
+        if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
         runTime++;

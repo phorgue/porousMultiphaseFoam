@@ -194,4 +194,18 @@ volScalarField seepageTerm
     dimensionedScalar("seepage_value",dimLength/dimTime,0.)
 );
 
+volScalarField waterSourceTerm
+(
+    IOobject
+    (
+        "waterSourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("water_source_term",dimLength/dimTime,0.)
+);
+
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());

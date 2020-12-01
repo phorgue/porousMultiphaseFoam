@@ -17,6 +17,22 @@ forAll(sourceEventList,sourceEventi)
     sourceEventList[sourceEventi]->storeOldValues();
 }
 
+//- Water Source event (injection/extraction)
+bool waterSourceEventIsPresent = transportProperties.found("eventFileWaterSource");
+word waterSourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
+sourceEventFile waterSourceEvent(waterSourceEventFileName);
+if (waterSourceEventIsPresent)
+{
+    waterSourceEvent.setTimeScheme(potential.name(), mesh);
+    waterSourceEvent.setFieldDimensions(waterSourceTerm.dimensions());
+    waterSourceEvent.updateIndex(runTime.startTime().value());
+    waterSourceEvent.updateValue(runTime);
+    waterSourceEvent.storeOldValues();
+}
+
+
+
+
 //- Updating infiltration value using event file
 if (infiltrationEventIsPresent)
 {
