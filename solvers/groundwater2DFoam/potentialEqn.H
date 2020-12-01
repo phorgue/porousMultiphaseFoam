@@ -6,6 +6,7 @@
             eps * fvm::ddt(potential)
             - fvm::laplacian(transmissivity,potential,"laplacian(transmissivity,potential)")
             ==
+            - waterSourceTerm * zScale
             - infiltration
         );
 
@@ -79,7 +80,7 @@
     }
     U = fvc::reconstruct(phi);
     U.correctBoundaryConditions();
-    cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration;
+    cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration + zScale * waterSourceTerm;
 
     Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", max(dpotential) = " << dpotentialdTmax*runTime.deltaTValue() << endl;
 
