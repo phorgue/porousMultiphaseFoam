@@ -35,6 +35,11 @@
   in transportProperties as:
      seepage yes;
 
+- groundwater2DFoam/groundwater2DTransportFoam
+
+  - add waterSourceEventFile options to 2D solvers to force localized volumetric
+  in 2D solvers (same usage as groundwaterFoam/groundwaterTransportFoam)  
+
 ### Utilities
 
 - setBoundaryHeadPressure
@@ -64,6 +69,7 @@ instabilities when hwater tends to 0
 - fix retard coefficient for unsaturated (depends on saturation flow)
 - fix flow/balance computation in 2D solvers
 - handle correctly dry cells for stationaryGroundwater2DFoam solver
+- fix deltat reduction for Picard loop groundwaterTransportFoam
 
 ************************
 *** PMFv1912
