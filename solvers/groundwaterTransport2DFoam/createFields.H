@@ -83,7 +83,7 @@ scalar flowOutSeepagePrev = 0;
 Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value()
 << " ; hwaterMin = " << hwaterMin.value() << endl;
 
-hwater.write();
+if (!hwater.headerOk()) hwater.write();
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
