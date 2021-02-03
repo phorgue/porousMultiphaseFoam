@@ -47,6 +47,7 @@ Author
 
 #include "fvMesh.H"
 #include "eventFile.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -60,6 +61,9 @@ class outputEventFile
 :
     public eventFile
 {
+private:
+
+    scalar computeInterpolationFactor(const Time&);
 
 public:
 
@@ -82,7 +86,10 @@ public:
     ~outputEventFile();
 
     // Member Functions
-    
+    scalar timeInterpolate(const scalar&, const scalar&, const Time&);
+    volScalarField timeInterpolate(const volScalarField&, Time&, bool = true);
+    volVectorField timeInterpolate(const volVectorField&, Time&, bool = true);
+    surfaceScalarField timeInterpolate(const surfaceScalarField&, Time&, bool = true);
     //- Access function
 };
 

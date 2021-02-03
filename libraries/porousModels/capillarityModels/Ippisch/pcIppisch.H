@@ -88,7 +88,7 @@ public:
                 << "Not implemented in pcIppish.H " << abort(FatalError);
         }
 
-    //- Correct effective saturation and capillary capacity and return saturation (Richards' solver)
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
     volScalarField correctAndSb(volScalarField h)
         {
             //- Compute Saturation from head pressure
@@ -102,15 +102,22 @@ public:
             Ch_.dimensions().reset(dimless/dimLength);
 
             //- Update saturation
-            volScalarField Stmp_(Smin_+(Smax_-Smin_)*(Se_-SMALL));
+            volScalarField Stmp_(Smin_+(Smax_-Smin_)*Se_);
     
             return Stmp_;
         }
 
-    //- Capillary capacity (Richards' model)
-    tmp<volScalarField> Ch() const
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    scalar correctAndSb(const volScalarField& h, const label& celli)
         {
-            return Ch_;
+            //- Compute saturation from head pressure
+            scalar Se = neg(h[celli]+he_[celli]) *(1.0/Sc_[celli])*pow(1.0+pow(alpha_[celli]*mag(h[celli]),n_[celli]),-m_[celli]) + pos(h[celli]+he_[celli]+VSMALL) ;
+
+            //- Update capillary capacity
+            Ch_[celli] = alpha_[celli]*m_[celli]*(Smax_[celli]-Smin_[celli])/(1.0-m_[celli])*pow(Se,1.0/m_[celli])*pow(1.0-pow(Se,1.0/m_[celli]),m_[celli]) ;
+
+            //- Update saturation
+            return Smin_[celli]+(Smax_[celli]-Smin_[celli])*Se;
         }
 
 };

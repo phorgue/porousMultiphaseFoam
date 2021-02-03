@@ -1,13 +1,4 @@
 {
-
-    Utheta.correctBoundaryConditions();
-    forAll(mesh.boundary(),patchi)
-    {
-        if (isA< fixedValueFvPatchField<vector> >(Utheta.boundaryField()[patchi]))
-        {
-            phi.boundaryFieldRef()[patchi] = Utheta.boundaryField()[patchi] & mesh.Sf().boundaryField()[patchi];
-        }
-    }
     
     h.storePrevIter();
 
@@ -31,10 +22,7 @@
 
     hEqn.solve();
 
-    resPicard = gMax((mag(h-h.prevIter()))->internalField());
-    Info << "Picard iteration : " << iterPicard << " residual = " << resPicard << endl; 
-
-    phi = phiG-(Mf*fvc::snGrad(h))*mesh.magSf();
-    Utheta = fvc::reconstruct(phi);
+    deltah = h-h.prevIter();
+    deltahIter = max(mag(deltah.internalField())).value();
 
 }

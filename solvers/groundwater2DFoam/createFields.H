@@ -69,13 +69,17 @@ hwater = potential - z0;
 
 dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01)));
 scalar cumulativeWaterAdded = 0;
+scalar flowOutFixedPoints = 0;
+scalar flowOutFixedPointsPrev = 0;
+scalar flowOutSeepage = 0;
+scalar flowOutSeepagePrev = 0;
 
 #include "correctInitialPotential.H"
 
 Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value()
 << " ; hwaterMin = " << hwaterMin.value() << endl;
 
-hwater.write();
+if (!hwater.headerOk()) hwater.write();
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
@@ -190,23 +194,18 @@ volScalarField seepageTerm
     dimensionedScalar("seepage_value",dimLength/dimTime,0.)
 );
 
+volScalarField waterSourceTerm
+(
+    IOobject
+    (
+        "waterSourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::AUTO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("water_source_term",dimLength/dimTime,0.)
+);
+
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
-
-////////////////////////////////////////////////////
-//////////////////// OUTPUT CSV ////////////////////
-////////////////////////////////////////////////////
-
-bool CSVoutput = runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
-OFstream waterMassBalanceCSV("waterMassBalance.csv");
-if (CSVoutput)
-{
-    waterMassBalanceCSV << "#Time flux(Infiltration) flux(fixedPoints)";
-    forAll(mesh.boundaryMesh(),patchi)
-    {
-        if (mesh.boundaryMesh()[patchi].type() == "patch")
-        {
-            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
-        }
-    }
-    waterMassBalanceCSV << endl;
-}

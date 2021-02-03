@@ -30,61 +30,24 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
-//- Global parameters
-scalar maxDeltaT =
+const scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+
 const bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
-const word timeStepControl =
-    runTime.controlDict().lookupOrDefault<word>("timeStepControl", "Picard");
-const bool eventTimeTracking =
-     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
-//- if dtFromPicard used
-const label nIterStability = runTime.controlDict().lookupOrDefault<label>("nIterStability",5);
-const label minIterPicard = runTime.controlDict().lookupOrDefault<label>("minIter",3);
-label iterStability = 0;
-const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",0);
-const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0);
-
-//- if dtFromtheta used
-const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
-scalar dthetadTmax = dthetamax/runTime.deltaTValue();
-scalar dtheta = 0;
-if (adjustTimeStep)
-{
-    if (timeStepControl == "Picard")
-    {
-        Info << "Timestepping is based on Picard's iteration with :"
-            << nl << "{"
-            << nl << "    dTFactIncrease = " << dTFactIncrease
-            << nl << "    dTFactDecrease = " << dTFactDecrease
-            << nl << "    minIterPicard  = " <<  minIterPicard
-            << nl << "    nIterStability = " << nIterStability
-            << nl << "}"
-            << endl;
-    }
-    else if (timeStepControl == "dthetamax")
-    {
-        Info << "Timestepping is based on theta variation with :"
-            << nl << "{"
-            << nl << "    dthetamax   = " << dthetamax
-            << nl << "}"
-            << endl;
-    }
-    else
-    {
-        FatalErrorIn("readPicardControls.H") << " timeStepControl is not defined => " << timeStepControl << abort(FatalError);
-    }       
-}
-else
-{
-    Info << "Timestep is fixed";
-}
-
-//- tracer timestep control
-scalar truncationError =
+const scalar truncationError_global =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError",0.01);
+
+const scalar truncationError_h =
+    runTime.controlDict().lookupOrDefault<scalar>("truncationError_h",truncationError_global);
+
+const scalar truncationError_C =
+    runTime.controlDict().lookupOrDefault<scalar>("truncationError_C",truncationError_global);
+
+const scalar dTFactDecrease =
+    runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.8);
+
 word timeScheme = mesh.ddtScheme("ddt(" + composition.Y(0).name() + ')');
 EulerD3dt3Scheme d3dt3Operator(mesh,runTime.deltaTValue());
 Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
@@ -92,33 +55,60 @@ scalarList dCdTmax(composition.Y().size());
 scalarList dC2dT2max(composition.Y().size());
 scalarList dC3dT3max(composition.Y().size());
 scalarList Cmax(composition.Y().size());
+scalar dtheta = 0;
+scalar hmax = 0;
+scalar dh2dT2max = 0;
+
 //- Derivative initialisation to keep 1st user-defined time step
-if (timeScheme == "backward")
+if (adjustTimeStep)
 {
-    forAll(composition.Y(), speciesi)
+    hmax = gMax(h);
+    dh2dT2max = 2*truncationError_h*(hmax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
+    Info << "Timestepping for h equation is based on time-scheme truncation error with :"
+        << nl << "{"
+        << nl << "    truncationError = " << truncationError_h
+        << nl << "    dTFactDecrease  = " << dTFactDecrease
+        << nl << "}"
+        << endl;
+
+    if (timeScheme == "backward")
     {
-        const auto& C = composition.Y(speciesi);
-        Cmax[speciesi] = gMax(C);
-        dC3dT3max[speciesi] = 3*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+        forAll(composition.Y(), speciesi)
+        {
+            const auto& C = composition.Y(speciesi);
+            Cmax[speciesi] = gMax(C);
+            dC3dT3max[speciesi] = 3*truncationError_C*(Cmax[speciesi]+VSMALL)
+                /Foam::pow(runTime.deltaTValue(),3);
+        }
     }
-}
-else if  (timeScheme == "CrankNicolson")
-{
-    forAll(composition.Y(), speciesi)
+    else if  (timeScheme == "CrankNicolson")
     {
-        const auto& C = composition.Y(speciesi);
-        Cmax[speciesi] = gMax(C);
-        dC3dT3max[speciesi] = 12*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
+        forAll(composition.Y(), speciesi)
+        {
+            const auto& C = composition.Y(speciesi);
+            Cmax[speciesi] = gMax(C);
+            dC3dT3max[speciesi] = 12*truncationError_C*(Cmax[speciesi]+VSMALL)
+                /Foam::pow(runTime.deltaTValue(),3);
+        }
     }
-}
-else if (timeScheme == "Euler")
-{
-    forAll(composition.Y(), speciesi)
+    else if (timeScheme == "Euler")
     {
-        const auto& C = composition.Y(speciesi);
-        Cmax[speciesi] = gMax(C);
-        dC2dT2max[speciesi] = 2*truncationError*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
+        forAll(composition.Y(), speciesi)
+        {
+            const auto& C = composition.Y(speciesi);
+            Cmax[speciesi] = gMax(C);
+            dC2dT2max[speciesi] = 2*truncationError_C*(Cmax[speciesi]+VSMALL)
+                /Foam::pow(runTime.deltaTValue(),2);
+        }
     }
+    Info << "Timestepping for C equation is based on time-scheme truncation error with :"
+        << nl << "{"
+        << nl << "    truncationError = " << truncationError_C
+        << nl << "}"
+        << endl; 
 }
+
+const bool eventTimeTracking =
+     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
 // ************************************************************************* //

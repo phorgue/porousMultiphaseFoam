@@ -38,7 +38,6 @@ Developers
 #include "incompressiblePhase.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
-#include "simpleControl.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
 #include "patchEventFile.H"
@@ -52,24 +51,26 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
-    simpleControl simple(mesh);
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
+    #include "readConvergenceControls.H"
+    scalar massConservativeTerms = 1; // useless, just for createthetaFields.H re-use
     #include "createthetaFields.H"
     #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
+    scalar hEqnResidual = GREAT;
 
-    while (simple.loop(runTime))
+    while (hEqnResidual > tolerance && runTime.value() < runTime.endTime().value()  )
     {
-
+        runTime++;
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "computeSourceTerm.H"
-        #include "hEqn.H"
-        #include "updateProperties.H"
+        #include "hEqnPicard.H"
+        #include "checkResidual.H"
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
         Info << "Head pressure h  " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
@@ -80,6 +81,13 @@ int main(int argc, char *argv[])
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
             << nl << endl;
     }
+
+    if (hEqnResidual > tolerance)
+    {
+        WarningIn("stationaryGroundwaterFoam.C") << "Solution not converged, final residual is : "
+            << hEqnResidual << " increase the end time for convergence" << nl  << endl;
+    }
+    runTime.writeNow();
 
     Info<< "End\n" << endl;
 

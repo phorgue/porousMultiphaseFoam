@@ -16,6 +16,21 @@ volScalarField h
     mesh
 );
 
+Info << "Creating deltah field (for Newton loop)" << endl;
+volScalarField deltah
+(
+    IOobject
+    (
+        "deltah",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    h
+);
+deltah == dimensionedScalar("",dimLength,0);
+
 //////////////////////////////////////////////////////////////////
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////////
@@ -121,6 +136,25 @@ surfaceScalarField Kf(fvc::interpolate(K,"K"));
 // specific storage
 dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
 Info << nl << "Reading speficic storage : Ss = " << Ss.value() << endl;
+
+///////////////////////////////////////////////////////////////////
+////////////////////////// FORCING TERMS //////////////////////////
+///////////////////////////////////////////////////////////////////
+
+//- For constant or event source injection/extraction
+volScalarField sourceTerm
+(
+    IOobject
+    (
+        "sourceTerm",
+        runTime.timeName(),
+        mesh,
+        IOobject::READ_IF_PRESENT,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("",dimless/dimTime,0)
+);
 
 ///////////////////////////////////////////////////////////////////////
 ////////////////////////// SCALAR TRANSPORT  //////////////////////////

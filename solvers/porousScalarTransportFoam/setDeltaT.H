@@ -46,7 +46,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(3*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                        Foam::pow(3*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
                     );
             }
         }
@@ -61,7 +61,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                        Foam::pow(12*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
                     );
             }
         }
@@ -76,7 +76,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
+                        Foam::pow(2*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
                     );
             }
         }
@@ -98,7 +98,6 @@ if (adjustTimeStep)
         forAll(sourceEventList,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList[sourceEventi]->currentEventEndTime());
         forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
     }
-    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
@@ -128,13 +127,6 @@ if (adjustTimeStep)
                 {
                     timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
-            }
-        }
-        if (outputEventIsPresent)
-        {
-            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
             }
         }
         runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));

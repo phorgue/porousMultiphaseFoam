@@ -28,12 +28,10 @@ Description
 
 if(adjustTimeStep)
 {
-    scalar deltaTFact=1;
-    //- in case of non convergence of the Picard's algorithm
-    if (iterPicard == maxIterPicard+1)
+    //- in case of non convergence of the Picard or Newton  algorithm
+    if (iterPicard == maxIterPicard+1 || iterNewton == maxIterNewton+1)
     {
-        deltaTFact = dTFactDecrease;
-        iterStability=0;
+        scalar deltaTFact = dTFactDecrease;
         runTime.setDeltaT
             (
                 min(
@@ -44,46 +42,15 @@ if(adjustTimeStep)
     }
     else
     {
-        //- Timestep using number of Picard's iterations
-        if (timeStepControl == "Picard")
-        {
-            scalar deltaTFact=1;
-            if (iterPicard <= minIterPicard)
-            {
-                iterStability++;
-            }
-
-            if (iterStability == nIterStability)
-            {
-                deltaTFact = dTFactIncrease;
-                iterStability = 0;
-            }
-
+            scalar dtForh = Foam::pow(2*truncationError_h*(hmax+VSMALL)/(dh2dT2max+VSMALL),1./2.);
+            scalar newDeltaT = min(dtForh, 1.2*runTime.deltaTValue());
             runTime.setDeltaT
                 (
                     min(
-                        deltaTFact*runTime.deltaTValue(),
+                        newDeltaT,
                         maxDeltaT
                     )
                 );
-        }
-
-        //- Timestep using h variation
-        else if(timeStepControl == "dthetamax")
-        {
-            scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
-
-            runTime.setDeltaT
-                (
-                    min(
-                        dtForTheta,
-                        min(
-                            1.2*runTime.deltaTValue(),
-                            maxDeltaT
-                        )
-                    )
-                );
-        }
     }
 
     scalar timeOfNextEvent = GREAT;
@@ -92,11 +59,9 @@ if(adjustTimeStep)
         if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
         forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
     }
-    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
-
     if ((nSteps < labelMax) && (nSteps != 0))
     {
         const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
@@ -124,17 +89,10 @@ if(adjustTimeStep)
                 }
             }
         }
-        if (outputEventIsPresent)
-        {
-            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
-            }
-        }
         runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
     }
 
-    Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << " ; dtheta avg = " << dtheta_avg << endl;
+    Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << endl;
 
 }
 

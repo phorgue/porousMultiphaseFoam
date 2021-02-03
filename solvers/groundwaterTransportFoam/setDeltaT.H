@@ -28,12 +28,10 @@ Description
 
 if(adjustTimeStep)
 {
-    scalar deltaTFact=1;
-    //- in case of non convergence of the Picard's algorithm
-    if (iterPicard == maxIterPicard+1)
+    //- in case of non convergence of the Picard or Newton  algorithm
+    if (iterPicard == maxIterPicard+1 || iterNewton == maxIterNewton+1)
     {
-        deltaTFact = dTFactDecrease;
-        iterStability=0;
+        scalar deltaTFact = dTFactDecrease;
         runTime.setDeltaT
             (
                 min(
@@ -44,6 +42,9 @@ if(adjustTimeStep)
     }
     else
     {
+        //- h-variation control
+        scalar dtForh = Foam::pow(2*truncationError_h*(hmax+VSMALL)/(dh2dT2max+VSMALL),1./2.);
+
         //- C-variation control
         scalar dtForC = VGREAT;
         if (timeScheme == "backward")
@@ -55,7 +56,7 @@ if(adjustTimeStep)
                     dtForC = min
                         (
                             dtForC,
-                            Foam::pow(3*truncationError*(Cmax[speciesi])/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                            Foam::pow(3*truncationError_C*(Cmax[speciesi])/(dC3dT3max[speciesi]+VSMALL),1./3.)
                         );
                 }
             }
@@ -70,7 +71,7 @@ if(adjustTimeStep)
                     dtForC = min
                         (
                             dtForC,
-                            Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                            Foam::pow(12*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
                         );
                 }
             }
@@ -85,63 +86,27 @@ if(adjustTimeStep)
                     dtForC = min
                         (
                             dtForC,
-                            Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
+                            Foam::pow(2*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
                         );
                 }
             }
         }
 
-        //- Timestep using number of Picard's iterations
-        if (timeStepControl == "Picard")
-        {
-            scalar deltaTFact=1;
-            if (iterPicard <= minIterPicard)
-            {
-                iterStability++;
-            }
-
-            if (iterStability == nIterStability)
-            {
-                deltaTFact = dTFactIncrease;
-                iterStability = 0;
-            }
-
-            runTime.setDeltaT
-                (
+        //- set minimal delta t
+        runTime.setDeltaT
+            (
+                min(
                     min(
-                        min(
-                            deltaTFact*runTime.deltaTValue(),
-                            dtForC
-                        ),
+                        dtForh,
+                        dtForC
+                    ),
+                    min(
+                        1.2*runTime.deltaTValue(),
                         maxDeltaT
                     )
-                );
-        }
+                )
+            );
 
-        //- Timestep using h variation
-        else if(timeStepControl == "dthetamax")
-        {
-            scalar dtForTheta = dthetamax / (dthetadTmax+SMALL);
-
-            runTime.setDeltaT
-                (
-                    min(
-                        min(
-                            dtForTheta,
-                            dtForC
-                        ),
-                        min(
-                            1.2*runTime.deltaTValue(),
-                            maxDeltaT
-                        )
-                    )
-                );
-        }
-        else
-        {
-            FatalErrorIn("setDeltaT.H") << "Time step control " << timeStepControl
-                << " is unknown, use Picard or dthetamax" << abort(FatalError);
-        }
     }
 
     scalar timeOfNextEvent = GREAT;
@@ -150,7 +115,6 @@ if(adjustTimeStep)
         if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
         forAll(tracerSourceEventList,tracerSourceEventi) timeOfNextEvent = min(timeOfNextEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime());
     }
-    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
@@ -186,13 +150,6 @@ if(adjustTimeStep)
                 {
                     timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
-            }
-        }
-        if (outputEventIsPresent)
-        {
-            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
             }
         }
         runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));

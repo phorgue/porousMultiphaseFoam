@@ -1,15 +1,75 @@
 ************************
 *** PMFvXXXX
-*** 
+*** Newton Algorithm for unsaturated solvers (groundwater)
 ************************
+
+### Solvers
+
+- Global
+
+  - output event value are not explictly computed but constructed by
+  interpolation to avoid time step instabilities. Time interpolated fields are
+  also used for CSV outputs.
+
+- groundwaterFoam/groundwaterTransportFoam
+
+  - pressure head equation can be solved using Newton algorithm to handle
+  strong non linearities. Convergence is faster than Picard's algorithm and can
+  handle complex cases where Picard does not converge, for example flow close
+  to the saturated point.
+  - pressure head equation is first solved using Picard formulation until the
+  Picard tolerance is reached (specified in system/fvSolution) and then equation
+  is solver using Newton method until the Newton tolerance.
+  - the equations residual is now signed and under-relaxation occurs only when
+  residual increases without changing sign.
+  - timestep is managed using time scheme for truncation error. Only the Euler
+  timescheme is currently handled for the pressure head equation but 2nd order
+  schemes can be used for C equation (see tutorials).
+
+- stationaryGroundwaterFoam
+
+  - convergence and time control is now based on hEqn residual.
+  - additional under-relaxation has been added (based on residual decrease)
+  to improve convergence rate.
+  - seepage option is now independant from fixedPotentialList and is activated
+  in transportProperties as:
+     seepage yes;
+
+- groundwater2DFoam/groundwater2DTransportFoam
+
+  - add waterSourceEventFile options to 2D solvers to force localized volumetric
+  in 2D solvers (same usage as groundwaterFoam/groundwaterTransportFoam)  
+
+### Utilities
+
+- setBoundaryHeadPressure
+
+  - add uniform potential option for 2D solvers (potential field)
+
+- setFieldsFromXY
+
+  - user can specify the number of points for interpolation (default = 3):
+    1 => use closest point value
+    0 => use number of neighbour faces for each cell
+
+### Libraries
+
+- numericalMethods
+
+  - new Jacobian Matrix class for handling FD Newton algorithm (finite
+  difference method, for debugging only)
 
 ### Bug fixes
 
 - solved ambiguous calls for compatibility with CLANG and OSX
 - fix dimensions in ToddNo.H
-- fix interpolateFactor for event value computation
+- fix interpolation functions for event value computation
 - 3rd time derivative computed on potential (instead of hwater) to avoid
 instabilities when hwater tends to 0
+- fix retard coefficient for unsaturated (depends on saturation flow)
+- fix flow/balance computation in 2D solvers
+- handle correctly dry cells for stationaryGroundwater2DFoam solver
+- fix deltat reduction for Picard loop groundwaterTransportFoam
 
 ************************
 *** PMFv1912

@@ -34,7 +34,7 @@ if (adjustTimeStep)
     scalar dtForhwater = VGREAT;
     if (timeScheme == "backward")
     {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(3*truncationError*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(3*truncationError_potential*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
@@ -42,7 +42,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(3*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                        Foam::pow(3*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
                     );
             }
         }
@@ -50,7 +50,7 @@ if (adjustTimeStep)
     }
     else if (timeScheme == "CrankNicolson")
     {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(12*truncationError*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(12*truncationError_potential*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
@@ -58,7 +58,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(12*truncationError*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
+                        Foam::pow(12*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
                     );
             }
         }
@@ -66,7 +66,7 @@ if (adjustTimeStep)
     }
     else if (timeScheme == "Euler")
     {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(2*truncationError*(hwatermax+VSMALL)/(dpotential2dT2max+VSMALL),1./2.);
+        if (hwatermax > SMALL) dtForhwater = Foam::pow(2*truncationError_potential*(hwatermax+VSMALL)/(dpotential2dT2max+VSMALL),1./2.);
         forAll(composition.Y(), speciesi)
         {
             if (Cmax[speciesi] > SMALL)
@@ -74,7 +74,7 @@ if (adjustTimeStep)
                 dtForC = min
                     (
                         dtForC,
-                        Foam::pow(2*truncationError*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
+                        Foam::pow(2*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
                     );
             }
         }
@@ -96,8 +96,7 @@ if (adjustTimeStep)
         if (infiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,infiltrationEvent.currentEventEndTime());
         forAll(sourceEventList,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList[sourceEventi]->currentEventEndTime());
     }
-    if (outputEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,outputEvent.currentEventEndTime());
-
+  
     scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
     if ((nSteps < labelMax) && (nSteps != 0))
@@ -132,13 +131,6 @@ if (adjustTimeStep)
                 {
                     timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
-            }
-        }
-        if (outputEventIsPresent)
-        {
-            if (outputEvent.currentEventEndTime() != runTime.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,outputEvent.currentEventEndTime()-runTime.timeOutputValue());
             }
         }
         runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
