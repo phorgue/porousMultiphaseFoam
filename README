@@ -6,8 +6,10 @@
 
 - The current branches (last version of the toolbox)
 
-  - branch "openfoam-v1906" > PMFv1912
-  - branch "openfoam-v7"    > PMFv1912
+  - branch "openfoam-v2006" > PMFv2102
+  - branch "openfoam-v1906" > PMFv2102
+  - branch "openfoam-v8"    > PMFv2102
+  - branch "openfoam-v7"    > PMFv2102
 
 - Old branches not updated
 
@@ -47,9 +49,9 @@
 
 - then in the "porousMultiphaseFoam" directory, run :
 
-       	  ./Allwmake
+       	  ./Allwmake -jX
 
-  to install the package.
+  to install the package (with X the number of processors).
 
 - Dynamic libraries are compiled in the standard OpenFOAM user directory :
 

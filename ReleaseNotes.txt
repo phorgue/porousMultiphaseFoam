@@ -1,7 +1,15 @@
 ************************
-*** PMFvXXXX
+*** PMFv2102
 *** Newton Algorithm for unsaturated solvers (groundwater)
 ************************
+
+### Compilation
+
+- Toolbox now accepts parallel compilation, run :
+
+  ./Allwmake -jX
+
+  with X the number of processors
 
 ### Solvers
 
@@ -70,6 +78,7 @@ instabilities when hwater tends to 0
 - fix flow/balance computation in 2D solvers
 - handle correctly dry cells for stationaryGroundwater2DFoam solver
 - fix deltat reduction for Picard loop groundwaterTransportFoam
+- fix C flux computation in CSV (groundwaterTransportFoam)
 
 ************************
 *** PMFv1912

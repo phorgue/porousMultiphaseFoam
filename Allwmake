@@ -2,26 +2,11 @@
 cd ${0%/*} || exit 1    # run from this directory
 set -x
 
-# Compiling libraries
-wmake libraries/numericalMethods
-wmake libraries/porousModels
-wmake libraries/toolsGIS
-wmake libraries/porousBoundaryConditions
+# Parse arguments for library compilation
+if [ -f $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments ]
+then  . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
+fi
 
-# Compiling solvers 
-wmake solvers/impesFoam
-wmake solvers/anisoImpesFoam
-wmake solvers/groundwaterFoam
-wmake solvers/porousScalarTransportFoam
-wmake solvers/porousScalarTransport2DFoam
-wmake solvers/groundwater2DFoam
-wmake solvers/groundwaterTransport2DFoam
-wmake solvers/groundwaterTransportFoam
-wmake solvers/stationaryGroundwater2DFoam
-wmake solvers/stationaryGroundwaterFoam
-
-# Compiling utilities
-wmake utilities/darcyFoam
-wmake utilities/setBoundaryHeadPressure
-wmake utilities/setFieldsFromXY
-wmake utilities/setFieldsFromMNT
+wmake all libraries
+wmake all solvers
+wmake all utilities
