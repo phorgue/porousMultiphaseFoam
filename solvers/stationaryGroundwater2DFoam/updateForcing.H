@@ -1,30 +1,23 @@
-//- Fix values if forcingPotential "fixedValue" or "fixedMNT" or "seepage"
-if ((forcingPotential.substr(0,5) == "fixed") && (fixedPotentialIDList.size() > 0))
+//- Fixed potential values
+if (fixedPotentialList.size() > 0) potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
+
+//- Seepage option
+if (seepageActive)
 {
-    if ( (forcingPotential.substr(0,5) == "fixed") || (forcingPotential == "seepage") )
-    {
-        potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
-    }
-}
-else if (forcingPotential == "seepage")
-{
-    fixedPotentialIDList.clear();
-    fixedPotentialValueList.clear();
+    seepageIDList.clear();
+    seepageValueList.clear();
     forAll(mesh.C(),celli)
     {
         if(potential[celli] >= potentialMNT[celli])
         {
             if (cellFlux[celli] < 0)
             {
-                fixedPotentialIDList.append(celli);
-                fixedPotentialValueList.append(potentialMNT[celli]);   
+                seepageIDList.append(celli);
+                seepageValueList.append(potentialMNT[celli]);
             }
         }
     }
     
-    Info << "Number of seepage cells = " << fixedPotentialIDList.size() << endl;
-    if (fixedPotentialIDList.size() > 0)
-    {
-        potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
-    }
+    Info << "Number of seepage cells = " << seepageIDList.size() << endl;
+    if (seepageIDList.size() > 0) potentialEqn.setValues(seepageIDList,seepageValueList);
 }

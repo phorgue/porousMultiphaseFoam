@@ -1,1 +1,0 @@
-../groundwaterFoam/readPicardControls.H
