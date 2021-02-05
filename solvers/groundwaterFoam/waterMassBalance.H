@@ -9,22 +9,4 @@
         }
     }
     Info << endl;
-
-    //- CSV output
-    if (CSVoutput)
-    {
-        if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
-        {
-            waterMassBalanceCSV << runTime.timeName() << " ";
-            forAll(mesh.boundaryMesh(),patchi)
-            {
-                if (mesh.boundaryMesh()[patchi].type() == "patch")
-                {
-                    waterMassBalanceCSV << " " << sum(phi.boundaryField()[patchi]);
-                }
-            }
-            waterMassBalanceCSV << endl;
-        }
-    }
-
 }

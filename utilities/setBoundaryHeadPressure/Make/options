@@ -7,5 +7,7 @@ EXE_INC = \
 EXE_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
+    -lsurfMesh \
     -L$(FOAM_USER_LIBBIN) \
+    -lporousBoundaryConditions \
     -ltoolsGIS

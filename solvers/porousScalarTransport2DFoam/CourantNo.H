@@ -35,7 +35,7 @@ scalar meanCoNum = 0.0;
 {
     scalarField sumPhi
         (
-            fvc::surfaceSum(mag(phiWater))().primitiveField()
+            fvc::surfaceSum(mag(phihwater))().primitiveField()
         );
     
     CoNum = 0.5*gMax(sumPhi/(eps.field()*hwater.field()*mesh.V().field()))*runTime.deltaTValue();

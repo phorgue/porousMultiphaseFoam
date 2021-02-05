@@ -16,6 +16,21 @@ volScalarField h
     mesh
 );
 
+Info << "Creating deltah field (for Newton loop)" << endl;
+volScalarField deltah
+(
+    IOobject
+    (
+        "deltah",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    h
+);
+deltah == dimensionedScalar("",dimLength,0);
+
 //////////////////////////////////////////////////////////////////
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////////
@@ -73,7 +88,7 @@ theta.write();
 autoPtr<incompressiblePhase> phasetheta = incompressiblePhase::New(mesh,transportProperties,"theta");
 volVectorField& Utheta = phasetheta->U();
 const dimensionedScalar& rhotheta = phasetheta->rho();
-const dimensionedScalar& mutheta = phasetheta->mu();    
+const dimensionedScalar& mutheta = phasetheta->mu();
 phasetheta->phi().writeOpt()=IOobject::NO_WRITE;
 
 surfaceScalarField phi
@@ -92,8 +107,8 @@ surfaceScalarField phi
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-   
-// Intrinsic permeability       
+
+// Intrinsic permeability
 Info  << nl << "Reading permeability field K" << endl;
 volScalarField K
 (
@@ -109,7 +124,7 @@ volScalarField K
 );
 
 // permeability interpolation
-surfaceScalarField Kf = fvc::interpolate(K,"K");
+surfaceScalarField Kf(fvc::interpolate(K,"K"));
 
 // specific storage
 dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));

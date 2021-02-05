@@ -110,7 +110,7 @@ void Foam::fixedHeadPressureSTL::updateCoeffs()
             this->db()
         )
         );
-    pointField pPoints = potentialSTL.points();
+    pointField pPoints(potentialSTL.points());
 
     const vectorField& fp = patch().patch().faceCentres();
     scalarField results(patch().patch().faceCentres().size());    
