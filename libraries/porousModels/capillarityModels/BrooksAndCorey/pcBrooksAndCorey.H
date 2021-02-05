@@ -58,6 +58,7 @@ class pcBrooksAndCorey
     volScalarField Smin_;
     volScalarField Smax_;
     volScalarField pc0_;
+    volScalarField hd_;
     volScalarField alpha_;
         
 public:
@@ -84,26 +85,48 @@ public:
     //- Correct the capillary pressure
     void correct()
         {
-            Se_ = (Sb_+SMALL-Smin_)/(Smax_ - Smin_);
+            Se_ = (Sb_-Smin_)/(Smax_ - Smin_);
             pc_ = pc0_ * pow(Se_,-alpha_);
-            dpcdS_= -alpha_*pc0_*(pow(Se_,-alpha_-1))/(Smax_-Smin_);
+            dpcdS_= -alpha_*pc0_*(pow(Se_+VSMALL,-alpha_-1))/(Smax_-Smin_);
         }
 
-    //- Compute Moisture from head pressure (Richards' model)
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
     volScalarField correctAndSb(volScalarField h) 
         {
-            FatalErrorIn("volScalarField MoistureFromHeadPressure(volScalarField h) const")
-                << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
+            if (gMax(hd_) == 0)
+            {
+                FatalErrorIn("pcBrooksAndCorey.H")
+                    << "hd equal to zero in Brooks and Corey capillary pressure model"
+                        << abort(FatalError);
+            }
+
+            //- Compute saturation from! head pressure
+            h.dimensions().reset(dimless);
+            Se_ = neg(h-hd_) * pow(hd_/(h+VSMALL),alpha_) + pos(h-hd_+VSMALL);
+            h.dimensions().reset(dimLength);
+
+            //- Update  capillary capacity
+            Ch_.dimensions().reset(dimless);
+            Ch_ = neg(h-hd_) * (alpha_ * (Smax_-Smin_) / mag(hd_)) * pow(hd_/(h+VSMALL),alpha_+1) + pos(h-hd_+VSMALL);
+            Ch_.dimensions().reset(dimless/dimLength);
+
+            //- Update saturation
+            volScalarField Stmp_(Smin_+(Smax_-Smin_)*Se_);
             return Se_;
         };
 
-    //- Capillary capacity (Richards' model)
-    tmp<volScalarField> Ch() const
+    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    scalar correctAndSb(const volScalarField& h, const label& celli)
         {
-            FatalErrorIn("tmp<volScalarField> Ch() const")
-                << "Not implemented in pcBrooksAndCorey.H " << abort(FatalError);
-            return Se_;
-        };
+            //- Compute saturation from head pressure
+            scalar Se = neg(h[celli]-hd_[celli]) * pow(hd_[celli]/(h[celli]+VSMALL),alpha_[celli]) + pos(h[celli]-hd_[celli]+VSMALL);
+
+            //- Update capillary capacity
+            Ch_[celli] = neg(h[celli]-hd_[celli]) * (alpha_[celli] * (Smax_[celli]-Smin_[celli]) / mag(hd_[celli])) * pow(hd_[celli]/(h[celli]+VSMALL),alpha_[celli]+1) + pos(h[celli]-hd_[celli]+VSMALL);
+
+            //- Return moisture value
+            return Smin_[celli]+(Smax_[celli]-Smin_[celli])*Se;
+        }
 
 };
 

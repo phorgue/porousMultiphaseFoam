@@ -135,7 +135,7 @@ public:
             return transportProperties_;
         }
 
-    //- Return relative permeabilities according
+    //- Return relative permeabilities
     tmp<volScalarField> kra() const
         {
             return kra_;
@@ -144,6 +144,12 @@ public:
     tmp<volScalarField> krb() const
         {
             return krb_;
+        }
+
+    //- Return relative permeability (one cell)
+    scalar krb(const label& celli) const
+        {
+            return krb_[celli];
         }
 
     //- Return the derivatives of relative permeabilities
@@ -162,8 +168,17 @@ public:
             return Se_;
         }
 
+    //- Set specific value of krb
+    void setKrb(const label& celli, const scalar& krValue)
+        {
+            krb_[celli] = krValue;
+        }
+
     //- Correct the relative permeabilities
-    virtual void correct() = 0; 
+    virtual void correct() = 0;
+    virtual void correcta() = 0;
+    virtual void correctb() = 0;
+    virtual void correctb(const label& celli) = 0;
 
 };
 

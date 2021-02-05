@@ -6,6 +6,7 @@
             eps * fvm::ddt(potential)
             - fvm::laplacian(transmissivity,potential,"laplacian(transmissivity,potential)")
             ==
+            - waterSourceTerm * zScale
             - infiltration
         );
 
@@ -53,21 +54,19 @@
     if (min(hwater).value() <= hwaterMin.value())
     {
         scalar waterAdded = 0;
-        label ndryCells = 0;
+        dryCellIDList.clear();
         forAll(hwater,celli)
         {
             if (hwater[celli] <= hwaterMin.value())
             {
-                ndryCells++;
+                dryCellIDList.append(celli);
                 waterAdded += (hwaterMin.value()-hwater[celli])*mesh.V()[celli]/zScale;
                 hwater[celli] = hwaterMin.value();
             }
         }
         cumulativeWaterAdded += waterAdded;
-        Warning() << "number of dry cells = " << ndryCells << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m)" << endl;
-     }
-
-    Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", max(dpotential) = " << dpotentialdTmax*runTime.deltaTValue() << endl;
+        Info << "Number of dry cells = " << dryCellIDList.size() << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m)" << endl;
+    }
 
     //- updating flow properties
     transmissivity = Mf*fvc::interpolate(hwater);
@@ -81,5 +80,8 @@
     }
     U = fvc::reconstruct(phi);
     U.correctBoundaryConditions();
+    cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration + zScale * waterSourceTerm;
+
+    Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", max(dpotential) = " << dpotentialdTmax*runTime.deltaTValue() << endl;
 
 }

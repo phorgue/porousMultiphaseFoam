@@ -93,7 +93,7 @@ public:
     const scalarList& values() const {return values_;}
 
     //- Linear interpolation using given point (based on the 3 closest points)
-    scalar interpolate(const point& position);
+    scalar interpolate(const point& position, label npoints);
 
 };
 

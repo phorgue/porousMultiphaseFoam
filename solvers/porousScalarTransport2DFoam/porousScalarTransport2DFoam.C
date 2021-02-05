@@ -54,14 +54,13 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     #include "readTimeControls.H"
     #include "readEvent.H"
-    
+    #include "CourantNo.H"
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     while (runTime.run())
     {
-        #include "CourantNo.H"
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
-        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
         forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
 

@@ -44,6 +44,7 @@ Developers
 #include "outputEventFile.H"
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
+#include "EulerD2dt2Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -55,9 +56,9 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
-    #include "createthetaFields.H"
-    #include "readPicardControls.H"
+    #include "readPicardNewtonControls.H"
     #include "readTimeControls.H"
+    #include "createthetaFields.H"
     #include "readEvent.H"
     #include "readForcing.H"
 
@@ -65,10 +66,10 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
     label iterPicard=0;
+    label iterNewton=0;
 
     while (runTime.run())
     {
-        if (outputEventIsPresent) outputEvent.updateIndex(runTime.timeOutputValue());
         if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
@@ -79,40 +80,65 @@ noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "computeSourceTerm.H"
-        scalar resPicard=GREAT;
+        scalar deltahIter = 1;
+        scalar hEqnResidual = 1.00001;
+        scalar hEqnResidualSigned = 0;
+
+        //--- 1) Picard loop
         iterPicard = 0;
-        while ((resPicard > tolPicard) && (iterPicard != maxIterPicard))
+        while ( hEqnResidual > tolerancePicard && iterPicard != maxIterPicard )
         {
             iterPicard++;
-            #include "hEqn.H"
-            #include "updateProperties.H"
+            #include "hEqnPicard.H"
+            #include "checkResidual.H"
+            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidualSigned << endl;
         }
-        if (resPicard > tolPicard)
+        if (  hEqnResidual > tolerancePicard )
+        {
+                Info << endl;
+                Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+                #include "rewindTime.H"
+                goto noConvergence;
+        }
+
+        //--- 2) Newton loop
+        iterNewton = 0;
+        while ( hEqnResidual > toleranceNewton && iterNewton != maxIterNewton)
+        {
+            iterNewton++;
+            #include "hEqnNewton.H"
+            #include "checkResidual.H"
+            Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidualSigned << endl;
+        }
+        if ( hEqnResidual > toleranceNewton )
         {
             Info << endl;
-            Warning() <<  " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-            iterPicard++;
-            h = h.oldTime();
-            //- rewind time
-            runTime.setTime(runTime.timeOutputValue()-runTime.deltaTValue(),runTime.timeIndex());
-            //- recompute time step
-            #include "setDeltaT.H"
-            //- Update new time
-            runTime.setTime(runTime.timeOutputValue()+runTime.deltaTValue(),runTime.timeIndex());
-            #include "updateProperties.H"
+            Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            #include "rewindTime.H"
             goto noConvergence;
         }
 
         Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
         Info << "Head pressure h  " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
-        volScalarField dtheta_tmp = mag(theta-theta.oldTime());
+
+        //--- Compute variations
+        volScalarField dh2dT2(d2dt2Operator.fvcD2dt2(h));
+        dh2dT2max = 0;
+        forAll(dh2dT2, celli)
+        {
+            if(mag(dh2dT2[celli]) > dh2dT2max)
+            {
+                hmax = mag(h[celli]);
+                dh2dT2max = mag(dh2dT2[celli]);
+            }
+        }
+        scalarField dtheta_tmp = mag(theta.internalField()-theta.oldTime().internalField());
         dtheta = gMax(dtheta_tmp);
-        dthetadTmax = dtheta/runTime.deltaTValue();
-        dtheta_avg = dtheta_tmp.weightedAverage(mesh.V()).value();
 
         #include "waterMassBalance.H"
-        #include "eventWrite.H"
 
+        #include "eventWrite.H"
+ 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
             << nl << endl;

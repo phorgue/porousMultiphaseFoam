@@ -93,6 +93,19 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       Sb.mesh(),
       pcBrooksAndCoreyCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
   ),
+  hd_
+  (
+      IOobject
+      (
+          "hd",
+          Sb_.time().timeName(),
+          Sb_.db(),
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      Sb.mesh(),
+      dimensionedScalar("hd",dimLength,pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("hd",0))
+  ),
   alpha_
   (
       IOobject
@@ -117,6 +130,9 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
     Info << "    alpha ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
+    Info << "    hd ";
+    if (hd_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(hd_).value() << endl;}
     Info <<  "    Smin ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}

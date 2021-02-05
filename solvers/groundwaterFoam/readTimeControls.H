@@ -28,59 +28,47 @@ Description
     Read the control parameters used by setDeltaT for groundwaterFoam solver
 \*---------------------------------------------------------------------------*/
 
-//- Global parameters
-scalar maxDeltaT =
+const scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+
 const bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
-const word timeStepControl =
-    runTime.controlDict().lookupOrDefault<word>("timeStepControl", "Picard");
-const bool eventTimeTracking =
-     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
+const scalar truncationError_global =
+    runTime.controlDict().lookupOrDefault<scalar>("truncationError",0.01);
 
-//- if dtFromPicard used
-const label nIterStability = runTime.controlDict().lookupOrDefault<label>("nIterStability",5);
-const label minIterPicard = runTime.controlDict().lookupOrDefault<label>("minIter",3);
-label iterStability = 0;
-const scalar dTFactIncrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",1.1);
-const scalar dTFactDecrease = runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.9);
+const scalar truncationError_h =
+    runTime.controlDict().lookupOrDefault<scalar>("truncationError_h",truncationError_global);
 
-//- if dtFromtheta used
-const scalar dthetamax = runTime.controlDict().lookupOrDefault("dthetamax", 1e-2);
-scalar dthetadTmax = dthetamax/runTime.deltaTValue();
+const scalar dTFactDecrease =
+    runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.8);
+
+Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
 scalar dtheta = 0;
-scalar dtheta_avg = 0;
+scalar hmax = 0;
+scalar dh2dT2max = 0;
 
 if (adjustTimeStep)
 {
-    if (timeStepControl == "Picard")
+    //- Derivative initialisation to keep 1st user-defined time step
+    if (adjustTimeStep)
     {
-        Info << "Timestepping is based on Picard's iteration with :"
+        hmax = gMax(h);
+        dh2dT2max = 2*truncationError_h*(hmax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
+        Info << "Timestepping is based on time-scheme truncation error with :"
             << nl << "{"
-            << nl << "    dTFactIncrease = " << dTFactIncrease
-            << nl << "    dTFactDecrease = " << dTFactDecrease
-            << nl << "    minIterPicard  = " <<  minIterPicard
-            << nl << "    nIterStability = " << nIterStability
-            << nl << "}"
-            << endl;
-    }
-    else if (timeStepControl == "dthetamax")
-    {
-        Info << "Timestepping is based on theta variation with :"
-            << nl << "{"
-            << nl << "    dthetamax   = " << dthetamax
+            << nl << "    truncationError = " << truncationError_h
+            << nl << "    dTFactDecrease  = " << dTFactDecrease
             << nl << "}"
             << endl;
     }
     else
     {
-        FatalErrorIn("readPicardControls.H") << " timeStepControl is not defined => " << timeStepControl << abort(FatalError);
-    }       
+        Info << "Timestep is fixed";
+    }
 }
-else
-{
-    Info << "Timestep is fixed";
-}
+
+const bool eventTimeTracking =
+     runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
 // ************************************************************************* //

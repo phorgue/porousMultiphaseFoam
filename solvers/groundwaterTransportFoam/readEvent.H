@@ -3,26 +3,12 @@ word eventFileName_water = transportProperties.lookupOrDefault<word>("eventFileW
 bool eventIsPresent_water = transportProperties.found("eventFileWaterSource");
 sourceEventFile event_water(eventFileName_water);
 
-volScalarField sourceTerm_water
-(
-    IOobject
-    (
-        "sourceTerm_water",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("",dimless/dimTime,0)
-);
-
 if (eventIsPresent_water)
 {
     event_water.setTimeScheme(h.name(), mesh);
     event_water.updateIndex(runTime.startTime().value());
     event_water.updateValue(runTime);
-    event_water.setFieldDimensions(sourceTerm_water.dimensions());
+    event_water.setFieldDimensions(sourceTerm.dimensions());
 }
 
 //- patch event reader for time step managing

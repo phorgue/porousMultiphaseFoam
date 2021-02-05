@@ -22,30 +22,21 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Global
-    readPicardControls
+    readConcergenceControls
 
 Description
-    Read control for Picard's iterations
+    Read control for unsaturated stationary solver 
 
 \*---------------------------------------------------------------------------*/
 
-const dictionary& PicardDict = mesh.solutionDict().subDict("Picard");
-if (!PicardDict.found("tolerance"))
-{
-    FatalErrorIn("readPicardControls.H")
-        << "Missing keyword tolerance in system/fvSolution.Picard"
-            << abort(FatalError);
-}
-const scalar tolPicard = PicardDict.lookupOrDefault<scalar>("tolerance", 1.);
-if (!PicardDict.found("maxIter"))
-{
-    FatalErrorIn("readPicardControls.H")
-        << "Missing keyword maxIter in system/fvSolution.Picard"
-            << abort(FatalError);
-}
-const label maxIterPicard = PicardDict.lookupOrDefault<label>("maxIter",10);
+const dictionary& residualDict = mesh.solutionDict().subDict("SIMPLE").subDict("residualControl");
+const scalar tolerance = residualDict.lookupOrDefault<scalar>("h", GREAT);
 
-//- to switch between conservative mixed formulation (by default) and head pressure (non conservative)
-bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
-scalar massConservativeTerms = 0;
-if (massConservative) massConservativeTerms = 1;
+if (!residualDict.found("h"))
+{
+    FatalErrorIn("readConvergenceControls.H")
+        << "Missing keyword h in system/fvSolution.SIMPLE.residualControl"
+            << abort(FatalError);
+}
+
+Info << nl << "Residual tolerance for convergence = " << tolerance << endl;
