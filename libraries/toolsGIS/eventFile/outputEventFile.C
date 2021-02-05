@@ -123,5 +123,132 @@ Foam::outputEventFile::outputEventFile
 
 Foam::outputEventFile::~outputEventFile()
 {}
+// * * * * * * * * * * * * Private Members * * * * * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
+Foam::scalar Foam::outputEventFile::computeInterpolationFactor(const Time& runTime)
+{
+    scalar ifactor = (runTime.timeOutputValue()-currentEventEndTime())/runTime.deltaTValue();
+    if (ifactor < 0 || ifactor > 1)
+    {
+        FatalErrorIn("outputEventFile.C")
+            << " Unconsistent value for time interpolation = " << ifactor
+            << " current time is " << runTime.timeOutputValue()
+            << " and event end time is " << currentEventEndTime() << abort(FatalError);
+    }
+    return ifactor;
+}
+
+// * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * * //
+
+Foam::scalar Foam::outputEventFile::timeInterpolate
+(
+    const scalar& prev,
+    const scalar& current,
+    const Time& runTime
+)
+{
+    //- compute interpolation factor
+    scalar interpolateFactor = computeInterpolationFactor(runTime);
+    return  interpolateFactor*current+(1.0-interpolateFactor)*prev;
+}
+
+Foam::volScalarField Foam::outputEventFile::timeInterpolate
+(
+    const volScalarField& vfield,
+    Time& runTime,
+    bool writeField
+)
+{
+    //- compute interpolation factor
+    scalar interpolateFactor = computeInterpolationFactor(runTime);
+
+    //- update time
+    scalar timeOutputBackup = runTime.timeOutputValue();
+    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
+
+    volScalarField ifield
+        (
+            IOobject
+            (
+                vfield.name(),
+                runTime.timeName(),
+                vfield.mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            vfield
+        );
+    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
+    if (writeField) ifield.write();
+
+    runTime.setTime(timeOutputBackup,runTime.timeIndex());
+    return ifield;
+}
+
+Foam::volVectorField Foam::outputEventFile::timeInterpolate
+(
+    const volVectorField& vfield,
+    Time& runTime,
+    bool writeField
+)
+{
+    //- compute interpolation factor
+    scalar interpolateFactor = computeInterpolationFactor(runTime);
+
+    //- update time
+    scalar timeOutputBackup = runTime.timeOutputValue();
+    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
+
+    volVectorField ifield
+        (
+            IOobject
+            (
+                vfield.name(),
+                runTime.timeName(),
+                vfield.mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            vfield
+        );
+    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
+    if (writeField) ifield.write();
+
+    runTime.setTime(timeOutputBackup,runTime.timeIndex());
+    return ifield;
+}
+
+Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
+(
+    const surfaceScalarField& vfield,
+    Time& runTime,
+    bool writeField
+)
+{
+    //- compute interpolation factor
+    scalar interpolateFactor = computeInterpolationFactor(runTime);
+
+    //- update time
+    scalar timeOutputBackup = runTime.timeOutputValue();
+    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
+
+    surfaceScalarField ifield
+        (
+            IOobject
+            (
+                vfield.name(),
+                runTime.timeName(),
+                vfield.mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            vfield
+        );
+
+    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
+    if (writeField) ifield.write();
+
+    runTime.setTime(timeOutputBackup,runTime.timeIndex());
+    return ifield;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

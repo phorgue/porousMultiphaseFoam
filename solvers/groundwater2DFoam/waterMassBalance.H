@@ -1,23 +1,41 @@
 {
     //- terminal display
-    Info << "Water mass balance (m3/s) : infiltration = " << (fvc::domainIntegrate(infiltration).value()/zScale)*(mesh.nCells()-fixedPotentialIDList.size())/mesh.nCells() << " ; ";
+    Info << "Water mass balance (m3/s) : infiltration = " << fvc::domainIntegrate(infiltration).value()/zScale << " ; ";
 
+    //- compute source term
+    if (waterSourceEventIsPresent) Info << "source = " << fvc::domainIntegrate(waterSourceTerm).value() << " ; ";
+
+    //- computing seepageTerm fields and global flow in/out (for fixed/seepage)
     seepageTerm = dimensionedScalar("",dimLength/dimTime,0);
-    scalar flowOutFixedPoints = 0;
 
+    flowOutFixedPointsPrev = flowOutFixedPoints;
+    flowOutFixedPoints = 0;
     if (fixedPotentialIDList.size() > 0)
     {
-        cellFlux = fvc::div(phi*fvc::interpolate(hwater));
         forAll(fixedPotentialIDList,pointi)
         {
             label currentCell = fixedPotentialIDList[pointi];
             scalar area = mesh.V()[currentCell]/zScale;
-            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell]/area;
             flowOutFixedPoints -= cellFlux.internalField()[currentCell]*area;
         }
         Info << "fixed points = " << flowOutFixedPoints << " ; ";
     }
 
+    flowOutSeepagePrev = flowOutSeepage;
+    flowOutSeepage = 0;
+    if (seepageActive)
+    {
+        forAll(seepageIDList,pointi)
+        {
+            label currentCell = seepageIDList[pointi];
+            scalar area = mesh.V()[currentCell]/zScale;
+            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
+            flowOutSeepage -= cellFlux.internalField()[currentCell]*area;
+        }
+        Info << " seepage cells = " << flowOutSeepage << " ; ";
+    }
+
+    //- compute/display flow at boundaries
     forAll(phi.boundaryField(),patchi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
@@ -26,23 +44,4 @@
         }
     }
     Info << endl;
-
-    //- CSV output
-    if (CSVoutput)
-    {
-        if ((!outputEventIsPresent) || outputEvent.currentEventEndTime() == runTime.timeOutputValue())
-        {
-            waterMassBalanceCSV << runTime.timeName() << " " <<  (fvc::domainIntegrate(infiltration).value()/zScale)*(mesh.nCells()-
-            fixedPotentialIDList.size())/mesh.nCells() << " " << flowOutFixedPoints << " ";
-            forAll(mesh.boundaryMesh(),patchi)
-            {
-                if (mesh.boundaryMesh()[patchi].type() == "patch")
-                {
-                    waterMassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi])/zScale << " ; ";
-                }
-            }
-            waterMassBalanceCSV << endl;
-        }
-    }
-
 }

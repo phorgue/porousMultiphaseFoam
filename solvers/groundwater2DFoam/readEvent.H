@@ -1,3 +1,8 @@
+
+////////////////////////////////////////////////////////
+////////////////// INFILTRATION EVENT //////////////////
+////////////////////////////////////////////////////////
+
 bool infiltrationEventIsPresent = transportProperties.found("eventFileInfiltration");
 word infiltrationEventFileName = transportProperties.lookupOrDefault<word>("eventFileInfiltration","");
 infiltrationEventFile infiltrationEvent(infiltrationEventFileName);
@@ -7,11 +12,6 @@ if (infiltrationEventIsPresent)
     infiltrationEvent.updateValue(runTime);
     infiltrationEvent.storeOldValues();
 }
-
-bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
-word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
-outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
 
 scalar eventTimeStep(runTime.controlDict().lookupOrDefault<scalar>("eventTimeStep",0));
 if (eventTimeStep > 0)
@@ -42,4 +42,47 @@ if (infiltrationEventIsPresent)
         }
 
     }
+}
+
+//////////////////////////////////////////////////////
+//////////////////// SOURCE EVENT ////////////////////
+//////////////////////////////////////////////////////
+
+bool waterSourceEventIsPresent = transportProperties.found("eventFileWaterSource");
+word waterSourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
+sourceEventFile waterSourceEvent(waterSourceEventFileName);
+if (waterSourceEventIsPresent)
+{
+    waterSourceEvent.setTimeScheme(potential.name(), mesh);
+    waterSourceEvent.setFieldDimensions(waterSourceTerm.dimensions());
+    waterSourceEvent.updateIndex(runTime.startTime().value());
+    waterSourceEvent.updateValue(runTime);
+    waterSourceEvent.storeOldValues();
+}
+
+//////////////////////////////////////////////////////
+//////////////////// OUTPUT EVENT ////////////////////
+//////////////////////////////////////////////////////
+
+bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+outputEventFile outputEvent(outputEventFileName);
+if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
+
+bool CSVoutput = runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
+OFstream waterMassBalanceCSV("waterMassBalance.csv");
+if (CSVoutput)
+{
+    waterMassBalanceCSV << "#Time flux(Infiltration)";
+    if (waterSourceEventIsPresent) waterMassBalanceCSV << " flux(waterSource)";
+    if (fixedPotentialIDList.size() > 0) waterMassBalanceCSV << " flux(fixedPoints)";
+    if (seepageActive) waterMassBalanceCSV << " flux(seepage)";
+    forAll(mesh.boundaryMesh(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+        }
+    }
+    waterMassBalanceCSV << endl;
 }

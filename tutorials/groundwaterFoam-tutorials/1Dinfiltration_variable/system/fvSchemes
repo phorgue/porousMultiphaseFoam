@@ -40,7 +40,7 @@ interpolationSchemes
     default		none;
     K			harmonic;
     pc   		linear;
-    krtheta         	upwind phi;
+    krtheta         	linear;
 }
 
 snGradSchemes

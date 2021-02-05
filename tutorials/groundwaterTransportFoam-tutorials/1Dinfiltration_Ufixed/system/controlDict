@@ -49,22 +49,13 @@ runTimeModifiable yes;
 
 maxDeltaT	1000;
 
-//- for Picard time step control
-timeStepControl Picard;
-dTFactIncrease  1.2;
-dTFactDecrease  0.8;
-nIterStability  5;
-minIter 3;
-
-//- for h variation time step control
-//timeStepControl dthetamax;
-//dthetamax           0.005;
-
 //- for tracer time step control
-truncationError 0.01;
+truncationError 0.1;
+truncationError_C 0.001;
+truncationError_h 0.01;
 
 CSVoutput  true;
 
-eventTimeTracking true;
+//eventTimeTracking true;
 
 // ************************************************************************* //
