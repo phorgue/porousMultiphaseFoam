@@ -95,10 +95,11 @@ noConvergence :
         }
         if (  hEqnResidual > tolerancePicard )
         {
-                Info << endl;
-                Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-                #include "rewindTime.H"
-                goto noConvergence;
+            Info << endl;
+            if (adjustTimeStep) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
+            #include "rewindTime.H"
+            goto noConvergence;
         }
 
         //--- 2) Newton loop
@@ -113,7 +114,8 @@ noConvergence :
         if ( hEqnResidual > toleranceNewton )
         {
             Info << endl;
-            Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            if (adjustTimeStep) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Newton algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
             #include "rewindTime.H"
             goto noConvergence;
         }
