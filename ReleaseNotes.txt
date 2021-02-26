@@ -79,6 +79,7 @@ instabilities when hwater tends to 0
 - handle correctly dry cells for stationaryGroundwater2DFoam solver
 - fix deltat reduction for Picard loop groundwaterTransportFoam
 - fix C flux computation in CSV (groundwaterTransportFoam)
+- add FatalError when timestep is fixed and Picard/Newton does not converge
 
 ************************
 *** PMFv1912
