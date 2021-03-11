@@ -90,6 +90,7 @@ public:
     volScalarField timeInterpolate(const volScalarField&, Time&, bool = true);
     volVectorField timeInterpolate(const volVectorField&, Time&, bool = true);
     surfaceScalarField timeInterpolate(const surfaceScalarField&, Time&, bool = true);
+    void checkControlDict(const Time&) const;
     //- Access function
 };
 
