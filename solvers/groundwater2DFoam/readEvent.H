@@ -67,7 +67,11 @@ if (waterSourceEventIsPresent)
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
+if (outputEventIsPresent)
+{
+    outputEvent.checkControlDict(runTime);
+    outputEvent.updateIndex(runTime.startTime().value());
+}
 
 bool CSVoutput = runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
 OFstream waterMassBalanceCSV("waterMassBalance.csv");

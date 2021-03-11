@@ -21,4 +21,8 @@ forAll(patchEventList,patchEventi)
 bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
 word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
 outputEventFile outputEvent(outputEventFileName);
-if (outputEventIsPresent) outputEvent.updateIndex(runTime.startTime().value());
+if (outputEventIsPresent)
+{
+    outputEvent.checkControlDict(runTime);
+    outputEvent.updateIndex(runTime.startTime().value());
+}
