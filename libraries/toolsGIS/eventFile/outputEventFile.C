@@ -251,4 +251,18 @@ Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
     runTime.setTime(timeOutputBackup,runTime.timeIndex());
     return ifield;
 }
+
+void Foam::outputEventFile::checkControlDict(const Time& runTime) const
+{
+    const dictionary& cDict = runTime.controlDict();
+    scalar endTimeValue(cDict.lookupOrDefault("endTime",0));
+    scalar writeIntervalValue(cDict.lookupOrDefault("writeInterval",GREAT));
+    if (cDict.found("writeFrequency")) writeIntervalValue = cDict.lookupOrDefault("writeFrequency",GREAT);
+    if (endTimeValue > writeIntervalValue)
+    {
+        FatalErrorIn("outputEventFile.C") << "Check controlDict: writeInterval/writeFrequency should be larger or equal to endTime when outputEventFile is specified"<< exit(FatalError);
+    }
+
+}
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
