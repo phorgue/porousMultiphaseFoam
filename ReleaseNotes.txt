@@ -1,3 +1,16 @@
+
+### Tools
+
+- new folder containing external tools (python/bash scripts) for the toolbox
+
+- pmf_csvToEvent
+
+  - python script to convert csv file extracted from simulations into event
+  file. It can be used to recover 1D column unsaturated fluxes for example to
+  inject in 2D watershed model. For usage, execute:
+
+  python pmf_csvToEvent.py --help
+
 ************************
 *** PMFv2102
 *** Newton Algorithm for unsaturated solvers (groundwater)
