@@ -53,7 +53,7 @@ forAll(composition.Y(), speciesi)
         }
     }
 
-    Info<< "Concentration Min(" << speciesName << ") = " << min(C).value()
+    Info<< "Concentration: Min(" << speciesName << ") = " << min(C).value()
         << " Max(" << speciesName << ") = " << max(C).value()
         << " d" << speciesName << "dTmax = " << dCdTmax[speciesi]
         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(C*theta).value()

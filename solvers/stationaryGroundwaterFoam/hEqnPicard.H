@@ -1,5 +1,4 @@
 {
-
     Utheta.correctBoundaryConditions();
     forAll(mesh.boundary(),patchi)
     {
@@ -21,4 +20,5 @@
 
     hEqn.solve();
 
+    deltah = mag(h-h.prevIter());
 }
