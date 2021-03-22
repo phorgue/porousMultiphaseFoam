@@ -44,6 +44,6 @@
     U.correctBoundaryConditions();
     cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration;
 
-    Info << "Potential min : " << min(potential).value() << ", max = " << max(potential).value() << ", diff = " << max(mag(potential-potential.oldTime())).value() << endl;
+    Info << "Potential min: " << min(potential).value() << ", max = " << max(potential).value() << ", delta(potential) = " << max(mag(potential-potential.oldTime())).value() << endl;
 
 }
