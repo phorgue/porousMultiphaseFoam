@@ -52,7 +52,7 @@ forAll(composition.Y(), speciesi)
             }
         }
     }
-    Info<< "Concentration Min(" << speciesName << ") = " << min(C).value() 
+    Info<< "Concentration: Min(" << speciesName << ") = " << min(C).value() 
         << " Max(" << speciesName << ") = " << max(C.internalField()).value()
         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*Saturation*eps).value()
         << " dCmax = " << dCdTmax[speciesi]*runTime.deltaTValue()
