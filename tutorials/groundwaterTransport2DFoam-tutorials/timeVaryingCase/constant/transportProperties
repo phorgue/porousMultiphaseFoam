@@ -21,7 +21,7 @@ eps eps [0 0 0 0 0 0 0] 0.5;
 rho rho [1 -3 0 0 0 0 0] 1000;
 mu mu [1 -1 -1 0 0 0 0] 1e-03;
 
-eventFileInfiltration waterInfiltration.dat;
+eventFileInfiltration waterInfiltration.evt;
 
 //- transportProperties
 
@@ -44,6 +44,6 @@ alphaDispersionCoeffs
     alphaT alphaT [0 1 0 0 0 0 0] 0.002;
 }
 
-eventFileTracerSource tracerInjection.dat;
+eventFileTracerSource tracerInjection.evt;
 
 // ************************************************************************* //
