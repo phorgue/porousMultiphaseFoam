@@ -25,7 +25,7 @@ input_csv = np.genfromtxt(args.input)
 ntimes = np.shape(input_csv)[0]
 time = input_csv[:,0]
 
-data_in = -input_csv[:,1]*surface
+data_in = -input_csv[:,args.c]*surface
 file_out = open(args.output, 'w')
 
 data_in = data_in.tolist()
