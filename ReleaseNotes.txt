@@ -11,6 +11,12 @@
 
   python pmf_csvToEvent.py --help
 
+### Tutorials
+
+- Global
+
+  - scripts are now compatible with python 3.
+
 ************************
 *** PMFv2102
 *** Newton Algorithm for unsaturated solvers (groundwater)
