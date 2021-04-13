@@ -37,7 +37,7 @@
         //- reading STL informations
         word STLfile = args.option("STL");
         triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
-        pointField pPoints = potentialSTL.points();
+        pointField pPoints(potentialSTL.points());
         Info << nl << "Potential fixed using STL = " << STLfile << endl;
       
         //- computing local potential
