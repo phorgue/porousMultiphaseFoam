@@ -1,8 +1,8 @@
 {
     h.storePrevIter();
     const volScalarField& dkrthetadS = krModel ->dkrbdS();
-    volScalarField dLdS = pcModel->Ch() * rhotheta * K * dkrthetadS / mutheta;
-    volScalarField dMdS = mag(g) * dLdS;
+    volScalarField dLdS( pcModel->Ch() * rhotheta * K * dkrthetadS / mutheta );
+    volScalarField dMdS( mag(g) * dLdS );
 
     fvScalarMatrix deltahEqn_hGrad(dMdS  * fvm::div(fvc::snGrad(h) * mesh.magSf(),deltah));
     fvScalarMatrix deltahEqn_grav( dLdS * fvm::div(-g & mesh.Sf(),deltah));
