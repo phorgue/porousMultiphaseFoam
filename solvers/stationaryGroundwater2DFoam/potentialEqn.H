@@ -17,7 +17,7 @@
     hwater = potential - z0;
 
     //- Checking for dry cells
-    if (min(hwater).value() <= hwaterMin.value())
+    if (gMin(hwater.internalField()) <= hwaterMin.value())
     {
         dryCellIDList.clear();
         forAll(hwater, celli)
@@ -44,6 +44,6 @@
     U.correctBoundaryConditions();
     cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration;
 
-    Info << "Potential min: " << min(potential).value() << ", max = " << max(potential).value() << ", delta(potential) = " << max(mag(potential-potential.oldTime())).value() << endl;
+    Info << "Potential min: " << gMin(potential.internalField()) << ", max = " << gMax(potential.internalField()) << ", delta(potential) = " << gMax(mag(potential.internalField()-potential.oldTime().internalField())()) << endl;
 
 }

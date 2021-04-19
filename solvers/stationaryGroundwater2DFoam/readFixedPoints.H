@@ -36,7 +36,7 @@ else
 }
 
 //- checking that potentialMNT in superior to z0)
-if (min(potentialMNT.internalField() - z0.internalField()).value() < 0)
+if (gMin((potentialMNT.internalField() - z0.internalField())()) < 0)
 {
     Warning() << "potential MNT inferior to z0 in domain => set to z0+hwaterMin" << endl;
     forAll(potentialMNT.internalField(),celli)
