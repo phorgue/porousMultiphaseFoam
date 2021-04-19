@@ -18,7 +18,7 @@
     hwater = potential - z0;
 
     //- compute derivatives
-    dpotentialdTmax = max(mag(fvc::ddt(potential))).value();
+    dpotentialdTmax = gMax(mag(fvc::ddt(potential))());
     if (timeScheme == "Euler")
     {
         volScalarField dpotential2dT2(d2dt2Operator.fvcD2dt2(potential));
@@ -51,7 +51,7 @@
     }
 
     //- Checking for dry cells
-    if (min(hwater).value() <= hwaterMin.value())
+    if (gMin(hwater.internalField()) <= hwaterMin.value())
     {
         scalar waterAdded = 0;
         dryCellIDList.clear();
@@ -82,6 +82,6 @@
     U.correctBoundaryConditions();
     cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration + zScale * waterSourceTerm;
 
-    Info << "Potential min: " << min(potential).value() << ", max = " << max(potential).value() << ", delta(potential) = " << dpotentialdTmax*runTime.deltaTValue() << endl;
+    Info << "Potential min: " << gMin(potential.internalField()) << ", max = " << gMax(potential.internalField()) << ", delta(potential) = " << dpotentialdTmax*runTime.deltaTValue() << endl;
 
 }
