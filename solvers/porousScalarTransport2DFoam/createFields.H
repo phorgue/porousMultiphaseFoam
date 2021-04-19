@@ -75,7 +75,7 @@ volScalarField hwater
 
 if (hwater.headerOk())
 {
-    Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+    Info << "min(hwater) = " << gMin(hwater.internalField()) << " ; max(hwater) = " << gMax(hwater.internalField()) << endl;
 }
 else
 {
@@ -107,15 +107,15 @@ else
             ),
             mesh
         );
-    Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << endl;
+    Info << "min(z0) = " << gMin(z0.internalField()) << " ; max(z0) = " << gMax(z0.internalField()) << endl;
 
     hwater = potential - z0;
 
-    Info << nl << "Computed hwater : min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value() << endl;
+    Info << nl << "Computed hwater : min(hwater) = " << gMin(hwater.internalField()) << " ; max(hwater) = " << gMax(hwater.internalField()) << endl;
     hwater.write();
 }
 
-if (min(hwater).value() < 0)
+if (gMin(hwater.internalField()) < 0)
 {
     FatalErrorIn("createFields") << " hwater has negative values" << abort(FatalError);
 }

@@ -1,8 +1,8 @@
 {
-    if (min(hwater).value() <= 0)
+    if (gMin(hwater.internalField()) <= 0)
     {
         //- if volume initialization negative
-        if (min(hwater.internalField()).value() <= hwaterMin.value())
+        if (gMin(hwater.internalField()) <= hwaterMin.value())
         {
             Warning() << "hwater negative in domain (initialized to hwaterMin) " << endl;
 
@@ -18,7 +18,7 @@
         //- if fixed boundary negative
         forAll(mesh.boundary(),patchi)
         {
-            if (min(hwater.boundaryField()[patchi]) <= hwaterMin.value())
+            if (gMin(hwater.boundaryField()[patchi]) <= hwaterMin.value())
             {
                 if (isA< fixedValueFvPatchField<scalar> >(hwater.boundaryField()[patchi]))
                 {

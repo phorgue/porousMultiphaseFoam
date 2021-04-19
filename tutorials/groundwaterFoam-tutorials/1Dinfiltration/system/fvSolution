@@ -36,14 +36,14 @@ solvers
 
 Picard
 {
-    tolerance 1e-1;
-    maxIter 10;
+    tolerance 1e-01;
+    maxIter 50;
 }
 
 Newton
 {
-    tolerance 1e-6;
-    maxIter 10;
+    tolerance 1e-10;
+    maxIter 50;
 }
 
 // ************************************************************************* //
