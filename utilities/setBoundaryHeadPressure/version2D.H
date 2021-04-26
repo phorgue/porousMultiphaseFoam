@@ -17,8 +17,7 @@
     word patchName = args.opt("patch");
     label patchID = mesh.boundaryMesh().findPatchID(patchName);
     fvPatchScalarField& potentialPatch = potential.boundaryFieldRef()[patchID];
-    const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
-  
+
     //-- Compute and set up head pressure
     if (args.optionFound("MNT"))
     {
@@ -27,6 +26,7 @@
         Info << nl << "Potential fixed using MNT " << endl;
 
         //- computing local potential
+        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
         forAll(potentialPatch,facei)
         {
             potentialPatch[facei] = fixedPotentialMNT.interpolate(faces[facei]);
