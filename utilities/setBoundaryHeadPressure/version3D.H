@@ -42,6 +42,7 @@
         Info << nl << "Potential fixed using STL = " << STLfile << endl;
       
         //- computing local potential
+        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
         forAll(hPatch,facei)
         {
             scalar xy_distance = GREAT;
@@ -61,9 +62,10 @@
     else
     {
         //- uniform potential
+        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
         scalar potential = args.opt("value",0.);
         Info << nl << "Uniform potential fixed = " << potential << " m " << endl;
-        forAll(faces,facei)
+        forAll(hPatch,facei)
         {
             hPatch[facei] = (potential - faces[facei].z());
         }
