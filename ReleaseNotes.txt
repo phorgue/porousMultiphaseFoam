@@ -17,6 +17,10 @@
 
   - scripts are now compatible with python 3.
 
+### Bug fixes
+
+- Time-step management when (eventTimeTracking=false) has been fixed
+
 ************************
 *** PMFv2102
 *** Newton Algorithm for unsaturated solvers (groundwater)
