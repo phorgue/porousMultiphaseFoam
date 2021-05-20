@@ -109,50 +109,51 @@ if(adjustTimeStep)
 
     }
 
+    //-Adjust time step to explicitly compute (water/tracer) event time 
     scalar timeOfNextEvent = GREAT;
     if (eventTimeTracking)
     {
         if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
         forAll(tracerSourceEventList,tracerSourceEventi) timeOfNextEvent = min(timeOfNextEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime());
-    }
 
-    scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
-    scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
-    if ((nSteps < labelMax) && (nSteps != 0))
-    {
-        const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
-        runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
-    }
-
-    //- To handle close event times (inferior to current timestep)
-    if (nSteps == 0)
-    {
-        scalar timeToCloseEvent = GREAT;
-        if (eventTimeTracking)
+        scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
+        scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+        if ((nSteps < labelMax) && (nSteps != 0))
         {
-            if (eventIsPresent_water)
-            {
-                if (event_water.currentEventEndTime() != runTime.timeOutputValue())
-                {
-                    timeToCloseEvent = min(timeToCloseEvent,event_water.currentEventEndTime()-runTime.timeOutputValue());
-                }
-            }
-            forAll(tracerSourceEventList,tracerSourceEventi)
-            {
-                if (tracerSourceEventList[tracerSourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
-                {
-                    timeToCloseEvent = min(timeToCloseEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
-                }
-            }
-            forAll(patchEventList,patchEventi)
-            {
-                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
-                {
-                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
-                }
-            }
+            const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
+            runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
         }
-        runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
+
+        //- To handle close event times (inferior to current timestep)
+        if (nSteps == 0)
+        {
+            scalar timeToCloseEvent = GREAT;
+            if (eventTimeTracking)
+            {
+                if (eventIsPresent_water)
+                {
+                    if (event_water.currentEventEndTime() != runTime.timeOutputValue())
+                    {
+                        timeToCloseEvent = min(timeToCloseEvent,event_water.currentEventEndTime()-runTime.timeOutputValue());
+                    }
+                }
+                forAll(tracerSourceEventList,tracerSourceEventi)
+                {
+                    if (tracerSourceEventList[tracerSourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                    {
+                        timeToCloseEvent = min(timeToCloseEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                    }
+                }
+                forAll(patchEventList,patchEventi)
+                {
+                    if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                    {
+                        timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                    }
+                }
+            }
+            runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
+        }
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue()
