@@ -72,21 +72,18 @@ if(adjustTimeStep)
         if (nSteps == 0)
         {
             scalar timeToCloseEvent = GREAT;
-            if (eventTimeTracking)
+            if (sourceEventIsPresent)
             {
-                if (sourceEventIsPresent)
+                if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
-                    {
-                        timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
-                    }
+                    timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
                 }
-                forAll(patchEventList,patchEventi)
+            }
+            forAll(patchEventList,patchEventi)
+            {
+                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
-                    {
-                        timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
-                    }
+                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
             runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
