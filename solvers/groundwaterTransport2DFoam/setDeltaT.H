@@ -110,28 +110,25 @@ if (adjustTimeStep)
         if (nSteps == 0)
         {
             scalar timeToCloseEvent = GREAT;
-            if (eventTimeTracking)
+            if (infiltrationEventIsPresent)
             {
-                if (infiltrationEventIsPresent)
+                if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
-                    {
-                        timeToCloseEvent = min(timeToCloseEvent,infiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
-                    }
+                    timeToCloseEvent = min(timeToCloseEvent,infiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
                 }
-                forAll(sourceEventList,sourceEventi) 
+            }
+            forAll(sourceEventList,sourceEventi) 
+            {
+                if (sourceEventList[sourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    if (sourceEventList[sourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
-                    {
-                        timeToCloseEvent = min(timeToCloseEvent,sourceEventList[sourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
-                    }
+                    timeToCloseEvent = min(timeToCloseEvent,sourceEventList[sourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
-                forAll(patchEventList,patchEventi)
+            }
+            forAll(patchEventList,patchEventi)
+            {
+                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
-                    {
-                        timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
-                    }
+                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
             runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));

@@ -73,14 +73,11 @@ if (adjustTimeStep)
         if (nSteps == 0)
         {
             scalar timeToCloseEvent = GREAT;
-            if (eventTimeTracking)
+            if (infiltrationEventIsPresent)
             {
-                if (infiltrationEventIsPresent)
+                if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
-                    {
-                        timeToCloseEvent = min(timeToCloseEvent,infiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
-                    }
+                    timeToCloseEvent = min(timeToCloseEvent,infiltrationEvent.currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
             runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
