@@ -23,33 +23,33 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "MNTfile.H"
+#include "DEMfile.H"
 #include "IFstream.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::MNTfile::MNTfile
+Foam::DEMfile::DEMfile
 (
-    const MNTfile& MNTtoCopy
+    const DEMfile& DEMtoCopy
 )
 :  
-    name_(MNTtoCopy.name()),
-    x0_(MNTtoCopy.x0()),
-    y0_(MNTtoCopy.y0()),
-    dx_(MNTtoCopy.dx()),
-    dy_(MNTtoCopy.dy()),
-    zvalues_(MNTtoCopy.z())
+    name_(DEMtoCopy.name()),
+    x0_(DEMtoCopy.x0()),
+    y0_(DEMtoCopy.y0()),
+    dx_(DEMtoCopy.dx()),
+    dy_(DEMtoCopy.dy()),
+    zvalues_(DEMtoCopy.z())
 {
 }
 
-Foam::MNTfile::MNTfile
+Foam::DEMfile::DEMfile
 (
     const word& fileName
 )
     :
     name_(fileName)
 {
-    //- properties of a MNT file
+    //- properties of a DEM file
     string separator_ = " ";
     label nEntries = 3;
 
@@ -57,7 +57,7 @@ Foam::MNTfile::MNTfile
     IFstream ifs(fileName);
     DynamicList<point> mnt_data; 
 
-    Info << nl << "Reading MNT file '" << fileName << "' ...";
+    Info << nl << "Reading DEM file '" << fileName << "' ...";
     // read data
     while (ifs.good())
     {
@@ -94,8 +94,8 @@ Foam::MNTfile::MNTfile
 
             if (n != 3)
             {
-                FatalErrorIn("MNTfile.C")
-                    << "wrong number of elements in MNT file :" << fileName
+                FatalErrorIn("DEMfile.C")
+                    << "wrong number of elements in DEM file :" << fileName
                         << nl << " found " << split.size() << " elements instead of 3 at line " << mnt_data.size()+1
                         << nl << "List of read elements : " << split
                         << abort(FatalError);
@@ -117,7 +117,7 @@ Foam::MNTfile::MNTfile
     y0_ = mnt_data[0][1];
     dx_ = mnt_data[1][0] - mnt_data[0][0];
     dy_ = 0;
-    if (dx_ <= 0) FatalErrorIn("MNTfile.C") << "MNT file incorrectly sorted (x1 = x2)" << abort(FatalError);
+    if (dx_ <= 0) FatalErrorIn("DEMfile.C") << "DEM file incorrectly sorted (x1 = x2)" << abort(FatalError);
     zvalues_ = scalarList(mnt_data.size());
     zvalues_[0] = mnt_data[0][2];
 
@@ -144,18 +144,18 @@ Foam::MNTfile::MNTfile
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::MNTfile::~MNTfile()
+Foam::DEMfile::~DEMfile()
 {}
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
-Foam::scalar Foam::MNTfile::interpolate(const point& location)
+Foam::scalar Foam::DEMfile::interpolate(const point& location)
 {
     label idx_ = floor((location.x()-x0_)/dx_);
     label idy_ = floor((location.y()-y0_)/dy_);
     if ((idx_ < 0) || (idx_ >= nx_) || (idy_ < 0) || (idy_ >= ny_))
     {
-        FatalErrorIn("Foam::scalar Foam::MNTfile::interpolate(const point& location)") << "location "
-            << location << " out of MNT bounds" << abort(FatalError);
+        FatalErrorIn("Foam::scalar Foam::DEMfile::interpolate(const point& location)") << "location "
+            << location << " out of DEM bounds" << abort(FatalError);
     }
     scalar fracx_ = (location.x() - idx_*dx_ - x0_)/dx_;
     scalar fracy_ = (location.y() - idy_*dy_ - y0_)/dy_;
