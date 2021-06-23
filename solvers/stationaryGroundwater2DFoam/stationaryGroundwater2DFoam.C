@@ -36,7 +36,7 @@ Developer
 #include "harmonic.H"
 #include "fixedValueFvPatchField.H"
 #include "simpleControl.H"
-#include "MNTfile.H"
+#include "DEMfile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;

@@ -22,19 +22,19 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::MNTfile
+    Foam::DEMfile
 
 Description
-    MNT file handler/reader with bilinear interpolation for the
+    DEM file handler/reader with bilinear interpolation for the
     porousMultiphaseFoam toolbox
 
 SourceFiles
-    MNTfile.C
+    DEMfile.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef MNTfile_H
-#define MNTfile_H
+#ifndef DEMfile_H
+#define DEMfile_H
 
 #include "fvMesh.H"
 
@@ -44,10 +44,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------* \
-    Class fluidMNTfile Declaration
+    Class fluidDEMfile Declaration
     \*---------------------------------------------------------------------------*/
 
-class MNTfile
+class DEMfile
 {
 
 private:
@@ -64,13 +64,13 @@ public:
     // Constructors
 
     //- Copy constructor
-    MNTfile
+    DEMfile
     (
-        const MNTfile& fileToCopy
+        const DEMfile& fileToCopy
     );
 
     //- Construct from Istream
-    MNTfile
+    DEMfile
     (
         const word& fileName
     );
@@ -78,7 +78,7 @@ public:
     // Selectors
 
     //- Destructor
-    virtual ~MNTfile();
+    virtual ~DEMfile();
 
     // Member Functions
     

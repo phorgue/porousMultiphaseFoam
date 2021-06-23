@@ -1,10 +1,10 @@
-//- Reading MNT file name and potentialMNT if present
-word MNTfileName(transportProperties.lookupOrDefault<word>("fileMNT",""));
-volScalarField potentialMNT
+//- Reading DEM file name and potentialDEM if present
+word DEMfileName(transportProperties.lookupOrDefault<word>("fileDEM",""));
+volScalarField potentialDEM
 (
     IOobject
     (
-        "potentialMNT",
+        "potentialDEM",
         runTime.constant(),
         mesh,
         IOobject::READ_IF_PRESENT,
@@ -13,35 +13,35 @@ volScalarField potentialMNT
     z0
 );
 
-//- Computing potentialMNT if necessary
-if (potentialMNT.headerOk()) Info << nl << "Reading precomputed potentialMNT file in constant/" << endl;
+//- Computing potentialDEM if necessary
+if (potentialDEM.headerOk()) Info << nl << "Reading precomputed potentialDEM file in constant/" << endl;
 else
 {
-    if (MNTfileName.size() > 0)
+    if (DEMfileName.size() > 0)
     {
-        Info << nl << "Reading MNT file to compute potentialMNT...";
-        MNTfile potentialMNTfile(MNTfileName);
+        Info << nl << "Reading DEM file to compute potentialDEM...";
+        DEMfile potentialDEMfile(DEMfileName);
         Info << "OK" << endl;
 
-        //- Computing for potentialMNT for Seep term
-        Info << "Interpolating value for potentialMNT...";
+        //- Computing for potentialDEM for Seep term
+        Info << "Interpolating value for potentialDEM...";
         forAll(mesh.C(),celli)
         {
-            potentialMNT[celli] = potentialMNTfile.interpolate(mesh.C()[celli]);
+            potentialDEM[celli] = potentialDEMfile.interpolate(mesh.C()[celli]);
         }
         Info << "OK" << endl;
-        potentialMNT.write();
+        potentialDEM.write();
     }
-    else Info << nl << "no potentialMNT field";
+    else Info << nl << "no potentialDEM field";
 }
 
-//- checking that potentialMNT in superior to z0)
-if (gMin((potentialMNT.internalField() - z0.internalField())()) < 0)
+//- checking that potentialDEM in superior to z0)
+if (gMin((potentialDEM.internalField() - z0.internalField())()) < 0)
 {
-    Warning() << "potential MNT inferior to z0 in domain => set to z0+hwaterMin" << endl;
-    forAll(potentialMNT.internalField(),celli)
+    Warning() << "potential DEM inferior to z0 in domain => set to z0+hwaterMin" << endl;
+    forAll(potentialDEM.internalField(),celli)
     {
-        potentialMNT.ref()[celli] = max(potentialMNT.internalField()[celli],z0.internalField()[celli]+hwaterMin.value());
+        potentialDEM.ref()[celli] = max(potentialDEM.internalField()[celli],z0.internalField()[celli]+hwaterMin.value());
     }
 }
 
@@ -50,9 +50,9 @@ bool seepageActive = transportProperties.lookupOrDefault("seepage", false);
 if (seepageActive)
 {
     Info << nl << "Seepage option is active" << endl;
-    if (!potentialMNT.headerOk() && MNTfileName.size() == 0)
+    if (!potentialDEM.headerOk() && DEMfileName.size() == 0)
     {
-        FatalErrorIn("readFixedPoints.H") << nl << "no potentialMNT file neither MNT file while seepage is active " << abort(FatalError);
+        FatalErrorIn("readFixedPoints.H") << nl << "no potentialDEM file neither DEM file while seepage is active " << abort(FatalError);
     }
 }
 else Info << nl << "no Seepage option" << endl;
@@ -63,7 +63,7 @@ List<Tuple2<point,scalar> > fixedPotentialList(transportProperties.lookupOrDefau
 );
 labelList fixedPotentialIDList(fixedPotentialList.size());
 scalarList fixedPotentialValueList(fixedPotentialList.size());
-bool useMNTtoFixPotential(transportProperties.lookupOrDefault<bool>("useMNTtoFixPotential",false));
+bool useDEMtoFixPotential(transportProperties.lookupOrDefault<bool>("useDEMtoFixPotential",false));
 if (fixedPotentialList.size() > 0)
 {
     //- find closest cell to fixed points
@@ -72,12 +72,12 @@ if (fixedPotentialList.size() > 0)
         fixedPotentialIDList[pointi] = mesh.findNearestCell(fixedPotentialList[pointi].first());
     }
 
-    if (useMNTtoFixPotential)
+    if (useDEMtoFixPotential)
     {
-        Info << nl << "potentialMNT used for fixedPotentialList" << endl;
+        Info << nl << "potentialDEM used for fixedPotentialList" << endl;
         forAll(fixedPotentialList,pointi)
         {
-            fixedPotentialValueList[pointi] = potentialMNT[fixedPotentialIDList[pointi]];
+            fixedPotentialValueList[pointi] = potentialDEM[fixedPotentialIDList[pointi]];
         }
     }
     else
