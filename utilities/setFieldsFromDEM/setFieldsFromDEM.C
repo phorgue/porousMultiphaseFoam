@@ -22,11 +22,11 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    setFieldsFromMNT
+    setFieldsFromDEM
 
 Description
     set the permeability field by performing bilinear interpolation using 
-    MNT file which should be in the form
+    DEM file which should be in the form
     x1 y1 z1
     x2 y1 z2
     ...
@@ -37,12 +37,12 @@ Description
     with x sorted in ascending order.
 
 Usage
-    setFieldsFromMNT -file MNTfile -field z0 -offset -1
+    setFieldsFromDEM -file DEMfile -field z0 -offset -1
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "MNTfile.H"
+#include "DEMfile.H"
 
 int main(int argc, char *argv[])
 {
@@ -54,14 +54,14 @@ int main(int argc, char *argv[])
     
     Foam::argList args(argc,argv); 
 
-    word nameMNT = "default";
+    word nameDEM = "default";
     if (args.optionFound("file"))
     {
-        nameMNT = args.option("file");
+        nameDEM = args.option("file");
     }
     else
     {
-        FatalErrorIn("setFieldsFromMNT.C")
+        FatalErrorIn("setFieldsFromDEM.C")
             << "no input file specified, use option -file"
             << exit(FatalError);
     }
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        FatalErrorIn("setFieldsFromMNT.C")
+        FatalErrorIn("setFieldsFromDEM.C")
             << "no field specified, use option -field"
             << exit(FatalError);
     }
@@ -85,8 +85,8 @@ int main(int argc, char *argv[])
     
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    //- read the MNT file
-    MNTfile sourceFile(nameMNT);
+    //- read the DEM file
+    DEMfile sourceFile(nameDEM);
 
     word fileDir = "constant";
     if (args.optionFound("folder"))
