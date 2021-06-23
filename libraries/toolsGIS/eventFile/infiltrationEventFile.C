@@ -51,7 +51,7 @@ Foam::infiltrationEventFile::infiltrationEventFile
         //- Infiltration field size (1 = uniform infiltration)
         label fieldSize = 1;
 
-        //- properties of a MNT file
+        //- properties of a DEM file
         string separator_ = " ";
 
         //- file name

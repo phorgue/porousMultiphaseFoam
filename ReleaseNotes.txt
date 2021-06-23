@@ -1,4 +1,9 @@
 
+### General
+
+- MNT (Modèle Numérique de Terrain) has been replaced by DEM (Digital
+  Elevation Model) for file name, field name, comments...
+
 ### Tools
 
 - new folder containing external tools (python/bash scripts) for the toolbox

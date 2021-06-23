@@ -8,12 +8,12 @@ if (seepageActive)
     seepageValueList.clear();
     forAll(mesh.C(),celli)
     {
-        if(potential[celli] >= potentialMNT[celli])
+        if(potential[celli] >= potentialDEM[celli])
         {
             if (cellFlux[celli] < 0)
             {
                 seepageIDList.append(celli);
-                seepageValueList.append(potentialMNT[celli]);
+                seepageValueList.append(potentialDEM[celli]);
             }
         }
     }
