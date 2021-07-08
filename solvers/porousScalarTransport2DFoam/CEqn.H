@@ -15,9 +15,9 @@ forAll(composition.Y(), speciesi)
 
     fvScalarMatrix CEqn
         (
-            eps * R * hwater * fvm::ddt(C)
+            eps * R * fvm::ddt(hwater, C)
             + fvm::div(phihwater, C, "div(phi,C)")
-            - eps*hwater* fvm::laplacian(Deff, C, "laplacian(Deff,C)")
+            - eps * hwater * fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm * zScale
             - eps * R * hwater * fvm::Sp(lambda,C)
