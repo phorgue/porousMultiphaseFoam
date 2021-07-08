@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
         #include "waterMassBalance.H"
 
         //- Solve transport equation
+        phihwater = phi * fvc::interpolate(hwater);
         #include "CEqn.H"
 
         //- C mass balance computation
