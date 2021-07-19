@@ -7,6 +7,10 @@ if [ -f $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments ]
 then  . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 fi
 
-wmake all libraries
+wmake libraries/numericalMethods
+wmake libraries/porousModels
+wmake libraries/toolsGIS
+wmake libraries/porousBoundaryConditions
+
 wmake all solvers
 wmake all utilities
