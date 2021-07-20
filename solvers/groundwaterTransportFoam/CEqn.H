@@ -17,7 +17,7 @@ forAll(composition.Y(), speciesi)
         (
             R * fvm::ddt(theta,C)
             + fvm::div(phi, C, "div(phi,C)")
-            - fvm::laplacian(theta*Deff, C, "laplacian(Deff,C)")
+            - theta * fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm_tracer
             - R * theta * fvm::Sp(lambda,C)

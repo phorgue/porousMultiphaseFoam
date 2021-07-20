@@ -17,7 +17,7 @@ forAll(composition.Y(), speciesi)
         (
             eps * R * Saturation * fvm::ddt(C)
             + fvm::div(phi, C, "div(phi,C)")
-            - fvm::laplacian(eps*Saturation*Deff, C, "laplacian(Deff,C)")
+            - eps * Saturation * fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm
             - eps * R * Saturation * fvm::Sp(lambda,C)
