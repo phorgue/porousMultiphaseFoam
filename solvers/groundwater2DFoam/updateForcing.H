@@ -1,1 +1,1 @@
-../stationaryGroundwater2DFoam/updateForcing.H
+../steadyGroundwater2DFoam/updateForcing.H
