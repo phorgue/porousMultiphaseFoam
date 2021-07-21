@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     stationaryGroundwater2DFoam;
+application     steadyGroundwater2DFoam;
 
 startFrom       startTime;
 

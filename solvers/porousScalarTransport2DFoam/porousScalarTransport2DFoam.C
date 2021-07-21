@@ -28,7 +28,7 @@ Description
     Solves the transport equation for a passive scalar in porous media 
     with dispersion coefficient model considering a 2D groundwater model 
     Velocity field should be pre-computed using 2D solver, groundater2DFoam
-    or stationaryGroundwater2DFoam
+    or steadyGroundwater2DFoam
 
 Author
     Pierre Horgue

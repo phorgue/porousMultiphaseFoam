@@ -22,21 +22,26 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    stationaryGroundwater2DFoam
+    steadyGroundwaterFoam
 
 Description
-    Stationary solver for free-surface flow in porous media
+    statonary solver for Richards equation..
+    Permeability is isotropic (K == volScalarField)
 
-Developer
+Developers
     P. Horgue
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
 #include "harmonic.H"
-#include "fixedValueFvPatchField.H"
-#include "simpleControl.H"
-#include "DEMfile.H"
+#include "incompressiblePhase.H"
+#include "capillarityModel.H"
+#include "relativePermeabilityModel.H"
+#include "sourceEventFile.H"
+#include "outputEventFile.H"
+#include "patchEventFile.H"
+#include "eventInfiltration.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -46,23 +51,29 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
-    simpleControl simple(mesh);
+    #include "readGravitationalAcceleration.H"
     #include "createFields.H"
-    #include "readFixedPoints.H"
+    #include "readConvergenceControls.H"
+    scalar massConservativeTerms = 1; // useless, just for createthetaFields.H re-use
+    #include "createthetaFields.H"
+    #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    Info << "\nStarting time loop\n" << endl;
+    Info<< "\nStarting time loop\n" << endl;
+    scalar hEqnResidual = GREAT;
 
-    while (simple.loop(runTime))
+    while (hEqnResidual > tolerance && runTime.value() < runTime.endTime().value()  )
     {
+        runTime++;
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Solve height equation
-        #include "potentialEqn.H"
+        #include "computeSourceTerm.H"
+        #include "hEqnPicard.H"
+        #include "checkResidual.H"
 
-        //- Water bilan computation
-        #include "waterMassBalance.H"
+        Info << "Saturation theta:" << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) << " delta(theta) = " << max(mag(theta.internalField()-theta.oldTime().internalField())()) << endl;
+        Info << "Head pressure h:" << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << " delta(h) = " << gMax(deltah.internalField()) << endl;
 
         runTime.write();
 
@@ -70,6 +81,13 @@ int main(int argc, char *argv[])
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
             << nl << endl;
     }
+
+    if (hEqnResidual > tolerance)
+    {
+        WarningIn("steadyGroundwaterFoam.C") << "Solution not converged, final residual is : "
+            << hEqnResidual << " increase the end time for convergence" << nl  << endl;
+    }
+    runTime.writeNow();
 
     Info<< "End\n" << endl;
 
