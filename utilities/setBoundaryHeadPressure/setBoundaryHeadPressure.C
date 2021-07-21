@@ -29,15 +29,15 @@ Description
     Can be used to set up water level for all groundwater solvers.
 
 Usage
-    1) for uniform head pressure (groundwaterFoam/stationaryGroundwaterFoam)
+    1) for uniform head pressure (groundwaterFoam/steadyGroundwaterFoam)
 
       setBoundaryHeadPressure -patch patchName -value 50.3
 
-    2) DEM dependent head pressure (groundwaterFoam/stationaryGroundwaterFoam)
+    2) DEM dependent head pressure (groundwaterFoam/steadyGroundwaterFoam)
 
       setBoundaryHeadPressure -patch patchName -file stl_file
 
-    3) DEM dependent potential (groundwater2DFoam/stationaryGroundwater2DFoam)
+    3) DEM dependent potential (groundwater2DFoam/steadyGroundwater2DFoam)
 
       setBoundaryHeadPressure -patch patchName -file stl_file -version 2D
 
