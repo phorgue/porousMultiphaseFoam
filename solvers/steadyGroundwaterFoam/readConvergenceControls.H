@@ -25,7 +25,7 @@ Global
     readConcergenceControls
 
 Description
-    Read control for unsaturated stationary solver 
+    Read control for unsaturated steady solver 
 
 \*---------------------------------------------------------------------------*/
 
