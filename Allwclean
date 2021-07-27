@@ -15,12 +15,18 @@ then
     rm -f $FOAM_USER_APPBIN/anisoImpesFoam
     rm -f $FOAM_USER_APPBIN/groundwater2DFoam
     rm -f $FOAM_USER_APPBIN/groundwaterFoam
+    rm -f $FOAM_USER_APPBIN/groundwaterTransport2DFoam
     rm -f $FOAM_USER_APPBIN/groundwaterTransportFoam
     rm -f $FOAM_USER_APPBIN/impesFoam
     rm -f $FOAM_USER_APPBIN/porousScalarTransport2DFoam
     rm -f $FOAM_USER_APPBIN/porousScalarTransportFoam
-    rm -f $FOAM_USER_APPBIN/stationaryGroundwater2DFoam
-    rm -f $FOAM_USER_APPBIN/stationaryGroundwaterFoam
+    rm -f $FOAM_USER_APPBIN/steadyGroundwater2DFoam
+    rm -f $FOAM_USER_APPBIN/steadyGroundwaterFoam
+    # clean utilities
+    rm -f $FOAM_USER_APPBIN/darcyFoam
+    rm -f $FOAM_USER_APPBIN/setBoundaryHeadPressure
+    rm -f $FOAM_USER_APPBIN/setFieldsFromDEM
+    rm -f $FOAM_USER_APPBIN/setFieldsFromXY
     # clean dynamic libraries
     rm -f $FOAM_USER_LIBBIN/libporousBoundaryConditions.so
     rm -f $FOAM_USER_LIBBIN/libporousModels.so
