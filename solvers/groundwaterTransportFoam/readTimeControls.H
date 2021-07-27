@@ -76,7 +76,7 @@ if (adjustTimeStep)
         forAll(composition.Y(), speciesi)
         {
             const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C);
+            Cmax[speciesi] = gMax(C.internalField());
             dC3dT3max[speciesi] = 3*truncationError_C*(Cmax[speciesi]+VSMALL)
                 /Foam::pow(runTime.deltaTValue(),3);
         }
@@ -86,7 +86,7 @@ if (adjustTimeStep)
         forAll(composition.Y(), speciesi)
         {
             const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C);
+            Cmax[speciesi] = gMax(C.internalField());
             dC3dT3max[speciesi] = 12*truncationError_C*(Cmax[speciesi]+VSMALL)
                 /Foam::pow(runTime.deltaTValue(),3);
         }
@@ -96,7 +96,7 @@ if (adjustTimeStep)
         forAll(composition.Y(), speciesi)
         {
             const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C);
+            Cmax[speciesi] = gMax(C.internalField());
             dC2dT2max[speciesi] = 2*truncationError_C*(Cmax[speciesi]+VSMALL)
                 /Foam::pow(runTime.deltaTValue(),2);
         }

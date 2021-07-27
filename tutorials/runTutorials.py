@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-## \file runTutorials.py
+## \file runTutorials.py for python 3
 ## Script for running all validations cases
-## \author Pierre Horgue (inspired from MARINE source code and K. Larnier ;-) )
+## \author Pierre Horgue (inspired from MARINE source code and K. Larnier)
 
 # import
 from __future__ import with_statement
@@ -27,9 +27,9 @@ class testCase:
     #=============================================================================
     def run(self):
 
-        print ""
-        print "Test : " + self.solver + " " + self.case
-        print ""
+        print("")
+        print("Test : " + self.solver + " " + self.case)
+        print("")
 
         refDir=os.getcwd()
 
@@ -42,13 +42,13 @@ class testCase:
 
         if len(stderr) > 0:
 
-            print "[ ERROR C++ ] " + stderr
+            print("[ ERROR C++ ] " + stderr)
 
         else:
 
             foam_exit = "FOAM exiting"
             foam_abort = "FOAM aborting"
-            foamFile = file("log."+self.solver)
+            foamFile = open("log."+self.solver, 'r')
             error_found = False
             for lines in foamFile:
                 if foam_exit in lines:
@@ -59,9 +59,9 @@ class testCase:
                     break
 
             if error_found:
-                print "[ ERROR OpenFOAM ] "
+                print("[ ERROR OpenFOAM ] ")
             else:
-                print "[ OK ]"
+                print("[ OK ]")
 
             os.chdir(refDir)
 
@@ -73,17 +73,17 @@ class testCase:
 
 if __name__ == '__main__':
 
-    print "========================================================"
-    print "                   RUNNING TEST CASES                   "
-    print "========================================================"
+    print("========================================================")
+    print("                   RUNNING TEST CASES                   ")
+    print("========================================================")
 
     for case in testCases:
         test = testCase(case["solver"],case["case"])
         test.run()
 
-    print " "
-    print "========================================================"
-    print "                        FINISHED                        "
-    print "========================================================"
+    print(" ")
+    print("========================================================")
+    print("                        FINISHED                        ")
+    print("========================================================")
 
     sys.exit(0)
