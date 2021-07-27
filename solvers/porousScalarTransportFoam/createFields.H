@@ -94,13 +94,13 @@ if (theta.headerOk())
 {
     Saturation = theta/eps;
     Uname = "U";
-    Info << "===> field S" << phaseName << " computed from theta/eps, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() << endl;
+    Info << "===> field S" << phaseName << " computed from theta/eps, min = " << gMin(Saturation.internalField()) << " ; max = " << gMax(Saturation.internalField()) << endl;
 }
 else
 {
     if (Saturation.headerOk())
     {
-        Info << "===> field S" << phaseName << " read, min = " << min(Saturation).value() << " ; max = " << max(Saturation).value() <<  endl;
+        Info << "===> field S" << phaseName << " read, min = " << gMin(Saturation.internalField()) << " ; max = " << gMax(Saturation.internalField()) <<  endl;
     }
     else
     {

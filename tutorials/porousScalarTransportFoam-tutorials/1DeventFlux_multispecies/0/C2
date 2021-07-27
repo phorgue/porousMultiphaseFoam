@@ -25,7 +25,7 @@ boundaryField
     {
         type           eventFlux;
         constantValue  -1e-8;
-        eventFile      "patchInjectionC2.dat";
+        eventFile      "patchInjectionC2.evt";
         phiName        phitheta;
         value          uniform 0;
     }
