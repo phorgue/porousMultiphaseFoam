@@ -51,4 +51,6 @@ maxDeltaT	1000;
 
 truncationError 0.01;
 
+eventFileOutput "dates_simulations.txt";
+
 // ************************************************************************* //

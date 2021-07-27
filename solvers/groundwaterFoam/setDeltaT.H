@@ -53,27 +53,25 @@ if(adjustTimeStep)
                 );
     }
 
-    scalar timeOfNextEvent = GREAT;
+    //-Adjust time step to explicitly compute (source/patch) event time
     if (eventTimeTracking)
     {
+        scalar timeOfNextEvent = GREAT;
         if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
         forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
-    }
 
-    scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
-    scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
-    if ((nSteps < labelMax) && (nSteps != 0))
-    {
-        const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
-        runTime.setDeltaT(timeToNextEvent/nStepsToNextEvent,false);
-    }
-
-    //- To handle close event times (inferior to current timestep)
-    if (nSteps == 0)
-    {
-        scalar timeToCloseEvent = GREAT;
-        if (eventTimeTracking)
+        scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
+        scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+        if ((nSteps < labelMax) && (nSteps != 0))
         {
+            const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
+            runTime.setDeltaT(timeToNextEvent/nStepsToNextEvent,false);
+        }
+
+        //- To handle close event times (inferior to current timestep)
+        if (nSteps == 0)
+        {
+            scalar timeToCloseEvent = GREAT;
             if (sourceEventIsPresent)
             {
                 if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
@@ -88,8 +86,8 @@ if(adjustTimeStep)
                     timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
-        }
         runTime.setDeltaT(min(runTime.deltaTValue(),timeToCloseEvent),false);
+        }
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << endl;
