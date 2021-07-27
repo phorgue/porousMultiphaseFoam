@@ -69,7 +69,7 @@ void Foam::patchEventFile::read(const word& fileName, bool display)
     name_ = fileName;
     if (fileName.size() != 0)
     {
-        //- properties of a MNT file
+        //- properties of a DEM file
         string separator_ = " ";
 
         //- file name
