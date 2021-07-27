@@ -1,1 +1,1 @@
-../stationaryGroundwater2DFoam/correctInitialPotential.H
+../steadyGroundwater2DFoam/correctInitialPotential.H

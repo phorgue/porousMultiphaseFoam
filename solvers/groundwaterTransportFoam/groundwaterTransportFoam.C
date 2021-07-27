@@ -112,7 +112,7 @@ noConvergence :
             iterNewton++;
             #include "hEqnNewton.H"
             #include "checkResidual.H"
-            Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidualSigned << endl;
+            Info << "Newton iteration " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidualSigned << endl;
         }
         if ( hEqnResidual > toleranceNewton )
         {
@@ -123,8 +123,8 @@ noConvergence :
             goto noConvergence;
         }
 
-        Info << "Saturation theta " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
-        Info << "Head pressure h  " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
+        Info << "Saturation theta: " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
+        Info << "Head pressure h: " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) <<  endl;
 
          //--- Compute variations
         volScalarField dh2dT2(d2dt2Operator.fvcD2dt2(h));

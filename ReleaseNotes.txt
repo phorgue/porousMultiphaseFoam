@@ -1,4 +1,36 @@
 ************************
+*** PMFv2107
+*** Bug Fix + tools folder 
+************************
+
+### General
+
+- MNT (Modèle Numérique de Terrain) has been replaced by DEM (Digital
+  Elevation Model) for file name, field name, comments...
+
+### Tools
+
+- new folder containing external tools (python/bash scripts) for the toolbox
+
+- pmf_csvToEvent
+
+  - python script to convert csv file extracted from simulations into event
+  file. It can be used to recover 1D column unsaturated fluxes for example to
+  inject in 2D watershed model. For usage, execute:
+
+  python pmf_csvToEvent.py --help
+
+### Tutorials
+
+- Global
+
+  - scripts are now compatible with python 3.
+
+### Bug fixes
+
+- Time-step management when (eventTimeTracking=false) has been fixed
+
+************************
 *** PMFv2102
 *** Newton Algorithm for unsaturated solvers (groundwater)
 ************************

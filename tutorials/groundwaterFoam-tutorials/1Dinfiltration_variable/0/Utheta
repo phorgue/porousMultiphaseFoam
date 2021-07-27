@@ -25,7 +25,7 @@ boundaryField
     {
         type            eventInfiltration;
         constantValue   0;
-        eventFile       "infiltration.dat";
+        eventFile       "infiltration.evt";
         value           uniform (0 0 0);
     }
     outlet
