@@ -1,24 +1,24 @@
-//- Read patch name for MNT seepage function
-word patchMNT=transportProperties.lookupOrDefault<word>("patchMNT","none");
-label patchMNTID = mesh.boundaryMesh().findPatchID(patchMNT);
+//- Read patch name for DEM seepage function
+word patchDEM=transportProperties.lookupOrDefault<word>("patchDEM","none");
+label patchDEMID = mesh.boundaryMesh().findPatchID(patchDEM);
 labelList topCellID(0);
 labelList fixedPotentialIDList(0);
 scalarList fixedPotentialValueList(0);
 
-if (patchMNT == "none")
+if (patchDEM == "none")
 {
-    Info << nl << nl << "no MNT patch (no seepage condition)" << endl;
+    Info << nl << nl << "no DEM patch (no seepage condition)" << endl;
 }
 else
 {
-    if (patchMNTID == -1)
+    if (patchDEMID == -1)
     {
-        FatalErrorIn("readForcing.H") << "patch for seepage : " << patchMNT << " not found" << abort(FatalError);
+        FatalErrorIn("readForcing.H") << "patch for seepage : " << patchDEM << " not found" << abort(FatalError);
     }
     else
     {
-        Info << nl << nl << "MNT patch used for seepage = " << patchMNT << " (id=" << patchMNTID << ")" << endl;
-        topCellID.resize(mesh.boundaryMesh()[patchMNTID].size());
-        topCellID = mesh.boundaryMesh()[patchMNTID].faceCells();
+        Info << nl << nl << "DEM patch used for seepage = " << patchDEM << " (id=" << patchDEMID << ")" << endl;
+        topCellID.resize(mesh.boundaryMesh()[patchDEMID].size());
+        topCellID = mesh.boundaryMesh()[patchDEMID].faceCells();
     }
 }
