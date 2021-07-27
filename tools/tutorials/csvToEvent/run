@@ -1,0 +1,14 @@
+#!/bin/bash
+echo ""
+echo "******************"
+echo "***display help***"
+echo "******************"
+echo ""
+python3 ../../pmf_csvToEvent.py -h
+echo ""
+echo "******************"
+echo "***run example ***"
+echo "******************"
+echo ""
+echo "python3 ../../pmf_csvToEvent.py distribution.cfg -m 10.0 -c 2 waterMassBalance.csv waterMassBalance.evt"
+python3 ../../pmf_csvToEvent.py distribution.cfg -m 10.0 -c 2 waterMassBalance.csv waterMassBalance.evt

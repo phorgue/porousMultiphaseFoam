@@ -19,17 +19,17 @@
     fvPatchScalarField& potentialPatch = potential.boundaryFieldRef()[patchID];
 
     //-- Compute and set up head pressure
-    if (args.optionFound("MNT"))
+    if (args.optionFound("DEM"))
     {
-        //- reading MNT informations
-        MNTfile fixedPotentialMNT(args.opt("MNT"));
-        Info << nl << "Potential fixed using MNT " << endl;
+        //- reading DEM informations
+        DEMfile fixedPotentialDEM(args.opt("DEM"));
+        Info << nl << "Potential fixed using DEM " << endl;
 
         //- computing local potential
         const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
         forAll(potentialPatch,facei)
         {
-            potentialPatch[facei] = fixedPotentialMNT.interpolate(faces[facei]);
+            potentialPatch[facei] = fixedPotentialDEM.interpolate(faces[facei]);
         }
     }
     else if (args.optionFound("STL"))
