@@ -41,7 +41,7 @@
 
     deltahEqn.solve();
 
-    deltahIter = max(mag(deltah.internalField())).value();
+    deltahIter = gMax(mag(deltah.internalField())());
     h = h.prevIter() + deltah;
     h.correctBoundaryConditions();
 

@@ -25,11 +25,11 @@ stopAt          endTime;
 
 endTime         360000;
 
-deltaT          1;
+deltaT          1e-5;
 
 writeControl    adjustableRunTime;
 
-writeInterval   72000;
+writeInterval   36000;
 
 purgeWrite      0;
 
@@ -53,6 +53,6 @@ maxDeltaT       1e+9;
 
 CSVoutput       true;
 
-eventTimeTracking true;
+eventTimeTracking false;
 
 // ************************************************************************* //

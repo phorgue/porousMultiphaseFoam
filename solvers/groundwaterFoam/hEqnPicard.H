@@ -23,6 +23,6 @@
     hEqn.solve();
 
     deltah = h-h.prevIter();
-    deltahIter = max(mag(deltah.internalField())).value();
+    deltahIter = gMax(mag(deltah.internalField())());
 
 }
