@@ -34,7 +34,7 @@ Developer
 
 #include "fvCFD.H"
 #include "fixedValueFvPatchField.H"
-#include "MNTfile.H"
+#include "DEMfile.H"
 #include "multiscalarMixture.H"
 #include "infiltrationEventFile.H"
 #include "sourceEventFile.H"
@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
         #include "waterMassBalance.H"
 
         //- Solve transport equation
+        phihwater = phi * fvc::interpolate(hwater);
         #include "CEqn.H"
 
         //- C mass balance computation

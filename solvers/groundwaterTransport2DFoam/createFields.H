@@ -54,7 +54,7 @@ volScalarField z0
     ),
     mesh
 );
-Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << endl;
+Info << "min(z0) = " << gMin(z0.internalField()) << " ; max(z0) = " << gMax(z0.internalField()) << endl;
 
 Info << nl << "Computing hwater" << endl;
 volScalarField hwater
@@ -80,7 +80,7 @@ scalar flowOutSeepagePrev = 0;
 
 #include "correctInitialPotential.H"
 
-Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value()
+Info << "min(hwater) = " << gMin(hwater.internalField()) << " ; max(hwater) = " << gMax(hwater.internalField())
 << " ; hwaterMin = " << hwaterMin.value() << endl;
 
 if (!hwater.headerOk()) hwater.write();
@@ -106,7 +106,7 @@ volScalarField eps
     epsScalar
 );
 
-if (max(eps).value() <= 0) FatalErrorIn("createFields.H") << " porosity eps equal to 0" << exit(FatalError);
+if (gMax(eps) <= 0) FatalErrorIn("createFields.H") << " porosity eps equal to 0" << exit(FatalError);
 
 // Intrinsic permeability
 Info << nl << "Reading permeability field K" << endl;
@@ -122,7 +122,7 @@ volScalarField K
     ),
     mesh
 );
-Info << "min(K) = " << min(K).value() << " ; max(K) = " << max(K).value() << nl << endl;
+Info << "min(K) = " << min(K) << " ; max(K) = " << gMax(K) << nl << endl;
 
 // permeability/mobility field
 dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);

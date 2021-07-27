@@ -1,1 +1,1 @@
-../stationaryGroundwater2DFoam/readFixedPoints.H
+../steadyGroundwater2DFoam/readFixedPoints.H

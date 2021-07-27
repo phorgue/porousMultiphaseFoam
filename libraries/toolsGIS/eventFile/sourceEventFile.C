@@ -49,7 +49,7 @@ Foam::sourceEventFile::sourceEventFile
 {
     if (fileName.size() != 0)
     {
-        //- properties of a MNT file
+        //- properties of a DEM file
         string separator_ = " ";
         label nEntriesMax = 4;
 

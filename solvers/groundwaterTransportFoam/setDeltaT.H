@@ -109,27 +109,25 @@ if(adjustTimeStep)
 
     }
 
+    //-Adjust time step to explicitly compute (water/tracer) event time 
     scalar timeOfNextEvent = GREAT;
     if (eventTimeTracking)
     {
         if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
         forAll(tracerSourceEventList,tracerSourceEventi) timeOfNextEvent = min(timeOfNextEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime());
-    }
 
-    scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
-    scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
-    if ((nSteps < labelMax) && (nSteps != 0))
-    {
-        const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
-        runTime.setDeltaT(timeToNextEvent/nStepsToNextEvent,false);
-    }
-
-    //- To handle close event times (inferior to current timestep)
-    if (nSteps == 0)
-    {
-        scalar timeToCloseEvent = GREAT;
-        if (eventTimeTracking)
+        scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
+        scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+        if ((nSteps < labelMax) && (nSteps != 0))
         {
+            const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
+            runTime.setDeltaT(timeToNextEvent/nStepsToNextEvent,false);
+        }
+
+        //- To handle close event times (inferior to current timestep)
+        if (nSteps == 0)
+        {
+            scalar timeToCloseEvent = GREAT;
             if (eventIsPresent_water)
             {
                 if (event_water.currentEventEndTime() != runTime.timeOutputValue())
@@ -151,8 +149,8 @@ if(adjustTimeStep)
                     timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
+            runTime.setDeltaT(min(runTime.deltaTValue(),timeToCloseEvent),false);
         }
-        runTime.setDeltaT(min(runTime.deltaTValue(),timeToCloseEvent),false);
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue()

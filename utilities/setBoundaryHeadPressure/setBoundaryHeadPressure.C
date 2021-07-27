@@ -29,29 +29,29 @@ Description
     Can be used to set up water level for all groundwater solvers.
 
 Usage
-    1) for uniform head pressure (groundwaterFoam/stationaryGroundwaterFoam)
+    1) for uniform head pressure (groundwaterFoam/steadyGroundwaterFoam)
 
       setBoundaryHeadPressure -patch patchName -value 50.3
 
-    2) MNT dependent head pressure (groundwaterFoam/stationaryGroundwaterFoam)
+    2) DEM dependent head pressure (groundwaterFoam/steadyGroundwaterFoam)
 
       setBoundaryHeadPressure -patch patchName -file stl_file
 
-    3) MNT dependent potential (groundwater2DFoam/stationaryGroundwater2DFoam)
+    3) DEM dependent potential (groundwater2DFoam/steadyGroundwater2DFoam)
 
       setBoundaryHeadPressure -patch patchName -file stl_file -version 2D
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "MNTfile.H"
+#include "DEMfile.H"
 #include "triSurfaceMesh.H"
 
 int main(int argc, char *argv[])
 {
     argList::addOption("patch","patchName","specify the patch to set head pressure");
     argList::addOption("STL","fileName","specify the STL file");
-    argList::addOption("MNT","fileName","specify the MNT file");
+    argList::addOption("DEM","fileName","specify the DEM file");
     argList::addOption("value","0","uniform potential value");
     argList::addOption("version","3D","3D (h) or 2D (potential)");
 

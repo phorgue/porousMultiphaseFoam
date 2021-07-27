@@ -54,6 +54,6 @@ BrooksAndCoreyCoeffs
     alpha	0.2;	
 }
 
-eventFileWaterSource "injection.dat";
+eventFileWaterSource "injection.evt";
 
 // ************************************************************************* //
