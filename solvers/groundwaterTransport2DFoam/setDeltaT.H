@@ -90,27 +90,26 @@ if (adjustTimeStep)
             )
         );
 
-    scalar timeOfNextEvent = GREAT;
+
+    //-Adjust time step to explicitly compute (infiltration/source/tracer) event time
     if (eventTimeTracking)
     {
+        scalar timeOfNextEvent = GREAT;
         if (infiltrationEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,infiltrationEvent.currentEventEndTime());
         forAll(sourceEventList,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList[sourceEventi]->currentEventEndTime());
-    }
   
-    scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
-    scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
-    if ((nSteps < labelMax) && (nSteps != 0))
-    {
-        const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
-        runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
-    }
-
-    //- To handle close event times (inferior to current timestep)
-    if (nSteps == 0)
-    {
-        scalar timeToCloseEvent = GREAT;
-        if (eventTimeTracking)
+        scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
+        scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
+        if ((nSteps < labelMax) && (nSteps != 0))
         {
+            const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
+            runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
+        }
+
+        //- To handle close event times (inferior to current timestep)
+        if (nSteps == 0)
+        {
+            scalar timeToCloseEvent = GREAT;
             if (infiltrationEventIsPresent)
             {
                 if (infiltrationEvent.currentEventEndTime() != runTime.timeOutputValue())
@@ -132,8 +131,8 @@ if (adjustTimeStep)
                     timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
+            runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
         }
-        runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
     }
 
     Info<< "deltaT = " <<  runTime.deltaTValue() << endl;

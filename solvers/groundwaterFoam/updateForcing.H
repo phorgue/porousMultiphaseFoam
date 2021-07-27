@@ -1,4 +1,4 @@
-if (patchMNTID > -1)
+if (patchDEMID > -1)
 {
     fixedPotentialIDList.clear();
     fixedPotentialValueList.clear();

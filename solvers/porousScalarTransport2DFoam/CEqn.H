@@ -15,9 +15,9 @@ forAll(composition.Y(), speciesi)
 
     fvScalarMatrix CEqn
         (
-            eps * R * hwater * fvm::ddt(C)
+            eps * R * fvm::ddt(hwater, C)
             + fvm::div(phihwater, C, "div(phi,C)")
-            - fvm::laplacian(eps*hwater*Deff, C, "laplacian(Deff,C)")
+            - eps * hwater * fvm::laplacian(Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm * zScale
             - eps * R * hwater * fvm::Sp(lambda,C)
@@ -26,7 +26,7 @@ forAll(composition.Y(), speciesi)
 
     CEqn.solve("C");
 
-    dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
+    dCdTmax[speciesi] = gMax(mag(fvc::ddt(C))());
     if (timeScheme == "Euler")
     {
         volScalarField dC2dT2(d2dt2Operator.fvcD2dt2(C));
@@ -53,8 +53,8 @@ forAll(composition.Y(), speciesi)
             }
         }
     }
-    Info<< "Concentration Min(" << speciesName << ") = " << min(C).value()
-        << " Max(" << speciesName << ") = " << max(C).value()
+    Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField())
+        << " Max(" << speciesName << ") = " << gMax(C.internalField())
         << " mass(" <<speciesName << ") = " << fvc::domainIntegrate(R*C*hwater*eps).value()/zScale
         << " dCmax = " << dCdTmax[speciesi]*runTime.deltaTValue() << endl;
 
