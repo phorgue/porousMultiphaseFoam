@@ -27,7 +27,7 @@ gradSchemes
 
 divSchemes
 {
-    default         Gauss linear;
+    default         Gauss vanLeer phi;
 }
 
 laplacianSchemes

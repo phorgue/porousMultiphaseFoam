@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-## \file cleanTutorials.py
+## \file cleanTutorials.py for python 3
 ## Script for running all validations cases
-## \author Pierre Horgue (inspired from MARINE source code and K. Larnier ;-) )
+## \author Pierre Horgue (inspired from MARINE source code and K. Larnier)
 
 # import
 from __future__ import with_statement
@@ -26,9 +26,9 @@ class testCase:
     #=============================================================================
     def run(self):
 
-        print ""
-        print "Test : " + self.solver + " " + self.case
-        print ""
+        print("")
+        print("Test : " + self.solver + " " + self.case)
+        print("")
 
         refDir=os.getcwd()
 
@@ -39,7 +39,7 @@ class testCase:
 
         stdout, stderr = ProcessPipe.communicate()
 
-        print "[ CLEAN ] "
+        print("[ CLEAN ] ")
 
         os.chdir(refDir)
 
@@ -51,17 +51,17 @@ class testCase:
 
 if __name__ == '__main__':
 
-    print "========================================================"
-    print "                   CLEANING TEST CASES                  "
-    print "========================================================"
+    print("========================================================")
+    print("                   CLEANING TEST CASES                  ")
+    print("========================================================")
 
     for case in testCases:
         test = testCase(case["solver"],case["case"])
         test.run()
 
-    print " "
-    print "========================================================"
-    print "                        FINISHED                        "
-    print "========================================================"
+    print(" ")
+    print("========================================================")
+    print("                        FINISHED                        ")
+    print("========================================================")
 
     sys.exit(0)

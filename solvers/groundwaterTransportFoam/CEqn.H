@@ -25,7 +25,7 @@ forAll(composition.Y(), speciesi)
 
     CEqn.solve("C");
 
-    dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
+    dCdTmax[speciesi] = gMax(mag(fvc::ddt(C))());
     if (timeScheme == "Euler")
     {
         volScalarField dC2dT2(d2dt2Operator.fvcD2dt2(C));
@@ -53,8 +53,8 @@ forAll(composition.Y(), speciesi)
         }
     }
 
-    Info<< "Concentration Min(" << speciesName << ") = " << min(C).value()
-        << " Max(" << speciesName << ") = " << max(C).value()
+    Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField())
+        << " Max(" << speciesName << ") = " << gMax(C.internalField())
         << " d" << speciesName << "dTmax = " << dCdTmax[speciesi]
         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(C*theta).value()
         << " dCmax = " << dCdTmax[speciesi]*runTime.deltaTValue()

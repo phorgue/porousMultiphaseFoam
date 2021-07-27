@@ -1,4 +1,4 @@
-MNTfile/MNTfile.C
+DEMfile/DEMfile.C
 XYfile/XYfile.C
 
 eventFile/eventFile.C
