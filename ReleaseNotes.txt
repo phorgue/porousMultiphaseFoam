@@ -1,18 +1,12 @@
+************************
+*** PMFv2107
+*** Bug Fix + tools folder 
+************************
 
 ### General
 
 - MNT (Modèle Numérique de Terrain) has been replaced by DEM (Digital
   Elevation Model) for file name, field name, comments...
-
-### Solvers
-
-- dispersive terms for transport solvers have been fixed with:
-
-  fvc::(eps * saturation * Deff, C)
-
-  replaced by:
-
-  eps * saturation * fvc::(Deff, C)
 
 ### Tools
 
