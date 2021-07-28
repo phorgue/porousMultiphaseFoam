@@ -42,7 +42,6 @@ fixedHeadPressureSTL
     STLname_("")
 {}
 
-
 Foam::fixedHeadPressureSTL::
 fixedHeadPressureSTL
 (
@@ -54,7 +53,6 @@ fixedHeadPressureSTL
     fixedValueFvPatchScalarField(h, iF, dict, false),
     STLname_(dict.lookup("file"))
 {}
-
 
 Foam::fixedHeadPressureSTL::
 fixedHeadPressureSTL
@@ -69,18 +67,6 @@ fixedHeadPressureSTL
     STLname_(ptf.STLname_)
 {}
 
-
-Foam::fixedHeadPressureSTL::
-fixedHeadPressureSTL
-(
-    const fixedHeadPressureSTL& ptf
-)
-:
-    fixedValueFvPatchScalarField(ptf),
-    STLname_(ptf.STLname_)
-{}
-
-
 Foam::fixedHeadPressureSTL::
 fixedHeadPressureSTL
 (
@@ -91,7 +77,6 @@ fixedHeadPressureSTL
     fixedValueFvPatchScalarField(ptf, iF),
     STLname_(ptf.STLname_)
 {}
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

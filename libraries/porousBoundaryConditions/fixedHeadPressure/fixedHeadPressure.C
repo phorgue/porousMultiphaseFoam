@@ -42,7 +42,6 @@ fixedHeadPressure
     potential_(0.)
 {}
 
-
 Foam::fixedHeadPressure::
 fixedHeadPressure
 (
@@ -54,7 +53,6 @@ fixedHeadPressure
     fixedValueFvPatchScalarField(h, iF, dict, false),
     potential_(dict.lookupOrDefault<scalar>("potential",0.))
 {}
-
 
 Foam::fixedHeadPressure::
 fixedHeadPressure
@@ -69,18 +67,6 @@ fixedHeadPressure
     potential_(ptf.potential_)
 {}
 
-
-Foam::fixedHeadPressure::
-fixedHeadPressure
-(
-    const fixedHeadPressure& ptf
-)
-:
-    fixedValueFvPatchScalarField(ptf),
-    potential_(ptf.potential_)
-{}
-
-
 Foam::fixedHeadPressure::
 fixedHeadPressure
 (
@@ -91,7 +77,6 @@ fixedHeadPressure
     fixedValueFvPatchScalarField(ptf, iF),
     potential_(ptf.potential_)
 {}
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

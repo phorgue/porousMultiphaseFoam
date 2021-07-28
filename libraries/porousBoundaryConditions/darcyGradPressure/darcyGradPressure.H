@@ -92,20 +92,11 @@ public:
         const fvPatchFieldMapper&
     );
 
-    //- Construct as copy
+    //- Disallow copy without setting internal field reference
     darcyGradPressure
     (
         const darcyGradPressure&
-    );
-
-    //- Construct and return a clone
-    virtual tmp<fvPatchScalarField> clone() const
-        {
-            return tmp<fvPatchScalarField>
-                (
-                    new darcyGradPressure(*this)
-                );
-        }
+    ) = delete;
 
     //- Construct as copy setting internal field reference
     darcyGradPressure

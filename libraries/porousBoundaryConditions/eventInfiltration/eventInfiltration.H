@@ -129,20 +129,11 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Disallow copy without setting internal field reference
         eventInfiltration
         (
             const eventInfiltration&
-        );
-
-        //- Construct and return a clone
-        virtual tmp<fvPatchVectorField> clone() const
-        {
-            return tmp<fvPatchVectorField >
-            (
-                new eventInfiltration(*this)
-            );
-        }
+        ) = delete ;
 
         //- Construct as copy setting internal field reference
         eventInfiltration

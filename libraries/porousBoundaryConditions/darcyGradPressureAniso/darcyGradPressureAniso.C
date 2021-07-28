@@ -84,19 +84,6 @@ Foam::darcyGradPressureAniso::darcyGradPressureAniso
 
 Foam::darcyGradPressureAniso::darcyGradPressureAniso
 (
-    const darcyGradPressureAniso& ptf
-)
-    :
-    fixedGradientFvPatchScalarField(ptf),
-    MfName_(ptf.MfName_),
-    MbfName_(ptf.MbfName_),
-    phiName_(ptf.phiName_),
-    LfName_(ptf.LfName_),
-    gradpcName_(ptf.gradpcName_)
-{}
-
-Foam::darcyGradPressureAniso::darcyGradPressureAniso
-(
     const darcyGradPressureAniso& ptf,
     const DimensionedField<scalar, volMesh>& iF
 )

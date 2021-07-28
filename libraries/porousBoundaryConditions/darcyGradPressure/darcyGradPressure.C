@@ -76,18 +76,6 @@ Foam::darcyGradPressure::darcyGradPressure
 
 Foam::darcyGradPressure::darcyGradPressure
 (
-    const darcyGradPressure& ptf
-)
-    :
-    fixedGradientFvPatchScalarField(ptf),
-    MfName_(ptf.MfName_),
-    phiName_(ptf.phiName_),
-    phiGfName_(ptf.phiGfName_),
-    phiPcName_(ptf.phiPcName_)
-{}
-
-Foam::darcyGradPressure::darcyGradPressure
-(
     const darcyGradPressure& ptf,
     const DimensionedField<scalar, volMesh>& iF
 )

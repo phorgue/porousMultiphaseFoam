@@ -8,8 +8,8 @@ then  . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 fi
 
 wmake libraries/numericalMethods
-wmake libraries/porousModels
 wmake libraries/toolsGIS
+wmake libraries/porousModels
 wmake libraries/porousBoundaryConditions
 
 wmake all solvers

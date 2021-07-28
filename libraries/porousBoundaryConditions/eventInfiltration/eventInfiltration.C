@@ -56,7 +56,6 @@ eventInfiltration
     eventFile_()
 {}
 
-
 Foam::eventInfiltration::
 eventInfiltration
 (
@@ -118,7 +117,6 @@ eventInfiltration
     }
 }
 
-
 Foam::eventInfiltration::
 eventInfiltration
 (
@@ -134,20 +132,6 @@ eventInfiltration
     eventFile_()
 {}
 
-
-Foam::eventInfiltration::
-eventInfiltration
-(
-    const eventInfiltration& ptf
-)
-:
-    fixedValueFvPatchVectorField(ptf),
-    fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
-    patchEventID_(-1),
-    eventFile_()
-{}
-
-
 Foam::eventInfiltration::
 eventInfiltration
 (
@@ -160,7 +144,6 @@ eventInfiltration
     patchEventID_(-1),
     eventFile_()
 {}
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 

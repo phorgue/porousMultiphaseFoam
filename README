@@ -6,8 +6,10 @@
 
 - The current branches (last version of the toolbox)
 
+  - branch "openfoam-v2106" > PMFv2107
   - branch "openfoam-v2006" > PMFv2107
   - branch "openfoam-v1906" > PMFv2107
+  - branch "openfoam-v9"    > PMFv2107
   - branch "openfoam-v8"    > PMFv2107
   - branch "openfoam-v7"    > PMFv2107
 
@@ -30,6 +32,7 @@
   - OpenFOAM 2.4 and older
   - foam-extend 3.2 and older
   - OpenFOAM v1706 and older
+  - OpenFOAM v1712/v1812/v1912/v2012
 
 - This toolbox needs only a standard OpenFOAM installation
   (see www.openfoam.org or openfoam.com)

@@ -129,20 +129,11 @@ public:
             const fvPatchFieldMapper&
         );
 
-        //- Construct as copy
+        //- Disallow copy without setting internal field reference
         fixedHeadPressure
         (
             const fixedHeadPressure&
-        );
-
-        //- Construct and return a clone
-        virtual tmp<fvPatchScalarField> clone() const
-        {
-            return tmp<fvPatchScalarField >
-            (
-                new fixedHeadPressure(*this)
-            );
-        }
+        ) = delete;
 
         //- Construct as copy setting internal field reference
         fixedHeadPressure

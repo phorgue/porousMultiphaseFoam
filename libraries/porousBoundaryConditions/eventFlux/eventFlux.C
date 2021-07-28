@@ -58,7 +58,6 @@ eventFlux
     eventFile_()
 {}
 
-
 Foam::eventFlux::
 eventFlux
 (
@@ -133,7 +132,6 @@ eventFlux
 
 }
 
-
 Foam::eventFlux::
 eventFlux
 (
@@ -151,22 +149,6 @@ eventFlux
     eventFile_()
 {}
 
-
-Foam::eventFlux::
-eventFlux
-(
-    const eventFlux& ptf
-)
-:
-    fixedValueFvPatchScalarField(ptf),
-    eventFluxValue_(ptf.eventFluxValue_),
-    phiName_(ptf.phiName_),
-    isBackwardScheme_(false),
-    patchEventID_(-1),
-    eventFile_()
-{}
-
-
 Foam::eventFlux::
 eventFlux
 (
@@ -181,7 +163,6 @@ eventFlux
     patchEventID_(-1),
     eventFile_()
 {}
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
