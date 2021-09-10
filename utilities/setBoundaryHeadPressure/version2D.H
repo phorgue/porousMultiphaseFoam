@@ -1,5 +1,5 @@
 {
-
+    
     volScalarField potential
         (
             IOobject
@@ -23,20 +23,55 @@
     {
         //- reading DEM informations
         DEMfile fixedPotentialDEM(args.opt("DEM"));
-        Info << nl << "Potential fixed using DEM " << endl;
+	scalar offsetPotential = args.optionLookupOrDefault<scalar>("offset",0.);
+	if (offsetPotential==0)
+	{
+	    Info << nl << "Potential fixed using DEM" << endl;
+	}
+	else
+	{
+	    Info << nl << "Potential fixed using DEM offseted by " << offsetPotential << endl;
+	}
 
         //- computing local potential
         const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
         forAll(potentialPatch,facei)
         {
-            potentialPatch[facei] = fixedPotentialDEM.interpolate(faces[facei]);
+            potentialPatch[facei] = fixedPotentialDEM.interpolate(faces[facei]) + offsetPotential;
         }
     }
     else if (args.optionFound("STL"))
     {
-        FatalErrorIn("version2D.H") << "-STL option cannon be used for 2D potential initialization" << abort(FatalError);
-    }
-    else
+        //- reading STL informations
+        word STLfile = args.opt("STL");
+        triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
+        pointField pPoints = potentialSTL.points();
+	scalar thresholdPotential = args.optionLookupOrDefault<scalar>("threshold",0.);
+	scalar offsetPotential = args.optionLookupOrDefault<scalar>("offset",0.);
+        Info << nl << "Potential fixed using points over " << thresholdPotential <<  " in STL = " << STLfile << " offseted by " << offsetPotential << endl;
+        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
+	
+        //- computing local potential
+        forAll(potentialPatch,facei)
+        {
+            scalar xy_distance = GREAT;
+            label id_point = -1;
+            forAll(pPoints,pointi)
+            {
+                if (pPoints[pointi].z()>thresholdPotential)
+		{
+                    scalar tmp_dist = Foam::sqrt(pow(pPoints[pointi].x()-faces[facei].x(),2)+pow(pPoints[pointi].y()-faces[facei].y(),2));
+                    if (tmp_dist < xy_distance)
+		    {
+                        xy_distance = tmp_dist;
+                        id_point = pointi;
+		    }
+		}
+            }
+            potentialPatch[facei] = pPoints[id_point].z() + offsetPotential;    
+        }
+    }  
+    else if (args.optionFound("value"))
     {
         //- uniform potential
         scalar uniformPotential = args.optionLookupOrDefault<scalar>("value",0.);
