@@ -54,7 +54,9 @@ int main(int argc, char *argv[])
     argList::addOption("DEM","fileName","specify the DEM file");
     argList::addOption("value","0","uniform potential value");
     argList::addOption("version","3D","3D (h) or 2D (potential)");
-
+    argList::addOption("threshold","0","minimum height for points to look in STL file");
+    argList::addOption("offset","0","specify the constant offset from the STL/MNT file");
+    
     Foam::argList args(argc,argv); 
 
     if (!args.found("patch"))

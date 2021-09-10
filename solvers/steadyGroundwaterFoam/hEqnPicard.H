@@ -18,6 +18,8 @@
             - sourceTerm
         );
 
+    #include "updateForcing.H"
+
     hEqn.solve();
 
     deltah = mag(h-h.prevIter());

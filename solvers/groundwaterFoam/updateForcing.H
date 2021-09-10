@@ -7,12 +7,12 @@ if (patchDEMID > -1)
     {
         label currentCell = topCellID[celli];
 
-        if(h[currentCell] >= 0)
+        if(h[currentCell] >= distanceToDEM[celli])
         {
             if (cellFlux[currentCell] < 0)
             {
                 fixedPotentialIDList.append(currentCell);
-                fixedPotentialValueList.append(0);
+                fixedPotentialValueList.append(distanceToDEM[celli]);
             }
         }
     }

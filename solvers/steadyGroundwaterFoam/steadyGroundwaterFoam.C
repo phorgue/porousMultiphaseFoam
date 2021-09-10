@@ -57,6 +57,8 @@ int main(int argc, char *argv[])
     scalar massConservativeTerms = 1; // useless, just for createthetaFields.H re-use
     #include "createthetaFields.H"
     #include "readEvent.H"
+    #include "readForcing.H"
+
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
