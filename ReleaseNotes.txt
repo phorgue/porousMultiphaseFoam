@@ -1,4 +1,21 @@
 ************************
+*** PMFv
+***
+************************
+
+### Solvers
+
+- steadyGroundwaterFoam
+
+  - seepage has been added (similar to transient solver groundwaterFoam)
+
+### Tutorials
+
+- darcyFoam
+
+  - fix input folder (0 -> 0.org) to avoid paraview visualizations
+
+************************
 *** PMFv2107
 *** Bug Fix + tools folder 
 ************************
