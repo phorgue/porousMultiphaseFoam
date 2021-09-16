@@ -7,7 +7,6 @@ solver=darcyFoam
 runApplication blockMesh
 
 cp constant/K.org constant/K
-cp 0/p.org 0/p
-cp 0/Ua.org 0/Ua
+cp -r 0.org 0
 
 runApplication $solver -phase a

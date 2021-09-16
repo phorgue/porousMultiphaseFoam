@@ -2,6 +2,7 @@
 Pierre Horgue (phorgue@imft.fr)
 Jacques Franc
 Gabriel Gerlero
+Gillien Latour
 
 # Bug track/fix and beta tester
 avlmachado (github)
