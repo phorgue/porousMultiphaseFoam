@@ -15,6 +15,13 @@
 
   - fix input folder (0 -> 0.org) to avoid paraview visualizations
 
+### utilities
+
+- setBoundaryWaterLevel
+
+  - replace setBoundaryHeadPressure as it can be used for potential or h
+  - version option (2D/3D) has been replaced by field option (h/potential)
+
 ************************
 *** PMFv2107
 *** Bug Fix + tools folder 
