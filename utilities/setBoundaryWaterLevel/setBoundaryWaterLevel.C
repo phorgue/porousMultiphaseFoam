@@ -22,24 +22,32 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    setBoundaryHeadPressure
+    setBoundaryHeadWaterLevel
 
 Description
     Utility to set up head Pressure (3D) or potential (2D) on a specified patch
     Can be used to set up water level for all groundwater solvers.
 
 Usage
-    1) for uniform head pressure (groundwaterFoam/steadyGroundwaterFoam)
+    1) to impose uniform head pressure (unsaturated solvers):
 
-      setBoundaryHeadPressure -patch patchName -value 50.3
+        setBoundaryWaterLevel -patch patchName -value 50.3
 
-    2) DEM dependent head pressure (groundwaterFoam/steadyGroundwaterFoam)
+    2) to impose uniform potential (saturated solvers):
 
-      setBoundaryHeadPressure -patch patchName -file stl_file
+        setBoundaryWaterLevel -patch patchName -value 50.3 -field potential
 
-    3) DEM dependent potential (groundwater2DFoam/steadyGroundwater2DFoam)
+    3) initialize pressure head with DEM  file (unsaturated solvers):
 
-      setBoundaryHeadPressure -patch patchName -file stl_file -version 2D
+        setBoundaryWaterLevel -patch patchName -DEM stl_file
+
+    4) initialize potential with DEM  file (saturated solvers):
+
+        setBoundaryWaterLevel -patch patchName -DEM stl_file -field potential
+
+    5)  initialize pressure head with STL  file (unsaturated solvers):
+
+        setBoundaryWaterLevel -patch patchName -STL stl_file
 
 \*---------------------------------------------------------------------------*/
 
@@ -53,7 +61,7 @@ int main(int argc, char *argv[])
     argList::addOption("STL","fileName","specify the STL file");
     argList::addOption("DEM","fileName","specify the DEM file");
     argList::addOption("value","0","uniform potential value");
-    argList::addOption("version","3D","3D (h) or 2D (potential)");
+    argList::addOption("field","h","h or potential");
     argList::addOption("threshold","0","minimum height for points to look in STL file");
     argList::addOption("offset","0","specify the constant offset from the STL/MNT file");
     
@@ -69,24 +77,24 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
 
-    word version("3D");
-    if (args.found("version"))
+    word field("h");
+    if (args.found("field"))
     {
-        version = args.opt("version");
+        field = args.opt("field");
     }
 
-    if(version == "3D")
+    if(field == "h")
     {
-        #include "version3D.H"
+        #include "pressureheadField.H"
     }
-    else if (version == "2D")
+    else if (field == "potential")
     {
-        #include "version2D.H"
+        #include "potentialField.H"
     }
     else
     {
         FatalErrorIn("in setBoundaryHeadPressure.C")
-            << "version not known : " << version
+            << "field not known : " << field
                 << abort(FatalError);
     }
 
