@@ -24,11 +24,13 @@ then
     rm -f $FOAM_USER_APPBIN/steadyGroundwaterFoam
     # clean utilities
     rm -f $FOAM_USER_APPBIN/darcyFoam
-    rm -f $FOAM_USER_APPBIN/setBoundaryHeadPressure
+    rm -f $FOAM_USER_APPBIN/setBoundaryWaterLevel
     rm -f $FOAM_USER_APPBIN/setFieldsFromDEM
     rm -f $FOAM_USER_APPBIN/setFieldsFromXY
     # clean dynamic libraries
     rm -f $FOAM_USER_LIBBIN/libporousBoundaryConditions.so
     rm -f $FOAM_USER_LIBBIN/libporousModels.so
     rm -f $FOAM_USER_LIBBIN/libtoolsGIS.so
+    # clean obsolete executables
+    rm -f $FOAM_USER_APPBIN/setBoundaryHeadPressure
 fi
