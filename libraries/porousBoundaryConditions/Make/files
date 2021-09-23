@@ -1,9 +1,6 @@
 darcyGradPressure/darcyGradPressure.C
 darcyGradPressureAniso/darcyGradPressureAniso.C
 
-fixedHeadPressure/fixedHeadPressure.C
-fixedHeadPressureSTL/fixedHeadPressureSTL.C
-
 eventFlux/eventFlux.C
 eventInfiltration/eventInfiltration.C
 
