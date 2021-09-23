@@ -3,6 +3,14 @@
 ***
 ************************
 
+### Libraries
+
+- porousBoundaryConditions
+
+  - fixedHeadPressure/fixedHeadPressureSTL BCs have been deleted. They can be
+  replaced by usual fixedValue while initialize values with the utility
+  setBoundaryWaterLevel
+
 ### Solvers
 
 - steadyGroundwaterFoam
