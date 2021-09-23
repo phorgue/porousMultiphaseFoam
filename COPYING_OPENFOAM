@@ -1,11 +1,11 @@
                     GNU GENERAL PUBLIC LICENSE
 
- OpenFOAM(R) is Copyright (C) 2011-2016 OpenFOAM Foundation
- Contact: OpenFOAM Foundation (OpenFOAM.Foundation@gmail.com)
+ porousMultiphaseFoam is Copyright (C) Toulouse INP, Pierre Horgue
+ Contact: Pierre Horgue (phorgue@imft.fr)
 
- You may use, distribute and copy the OpenFOAM CFD Toolbox under the terms
- of GNU General Public License version 3, which is displayed below, or
- (at your option) any later version.
+ You may use, distribute and copy the porousMultiphaseFoam (PMF) Toolbox
+ under the terms  of GNU General Public License version 3, which is
+ displayed below, or (at your option) any later version.
 
 -------------------------------------------------------------------------
 

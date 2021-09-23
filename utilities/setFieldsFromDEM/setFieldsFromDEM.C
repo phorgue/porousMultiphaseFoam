@@ -1,12 +1,16 @@
 /*---------------------------------------------------------------------------*\
-  =========                 |
-  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
-     \\/     M anipulation  |
--------------------------------------------------------------------------------
+  		  _______  ____    ____  ________  
+ 		 |_   __ \|_   \  /   _||_   __  | 
+   		   | |__) | |   \/   |    | |_ \_| 
+   		   |  ___/  | |\  /| |    |  _|    
+    		  _| |_    _| |_\/_| |_  _| |_     
+   		 |_____|  |_____||_____||_____|    
+   	     Copyright (C) Toulouse INP, Pierre Horgue
+
 License
-    This file is part of OpenFOAM.
+    This file is part of porousMultiphaseFoam, an extension of OpenFOAM
+    developed by Pierre Horgue (phorgue@imft.fr) and dedicated to multiphase 
+    flows through porous media.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by
