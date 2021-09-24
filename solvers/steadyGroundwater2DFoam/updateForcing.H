@@ -17,7 +17,9 @@ if (seepageActive)
             }
         }
     }
-    
-    Info << "Number of seepage cells = " << seepageIDList.size() << endl;
+
+    // Display number of seepage only for serial run (wrong value for parallel
+    if (Pstream::nProcs() == 1) Info << "Number of seepage cells = " << seepageIDList.size() << endl;
+
     if (seepageIDList.size() > 0) potentialEqn.setValues(seepageIDList,seepageValueList);
 }
