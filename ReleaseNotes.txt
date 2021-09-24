@@ -17,6 +17,11 @@
 
   - seepage has been added (similar to transient solver groundwaterFoam)
 
+- groundwater solvers
+
+  - number of seepage cells is only displayed for serial simulation (parallel
+  simulations give wrong value in terminal due to domain decomposition)
+
 ### Tutorials
 
 - darcyFoam
