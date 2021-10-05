@@ -41,8 +41,9 @@
 
     deltahEqn.solve();
 
-    deltahIter = gMax(mag(deltah.internalField())());
     h = h.prevIter() + deltah;
     h.correctBoundaryConditions();
 
+    forAll(fixedPotentialIDList,celli) deltah[fixedPotentialIDList[celli]] = 0;
+    deltahIter = gMax(mag(deltah.internalField())());
 }

@@ -35,6 +35,16 @@
   - replace setBoundaryHeadPressure as it can be used for potential or h
   - version option (2D/3D) has been replaced by field option (h/potential)
 
+### Bug Fix
+
+- groundwaterFoam/groundwater2DFoam
+
+  - set deltah/dpotential=0 for seepage cells
+
+- steadyGroundwaterFoam
+
+  - set residual=0 for seepage cells
+
 ************************
 *** PMFv2107
 *** Bug Fix + tools folder 
