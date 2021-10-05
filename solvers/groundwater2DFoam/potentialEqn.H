@@ -22,6 +22,7 @@
     if (timeScheme == "Euler")
     {
         volScalarField dpotential2dT2(d2dt2Operator.fvcD2dt2(potential));
+        forAll(fixedPotentialIDList,celli) dpotential2dT2[fixedPotentialIDList[celli]] = 0;
         dpotential2dT2max = 0;
         forAll(dpotential2dT2, celli)
         {
@@ -35,10 +36,7 @@
     else
     {
         volScalarField dpotential3dT3(d3dt3Operator.d3dt3(potential));
-        forAll(fixedPotentialIDList,celli)
-        {
-            dpotential3dT3[fixedPotentialIDList[celli]] = 0;
-        }
+        forAll(fixedPotentialIDList,celli) dpotential3dT3[fixedPotentialIDList[celli]] = 0;
         dpotential3dT3max = 0;
         forAll(dpotential3dT3, celli)
         {
