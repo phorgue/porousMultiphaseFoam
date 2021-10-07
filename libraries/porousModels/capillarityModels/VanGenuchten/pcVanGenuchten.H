@@ -96,7 +96,7 @@ public:
         {
             //- Compute Saturation from! head pressure
             h.dimensions().reset(dimless);
-            Se_ =  neg(h) *pow(1.0+pow(alpha_*mag(h),n_),-m_) + pos(h+VSMALL)*(1);
+            Se_ =  neg(h+VSMALL) *pow(1.0+pow(alpha_*mag(h),n_),-m_) + pos(h+VSMALL)*1;
             h.dimensions().reset(dimLength);
 
             //- Update capillary capacity
