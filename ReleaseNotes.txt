@@ -37,13 +37,12 @@
 
 ### Bug Fix
 
-- groundwaterFoam/groundwater2DFoam
+- groundwaterFoam/groundwater2DFoam: set deltah/dpotential=0 for seepage cells
 
-  - set deltah/dpotential=0 for seepage cells
+- steadyGroundwaterFoam: set residual=0 for seepage cells
 
-- steadyGroundwaterFoam
+- pcVanGenuchten: fix Se computation when -VSMALL < h < 0
 
-  - set residual=0 for seepage cells
 
 ************************
 *** PMFv2107
