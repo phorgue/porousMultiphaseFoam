@@ -5,6 +5,13 @@
 
 ### Libraries
 
+- numericalMethods
+
+  - timestepManager: new class managing derivative computations (1s, 2nd
+  and 3rd order) and timestepping based on truncation error.
+  This allows to simplify the code of the solvers by implementing common
+  functions in this new class
+
 - porousBoundaryConditions
 
   - fixedHeadPressure/fixedHeadPressureSTL BCs have been deleted. They can be

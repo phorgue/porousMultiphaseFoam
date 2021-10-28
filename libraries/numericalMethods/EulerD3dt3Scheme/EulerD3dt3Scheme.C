@@ -42,7 +42,7 @@ Foam::EulerD3dt3Scheme::~EulerD3dt3Scheme()
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 tmp<volScalarField>
-EulerD3dt3Scheme::d3dt3
+EulerD3dt3Scheme::fvcD3dt3
 (
     const volScalarField& vf
 )
