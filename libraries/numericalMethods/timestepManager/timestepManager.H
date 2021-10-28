@@ -26,23 +26,24 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fv::EulerD3dt3Scheme
+    Foam::fv::timestepManager
 
 Description
-    First-order Euler explicit d3dt3 using the current and two previous
-    time-step values.
+    Timestep manager compute timestep based on temporal truncation error. 
+    Current version works with volScalarField and 3 time schemes:
+    Euler / backward / CrankNicolson
 
 SourceFiles
-    EulerD3dt3Scheme.C
+    timestepManager.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef EulerD3dt3Scheme_H
-#define EulerD3dt3Scheme_H
+#ifndef timestepManager_H
+#define timestepManager_H
 
 #include "fvMesh.H"
-#include "tmp.H"
-#include "volFields.H"
+#include "EulerD2dt2Scheme.H"
+#include "EulerD3dt3Scheme.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,48 +53,61 @@ namespace Foam
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 /*---------------------------------------------------------------------------*\
-                       Class EulerD3dt3Scheme Declaration
+                       Class timestepManager Declaration
 \*---------------------------------------------------------------------------*/
 
-class EulerD3dt3Scheme
+class timestepManager
 {
     
-protected:
-   
-    const fvMesh& mesh_; 
+private:
 
-    //- store old-old-time step
-    scalar dt00_;
+    //- reference to time
+    const Time& runTime_;
+
+    //- reference to field
+    const volScalarField& vf_;
+
+    const scalar truncationError_;
+
+    //- time scheme for this field
+    const word timeScheme_;
+
+    //- derivative operator
+    EulerD3dt3Scheme d3dt3Operator_;
+    fv::EulerD2dt2Scheme<scalar> d2dt2Operator_;
+
+    //- maximal derivative/value
+    scalar dVmax_, dV2max_, dV3max_;
+    scalar Vmax_, V2max_, V3max_;
+
+    void update1stOrder();
+    void update2ndOrder();
+    void update3rdOrder();
     
+ 
 public:
 
     // Constructors
 
-        //- Construct from mesh
-    EulerD3dt3Scheme(const fvMesh& mesh, scalar dt)
-        :
-            mesh_(mesh),
-            dt00_(dt)
-        {}
+    //- Construct from field
+    timestepManager(const Time&, const volScalarField&, const scalar&);
 
-    virtual ~EulerD3dt3Scheme();
+    virtual ~timestepManager();
 
-    // Member Functions
+    //- Access functions
+    scalar Vmax(){return Vmax_;}
+    scalar dVmax(){return dVmax_;}
+    scalar V2max(){return V2max_;}
+    scalar dV2max(){return dV2max_;}
+    scalar V3max(){return V3max_;}
+    scalar dV3max(){return dV3max_;}
 
-        //- Return mesh reference
-        const fvMesh& mesh() const
-        {
-            return mesh_;
-        }
+    //- Access functions
+    void updateDerivatives();
+    scalar computeTimestep(const scalar&);
+    scalar computeTimestep();
+    
 
-        tmp<volScalarField> fvcD3dt3
-        (
-            const volScalarField&
-        );
-
-    // Member Operators
-       //- Store the old-old time step
-        void storeDeltaT00(scalar dt){ dt00_ = dt;}
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
