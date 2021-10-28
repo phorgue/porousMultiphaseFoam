@@ -35,7 +35,7 @@
     }
     else
     {
-        volScalarField dpotential3dT3(d3dt3Operator.d3dt3(potential));
+        volScalarField dpotential3dT3(d3dt3Operator.fvcD3dt3(potential));
         forAll(fixedPotentialIDList,celli) dpotential3dT3[fixedPotentialIDList[celli]] = 0;
         dpotential3dT3max = 0;
         forAll(dpotential3dT3, celli)

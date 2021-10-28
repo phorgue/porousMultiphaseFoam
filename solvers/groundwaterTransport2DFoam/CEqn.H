@@ -45,7 +45,7 @@ forAll(composition.Y(), speciesi)
     }
     else
     {
-        volScalarField dC3dT3(d3dt3Operator.d3dt3(C));
+        volScalarField dC3dT3(d3dt3Operator.fvcD3dt3(C));
         dC3dT3max[speciesi] = 0;
         forAll(dC3dT3, celli)
         {

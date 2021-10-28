@@ -1,4 +1,7 @@
 EulerD3dt3Scheme/EulerD3dt3Scheme.C
+
+timestepManager/timestepManager.C
+
 JacobianMatrix/JacobianMatrix.C
 
 LIB = $(FOAM_USER_LIBBIN)/libPMFnumericalMethods
