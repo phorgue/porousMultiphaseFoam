@@ -42,38 +42,13 @@ scalar truncationError_global =
 scalar truncationError_potential =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError_potential",truncationError_global);
 
-word timeScheme(mesh.ddtScheme("ddt(potential)"));
-
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
-EulerD3dt3Scheme d3dt3Operator(mesh,runTime.deltaTValue());
-Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
-scalar dpotentialdTmax = 0;
-scalar dpotential2dT2max = 0;
-scalar dpotential3dT3max = 0;
-scalar hwatermax = 0;
+timestepManager dtManager(runTime, hwater, truncationError_potential);
 
 if (adjustTimeStep)
 {
-    //- Derivative initialisation to keep 1st user-defined time step
-    if (timeScheme == "backward")
-    {
-        hwatermax = gMax(hwater);
-
-        dpotential3dT3max = 3*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
-    }
-    else if  (timeScheme == "CrankNicolson")
-    {
-        hwatermax = gMax(hwater);
-        dpotential3dT3max = 12*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
-    }
-    else if (timeScheme == "Euler")
-    {
-        hwatermax = gMax(hwater);
-        dpotential2dT2max = 2*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
-    }
-
     Info << "Timestepping is based on time-scheme truncation error with :"
         << nl << "{"
         << nl << "    truncationError = " << truncationError_potential
