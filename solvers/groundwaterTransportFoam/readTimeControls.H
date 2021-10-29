@@ -46,29 +46,23 @@ const scalar truncationError_global =
 const scalar truncationError_h =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError_h",truncationError_global);
 
-const scalar truncationError_C =
-    runTime.controlDict().lookupOrDefault<scalar>("truncationError_C",truncationError_global);
-
 const scalar dTFactDecrease =
     runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.8);
 
-word timeScheme(mesh.ddtScheme("ddt(" + composition.Y(0).name() + ')'));
+timestepManager dtManager(runTime, h, truncationError_h);
 
-EulerD3dt3Scheme d3dt3Operator(mesh,runTime.deltaTValue());
-Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
-scalarList dCdTmax(composition.Y().size());
-scalarList dC2dT2max(composition.Y().size());
-scalarList dC3dT3max(composition.Y().size());
-scalarList Cmax(composition.Y().size());
-scalar dtheta = 0;
-scalar hmax = 0;
-scalar dh2dT2max = 0;
+const scalar truncationError_C =
+    runTime.controlDict().lookupOrDefault<scalar>("truncationError_C",truncationError_global);
+
+PtrList<timestepManager> dtManagerC(0);
+forAll(composition.Y(), speciei)
+{
+    dtManagerC.append(new timestepManager(runTime, composition.Y()[speciei], truncationError_C));
+}
 
 //- Derivative initialisation to keep 1st user-defined time step
 if (adjustTimeStep)
 {
-    hmax = gMax(h);
-    dh2dT2max = 2*truncationError_h*(hmax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
     Info << "Timestepping for h equation is based on time-scheme truncation error with :"
         << nl << "{"
         << nl << "    truncationError = " << truncationError_h
@@ -76,36 +70,6 @@ if (adjustTimeStep)
         << nl << "}"
         << endl;
 
-    if (timeScheme == "backward")
-    {
-        forAll(composition.Y(), speciesi)
-        {
-            const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C.internalField());
-            dC3dT3max[speciesi] = 3*truncationError_C*(Cmax[speciesi]+VSMALL)
-                /Foam::pow(runTime.deltaTValue(),3);
-        }
-    }
-    else if  (timeScheme == "CrankNicolson")
-    {
-        forAll(composition.Y(), speciesi)
-        {
-            const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C.internalField());
-            dC3dT3max[speciesi] = 12*truncationError_C*(Cmax[speciesi]+VSMALL)
-                /Foam::pow(runTime.deltaTValue(),3);
-        }
-    }
-    else if (timeScheme == "Euler")
-    {
-        forAll(composition.Y(), speciesi)
-        {
-            const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C.internalField());
-            dC2dT2max[speciesi] = 2*truncationError_C*(Cmax[speciesi]+VSMALL)
-                /Foam::pow(runTime.deltaTValue(),2);
-        }
-    }
     Info << "Timestepping for C equation is based on time-scheme truncation error with :"
         << nl << "{"
         << nl << "    truncationError = " << truncationError_C
