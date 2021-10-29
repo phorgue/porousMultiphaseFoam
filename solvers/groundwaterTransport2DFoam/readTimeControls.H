@@ -46,58 +46,19 @@ scalar truncationError_global =
 scalar truncationError_potential =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError_potential",truncationError_global);
 
+timestepManager dtManager(runTime, hwater, truncationError_potential);
+
 scalar truncationError_C =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError_C",truncationError_global);
 
-word timeScheme(mesh.ddtScheme("ddt(" + composition.Y(0).name() + ')'));
-
-EulerD3dt3Scheme d3dt3Operator(mesh,runTime.deltaTValue());
-Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
-scalar dpotentialdTmax = 0;
-scalar dpotential2dT2max = 0;
-scalar dpotential3dT3max = 0;
-scalar hwatermax = 0;
-scalarList dCdTmax(composition.Y().size());
-scalarList dC2dT2max(composition.Y().size());
-scalarList dC3dT3max(composition.Y().size());
-scalarList Cmax(composition.Y().size());
+PtrList<timestepManager> dtManagerC(0);
+forAll(composition.Y(), speciei)
+{
+    dtManagerC.append(new timestepManager(runTime, composition.Y()[speciei], truncationError_C));
+}
 
 if (adjustTimeStep)
 {
-    //- Derivative initialisation to keep 1st user-defined time step
-    if (timeScheme == "backward")
-    {
-        forAll(composition.Y(), speciesi)
-        {
-            const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C);
-            dC3dT3max[speciesi] = 3*truncationError_C*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
-        }
-        hwatermax = gMax(hwater);
-        dpotential3dT3max = 3*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
-    }
-    else if  (timeScheme == "CrankNicolson")
-    {
-        forAll(composition.Y(), speciesi)
-        {
-            const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C);
-            dC3dT3max[speciesi] = 12*truncationError_C*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
-        }
-        hwatermax = gMax(hwater);
-        dpotential3dT3max = 12*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),3);
-    }
-    else if (timeScheme == "Euler")
-    {
-        forAll(composition.Y(), speciesi)
-        {
-            const auto& C = composition.Y(speciesi);
-            Cmax[speciesi] = gMax(C);
-            dC2dT2max[speciesi] = 2*truncationError_C*(Cmax[speciesi]+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
-        }
-        hwatermax = gMax(hwater);
-        dpotential2dT2max = 2*truncationError_potential*(hwatermax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
-    }
     Info << "Timestepping for potential equation is based on time-scheme truncation error with :"
         << nl << "{"
         << nl << "    truncationError = " << truncationError_potential

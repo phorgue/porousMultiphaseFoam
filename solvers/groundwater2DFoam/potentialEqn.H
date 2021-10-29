@@ -18,35 +18,7 @@
     hwater = potential - z0;
 
     //- compute derivatives
-    dpotentialdTmax = gMax(mag(fvc::ddt(potential))());
-    if (timeScheme == "Euler")
-    {
-        volScalarField dpotential2dT2(d2dt2Operator.fvcD2dt2(potential));
-        forAll(fixedPotentialIDList,celli) dpotential2dT2[fixedPotentialIDList[celli]] = 0;
-        dpotential2dT2max = 0;
-        forAll(dpotential2dT2, celli)
-        {
-            if(mag(dpotential2dT2[celli]) > dpotential2dT2max)
-            {
-                hwatermax = hwater[celli];
-                dpotential2dT2max = mag(dpotential2dT2[celli]);
-            }
-        }
-    }
-    else
-    {
-        volScalarField dpotential3dT3(d3dt3Operator.fvcD3dt3(potential));
-        forAll(fixedPotentialIDList,celli) dpotential3dT3[fixedPotentialIDList[celli]] = 0;
-        dpotential3dT3max = 0;
-        forAll(dpotential3dT3, celli)
-        {
-            if(mag(dpotential3dT3[celli]) > dpotential3dT3max)
-            {
-                hwatermax = hwater[celli];
-                dpotential3dT3max = mag(dpotential3dT3[celli]);
-            }
-        }
-    }
+    dtManager.updateDerivatives();
 
     //- Checking for dry cells
     if (gMin(hwater.internalField()) <= hwaterMin.value())
@@ -80,6 +52,6 @@
     U.correctBoundaryConditions();
     cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration + zScale * waterSourceTerm;
 
-    Info << "Potential min: " << gMin(potential.internalField()) << ", max = " << gMax(potential.internalField()) << ", delta(potential) = " << dpotentialdTmax*runTime.deltaTValue() << endl;
+    Info << "Potential min: " << gMin(potential.internalField()) << ", max = " << gMax(potential.internalField()) << ", delta(potential) = " << dtManager.dVmax()*runTime.deltaTValue() << endl;
 
 }
