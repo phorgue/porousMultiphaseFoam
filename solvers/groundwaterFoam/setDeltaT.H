@@ -35,26 +35,13 @@ if(adjustTimeStep)
     //- in case of non convergence of the Picard or Newton  algorithm
     if (iterPicard == maxIterPicard+1 || iterNewton == maxIterNewton+1)
     {
-        scalar deltaTFact = dTFactDecrease;
-        runTime.setDeltaT
-            (
-                min(
-                    deltaTFact*runTime.deltaTValue(),
-                    maxDeltaT
-                )
-            );
+        runTime.setDeltaT(dTFactDecrease*runTime.deltaTValue());
     }
     else
     {
-            scalar dtForh = Foam::pow(2*truncationError_h*(hmax+VSMALL)/(dh2dT2max+VSMALL),1./2.);
-            scalar newDeltaT = min(dtForh, 1.2*runTime.deltaTValue());
-            runTime.setDeltaT
-                (
-                    min(
-                        newDeltaT,
-                        maxDeltaT
-                    )
-                );
+        scalar dtForh = dtManager.computeTimestep();
+        scalar newDeltaT = min(dtForh, 1.2*runTime.deltaTValue());
+        runTime.setDeltaT(min(newDeltaT, maxDeltaT));
     }
 
     //-Adjust time step to explicitly compute (source/patch) event time
@@ -94,7 +81,7 @@ if(adjustTimeStep)
         }
     }
 
-    Info<< "deltaT = " <<  runTime.deltaTValue() << " ; dtheta max = " << dtheta << endl;
+    Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
 
 }
 

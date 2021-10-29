@@ -48,18 +48,13 @@ const scalar truncationError_h =
 const scalar dTFactDecrease =
     runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.8);
 
-Foam::fv::EulerD2dt2Scheme<scalar> d2dt2Operator(mesh);
-scalar dtheta = 0;
-scalar hmax = 0;
-scalar dh2dT2max = 0;
+timestepManager dtManager(runTime, h, truncationError_h);
 
 if (adjustTimeStep)
 {
     //- Derivative initialisation to keep 1st user-defined time step
     if (adjustTimeStep)
     {
-        hmax = gMax(h);
-        dh2dT2max = 2*truncationError_h*(hmax+VSMALL)/Foam::pow(runTime.deltaTValue(),2);
         Info << "Timestepping is based on time-scheme truncation error with :"
             << nl << "{"
             << nl << "    truncationError = " << truncationError_h
