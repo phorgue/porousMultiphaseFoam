@@ -23,7 +23,7 @@
     {
         //- reading DEM informations
         DEMfile fixedPotentialDEM(args.opt("DEM"));
-	scalar offseth = args.optionLookupOrDefault<scalar>("offset",0.);
+	scalar offseth = args.getOrDefault<scalar>("offset",0.);
 	if (offseth==0)
 	{
 	    Info << nl << "Potential fixed using DEM " << endl;
@@ -40,14 +40,14 @@
             hPatch[facei] = fixedPotentialDEM.interpolate(faces[facei]) - faces[facei].z() + offseth;
         }
     }
-    else if (args.optionFound("STL"))
+    else if (args.found("STL"))
     {
         //- reading STL informations
         word STLfile = args.opt("STL");
         triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
         pointField pPoints = potentialSTL.points();
-	scalar thresholdh = args.optionLookupOrDefault<scalar>("threshold",0.);
-	scalar offseth = args.optionLookupOrDefault<scalar>("offset",0.);
+	scalar thresholdh = args.getOrDefault<scalar>("threshold",0.);
+	scalar offseth = args.getOrDefault<scalar>("offset",0.);
 	Info << nl << "Potential fixed using points over " << thresholdh <<  " in STL = " << STLfile << " offseted by " << offseth << endl;
 	
         //- computing local potential
