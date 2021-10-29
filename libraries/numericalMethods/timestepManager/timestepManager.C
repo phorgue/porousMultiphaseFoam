@@ -58,17 +58,17 @@ Foam::timestepManager::timestepManager(
     //- derivative initialization to keep 1st user-defined time step
     if (timeScheme_ == "backward")
     {
-        V3max_ = gMax(vf_.internalField());
+        V3max_ = max(SMALL, gMax(vf_.internalField()));
         dV3max_ = 3*truncationError_*(V3max_+VSMALL)/Foam::pow(runTime_.deltaTValue(),3);
     }
     else if  (timeScheme_ == "CrankNicolson")
     {
-        V3max_ = gMax(vf_.internalField());
+        V3max_ = max(SMALL, gMax(vf_.internalField()));
         dV3max_ = 12*truncationError_*(V3max_+VSMALL)/Foam::pow(runTime_.deltaTValue(),3);
     }
     else if (timeScheme_ == "Euler")
     {
-        V2max_ = gMax(vf_.internalField());
+        V2max_ = max(SMALL, gMax(vf_.internalField()));
         dV2max_ = 2*truncationError_*(V2max_+VSMALL)/Foam::pow(runTime_.deltaTValue(),2);
     }
     else
@@ -95,7 +95,7 @@ void timestepManager::update1stOrder()
     {
         if(mag(dVdT[celli]) > dVmax_)
         {
-            Vmax_ = vf_[celli];
+            Vmax_ = mag(vf_[celli]);
             dVmax_ = mag(dVdT[celli]);
         }
     }
@@ -111,7 +111,7 @@ void timestepManager::update2ndOrder()
     {
         if(mag(dV2dT2[celli]) > dV2max_)
         {
-            V2max_ = vf_[celli];
+            V2max_ = mag(vf_[celli]);
             dV2max_ = mag(dV2dT2[celli]);
         }
     }
@@ -127,7 +127,7 @@ void timestepManager::update3rdOrder()
     {
         if(mag(dV3dT3[celli]) > dV3max_)
         {
-            V3max_ = vf_[celli];
+            V3max_ = mag(vf_[celli]);
             dV3max_ = mag(dV3dT3[celli]);
         }
     }
@@ -152,20 +152,17 @@ scalar timestepManager::computeTimestep
     scalar dt = GREAT;
     if (timeScheme_ == "Euler")
     {
-         if (V2max_ > SMALL)
-            dt =Foam::pow(2*truncationError*(V2max_+VSMALL)/(dV2max_+VSMALL),1./2.);
+        dt =Foam::pow(2*truncationError*(V2max_+VSMALL)/(dV2max_+VSMALL),1./2.);
     }
     else if (timeScheme_ == "backward")
     {
         d3dt3Operator_.storeDeltaT00(runTime_.deltaT0Value());
-        if (V3max_ > SMALL)
-            dt = Foam::pow(3*truncationError*(V3max_+VSMALL)/(dV3max_+VSMALL),1./3.);
+        dt = Foam::pow(3*truncationError*(V3max_+VSMALL)/(dV3max_+VSMALL),1./3.);
     }
     else if (timeScheme_ == "CrankNicolson")
     {
         d3dt3Operator_.storeDeltaT00(runTime_.deltaT0Value());
-        if (V3max_ > SMALL)
-            dt = Foam::pow(12*truncationError*(V3max_+VSMALL)/(dV3max_+VSMALL),1./3.);
+        dt = Foam::pow(12*truncationError*(V3max_+VSMALL)/(dV3max_+VSMALL),1./3.);
     }
     return dt;
 }
