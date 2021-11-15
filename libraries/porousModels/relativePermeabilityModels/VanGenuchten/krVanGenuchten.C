@@ -68,7 +68,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
     Smax_
     (
@@ -81,7 +81,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
     ),
     krVanGenuchtenCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
@@ -95,7 +95,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("m",dimless,krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0))
+        dimensionedScalar("m",dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("m",0))
     ),
     kramax_
     (
@@ -108,7 +108,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     ),
     krbmax_
     (
@@ -121,7 +121,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     )
 {
     Se_ = (Sb_-Smin_)/(Smax_-Smin_);
