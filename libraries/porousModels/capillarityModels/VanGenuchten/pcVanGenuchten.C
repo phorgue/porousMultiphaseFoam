@@ -69,7 +69,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
     Smax_
     (
@@ -82,7 +82,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
     ),
     m_
     (
@@ -95,7 +95,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("m",dimless,pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("m",0))
+        dimensionedScalar("m",dimless,pcVanGenuchtenCoeffs_.getOrDefault<scalar>("m",0))
     ),
     n_(1/(1-m_)),
     alpha_ // necessary for Richards solver
@@ -109,7 +109,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("alpha",dimless,pcVanGenuchtenCoeffs_.lookupOrDefault<scalar>("alpha",0))
+        dimensionedScalar("alpha",dimless,pcVanGenuchtenCoeffs_.getOrDefault<scalar>("alpha",0))
     ),
     pc0_
     (
@@ -122,7 +122,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcVanGenuchtenCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0.))
+        pcVanGenuchtenCoeffs_.getOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0.))
     )
 {
     Se_ = ((Sb_-Smin_)/(Smax_-Smin_));

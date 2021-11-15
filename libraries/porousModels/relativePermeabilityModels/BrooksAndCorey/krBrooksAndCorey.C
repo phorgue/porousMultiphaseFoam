@@ -68,7 +68,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
     Smax_
     (
@@ -81,7 +81,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
     ),
     krBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     n_
@@ -95,7 +95,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("n",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("n",0))
+        dimensionedScalar("n",dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("n",0))
     ),
     kramax_
     (
@@ -108,7 +108,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     ),
     krbmax_
     (
@@ -121,7 +121,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
+        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
     )
 {
     Se_ = (Sb_-Smin_)/(Smax_-Smin_);
