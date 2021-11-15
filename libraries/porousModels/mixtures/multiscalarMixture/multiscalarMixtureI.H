@@ -62,15 +62,15 @@ inline Foam::multiscalarMixture::multiscalarMixture
         dictionary speciesDict(dict.optionalSubDict(speciesNames[speciesi]));
         dictionary porousTransport(speciesDict.subDict("porousTransport"));
 
-        dimensionedScalar Kd(porousTransport.lookupOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
+        dimensionedScalar Kd(porousTransport.getOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
         Kd_[speciesi] = Kd.value();
-        dimensionedScalar rs(porousTransport.lookupOrDefault("rs",dimensionedScalar("rs_default",dimensionSet(1,-3,0,0,0),0.)));
+        dimensionedScalar rs(porousTransport.getOrDefault("rs",dimensionedScalar("rs_default",dimensionSet(1,-3,0,0,0),0.)));
         rs_[speciesi] = rs.value();
-        dimensionedScalar epsTotal(porousTransport.lookupOrDefault("epsTotal",dimensionedScalar("epsTotal_default",dimless,1.)));
+        dimensionedScalar epsTotal(porousTransport.getOrDefault("epsTotal",dimensionedScalar("epsTotal_default",dimless,1.)));
         epsTotal_[speciesi] = epsTotal.value();
 
         lambdas_[speciesi].dimensions().reset(dimensionSet(0,0,-1,0,0));
-        lambdas_[speciesi] = porousTransport.lookupOrDefault("lambda",dimensionedScalar("lambda_default",dimensionSet(0,0,-1,0,0),0.));
+        lambdas_[speciesi] = porousTransport.getOrDefault("lambda",dimensionedScalar("lambda_default",dimensionSet(0,0,-1,0,0),0.));
 
         Info << nl << "porousTransport parameters" << nl << "{" << endl;
         Info << "    " << Kd.name() << " : " << Kd.value() << endl;
@@ -114,7 +114,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
         //- read source event if present
         if(speciesDict.found("eventFileTracerSource"))
         {
-            word sourceEventFileName = speciesDict.lookupOrDefault<word>("eventFileTracerSource","");
+            word sourceEventFileName = speciesDict.getOrDefault<word>("eventFileTracerSource","");
             sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
 
             const word& dtFieldName = 

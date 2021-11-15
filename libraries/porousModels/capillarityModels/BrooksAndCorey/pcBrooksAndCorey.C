@@ -69,7 +69,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+      transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
   ),
   Smax_
   (
@@ -82,7 +82,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+      transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
   ),
   pc0_
   (
@@ -95,7 +95,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      pcBrooksAndCoreyCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
+      pcBrooksAndCoreyCoeffs_.getOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
   ),
   hd_
   (
@@ -108,7 +108,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      dimensionedScalar("hd",dimLength,pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("hd",0))
+      dimensionedScalar("hd",dimLength,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("hd",0))
   ),
   alpha_
   (
@@ -121,7 +121,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
           IOobject::NO_WRITE
       ),
       Sb.mesh(),
-      dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.lookupOrDefault<scalar>("alpha",0))
+      dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("alpha",0))
   )
 {
     Se_ = ((Sb_-Smin_)/(Smax_-Smin_));

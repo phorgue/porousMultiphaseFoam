@@ -54,10 +54,10 @@ Foam::darcyGradPressure::darcyGradPressure
 )
     :
     fixedGradientFvPatchScalarField(p, iF),
-    MfName_(dict.lookupOrDefault<word>("Mf", "Mf")),
-    phiName_(dict.lookupOrDefault<word>("phi", "phi")),
-    phiGfName_(dict.lookupOrDefault<word>("phiG","phiG")),
-    phiPcName_(dict.lookupOrDefault<word>("phiPc","phiPc"))
+    MfName_(dict.getOrDefault<word>("Mf", "Mf")),
+    phiName_(dict.getOrDefault<word>("phi", "phi")),
+    phiGfName_(dict.getOrDefault<word>("phiG","phiG")),
+    phiPcName_(dict.getOrDefault<word>("phiPc","phiPc"))
 {
     fvPatchField<scalar>::operator=(patchInternalField());
     gradient() = 0.0;
@@ -125,7 +125,7 @@ void Foam::darcyGradPressure::updateCoeffs()
         patch().lookupPatchField<surfaceScalarField, scalar>(phiPcName_);
 
     //Extract the dictionary from database
-    scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").lookupOrDefault<scalar>("activateCapillarity",0.));
+    scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").getOrDefault<scalar>("activateCapillarity",0.));
 
     gradient() = - (phi-phiGf-phiPc*activateCapillarity)/Mf/(patch().magSf());
 
