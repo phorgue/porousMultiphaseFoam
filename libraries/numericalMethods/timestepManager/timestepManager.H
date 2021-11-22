@@ -67,7 +67,11 @@ private:
     //- reference to field
     const volScalarField& vf_;
 
+    //- User defined truncation error
     const scalar truncationError_;
+
+    //- reference to dry cells list
+    const labelList& dryCells_;
 
     //- time scheme for this field
     const word timeScheme_;
@@ -90,7 +94,10 @@ public:
     // Constructors
 
     //- Construct from field
-    timestepManager(const Time&, const volScalarField&, const scalar&);
+    timestepManager(
+        const Time&, const volScalarField&, const scalar&,
+        const labelList& dryCells = labelList(0)
+    );
 
     virtual ~timestepManager();
 
