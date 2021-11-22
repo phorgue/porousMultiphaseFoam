@@ -39,12 +39,14 @@ namespace Foam
 Foam::timestepManager::timestepManager(
     const Time& runTime,
     const volScalarField& vf,
-    const scalar& truncationError
+    const scalar& truncationError,
+    const labelList& dryCells
 )
     :
     runTime_(runTime),
     vf_(vf),
     truncationError_(truncationError),
+    dryCells_(dryCells),
     timeScheme_(vf.mesh().ddtScheme("ddt("+vf.name()+")")),
     d3dt3Operator_(vf.mesh(),runTime.deltaTValue()),
     d2dt2Operator_(vf.mesh()),
@@ -89,6 +91,7 @@ Foam::timestepManager::~timestepManager()
 void timestepManager::update1stOrder()
 {
     volScalarField dVdT(vf_-vf_.oldTime());
+    forAll(dryCells_, pointi) dVdT[dryCells_[pointi]] = 0;
     dVmax_ = 0;
     Vmax_ = 0;
     forAll(dVdT, celli)
@@ -105,6 +108,7 @@ void timestepManager::update1stOrder()
 void timestepManager::update2ndOrder()
 {
     volScalarField dV2dT2(d2dt2Operator_.fvcD2dt2(vf_));
+    forAll(dryCells_, pointi) dV2dT2[dryCells_[pointi]] = 0;
     dV2max_ = 0;
     V2max_ = 0;
     forAll(dV2dT2, celli)
@@ -121,6 +125,7 @@ void timestepManager::update2ndOrder()
 void timestepManager::update3rdOrder()
 {
     volScalarField dV3dT3(d3dt3Operator_.fvcD3dt3(vf_));
+    forAll(dryCells_, pointi) dV3dT3[dryCells_[pointi]] = 0;
     dV3max_ = 0;
     V3max_ = 0;
     forAll(dV3dT3, celli)
