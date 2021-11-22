@@ -17,9 +17,6 @@
     //- updating hwater and fluxes
     hwater = potential - z0;
 
-    //- compute derivatives
-    dtManager.updateDerivatives();
-
     //- Checking for dry cells
     if (gMin(hwater.internalField()) <= hwaterMin.value())
     {
@@ -37,6 +34,9 @@
         cumulativeWaterAdded += waterAdded;
         Info << "Number of dry cells = " << dryCellIDList.size() << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m)" << endl;
     }
+
+    //- compute derivatives
+    dtManager.updateDerivatives();
 
     //- updating flow properties
     transmissivity = Mf*fvc::interpolate(hwater);
