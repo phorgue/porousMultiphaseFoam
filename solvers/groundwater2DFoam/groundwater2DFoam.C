@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
-    #include "readTimeControls.H"
     #include "readFixedPoints.H"
+    #include "readTimeControls.H"
     #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
