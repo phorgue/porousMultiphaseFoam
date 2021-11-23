@@ -45,7 +45,8 @@ scalar truncationError_potential =
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
-timestepManager dtManager(runTime, hwater, truncationError_potential, dryCellIDList);
+labelList* dryCellIDListPtr = &dryCellIDList;
+timestepManager dtManager(runTime, hwater, truncationError_potential, dryCellIDListPtr);
 
 if (adjustTimeStep)
 {

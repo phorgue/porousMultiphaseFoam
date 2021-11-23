@@ -46,7 +46,8 @@ scalar truncationError_global =
 scalar truncationError_potential =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError_potential",truncationError_global);
 
-timestepManager dtManager(runTime, hwater, truncationError_potential, dryCellIDList);
+labelList* dryCellIDListPtr = &dryCellIDList;
+timestepManager dtManager(runTime, hwater, truncationError_potential, dryCellIDListPtr);
 
 scalar truncationError_C =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError_C",truncationError_global);

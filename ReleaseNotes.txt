@@ -50,6 +50,7 @@
 
 - pcVanGenuchten: fix Se computation when -VSMALL < h < 0
 
+- set derivative=0 (1st/2nd/3rd order) for dry cells.
 
 ************************
 *** PMFv2107
