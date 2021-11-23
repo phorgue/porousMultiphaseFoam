@@ -40,7 +40,7 @@ Foam::timestepManager::timestepManager(
     const Time& runTime,
     const volScalarField& vf,
     const scalar& truncationError,
-    const labelList& dryCells
+    const labelList* dryCells
 )
     :
     runTime_(runTime),
@@ -91,7 +91,7 @@ Foam::timestepManager::~timestepManager()
 void timestepManager::update1stOrder()
 {
     volScalarField dVdT(vf_-vf_.oldTime());
-    forAll(dryCells_, pointi) dVdT[dryCells_[pointi]] = 0;
+    if (dryCells_) dryCellsDerivativeUpdate(dVdT);
     dVmax_ = 0;
     Vmax_ = 0;
     forAll(dVdT, celli)
@@ -108,7 +108,7 @@ void timestepManager::update1stOrder()
 void timestepManager::update2ndOrder()
 {
     volScalarField dV2dT2(d2dt2Operator_.fvcD2dt2(vf_));
-    forAll(dryCells_, pointi) dV2dT2[dryCells_[pointi]] = 0;
+    if (dryCells_) dryCellsDerivativeUpdate(dV2dT2);
     dV2max_ = 0;
     V2max_ = 0;
     forAll(dV2dT2, celli)
@@ -125,7 +125,7 @@ void timestepManager::update2ndOrder()
 void timestepManager::update3rdOrder()
 {
     volScalarField dV3dT3(d3dt3Operator_.fvcD3dt3(vf_));
-    forAll(dryCells_, pointi) dV3dT3[dryCells_[pointi]] = 0;
+    if (dryCells_) dryCellsDerivativeUpdate(dV3dT3);
     dV3max_ = 0;
     V3max_ = 0;
     forAll(dV3dT3, celli)
@@ -137,6 +137,12 @@ void timestepManager::update3rdOrder()
         }
     }
     if (V3max_ == 0) V3max_ = SMALL;
+}
+
+void timestepManager::dryCellsDerivativeUpdate(volScalarField& field)
+{
+    const labelList& dryCells = *dryCells_;
+    forAll(dryCells, pointi) field[dryCells[pointi]] = 0;
 }
 
 // * * * * * * * * * * * * * * * * Public Functions  * * * * * * * * * * * * //

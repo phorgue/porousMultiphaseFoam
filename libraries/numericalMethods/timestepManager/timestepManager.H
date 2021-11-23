@@ -71,7 +71,7 @@ private:
     const scalar truncationError_;
 
     //- reference to dry cells list
-    const labelList& dryCells_;
+    const labelList* dryCells_;
 
     //- time scheme for this field
     const word timeScheme_;
@@ -87,7 +87,7 @@ private:
     void update1stOrder();
     void update2ndOrder();
     void update3rdOrder();
-    
+    void dryCellsDerivativeUpdate(volScalarField&);
  
 public:
 
@@ -96,7 +96,7 @@ public:
     //- Construct from field
     timestepManager(
         const Time&, const volScalarField&, const scalar&,
-        const labelList& dryCells = labelList(0)
+        const labelList* dryCells = NULL
     );
 
     virtual ~timestepManager();
