@@ -1,0 +1,21 @@
+FROM opensuse/leap
+
+RUN zypper in mingw64-cross-binutils
+RUN zypper in mingw64-cross-cpp mingw64-cross-gcc mingw64-cross-gcc-c++
+RUN zypper in mingw64-filesystem mingw64-headers mingw64-runtime
+
+RUN zypper in mingw64-libwinpthread1 mingw64-winpthreads-devel
+RUN zypper in mingw64-libz mingw64-zlib-devel
+
+# Note: can cross-compile FFTW from ThirdParty sources instead
+RUN zypper in mingw64-libfftw3 mingw64-fftw3-devel
+
+RUN zypper in git
+
+RUN git clone https://develop.openfoam.com/Development/openfoam.git
+ADD ../etc-mingw  openfoam/etc-mingw
+
+RUN cd openfoam
+RUN FOAM_VERBOSE=true  source etc/bashrc etc-mingw/prefs.sh
+RUN ./Allwmake -j
+
