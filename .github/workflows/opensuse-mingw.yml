@@ -31,7 +31,7 @@ jobs:
       uses: docker/build-push-action@v1
       with:
         registry: ghcr.io
-        repository: pmf/opensuse-mingw
+        repository: jmkerloch/openfoam-opensuse-mingw
         tags: latest
         dockerfile: docker/opensuse-mingw
 
@@ -39,7 +39,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: docker_publish
-    container: 'pmf/opensuse-mingw'
+    container: 'jmkerloch/openfoam-opensuse-mingw'
 
     steps:
     
