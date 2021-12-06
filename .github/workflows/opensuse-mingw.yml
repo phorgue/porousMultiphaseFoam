@@ -29,7 +29,6 @@ jobs:
         
     - name: Docker file push
       id: docker_push
-      if: steps.changed-files.outputs.modified_files != ''
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: jmkerloch/openfoam-opensuse-mingw
