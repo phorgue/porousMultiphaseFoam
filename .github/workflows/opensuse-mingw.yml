@@ -28,12 +28,12 @@ jobs:
           docker/opensuse-mingw
         
     - name: Push to GitHub Packages
-        uses: docker/build-push-action@v1
-        with:
-          registry: ghcr.io
-          repository: pmf/opensuse-mingw
-          tags: latest
-          dockerfile: docker/opensuse-mingw
+      uses: docker/build-push-action@v1
+      with:
+        registry: ghcr.io
+        repository: pmf/opensuse-mingw
+        tags: latest
+        dockerfile: docker/opensuse-mingw
 
   build:
 
