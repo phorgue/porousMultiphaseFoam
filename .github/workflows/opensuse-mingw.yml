@@ -60,7 +60,6 @@ jobs:
     - name: Build
       run: |
            pwd
-	   ls -l
+           ls -l
            source /etc-mingw/prefs.sh
            ./Allwmake -j
-
