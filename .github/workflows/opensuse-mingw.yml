@@ -47,7 +47,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: docker_publish
-    container: 'ghcr.io/jmkerloch/openfoam-opensuse-mingw'
+    container: 'ghcr.io/${{github.actor}}/porousmultiphasefoam:openfoam-opensuse-mingw'
 
     steps:
     
