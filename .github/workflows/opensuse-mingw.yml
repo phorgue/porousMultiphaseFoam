@@ -65,4 +65,4 @@ jobs:
            pwd
            ls /openfoam
            source /openfoam/etc/bashrc etc-mingw/prefs.sh
-           ./Allwmake -j
+           Allwmake -j
