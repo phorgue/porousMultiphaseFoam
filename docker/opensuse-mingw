@@ -15,6 +15,5 @@ ADD etc-mingw  openfoam/etc-mingw
 RUN zypper install -y make gcc gcc-c++ m4 flex
 RUN cd openfoam &&\
     FOAM_VERBOSE=true  &&\
-    source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh &&\
-    ./Allwmake -j
+    source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh
 
