@@ -30,6 +30,7 @@ jobs:
     - name: Push to GitHub Packages
       uses: docker/build-push-action@v1
       with:
+        registry: ghcr.io
         tags: openfoam-opensuse-mingw
         dockerfile: docker/opensuse-mingw
 
