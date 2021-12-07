@@ -62,4 +62,6 @@ jobs:
     - name: Build
       run: |
            source /openfoam/etc/bashrc etc-mingw/prefs.sh
+           ls
+           pwd
            ./Allwmake -j
