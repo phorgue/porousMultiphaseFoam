@@ -40,6 +40,8 @@ jobs:
         registry: ghcr.io
         tags: openfoam-opensuse-mingw
         dockerfile: docker/opensuse-mingw
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
   build:
 
