@@ -61,7 +61,6 @@ jobs:
           
     - name: Build
       run: |           
-           source etc-mingw/prefs.sh
            echo $FOAM_CONFIG_ETC
            echo $WM_COMPILER
            echo $WM_MPLIB          
