@@ -64,8 +64,7 @@ jobs:
            source etc-mingw/prefs.sh
            echo $FOAM_CONFIG_ETC
            echo $WM_COMPILER
-           echo $WM_MPLIB
-           FOAM_VERBOSE=true  source /openfoam/etc/bashrc           
+           echo $WM_MPLIB          
            ls
            pwd
            ls /openfoam
