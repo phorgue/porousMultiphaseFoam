@@ -61,6 +61,8 @@ jobs:
           
     - name: Build
       run: |    
-           FOAM_VERBOSE=true &&  source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh && ls && ./Allwmake -j
-      
-      shell: sh
+           FOAM_VERBOSE=true &&  source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh && ls && ./Allwmake -j      
+      shell: sh      
+      artifacts:
+        paths:
+          - /root/OpenFOAM/-v2106/platforms/linux64MingwDPInt32Opt/
