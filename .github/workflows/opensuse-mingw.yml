@@ -68,6 +68,8 @@ jobs:
            ls
            pwd
            ls /openfoam
+           FOAM_VERBOSE=true
+           source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh
            echo $FOAM_SETTINGS
            ./Allwmake -j      
       shell: bash
