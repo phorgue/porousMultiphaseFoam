@@ -60,15 +60,8 @@ jobs:
           git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git -b ${BRANCH_NAME} .
           
     - name: Build
-      run: |           
-           echo $FOAM_CONFIG_ETC
-           echo $WM_COMPILER
-           echo $WM_MPLIB          
-           ls
-           pwd
-           ls /openfoam
+      run: |    
            FOAM_VERBOSE=true
-           source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh
-           echo $FOAM_SETTINGS
+           source /openfoam/etc/bashrc
            ./Allwmake -j      
       shell: bash
