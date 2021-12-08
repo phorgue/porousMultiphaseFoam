@@ -61,9 +61,10 @@ jobs:
           
     - name: Build
       run: |    
+           export PMF_DIR=$pwd
            FOAM_VERBOSE=true
-           cd openfoam
+           cd /openfoam
            FOAM_VERBOSE=true  source etc/bashrc etc-mingw/prefs.sh
-           cd ..
+           cd $PMF_DIR
            ./Allwmake -j      
       shell: bash
