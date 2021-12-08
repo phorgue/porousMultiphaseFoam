@@ -67,4 +67,4 @@ jobs:
            FOAM_VERBOSE=true  source etc/bashrc etc-mingw/prefs.sh
            cd $PMF_DIR
            ./Allwmake -j      
-      shell: bash
+      shell: sh
