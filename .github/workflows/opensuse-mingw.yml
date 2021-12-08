@@ -62,6 +62,8 @@ jobs:
     - name: Build
       run: |    
            FOAM_VERBOSE=true
-           source /openfoam/etc/bashrc
+           cd openfoam
+           FOAM_VERBOSE=true  source etc/bashrc etc-mingw/prefs.sh
+           cd ..
            ./Allwmake -j      
       shell: bash
