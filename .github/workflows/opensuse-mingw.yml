@@ -70,4 +70,5 @@ jobs:
            pwd
            ls /openfoam
            echo $FOAM_SETTINGS
-           ./Allwmake -j
+           ./Allwmake -j      
+      shell: bash
