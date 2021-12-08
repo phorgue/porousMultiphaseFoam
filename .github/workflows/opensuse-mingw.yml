@@ -61,8 +61,9 @@ jobs:
           
     - name: Build
       run: |
-           FOAM_VERBOSE=true source /openfoam/etc/bashrc 
+           FOAM_VERBOSE=true 
            source etc-mingw/prefs.sh
+           source /openfoam/etc/bashrc           
            ls
            pwd
            ls /openfoam
