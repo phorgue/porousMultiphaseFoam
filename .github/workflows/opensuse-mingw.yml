@@ -67,4 +67,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: pmf-opensuse-mingw
-        path: /root/OpenFOAM/-v2106/platforms/linux64MingwDPInt32Opt/
+        path: /github/home/OpenFOAM/-v2106/platforms/linux64MingwDPInt32Opt/
+        
