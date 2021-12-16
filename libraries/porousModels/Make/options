@@ -13,3 +13,12 @@ EXE_LIBS = \
     -lfluidThermophysicalModels \
     -lreactionThermophysicalModels \
     -ltoolsGIS
+
+LIB_LIBS = \
+    -L$(FOAM_USER_LIBBIN) \
+    -lfiniteVolume \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lreactionThermophysicalModels \
+    -ltoolsGIS
+
