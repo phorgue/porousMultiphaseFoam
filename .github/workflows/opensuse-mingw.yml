@@ -44,7 +44,7 @@ jobs:
         dockerfile: docker/opensuse-mingw
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-        build-args: OPENFOAM_BRANCH=maintenance-v2106
+        build_args: OPENFOAM_BRANCH=maintenance-v2106
 
   build:
 
