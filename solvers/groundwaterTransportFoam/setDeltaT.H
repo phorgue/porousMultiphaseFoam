@@ -35,79 +35,30 @@ if(adjustTimeStep)
     //- in case of non convergence of the Picard or Newton  algorithm
     if (iterPicard == maxIterPicard+1 || iterNewton == maxIterNewton+1)
     {
-        scalar deltaTFact = dTFactDecrease;
-        runTime.setDeltaT
-            (
-                min(
-                    deltaTFact*runTime.deltaTValue(),
-                    maxDeltaT
-                )
-            );
+        runTime.setDeltaT(dTFactDecrease*runTime.deltaTValue());
     }
     else
     {
         //- h-variation control
-        scalar dtForh = Foam::pow(2*truncationError_h*(hmax+VSMALL)/(dh2dT2max+VSMALL),1./2.);
+        scalar dtForh = dtManager.computeTimestep();
 
         //- C-variation control
         scalar dtForC = VGREAT;
-        if (timeScheme == "backward")
+        forAll(composition.Y(), speciei)
         {
-            forAll(composition.Y(), speciesi)
-            {
-                if (Cmax[speciesi] > SMALL)
-                {
-                    dtForC = min
-                        (
-                            dtForC,
-                            Foam::pow(3*truncationError_C*(Cmax[speciesi])/(dC3dT3max[speciesi]+VSMALL),1./3.)
-                        );
-                }
-            }
-            d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
-        }
-        else if (timeScheme == "CrankNicolson")
-        {
-            forAll(composition.Y(), speciesi)
-            {
-                if (Cmax[speciesi] > SMALL)
-                {
-                    dtForC = min
-                        (
-                            dtForC,
-                            Foam::pow(12*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
-                        );
-                }
-            }
-            d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
-        }
-        else if (timeScheme == "Euler")
-        {
-            forAll(composition.Y(), speciesi)
-            {
-                if (Cmax[speciesi] > SMALL)
-                {
-                    dtForC = min
-                        (
-                            dtForC,
-                            Foam::pow(2*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
-                        );
-                }
-            }
+            dtForC = min
+                (
+                    dtForC,
+                    dtManagerC[speciei].computeTimestep()
+                );
         }
 
         //- set minimal delta t
         runTime.setDeltaT
             (
                 min(
-                    min(
-                        dtForh,
-                        dtForC
-                    ),
-                    min(
-                        1.2*runTime.deltaTValue(),
-                        maxDeltaT
-                    )
+                    min(dtForh, dtForC),
+                    min( 1.2*runTime.deltaTValue(),maxDeltaT)
                 )
             );
 
@@ -157,8 +108,7 @@ if(adjustTimeStep)
         }
     }
 
-    Info<< "deltaT = " <<  runTime.deltaTValue()
-        << " ; dtheta = " << dtheta << endl;
+    Info<< "deltaT = " <<  runTime.deltaTValue() << endl;
 
 }
 

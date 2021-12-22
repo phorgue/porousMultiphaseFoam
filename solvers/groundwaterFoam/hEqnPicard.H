@@ -23,6 +23,7 @@
     hEqn.solve();
 
     deltah = h-h.prevIter();
+    forAll(fixedPotentialIDList,celli) deltah[fixedPotentialIDList[celli]] = 0;
     deltahIter = gMax(mag(deltah.internalField())());
 
 }

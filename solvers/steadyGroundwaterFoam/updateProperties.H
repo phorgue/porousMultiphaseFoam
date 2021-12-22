@@ -24,4 +24,5 @@ forAll(mesh.boundary(),patchi)
 
 //- Compute h equation residual
 ResiduN = - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;
+forAll(fixedPotentialIDList, pointi) ResiduN[fixedPotentialIDList[pointi]]=0;
 hEqnResidual = gMax(mag(ResiduN)().internalField());
