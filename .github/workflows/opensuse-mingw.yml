@@ -36,7 +36,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Push to GitHub Packages
-      #if: steps.changed-files.outputs.modified_files != ''
+      if: steps.changed-files.outputs.modified_files != ''
       uses: docker/build-push-action@v1
       with:
         registry: ghcr.io
