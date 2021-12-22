@@ -1,0 +1,22 @@
+FROM opensuse/leap
+
+ARG OPENFOAM_BRANCH=maintenance-v2106
+
+RUN zypper install -y mingw64-cross-binutils
+RUN zypper install -y mingw64-cross-cpp mingw64-cross-gcc mingw64-cross-gcc-c++
+RUN zypper install -y mingw64-filesystem mingw64-headers mingw64-runtime
+
+RUN zypper install -y mingw64-libwinpthread1 mingw64-winpthreads-devel
+RUN zypper install -y mingw64-libz mingw64-zlib-devel
+
+RUN zypper install -y git
+
+RUN git clone -b $OPENFOAM_BRANCH https://develop.openfoam.com/Development/openfoam.git
+ADD etc-mingw  openfoam/etc-mingw
+
+RUN zypper install -y make gcc gcc-c++ m4 flex
+RUN cd openfoam &&\
+    FOAM_VERBOSE=true  &&\
+    source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh &&\
+    ./Allwmake -j
+
