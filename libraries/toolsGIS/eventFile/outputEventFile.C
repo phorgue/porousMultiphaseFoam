@@ -259,12 +259,15 @@ Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
 void Foam::outputEventFile::checkControlDict(const Time& runTime) const
 {
     const dictionary& cDict = runTime.controlDict();
-    scalar endTimeValue(cDict.lookupOrDefault("endTime",0));
-    scalar writeIntervalValue(cDict.lookupOrDefault("writeInterval",GREAT));
-    if (cDict.found("writeFrequency")) writeIntervalValue = cDict.lookupOrDefault("writeFrequency",GREAT);
+    scalar endTimeValue(cDict.get<scalar>("endTime"));
+    scalar writeIntervalValue(cDict.getOrDefault<scalar>("writeInterval",GREAT));
+    if (cDict.found("writeFrequency"))
+    {
+        FatalErrorIn("outputEventFile.C") << "Check controlDict: writeFrequency cannot be used when outputEventFile is specified"<< exit(FatalError);
+    }
     if (endTimeValue > writeIntervalValue)
     {
-        FatalErrorIn("outputEventFile.C") << "Check controlDict: writeInterval/writeFrequency should be larger or equal to endTime when outputEventFile is specified"<< exit(FatalError);
+        FatalErrorIn("outputEventFile.C") << "Check controlDict: writeInterval should be larger or equal to endTime when outputEventFile is specified"<< exit(FatalError);
     }
 
 }

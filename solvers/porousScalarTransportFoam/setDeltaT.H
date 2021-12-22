@@ -40,50 +40,14 @@ Description
 
 if (adjustTimeStep)
 {
-    scalar dtForC = VGREAT;
-    if (timeScheme == "backward")
+    scalar dtForC = GREAT;
+    forAll(composition.Y(), speciei)
     {
-        forAll(composition.Y(), speciesi)
-        {
-            if (Cmax[speciesi] > SMALL)
-            {
-                dtForC = min
-                    (
-                        dtForC,
-                        Foam::pow(3*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
-                    );
-            }
-        }
-        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
-    }
-    else if (timeScheme == "CrankNicolson")
-    {
-        forAll(composition.Y(), speciesi)
-        {
-            if (Cmax[speciesi] > SMALL)
-            {
-                dtForC = min
-                    (
-                        dtForC,
-                        Foam::pow(12*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
-                    );
-            }
-        }
-        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
-    }
-    else if (timeScheme == "Euler")
-    {
-        forAll(composition.Y(), speciesi)
-        {
-            if (Cmax[speciesi] > SMALL)
-            {
-                dtForC = min
-                    (
-                        dtForC,
-                        Foam::pow(2*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
-                    );
-            }
-        }
+        dtForC = min
+            (
+                dtForC,
+                dtManager[speciei].computeTimestep()
+            );
     }
 
     scalar newDeltaT = min(dtForC, 1.2*runTime.deltaTValue());

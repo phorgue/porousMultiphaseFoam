@@ -69,7 +69,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
     Smax_
     (
@@ -82,7 +82,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
     m_
     (
@@ -95,7 +95,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("m",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("m",0))
+        dimensionedScalar("m",dimless,pcIppischCoeffs_.getOrDefault<scalar>("m",0))
     ),
     n_(1/(1-m_)),
     alpha_
@@ -109,7 +109,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("alpha",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("alpha",GREAT))
+        dimensionedScalar("alpha",dimless,pcIppischCoeffs_.getOrDefault<scalar>("alpha",GREAT))
     ),
     tau_
     (
@@ -122,7 +122,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("tau",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("tau",1.))
+        dimensionedScalar("tau",dimless,pcIppischCoeffs_.getOrDefault<scalar>("tau",1.))
     ),
     he_
     (
@@ -135,7 +135,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        dimensionedScalar("he",dimless,pcIppischCoeffs_.lookupOrDefault<scalar>("he",1.))
+        dimensionedScalar("he",dimless,pcIppischCoeffs_.getOrDefault<scalar>("he",1.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {

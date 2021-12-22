@@ -40,8 +40,7 @@ Description
 #include "infiltrationEventFile.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
-#include "EulerD3dt3Scheme.H"
-#include "EulerD2dt2Scheme.H"
+#include "timestepManager.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -52,8 +51,8 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
-    #include "readTimeControls.H"
     #include "readFixedPoints.H"
+    #include "readTimeControls.H"
     #include "readEvent.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

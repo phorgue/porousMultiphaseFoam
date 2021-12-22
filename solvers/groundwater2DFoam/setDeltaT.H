@@ -32,23 +32,7 @@ Description
 
 if (adjustTimeStep)
 {
-    scalar dtForhwater = VGREAT;
-    if (timeScheme == "backward")
-    {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(3*truncationError_potential*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
-        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
-    }
-    else if (timeScheme == "CrankNicolson")
-    {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(12*truncationError_potential*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
-        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
-    }
-    else if (timeScheme == "Euler")
-    {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(2*truncationError_potential*(hwatermax+VSMALL)/(dpotential2dT2max+VSMALL),1./2.);
-    }
-
-    scalar newDeltaT = min(dtForhwater,1.2*runTime.deltaTValue());
+    scalar newDeltaT = min(dtManager.computeTimestep(),1.2*runTime.deltaTValue());
 
     runTime.setDeltaT
         (

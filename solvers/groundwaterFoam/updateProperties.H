@@ -30,6 +30,9 @@ ResiduN = Ss*pcModel->Se() * fvc::ddt(h)
     - fvc::laplacian(Mf,h)
     + fvc::div(phiG)
     + sourceTerm;
+
+forAll(fixedPotentialIDList, pointi) ResiduN[fixedPotentialIDList[pointi]]=0;
+
 scalar hEqnResidualMax = gMax(ResiduN.internalField());
 scalar hEqnResidualMin = gMin(ResiduN.internalField());
 if (mag(hEqnResidualMax) < mag(hEqnResidualMin))

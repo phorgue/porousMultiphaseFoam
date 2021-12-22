@@ -59,11 +59,11 @@ Foam::darcyGradPressureAniso::darcyGradPressureAniso
 )
     :
     fixedGradientFvPatchScalarField(p, iF),
-    MfName_(dict.lookupOrDefault<word>("Mf", "Mf")),
-    MbfName_(dict.lookupOrDefault<word>("Mbf", "Mbf")),
-    phiName_(dict.lookupOrDefault<word>("phi", "phi")),
-    LfName_(dict.lookupOrDefault<word>("Lf","Lf")),
-    gradpcName_(dict.lookupOrDefault<word>("gradpc","gradpc"))
+    MfName_(dict.getOrDefault<word>("Mf", "Mf")),
+    MbfName_(dict.getOrDefault<word>("Mbf", "Mbf")),
+    phiName_(dict.getOrDefault<word>("phi", "phi")),
+    LfName_(dict.getOrDefault<word>("Lf","Lf")),
+    gradpcName_(dict.getOrDefault<word>("gradpc","gradpc"))
 {
     fvPatchField<scalar>::operator=(patchInternalField());
     gradient() = 0.0;
@@ -140,7 +140,7 @@ void Foam::darcyGradPressureAniso::updateCoeffs()
         meshObjects::gravity::New(db().time());
 
     //Activate or not capillarity term
-    scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").lookupOrDefault<scalar>("activateCapillarity",0.));
+    scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").getOrDefault<scalar>("activateCapillarity",0.));
 	
     gradient() = - (phi/patch().magSf()) * ( inv(Mf) & patch().nf() & patch().nf());
     gradient() = gradient() + (inv(Mf) & Lf & g.value() & patch().nf() );

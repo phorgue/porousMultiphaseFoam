@@ -20,7 +20,7 @@ forAll(composition.Y(), speciesi)
         (
             eps * R * fvm::ddt(hwater,C)
             + fvm::div(phihwater, C, "div(phi,C)")
-            - fvm::laplacian(eps*hwater*Deff, C, "laplacian(Deff,C)")
+            - fvm::laplacian(eps * hwater * Deff, C, "laplacian(Deff,C)")
             ==
             - sourceTerm * zScale
             - eps * R * hwater * fvm::Sp(lambda,C)
@@ -29,37 +29,11 @@ forAll(composition.Y(), speciesi)
 
     CEqn.solve(mesh.solver("C"));
 
-    dCdTmax[speciesi] = max(mag(fvc::ddt(C))).value();
-    if (timeScheme == "Euler")
-    {
-        volScalarField dC2dT2(d2dt2Operator.fvcD2dt2(C));
-        dC2dT2max[speciesi] = 0;
-        forAll(dC2dT2, celli)
-        {
-            if(mag(dC2dT2[celli]) > dC2dT2max[speciesi])
-            {
-                Cmax[speciesi] = mag(C[celli]);
-                dC2dT2max[speciesi] = mag(dC2dT2[celli]);
-            }
-        }
-    }
-    else
-    {
-        volScalarField dC3dT3(d3dt3Operator.d3dt3(C));
-        dC3dT3max[speciesi] = 0;
-        forAll(dC3dT3, celli)
-        {
-            if(mag(dC3dT3[celli]) > dC3dT3max[speciesi])
-            {
-                Cmax[speciesi] = mag(C[celli]);
-                dC3dT3max[speciesi] = mag(dC3dT3[celli]);
-            }
-        }
-    }
+    dtManagerC[speciesi].updateDerivatives();
 
     Info<< "Concentration Min(" << speciesName << ") = " << min(C).value()
         << " Max(" << speciesName << ") = " << max(C).value()
         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*hwater*eps).value()/zScale
-        << " dCmax = " << dCdTmax[speciesi]*runTime.deltaTValue() << endl;
+        << " dCmax = " << dtManagerC[speciesi].dVmax()*runTime.deltaTValue() << endl;
 
 }

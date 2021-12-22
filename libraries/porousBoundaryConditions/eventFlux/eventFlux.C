@@ -72,13 +72,13 @@ eventFlux
 )
     :
     fixedValueFvPatchScalarField(h, iF, dict, false),
-    eventFluxValue_(dict.lookupOrDefault<scalar>("constantValue",0.)),
-    phiName_(dict.lookupOrDefault<word>("phiName","phi")),
+    eventFluxValue_(dict.getOrDefault<scalar>("constantValue",0.)),
+    phiName_(dict.getOrDefault<word>("phiName","phi")),
     isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {
-    word eventFileName = dict.lookupOrDefault<word>("eventFile","");
+    word eventFileName = dict.getOrDefault<word>("eventFile","");
     //- Read if backward time scheme is used
     if (word(internalField().mesh().ddtScheme("source")) == "backward")
     {
@@ -108,7 +108,7 @@ eventFlux
         eventFile_.setTimeScheme(dtFieldName, iF.mesh());
 
         //- Reading patch event file and adding intermediate time step
-        scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",0);
+        scalar eventTimeStep = this->db().time().controlDict().getOrDefault<scalar>("eventTimeStep",0);
         if (eventTimeStep > 0)
         {
             eventFile_.addIntermediateTimeSteps(eventTimeStep);
