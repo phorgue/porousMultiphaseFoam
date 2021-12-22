@@ -19,15 +19,16 @@
 
 ## The current branches (last version of the toolbox)
 
-- branch **openfoam-v2106** > PMFv2107
-- branch **openfoam-v2006** > PMFv2107
-- branch **openfoam-v1906** > PMFv2107
-- branch **openfoam-v9**    > PMFv2107
-- branch **openfoam-v8**    > PMFv2107
-- branch **openfoam-v7**    > PMFv2107
+- branch **openfoam-v2106** > PMFv2107.1
+- branch **openfoam-v2006** > PMFv2107.1
+- branch **openfoam-v1906** > PMFv2107.1
+- branch **openfoam-v9**    > PMFv2107.1
+- branch **openfoam-v8**    > PMFv2107.1
+
 
 ## Old branches not updated
 
+- branch **openfoam-v7**     > PMFv2107
 - branch **openfoam-v1812**  > PMFv1906
 - branch **openfoam-v6**     > PMFv1906
 - branch **openfoam-v5**     > PMFv1809
