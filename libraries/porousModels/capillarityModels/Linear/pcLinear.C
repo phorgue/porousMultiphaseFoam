@@ -69,7 +69,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        transportProperties.lookupOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
     ),
     Smax_
     (
@@ -82,7 +82,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-       transportProperties.lookupOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+       transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
     ),
     pc0_
     (
@@ -95,7 +95,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
+        pcLinearCoeffs_.getOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
     ),
     pcMax_
     (
@@ -108,7 +108,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         Sb.mesh(),
-        pcLinearCoeffs_.lookupOrDefault("pcMax",dimensionedScalar("pcMax",dimensionSet(1,-1,-2,0,0),0))
+        pcLinearCoeffs_.getOrDefault("pcMax",dimensionedScalar("pcMax",dimensionSet(1,-1,-2,0,0),0))
     )
 {
     Se_ = ((Sb_-Smin_)/(Smax_-Smin_));

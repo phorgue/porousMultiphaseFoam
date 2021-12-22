@@ -33,66 +33,23 @@ Description
 if (adjustTimeStep)
 {
 
-    //- C-variation control
+    //- C variation control
     scalar dtForC = VGREAT;
-    scalar dtForhwater = VGREAT;
-    if (timeScheme == "backward")
+    forAll(composition.Y(), speciei)
     {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(3*truncationError_potential*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
-        forAll(composition.Y(), speciesi)
-        {
-            if (Cmax[speciesi] > SMALL)
-            {
-                dtForC = min
-                    (
-                        dtForC,
-                        Foam::pow(3*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
-                    );
-            }
-        }
-        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
-    }
-    else if (timeScheme == "CrankNicolson")
-    {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(12*truncationError_potential*(hwatermax+VSMALL)/(dpotential3dT3max+VSMALL),1./3.);
-        forAll(composition.Y(), speciesi)
-        {
-            if (Cmax[speciesi] > SMALL)
-            {
-                dtForC = min
-                    (
-                        dtForC,
-                        Foam::pow(12*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC3dT3max[speciesi]+VSMALL),1./3.)
-                    );
-            }
-        }
-        d3dt3Operator.storeDeltaT00(runTime.deltaT0Value());
-    }
-    else if (timeScheme == "Euler")
-    {
-        if (hwatermax > SMALL) dtForhwater = Foam::pow(2*truncationError_potential*(hwatermax+VSMALL)/(dpotential2dT2max+VSMALL),1./2.);
-        forAll(composition.Y(), speciesi)
-        {
-            if (Cmax[speciesi] > SMALL)
-            {
-                dtForC = min
-                    (
-                        dtForC,
-                        Foam::pow(2*truncationError_C*(Cmax[speciesi]+VSMALL)/(dC2dT2max[speciesi]+VSMALL),1./2.)
-                    );
-            }
-        }
+        dtForC = min
+            (
+                dtForC,
+                dtManagerC[speciei].computeTimestep()
+            );
     }
 
+    //- hwater variation control
+    scalar dtForhwater = dtManager.computeTimestep();
+
+    //- set new deltaT
     scalar newDeltaT = min(min(dtForhwater,dtForC), 1.2*runTime.deltaTValue());
-    runTime.setDeltaT
-        (
-            min
-            (
-                newDeltaT,
-                maxDeltaT
-            )
-        );
+    runTime.setDeltaT(min(newDeltaT, maxDeltaT));
 
 
     //-Adjust time step to explicitly compute (infiltration/source/tracer) event time
