@@ -45,7 +45,7 @@ Description
 #include "outputEventFile.H"
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
-#include "EulerD2dt2Scheme.H"
+#include "timestepManager.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -121,22 +121,13 @@ noConvergence :
             goto noConvergence;
         }
 
-        Info << "Saturation theta: " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) <<  endl;
-        Info << "Head pressure h: " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << endl;
-
         //--- Compute variations
-        volScalarField dh2dT2(d2dt2Operator.fvcD2dt2(h));
-        dh2dT2max = 0;
-        forAll(dh2dT2, celli)
-        {
-            if(mag(dh2dT2[celli]) > dh2dT2max)
-            {
-                hmax = mag(h[celli]);
-                dh2dT2max = mag(dh2dT2[celli]);
-            }
-        }
+        dtManager.updateDerivatives();
         scalarField dtheta_tmp = mag(theta.internalField()-theta.oldTime().internalField());
-        dtheta = gMax(dtheta_tmp);
+        scalar dtheta = gMax(dtheta_tmp);
+
+        Info << "Saturation theta: " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) << " dthetamax = " << dtheta << endl;
+        Info << "Head pressure h: " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << endl;
 
         #include "waterMassBalance.H"
 

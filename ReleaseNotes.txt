@@ -1,9 +1,16 @@
 ************************
-*** PMFv
-***
+*** PMFv2107.1
+*** Minor fixes for PMFv2107
 ************************
 
 ### Libraries
+
+- numericalMethods
+
+  - timestepManager: new class managing derivative computations (1s, 2nd
+  and 3rd order) and timestepping based on truncation error.
+  This allows to simplify the code of the solvers by implementing common
+  functions in this new class
 
 - porousBoundaryConditions
 
@@ -17,6 +24,11 @@
 
   - seepage has been added (similar to transient solver groundwaterFoam)
 
+- groundwater solvers
+
+  - number of seepage cells is only displayed for serial simulation (parallel
+  simulations give wrong value in terminal due to domain decomposition)
+
 ### Tutorials
 
 - darcyFoam
@@ -29,6 +41,16 @@
 
   - replace setBoundaryHeadPressure as it can be used for potential or h
   - version option (2D/3D) has been replaced by field option (h/potential)
+
+### Bug Fix
+
+- groundwaterFoam/groundwater2DFoam: set deltah/dpotential=0 for seepage cells
+
+- steadyGroundwaterFoam: set residual=0 for seepage cells
+
+- pcVanGenuchten: fix Se computation when -VSMALL < h < 0
+
+- set derivative=0 (1st/2nd/3rd order) for dry cells.
 
 ************************
 *** PMFv2107
