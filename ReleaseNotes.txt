@@ -1,4 +1,21 @@
 ************************
+*** PMFvXXXX
+*** 
+************************
+
+### Utilities
+
+- subsetMeshFromDEM
+
+  - Generate automatically a subsetMesh using two DEM files, respectively for
+    the top and the bottom of the aquifer:
+
+    subsetMeshFromDEM /patch/to/file/top.xyz /patch/to/file/bottom.xyz
+
+    two patches are automatically generated: top and bottom.
+  
+
+************************
 *** PMFv2107.1
 *** Minor fixes for PMFv2107
 ************************
