@@ -15,6 +15,7 @@ forAll(composition.Y(), speciesi)
 
     //- update water flux
     phihwater = phi * fvc::interpolate(hwater);
+    forAll(dryCellIDList, celli) C[dryCellIDList[celli]] = 0;
 
     fvScalarMatrix CEqn
         (
