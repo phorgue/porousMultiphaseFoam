@@ -13,7 +13,12 @@
     subsetMeshFromDEM /patch/to/file/top.xyz /patch/to/file/bottom.xyz
 
     two patches are automatically generated: top and bottom.
-  
+
+### Bug
+
+- groundwaterTransport2DFoam
+
+  - fix dryCells (C=0 and dC/dt=0)
 
 ************************
 *** PMFv2107.1
