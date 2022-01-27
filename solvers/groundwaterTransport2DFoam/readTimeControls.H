@@ -55,7 +55,7 @@ scalar truncationError_C =
 PtrList<timestepManager> dtManagerC(0);
 forAll(composition.Y(), speciei)
 {
-    dtManagerC.append(new timestepManager(runTime, composition.Y()[speciei], truncationError_C));
+    dtManagerC.append(new timestepManager(runTime, composition.Y()[speciei], truncationError_C, dryCellIDListPtr));
 }
 
 if (adjustTimeStep)
