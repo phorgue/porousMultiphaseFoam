@@ -43,11 +43,11 @@ Usage
 
     3) initialize pressure head with DEM  file (unsaturated solvers):
 
-        setBoundaryWaterLevel -patch patchName -DEM stl_file
+        setBoundaryWaterLevel -patch patchName -DEM XYZ_file
 
     4) initialize potential with DEM  file (saturated solvers):
 
-        setBoundaryWaterLevel -patch patchName -DEM stl_file -field potential
+        setBoundaryWaterLevel -patch patchName -DEM XYZ_file -field potential
 
     5)  initialize pressure head with STL  file (unsaturated solvers):
 
