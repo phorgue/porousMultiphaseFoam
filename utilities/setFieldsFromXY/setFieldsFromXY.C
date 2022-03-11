@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     //- read the XY file
-    XYfile sourceFile(nameXY);
+    XYfile sourceFile(nameXY, mesh, npoints);
 
     word fileDir = "constant";
     if (args.found("folder"))
@@ -118,18 +118,7 @@ int main(int argc, char *argv[])
             mesh
         );
 
-    forAll(outputFile,celli)
-    {
-        if (npoints == 0)
-        {
-            outputFile[celli] = sourceFile.interpolate(mesh.C()[celli],mesh.cells()[celli].size()-2) + offset;
-        }
-        else
-        {
-            outputFile[celli] = sourceFile.interpolate(mesh.C()[celli],npoints) + offset;
-        }
-    }
-
+    sourceFile.mapField(outputFile, offset);
     outputFile.write();
 
     Info << nl << "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
