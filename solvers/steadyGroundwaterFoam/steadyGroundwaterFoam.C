@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         #include "hEqnPicard.H"
         #include "checkResidual.H"
 
-        Info << "Saturation theta:" << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) << " delta(theta) = " << max(mag(theta.internalField()-theta.oldTime().internalField())()) << endl;
+        Info << "Saturation theta:" << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) << " delta(theta) = " << gMax(mag(theta.internalField()-theta.oldTime().internalField())()) << endl;
         Info << "Head pressure h:" << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << " delta(h) = " << gMax(deltah.internalField()) << endl;
 
         runTime.write();
