@@ -32,8 +32,8 @@ forAll(composition.Y(), speciesi)
 
     dtManagerC[speciesi].updateDerivatives();
 
-    Info<< "Concentration Min(" << speciesName << ") = " << min(C).value()
-        << " Max(" << speciesName << ") = " << max(C).value()
+    Info<< "Concentration Min(" << speciesName << ") = " << gMin(C)
+        << " Max(" << speciesName << ") = " << gMax(C)
         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*hwater*eps).value()/zScale
         << " dCmax = " << dtManagerC[speciesi].dVmax()*runTime.deltaTValue() << endl;
 

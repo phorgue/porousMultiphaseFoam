@@ -122,7 +122,7 @@ volScalarField K
     ),
     mesh
 );
-Info << "min(K) = " << min(K) << " ; max(K) = " << gMax(K) << nl << endl;
+Info << "min(K) = " << gMin(K) << " ; max(K) = " << gMax(K) << nl << endl;
 
 // permeability/mobility field
 dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
