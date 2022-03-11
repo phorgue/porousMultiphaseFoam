@@ -50,7 +50,7 @@ volScalarField z0
     ),
     mesh
 );
-Info << "min(z0) = " << min(z0).value() << " ; max(z0) = " << max(z0).value() << endl;
+Info << "min(z0) = " << gMin(z0) << " ; max(z0) = " << gMax(z0) << endl;
 
 Info << nl << "Computing hwater" << endl;
 volScalarField hwater
@@ -61,8 +61,7 @@ volScalarField hwater
         runTime.timeName(),
         mesh,
         IOobject::NO_READ,
-        IOobject::AUTO_WRITE
-    ),
+        IOobject::AUTO_WRITE    ),
     potential
 );
 hwater = potential - z0;
@@ -71,7 +70,7 @@ dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dime
 
 #include "correctInitialPotential.H"
 
-Info << "min(hwater) = " << min(hwater).value() << " ; max(hwater) = " << max(hwater).value()
+Info << "min(hwater) = " << gMin(hwater) << " ; max(hwater) = " << gMax(hwater)
 << " ; hwaterMin = " << hwaterMin.value() << endl;
 
 hwater.write();
@@ -94,7 +93,7 @@ volScalarField K
     ),
     mesh
 );
-Info << "min(K) = " << min(K).value() << " ; max(K) = " << max(K).value() << endl;
+Info << "min(K) = " << gMin(K) << " ; max(K) = " << gMax(K) << endl;
 
 // Computing permeability/mobility field
 dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
