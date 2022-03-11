@@ -47,6 +47,7 @@ SourceFiles
 #define XYfile_H
 
 #include "fvMesh.H"
+#include "IFstream.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,9 +71,10 @@ private:
     scalarList values_;
     List<List<Tuple2<label, scalar>>> mapping_ ;
 
+    DynamicList<string> splitLine(const string&, const string&, const label&, const word&);
     void findClosestPoints(const point&, labelList&, scalarList&);
     void constructMapping();
-    void readMapping();
+    bool readMapping(IFstream&);
 
 public:
 
