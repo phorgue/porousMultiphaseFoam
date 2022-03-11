@@ -28,7 +28,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "XYfile.H"
-#include "IFstream.H"
 #include "volFields.H"
 #include "OFstream.H"
 
@@ -60,10 +59,6 @@ Foam::XYfile::XYfile
     npoints_(npoints),
     mapping_(mesh.C().size())
 {
-    //- properties of a XY file
-    string separator_ = " ";
-    label nEntries = 3;
-
     //- file name
     IFstream ifs(fileName);
     DynamicList<scalar> xread; 
@@ -79,44 +74,10 @@ Foam::XYfile::XYfile
 
         if (line != "")
         {
-            label n = 0;
-            std::size_t pos = 0;
-            DynamicList<string> split;
-        
-            while ((pos != std::string::npos) && (n <= nEntries))
-            {
-                std::size_t nPos = line.find(separator_, pos);
-                if (nPos == std::string::npos)
-                {
-                    split.append(line.substr(pos));
-                    pos = nPos;
-                    n++;
-                }
-                else
-                {
-                    split.append(line.substr(pos, nPos - pos));
-                    pos = nPos + 1;
-                    n++;
-                }
-            }
-
-            if (split.size() <= 1)
-            {
-                break;
-            }
-
-            if (n != nEntries)
-            {
-                FatalErrorIn("XYfile.C")
-                    << "wrong number of elements in XY file :" << fileName
-                        << nl << "List of read elements : " << split
-                        << abort(FatalError);
-            }
-
+            DynamicList<string> split = splitLine(line, " ", 3, fileName);
             xread.append(readScalar(IStringStream(split[0])()));
             yread.append(readScalar(IStringStream(split[1])()));
             valuesread.append(readScalar(IStringStream(split[2])()));
-            
         }
     }
 
@@ -136,7 +97,30 @@ Foam::XYfile::XYfile
         << nl << "  endPoint   (" << max(x_) << "," << max(y_) << ")"
         << nl << "}" << endl;
 
-    constructMapping();
+    Info << "Test if mapping file available..." << endl;
+    word mappingFileName = name_ + ".map";
+    IFstream mappingFileStream(mappingFileName);
+    if (mappingFileStream.good())
+    {
+        Info << "Mapping file found, reading Information...";
+        bool res = readMapping(mappingFileStream);
+        if (res)
+        {
+            Info << "OK" << endl;
+        }
+        else
+        {
+            Info << "Error in mapping file" << nl << "Re-constructing mapping...";
+            constructMapping();
+            Info << "OK" << endl;
+        }
+    }
+    else
+    {
+        Info << "Mapping file not found, constructing mapping...";
+        constructMapping();
+        Info << "OK" << endl;
+    }
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -145,6 +129,37 @@ Foam::XYfile::~XYfile()
 {}
 
 // * * * * * * * * * * * * * Private Members  * * * * * * * * * * * * * * //
+
+Foam::DynamicList<Foam::string> Foam::XYfile::splitLine(const string& line, const string& separator, const label& nEntries, const word& fileName)
+{
+    std::size_t pos = 0;
+    DynamicList<string> split;
+
+    while ((pos != std::string::npos) && (split.size() <= nEntries))
+    {
+        std::size_t nPos = line.find(separator, pos);
+        if (nPos == std::string::npos)
+        {
+            split.append(line.substr(pos));
+            pos = nPos;
+        }
+        else
+        {
+            split.append(line.substr(pos, nPos - pos));
+            pos = nPos + 1;
+        }
+    }
+
+    if (split.size() < nEntries)
+    {
+        FatalErrorIn("XYfile.C")
+            << "wrong number of elements in file : " << fileName
+                << nl << "List of read elements : " << split
+                << abort(FatalError);
+    }
+
+    return split;
+}
 
 void Foam::XYfile::findClosestPoints(const point& location, labelList& id, scalarList& coeffs)
 {
@@ -203,8 +218,33 @@ void Foam::XYfile::constructMapping()
         mappingFile << endl;
     };
 }
-void Foam::XYfile::readMapping()
+bool Foam::XYfile::readMapping(Foam::IFstream& mappingFile)
 {
+    string line;
+    // check header of the .map file
+    if (mappingFile.good())
+    {
+        mappingFile.getLine(line);
+        DynamicList<string> split = splitLine(line, " ", 2, mappingFile.name());
+        if ((readInt(split[0]) != mesh_.C().size()) || (readInt(split[1]) != npoints_))
+        {
+            return false;
+        }
+    }
+    // read data
+    label ne = npoints_*2;
+    for(label celli=0; celli<mesh_.C().size(); celli++)
+    {
+        mapping_[celli].resize(npoints_);
+        mappingFile.getLine(line);
+        DynamicList<string> split = splitLine(line, " ", ne, mappingFile.name());
+        for(label pointi=0; pointi<npoints_; pointi++)
+        {
+            mapping_[celli][pointi].first() = readInt(split[2*pointi]);
+            mapping_[celli][pointi].second() = readScalar(split[2*pointi+1]);
+        }
+    }
+    return true;
 }
 
 
