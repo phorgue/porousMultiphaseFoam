@@ -44,7 +44,7 @@
         //- reading STL informations
         word STLfile = args.opt("STL");
         triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
-        pointField pPoints = potentialSTL.points();
+        pointField pPoints( potentialSTL.points() );
 	scalar thresholdPotential = args.getOrDefault<scalar>("threshold",0.);
 	scalar offsetPotential = args.getOrDefault<scalar>("offset",0.);
         Info << nl << "Potential fixed using points over " << thresholdPotential <<  " in STL = " << STLfile << " offseted by " << offsetPotential << endl;
