@@ -97,36 +97,27 @@ Foam::XYfile::XYfile
         << nl << "  endPoint   (" << max(x_) << "," << max(y_) << ")"
         << nl << "}" << endl;
 
-    if (Pstream::nProcs() == 1)
+    Info << "Test if mapping file available..." << endl;
+    word mappingFileName = name_ + ".map";
+    IFstream mappingFileStream(mesh_.time().path()+'/'+mappingFileName);
+    if (mappingFileStream.good())
     {
-        Info << "Test if mapping file available..." << endl;
-        word mappingFileName = name_ + ".map";
-        IFstream mappingFileStream(mappingFileName);
-        if (mappingFileStream.good())
+        Info << "Mapping file found, reading Information...";
+        bool res = readMapping(mappingFileStream);
+        if (res)
         {
-            Info << "Mapping file found, reading Information...";
-            bool res = readMapping(mappingFileStream);
-            if (res)
-            {
-                Info << "OK" << endl;
-            }
-            else
-            {
-                Info << "Error in mapping file" << nl << "Re-constructing mapping...";
-                constructMapping();
-                Info << "OK" << endl;
-            }
+            Info << "OK" << endl;
         }
         else
         {
-            Info << "Mapping file not found, constructing mapping...";
+            Info << "Error in mapping file" << nl << "Re-constructing mapping...";
             constructMapping();
             Info << "OK" << endl;
         }
     }
     else
     {
-        Info << "Parallel run, mapping file not working. Constructing mapping...";
+        Info << "Mapping file not found, constructing mapping...";
         constructMapping();
         Info << "OK" << endl;
     }
@@ -210,7 +201,7 @@ void Foam::XYfile::findClosestPoints(const point& location, labelList& id, scala
 void Foam::XYfile::constructMapping()
 {
     word mappingFileName = name_ + ".map";
-    OFstream mappingFile(mappingFileName);
+    OFstream mappingFile(mesh_.time().path()+'/'+mappingFileName);
     mappingFile << mesh_.C().size() << " " << npoints_ << endl;
     forAll(mesh_.C(), celli)
     {
