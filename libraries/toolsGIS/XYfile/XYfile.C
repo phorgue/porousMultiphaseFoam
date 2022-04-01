@@ -97,27 +97,36 @@ Foam::XYfile::XYfile
         << nl << "  endPoint   (" << max(x_) << "," << max(y_) << ")"
         << nl << "}" << endl;
 
-    Info << "Test if mapping file available..." << endl;
-    word mappingFileName = name_ + ".map";
-    IFstream mappingFileStream(mappingFileName);
-    if (mappingFileStream.good())
+    if (Pstream::nProcs() == 1)
     {
-        Info << "Mapping file found, reading Information...";
-        bool res = readMapping(mappingFileStream);
-        if (res)
+        Info << "Test if mapping file available..." << endl;
+        word mappingFileName = name_ + ".map";
+        IFstream mappingFileStream(mappingFileName);
+        if (mappingFileStream.good())
         {
-            Info << "OK" << endl;
+            Info << "Mapping file found, reading Information...";
+            bool res = readMapping(mappingFileStream);
+            if (res)
+            {
+                Info << "OK" << endl;
+            }
+            else
+            {
+                Info << "Error in mapping file" << nl << "Re-constructing mapping...";
+                constructMapping();
+                Info << "OK" << endl;
+            }
         }
         else
         {
-            Info << "Error in mapping file" << nl << "Re-constructing mapping...";
+            Info << "Mapping file not found, constructing mapping...";
             constructMapping();
             Info << "OK" << endl;
         }
     }
     else
     {
-        Info << "Mapping file not found, constructing mapping...";
+        Info << "Parallel run, mapping file not working. Constructing mapping...";
         constructMapping();
         Info << "OK" << endl;
     }
