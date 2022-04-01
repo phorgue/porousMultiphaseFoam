@@ -19,7 +19,8 @@
   - utility now generate a mapping file (.map) linking mesh cells to XY points.
   If .map file is present, utility check that number of cells corresponds to the
   mesh and that number of points corresponds to the interpolation. This allows
-  the re-use of similar interpolation with reduced cost
+  the re-use of similar interpolation with reduced cost. Works both for serial
+  and parallel runs.
 
 ### Bug
 
