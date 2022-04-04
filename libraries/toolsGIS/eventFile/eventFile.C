@@ -210,7 +210,7 @@ void Foam::eventFile::setTimeScheme(const word& dtFieldName, const fvMesh& mesh)
 
 Foam::scalar Foam::eventFile::dtValue(const label& id) const
 {
-    if(ddtScheme_.empty())
+    if(!ddtScheme_)
     {
         FatalErrorIn("eventFile.C")
             << "You must call setTimeScheme(...) before being able to use dtValue(s)()"
