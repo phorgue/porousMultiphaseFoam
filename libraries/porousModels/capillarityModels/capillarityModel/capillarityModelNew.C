@@ -42,8 +42,7 @@ Foam::autoPtr<Foam::capillarityModel> Foam::capillarityModel::New
 
   Info<< "Selecting capillarity model => " << modelType << "\n" << endl;
 
-  dictionaryConstructorTable::iterator cstrIter =
-    dictionaryConstructorTablePtr_->find(modelType);
+  auto cstrIter = dictionaryConstructorTablePtr_->find(modelType);
 
   if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
