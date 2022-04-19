@@ -63,6 +63,11 @@ jobs:
     strategy:
       matrix:
         openfoam_version: [ v2106, v2112 ]
+        include:
+          - openfoam_version: v2106
+            output_build: -v2106
+          - openfoam_version: v2112
+            output_build: user-v2112
 
     container: 'ghcr.io/${{github.actor}}/porousmultiphasefoam:openfoam-${{matrix.openfoam_version}}-opensuse-mingw'
 
@@ -82,5 +87,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: pmf-opensuse-mingw-${{matrix.openfoam_version}}
-        path: /github/home/OpenFOAM/-${{matrix.openfoam_version}}/platforms/linux64MingwDPInt32Opt/
+        path: /github/home/OpenFOAM/${{matrix.output_build}}/platforms/linux64MingwDPInt32Opt/
         
