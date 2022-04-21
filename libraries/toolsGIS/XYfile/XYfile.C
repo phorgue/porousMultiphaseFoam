@@ -99,7 +99,7 @@ Foam::XYfile::XYfile
 
     Info << "Test if mapping file available..." << endl;
     word mappingFileName = name_ + ".map";
-    IFstream mappingFileStream(mappingFileName);
+    IFstream mappingFileStream(mesh_.time().path()+'/'+mappingFileName);
     if (mappingFileStream.good())
     {
         Info << "Mapping file found, reading Information...";
@@ -201,7 +201,7 @@ void Foam::XYfile::findClosestPoints(const point& location, labelList& id, scala
 void Foam::XYfile::constructMapping()
 {
     word mappingFileName = name_ + ".map";
-    OFstream mappingFile(mappingFileName);
+    OFstream mappingFile(mesh_.time().path()+'/'+mappingFileName);
     mappingFile << mesh_.C().size() << " " << npoints_ << endl;
     forAll(mesh_.C(), celli)
     {
