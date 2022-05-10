@@ -123,6 +123,10 @@ volScalarField K
     mesh
 );
 
+scalar Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
+K *= Kfactor;
+Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
+
 // permeability interpolation
 surfaceScalarField Kf(fvc::interpolate(K,"K"));
 
