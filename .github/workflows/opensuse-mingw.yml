@@ -1,0 +1,91 @@
+name: OpenSuse mingw CI (docker image)
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - features/*
+      - feature/*
+  
+jobs:
+
+  docker_publish:
+          
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        openfoam_version: [ v2106, v2112 ]
+        include:
+          - openfoam_version: v2106
+            openfoam_branch: maintenance-v2106
+          - openfoam_version: v2112
+            openfoam_branch: OpenFOAM-v2112
+    
+    steps:
+    
+    - uses: actions/checkout@master
+      with:
+        fetch-depth: 0
+        
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v1.1.2
+      with:
+        files: |
+          docker/opensuse-mingw
+          
+    - name: Log in to the Container registry
+      #if: steps.changed-files.outputs.modified_files != ''
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Push to GitHub Packages ${{matrix.openfoam_version}}
+      if: steps.changed-files.outputs.modified_files != ''
+      uses: docker/build-push-action@v1
+      with:
+        registry: ghcr.io
+        tags: openfoam-${{matrix.openfoam_version}}-opensuse-mingw
+        dockerfile: docker/opensuse-mingw
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        build_args: OPENFOAM_BRANCH=${{matrix.openfoam_branch}}
+
+  build:
+
+    runs-on: ubuntu-latest
+    needs: docker_publish
+
+    strategy:
+      matrix:
+        openfoam_version: [ v2106, v2112 ]
+        include:
+          - openfoam_version: v2106
+            output_build: -v2106
+          - openfoam_version: v2112
+            output_build: user-v2112
+
+    container: 'ghcr.io/${{github.actor}}/porousmultiphasefoam:openfoam-${{matrix.openfoam_version}}-opensuse-mingw'
+
+    steps:
+
+    - uses: nelonoel/branch-name@v1.0.1
+
+    - name: Checkout
+      run: |
+          git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git -b ${BRANCH_NAME} .
+
+    - name: Build
+      run: |
+           FOAM_VERBOSE=true &&  source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh && ls && ./Allwmake -j
+
+    - name: Build artifact upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: pmf-opensuse-mingw-${{matrix.openfoam_version}}
+        path: /github/home/OpenFOAM/${{matrix.output_build}}/platforms/linux64MingwDPInt32Opt/
+        
