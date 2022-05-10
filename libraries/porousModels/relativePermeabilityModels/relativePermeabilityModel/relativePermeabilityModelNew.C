@@ -42,8 +42,7 @@ Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::
 
     Info<< "Selecting relativePermeability model => " << modelType << "\n" << endl;
 
-    dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(modelType);
+    auto cstrIter = dictionaryConstructorTablePtr_->find(modelType);
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
