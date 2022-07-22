@@ -127,7 +127,7 @@ void Foam::darcyGradPressure::updateCoeffs()
     //Extract the dictionary from database
     scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").getOrDefault<scalar>("activateCapillarity",0.));
 
-    gradient() = - (phi-phiGf-phiPc*activateCapillarity)/Mf/(patch().magSf());
+    gradient() = - (phi-phiGf-phiPc*activateCapillarity)/(Mf+ROOTVSMALL)/(patch().magSf());
 
     fixedGradientFvPatchScalarField::updateCoeffs();
 }
