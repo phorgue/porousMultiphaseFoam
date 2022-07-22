@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
             << nl << endl;
     }
 
-    if (cumulativeWaterAdded > 0) Info << "Cumulated water added = " << cumulativeWaterAdded << " m3, equivalent height = " << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m" << nl << endl;
+    if (cumulativeWaterAdded > 0) Info << "Cumulated water added = " << cumulativeWaterAdded << " m3, equivalent height = " << cumulativeWaterAdded*zScale/gSum(mesh.V()) << " m" << nl << endl;
     Info<< "End\n" << endl;
 
     return 0;

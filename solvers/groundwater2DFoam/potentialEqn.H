@@ -32,7 +32,7 @@
             }
         }
         cumulativeWaterAdded += waterAdded;
-        Info << "Number of dry cells = " << dryCellIDList.size() << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/sum(mesh.V()).value() << " m)" << endl;
+        Info << "Number of dry cells = " << dryCellIDList.size() << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/gSum(mesh.V()) << " m)" << endl;
     }
 
     //- compute derivatives

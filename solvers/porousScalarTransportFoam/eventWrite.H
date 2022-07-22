@@ -20,7 +20,7 @@ if (outputEventIsPresent)
                 {
                     if (mesh.boundaryMesh()[patchi].type() == "patch")
                     {
-                        CmassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C_interpolated.boundaryField()[patchi]);
+                        CmassBalanceCSV << " " << gSum(phi.boundaryField()[patchi]*C_interpolated.boundaryField()[patchi]);
                     }
                 }
                 CmassBalanceCSV << endl;
@@ -51,7 +51,7 @@ else
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    CmassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
+                    CmassBalanceCSV << " " << gSum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]);
                 }
             }
             CmassBalanceCSV << endl;

@@ -10,7 +10,7 @@ forAll(composition.Y(), speciesi)
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            Info << phihwater.boundaryField()[patchi].patch().name() << " = " <<  sum(phihwater.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale << " ; ";
+            Info << phihwater.boundaryField()[patchi].patch().name() << " = " <<  gSum(phihwater.boundaryField()[patchi]*C.boundaryField()[patchi])/zScale << " ; ";
         }
     }
     Info << " fixed points = " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
