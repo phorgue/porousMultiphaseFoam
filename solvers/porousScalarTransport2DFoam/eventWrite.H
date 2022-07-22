@@ -27,7 +27,7 @@ if (outputEventIsPresent)
                     {
                         scalarField dispersiveFlux(((Deff.boundaryField()[patchi] & mesh.boundary()[patchi].nf()) & mesh.boundary()[patchi].Sf()));
                         scalarField convectiveFlux(phihwater_interpolated.boundaryField()[patchi]*C_interpolated.boundaryField()[patchi]);
-                        CmassBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C_interpolated)+convectiveFlux)/zScale;
+                        CmassBalanceCSV << " " << gSum(dispersiveFlux*fvc::snGrad(C_interpolated)+convectiveFlux)/zScale;
                     }
                 }
                 CmassBalanceCSV << " " << fvc::domainIntegrate(seepageTerm*C_interpolated).value()/zScale << endl;
@@ -60,7 +60,7 @@ else
                 {
                     scalarField dispersiveFlux(((Deff.boundaryField()[patchi] & mesh.boundary()[patchi].nf()) & mesh.boundary()[patchi].Sf()));
                     scalarField convectiveFlux(phihwater.boundaryField()[patchi]*C.boundaryField()[patchi]);
-                    CmassBalanceCSV << " " << sum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
+                    CmassBalanceCSV << " " << gSum(dispersiveFlux*fvc::snGrad(C)+convectiveFlux)/zScale;
                 }
             }
             CmassBalanceCSV << " " << fvc::domainIntegrate(seepageTerm*C).value()/zScale << endl;
