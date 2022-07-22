@@ -40,7 +40,7 @@
     {
         if (mesh.boundaryMesh()[patchi].type() == "patch")
         {
-            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  sum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi])/zScale << " ; ";
+            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  gSum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi])/zScale << " ; ";
         }
     }
     Info << endl;

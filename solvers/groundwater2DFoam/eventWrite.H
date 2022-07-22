@@ -33,7 +33,7 @@ if (outputEventIsPresent)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    waterMassBalanceCSV << " " << sum(phi_interpolated.boundaryField()[patchi]*hwater_interpolated.boundaryField()[patchi])/zScale << " ";
+                    waterMassBalanceCSV << " " << gSum(phi_interpolated.boundaryField()[patchi]*hwater_interpolated.boundaryField()[patchi])/zScale << " ";
                 }
             }
             waterMassBalanceCSV << endl;
@@ -59,7 +59,7 @@ else
         {
             if (mesh.boundaryMesh()[patchi].type() == "patch")
             {
-                waterMassBalanceCSV << " " << sum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi])/zScale << " ";
+                waterMassBalanceCSV << " " << gSum(phi.boundaryField()[patchi]*hwater.boundaryField()[patchi])/zScale << " ";
             }
         }
         waterMassBalanceCSV << endl;

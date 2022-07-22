@@ -17,7 +17,7 @@ if (outputEventIsPresent)
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    waterMassBalanceCSV << " " << sum(phi_interpolated.boundaryField()[patchi]);
+                    waterMassBalanceCSV << " " << gSum(phi_interpolated.boundaryField()[patchi]);
                 }
             }
             waterMassBalanceCSV << endl;
@@ -39,7 +39,7 @@ else
             {
                 if (mesh.boundaryMesh()[patchi].type() == "patch")
                 {
-                    waterMassBalanceCSV << " " << sum(phi.boundaryField()[patchi]);
+                    waterMassBalanceCSV << " " << gSum(phi.boundaryField()[patchi]);
                 }
             }
             waterMassBalanceCSV << endl;
