@@ -5,7 +5,7 @@
 
 # import
 from __future__ import with_statement
-import os, subprocess, sys
+import os, subprocess, sys, glob
 
 # import list_cases
 from tutorialsList import tutorials as testCases
@@ -48,16 +48,18 @@ class testCase:
 
             foam_exit = "FOAM exiting"
             foam_abort = "FOAM aborting"
-            foamFile = open("log."+self.solver, 'r')
-            error_found = False
-            for lines in foamFile:
-                if foam_exit in lines:
-                    error_found = True
-                    break
-                if foam_abort in lines:
-                    error_found = True
-                    break
-
+            log_files = glob.glob('log.*')
+            for filename in log_files:
+                foamFile = open(filename, 'r')
+                error_found = False
+                for lines in foamFile:
+                    if foam_exit in lines:
+                        error_found = True
+                        break
+                    if foam_abort in lines:
+                        error_found = True
+                        break
+                    
             if error_found:
                 print("[ ERROR OpenFOAM ] ")
             else:
