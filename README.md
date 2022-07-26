@@ -12,22 +12,24 @@
 
 # Branches
 
-## Development branches: dev works with OpenFOAM-v2106
+## Development branches:
 
 - branch **dev** works with OpenFOAM-v2106 (openfoam.com)
 - branch **dev_org** works with OpenFOAM-v9 (openfoam.org)
 
 ## The current branches (last version of the toolbox)
 
-- branch **openfoam-v2106** > PMFv2107.1
-- branch **openfoam-v2006** > PMFv2107.1
-- branch **openfoam-v1906** > PMFv2107.1
-- branch **openfoam-v9**    > PMFv2107.1
-- branch **openfoam-v8**    > PMFv2107.1
-
+- branch **openfoam-v2206**  > PMFv2107.2
+- branch **openfoam-v2106**  > PMFv2107.2
+- branch **openfoam-v2006**  > PMFv2107.2
+- branch **openfoam-v10**    > PMFv2107.2
+  *openfoam-v10 has errors when using postProcess/setSet in tutorials*
+- branch **openfoam-v9**     > PMFv2107.2
+- branch **openfoam-v8**     > PMFv2107.2
 
 ## Old branches not updated
 
+- branch **openfoam-v1906**  > PMFv2107.1
 - branch **openfoam-v7**     > PMFv2107
 - branch **openfoam-v1812**  > PMFv1906
 - branch **openfoam-v6**     > PMFv1906
