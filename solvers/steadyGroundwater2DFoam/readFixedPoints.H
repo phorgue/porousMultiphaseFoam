@@ -61,15 +61,22 @@ else Info << nl << "no Seepage option" << endl;
 List<Tuple2<point,scalar> > fixedPotentialList(transportProperties.lookupOrDefault
 ("fixedPotentialList",List<Tuple2<point,scalar> >())
 );
-labelList fixedPotentialIDList(fixedPotentialList.size());
-scalarList fixedPotentialValueList(fixedPotentialList.size());
+DynamicList<label> fixedPotentialIDList(0);
+DynamicList<scalar> fixedPotentialValueList(0);
 bool useDEMtoFixPotential(transportProperties.lookupOrDefault<bool>("useDEMtoFixPotential",false));
 if (fixedPotentialList.size() > 0)
 {
+    label nFixedPoints = 0;
     //- find closest cell to fixed points
     forAll(fixedPotentialList,pointi)
     {
-        fixedPotentialIDList[pointi] = mesh.findNearestCell(fixedPotentialList[pointi].first());
+        label cellID =  mesh.findCell(fixedPotentialList[pointi].first());
+        if (cellID > -1)
+        {
+            nFixedPoints += 1;
+            fixedPotentialIDList.resize(nFixedPoints, cellID);
+            fixedPotentialValueList.resize(nFixedPoints, fixedPotentialList[pointi].second());
+        }
     }
 
     if (useDEMtoFixPotential)
@@ -83,22 +90,21 @@ if (fixedPotentialList.size() > 0)
     else
     {
         Info << nl << "user-defined values used for fixedPotentialList" << endl;
-        forAll(fixedPotentialList,pointi)
-        {
-            fixedPotentialValueList[pointi] = fixedPotentialList[pointi].second();
-        }
     }
 
     //- Display information about fixed values
-    Info << nl << "Fixed potential positions and values are " << nl << "{";
-    forAll(fixedPotentialList,pointi)
+    if (Pstream::nProcs() == 1)
     {
-        scalar distance_to_centre = Foam::sqrt(pow(mesh.C()[fixedPotentialIDList[pointi]].x()-fixedPotentialList[pointi].first().x(),2)
-        +pow(mesh.C()[fixedPotentialIDList[pointi]].y()-fixedPotentialList[pointi].first().y(),2));
-        Info << nl << "  " << fixedPotentialList[pointi].first() <<  " : value " << fixedPotentialValueList[pointi]
-            << "  (cellID = " << fixedPotentialIDList[pointi] << ", distance with cell-center = " << distance_to_centre << ")";
+        Info << nl << "Fixed potential positions and values are " << nl << "{";
+        forAll(fixedPotentialList,pointi)
+        {
+            scalar distance_to_centre = Foam::sqrt(pow(mesh.C()[fixedPotentialIDList[pointi]].x()-fixedPotentialList[pointi].first().x(),2)
+            +pow(mesh.C()[fixedPotentialIDList[pointi]].y()-fixedPotentialList[pointi].first().y(),2));
+            Info << nl << "  " << fixedPotentialList[pointi].first() <<  " : value " << fixedPotentialValueList[pointi]
+                << "  (cellID = " << fixedPotentialIDList[pointi] << ", distance with cell-center = " << distance_to_centre << ")";
+        }
+        Info << nl << "}" << endl;
     }
-    Info << nl << "}" << endl;
 }
 
 //- creating seepage and dryCell lists
