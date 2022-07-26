@@ -183,7 +183,9 @@ void Foam::sourceEventFile::onMeshChanged()
 
         forAll(this->coordinates(),pointi)
         {
-            idCoordinates_[pointi] = mesh_->findNearestCell(this->coordinates()[pointi]);
+            idCoordinates_[pointi] = mesh_->findCell(this->coordinates()[pointi]);
+            // if (cell >
+            // Info << nl << this->coordinates()[pointi] << " ID " << idCoordinates_[pointi] << " VOLUME = " << mesh_->V()[idCoordinates_[pointi]] << endl;
         }
     }
     else
@@ -228,7 +230,10 @@ Foam::tmp<Foam::volScalarField> Foam::sourceEventFile::dtValuesAsField() const
 
     forAll(this->coordinates(), pointi)
     {
-        sourceTerm[idCoordinates_[pointi]] += this->dtValue(pointi)/mesh_->V()[idCoordinates_[pointi]];
+        if (idCoordinates_[pointi] > -1)
+        {
+            sourceTerm[idCoordinates_[pointi]] += this->dtValue(pointi)/mesh_->V()[idCoordinates_[pointi]];
+        }
     }
 
     return tSourceTerm;
