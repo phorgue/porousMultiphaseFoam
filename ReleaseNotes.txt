@@ -3,6 +3,17 @@
 *** Minor fixes for PMFv2107.1
 ************************
 
+### Bug fixes
+
+- sourceEventFile / 2D fixed points
+
+  - parallel issues for source injection and potential fixed points.
+
+************************
+*** PMFv2107.2
+*** Minor fixes for PMFv2107.1
+************************
+
 ### Utilities
 
 - subsetMeshFromDEM
