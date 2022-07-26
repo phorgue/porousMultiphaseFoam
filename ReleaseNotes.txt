@@ -1,6 +1,6 @@
 ************************
-*** PMFvXXXX
-*** 
+*** PMFv2107.2
+*** Minor fixes for PMFv2107.1
 ************************
 
 ### Utilities
@@ -27,6 +27,12 @@
 - groundwaterTransport2DFoam
 
   - fix dryCells (C=0 and dC/dt=0)
+
+- darcyGradPressure
+
+  - now handle dry cells (mobility=0) to avoid crash during steady iterations
+
+- multiple minor bugs
 
 ************************
 *** PMFv2107.1
