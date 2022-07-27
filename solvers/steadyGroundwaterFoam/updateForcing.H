@@ -35,8 +35,11 @@ if (patchDEMID > -1)
             }
         }
     }
+
     // Display number of seepage only for serial run (wrong value for parallel
-    if (Pstream::nProcs() == 1) Info << "Number of seepage cells = " << fixedPotentialIDList.size() << endl;
+    label nSeepageCells = fixedPotentialIDList.size();
+    reduce(nSeepageCells, sumOp<label>());
+    Info << "Number of seepage cells = " << nSeepageCells << endl;
 
     if (fixedPotentialIDList.size() > 0) hEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
 }
