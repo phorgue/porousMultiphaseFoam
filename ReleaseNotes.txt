@@ -5,6 +5,11 @@
 
 ### Bug fixes
 
+- timeStepManager
+
+  - there was issues for derivative computation when running on multiple cores.
+  timeStepManager class now uses reduce function.
+
 - sourceEventFile / 2D fixed points
 
   - parallel issues for source injection and potential fixed points.

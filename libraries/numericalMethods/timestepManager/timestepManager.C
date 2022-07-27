@@ -102,6 +102,8 @@ void timestepManager::update1stOrder()
             dVmax_ = mag(dVdT[celli]);
         }
     }
+    reduce(Vmax_, maxOp<scalar>());
+    reduce(dVmax_, maxOp<scalar>());
     if (Vmax_ == 0) Vmax_ = SMALL;
 }
 
@@ -119,7 +121,9 @@ void timestepManager::update2ndOrder()
             dV2max_ = mag(dV2dT2[celli]);
         }
     }
-    if (V2max_== 0 ) V2max_ = SMALL;
+    reduce(V2max_, maxOp<scalar>());
+    reduce(dV2max_, maxOp<scalar>());
+    if (V2max_ == 0) V2max_ = SMALL;
 }
 
 void timestepManager::update3rdOrder()
@@ -136,6 +140,8 @@ void timestepManager::update3rdOrder()
             dV3max_ = mag(dV3dT3[celli]);
         }
     }
+    reduce(V3max_, maxOp<scalar>());
+    reduce(dV3max_, maxOp<scalar>());
     if (V3max_ == 0) V3max_ = SMALL;
 }
 
@@ -175,6 +181,7 @@ scalar timestepManager::computeTimestep
         d3dt3Operator_.storeDeltaT00(runTime_.deltaT0Value());
         dt = Foam::pow(12*truncationError*(V3max_+VSMALL)/(dV3max_+VSMALL),1./3.);
     }
+    reduce(dt, minOp<scalar>());
     return dt;
 }
 
