@@ -1,4 +1,4 @@
-/*---------------------------------------------------------------------------*\
+/*---------------------------------------------------------------------------* \
   		  _______  ____    ____  ________  
  		 |_   __ \|_   \  /   _||_   __  | 
    		   | |__) | |   \/   |    | |_ \_| 
@@ -41,17 +41,21 @@ Description
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
 #include "timestepManager.H"
+#include "simpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
 
 int main(int argc, char *argv[])
 {
+    argList::addBoolOption("steady", "to run steady flow simulation");
+
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
     #include "readFixedPoints.H"
+    bool steady = args.found("steady");
     #include "readTimeControls.H"
     #include "readEvent.H"
 
@@ -61,16 +65,22 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.timeOutputValue());
-        if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.timeOutputValue());
-        #include "setDeltaT.H"
+        if (!steady)
+        {
+            if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.timeOutputValue());
+            if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.timeOutputValue());
+            #include "setDeltaT.H"
+        }
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         //- Update infiltration term
-        #include "computeInfiltration.H"
+        if (!steady)
+        {
+            #include "computeInfiltration.H"
+        }
 
         //- Solve potential equation
         #include "potentialEqn.H"
@@ -78,7 +88,23 @@ int main(int argc, char *argv[])
         //- Water mass balance computation
         #include "waterMassBalance.H"
 
+        //- Residual computation
+        if (steady)
+        {
+            scalarField ResiduN = -fvc::laplacian(transmissivity,potential,"laplacian(transmissivity,potential)") + infiltration + seepageTerm;
+            forAll(dryCellIDList, celli)  ResiduN[dryCellIDList[celli]] = 0;
+            forAll(fixedPotentialIDList, celli)  ResiduN[fixedPotentialIDList[celli]] = 0;
+            scalar maxResidual = gMax(mag(ResiduN));
+            Info << "Potential equation residual = " << maxResidual << endl;
+            if (maxResidual < residualPotential)
+            {
+                runTime.writeAndEnd();
+            }
+        }
+        else
+        {
         #include "eventWrite.H"
+        }
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
