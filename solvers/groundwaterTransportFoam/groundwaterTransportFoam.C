@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
+    bool steady = false;
     label iterPicard=0;
     label iterNewton=0;
 
