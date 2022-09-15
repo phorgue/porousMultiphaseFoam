@@ -24,12 +24,13 @@ forAll(mesh.boundary(),patchi)
 h.correctBoundaryConditions();
 
 //- Compute h equation residual
-ResiduN = Ss*pcModel->Se() * fvc::ddt(h)
-    + massConservativeTerms * fvc::ddt(theta)
-    + (1 - massConservativeTerms) * pcModel->Ch() * fvc::ddt(h)
-    - fvc::laplacian(Mf,h)
-    + fvc::div(phiG)
-    + sourceTerm;
+ResiduN = - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;
+if (!steady)
+{
+    ResiduN += Ss*pcModel->Se() * fvc::ddt(h)
+        + massConservativeTerms * fvc::ddt(theta)
+        + (1 - massConservativeTerms) * pcModel->Ch() * fvc::ddt(h);
+}
 
 forAll(fixedPotentialIDList, pointi) ResiduN[fixedPotentialIDList[pointi]]=0;
 

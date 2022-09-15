@@ -1,4 +1,17 @@
 ************************
+*** PMF
+***
+************************
+
+### Solvers
+
+- steadyGroundwaterFoam/groundwaterFoam
+
+  - solvers have been merge. Steady simulation can be done using -steady option,
+  i.e. :
+       groundwaterFoam -steady
+
+************************
 *** PMFv2107.2
 *** Minor fixes for PMFv2107.1
 ************************

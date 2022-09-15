@@ -29,7 +29,7 @@ Application
     groundwaterFoam
 
 Description
-    Transient solver for Richards equation. 
+    Transient or steady solver for Richards equation.
     A Picard loop is used for linearization.
     Permeability is isotropic (K == volScalarField)
 
@@ -52,6 +52,8 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
+    argList::addBoolOption("steady", "to run steady flow simulation");
+
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
@@ -66,14 +68,19 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
+    bool steady = args.found("steady");
+    if (steady) maxIterPicard = 1;
     label iterPicard=0;
     label iterNewton=0;
 
     while (runTime.run())
     {
-        if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
-        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
-        #include "setDeltaT.H"
+        if (!steady)
+        {
+            if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
+            forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
+            #include "setDeltaT.H"
+        }
 
         runTime++;
 
@@ -94,7 +101,7 @@ noConvergence :
             #include "checkResidual.H"
             Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidualSigned << endl;
         }
-        if (  hEqnResidual > tolerancePicard )
+        if ( !steady &&  hEqnResidual > tolerancePicard )
         {
             Info << endl;
             if (adjustTimeStep) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
@@ -112,7 +119,7 @@ noConvergence :
             #include "checkResidual.H"
             Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidualSigned << endl;
         }
-        if ( hEqnResidual > toleranceNewton )
+        if ( !steady && hEqnResidual > toleranceNewton )
         {
             Info << endl;
             if (adjustTimeStep) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
@@ -122,7 +129,7 @@ noConvergence :
         }
 
         //--- Compute variations
-        dtManager.updateDerivatives();
+        if (!steady) dtManager.updateDerivatives();
         scalarField dtheta_tmp = mag(theta.internalField()-theta.oldTime().internalField());
         scalar dtheta = gMax(dtheta_tmp);
 
@@ -130,8 +137,14 @@ noConvergence :
         Info << "Head pressure h: " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << endl;
 
         #include "waterMassBalance.H"
-
-        #include "eventWrite.H"
+        if (steady)
+        {
+            if (hEqnResidual < tolerancePicard) runTime.writeAndEnd();
+        }
+        else
+        {
+            #include "eventWrite.H"
+        }
  
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
