@@ -7,4 +7,4 @@ runApplication blockMesh
 cp constant/z0.org constant/z0
 cp 0/infiltration.org 0/infiltration
 runApplication setFields
-runApplication steadyGroundwater2DFoam
+runApplication groundwater2DFoam -steady
