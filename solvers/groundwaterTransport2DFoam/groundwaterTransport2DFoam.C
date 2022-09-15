@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     #include "readFixedPoints.H"
     #include "readTimeControls.H"  
     #include "readEvent.H"
-
+    bool steady = false;
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info << "\nStarting time loop\n" << endl;
