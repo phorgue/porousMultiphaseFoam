@@ -26,12 +26,9 @@ solvers
     }
 }
 
-SIMPLE
+residualControl
 {
-    residualControl
-    {
-        potential          1e-6;
-    }
+    potential          1e-8;
 }
 
 relaxationFactors
