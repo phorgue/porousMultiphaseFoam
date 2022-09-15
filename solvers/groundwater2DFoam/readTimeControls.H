@@ -60,4 +60,12 @@ if (adjustTimeStep)
 const bool eventTimeTracking =
    runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
+const dictionary& residualControl = mesh.solutionDict().subOrEmptyDict("residualControl");
+const scalar residualPotential = residualControl.lookupOrDefault<scalar>("potential", 0);
+if (steady && residualPotential ==0)
+{
+    FatalErrorIn("readTimeControls.h") << "residualControl.potential should be specified in system/fvSolution" << abort(FatalError);
+}
+
+
 // ************************************************************************* //

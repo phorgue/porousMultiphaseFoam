@@ -7,9 +7,15 @@
 
 - steadyGroundwaterFoam/groundwaterFoam
 
-  - solvers have been merge. Steady simulation can be done using -steady option,
-  i.e. :
+  - solvers have been merged. Steady simulations can be done using -steady
+  option, i.e. :
        groundwaterFoam -steady
+       
+- steadyGroundwater2DFoam/groundwater2DFoam
+
+  - solvers have been merge. Steady simulations can be done using -steady
+  option, i.e. :
+       groundwater2DFoam -steady
 
 ************************
 *** PMFv2107.2

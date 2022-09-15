@@ -3,16 +3,19 @@
 
     fvScalarMatrix potentialEqn
         (
-            eps * fvm::ddt(potential)
             - fvm::laplacian(transmissivity,potential,"laplacian(transmissivity,potential)")
             ==
             - waterSourceTerm * zScale
             - infiltration
         );
 
+    if (!steady) potentialEqn += eps * fvm::ddt(potential);
+
     #include "updateForcing.H"
 
     potentialEqn.solve();
+
+    if (steady) potential.relax();
 
     //- updating hwater and fluxes
     hwater = potential - z0;
@@ -32,11 +35,16 @@
             }
         }
         cumulativeWaterAdded += waterAdded;
-        Info << "Number of dry cells = " << dryCellIDList.size() << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/gSum(mesh.V()) << " m)" << endl;
+        Info << "Number of dry cells = " << dryCellIDList.size();
+        if (steady)
+        {
+            Info << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/gSum(mesh.V()) << " m)";
+        }
+        Info << endl;
     }
 
     //- compute derivatives
-    dtManager.updateDerivatives();
+    if (!steady) dtManager.updateDerivatives();
 
     //- updating flow properties
     transmissivity = Mf*fvc::interpolate(hwater);
@@ -52,6 +60,5 @@
     U.correctBoundaryConditions();
     cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration + zScale * waterSourceTerm;
 
-    Info << "Potential min: " << gMin(potential.internalField()) << ", max = " << gMax(potential.internalField()) << ", delta(potential) = " << dtManager.dVmax()*runTime.deltaTValue() << endl;
-
+    Info << "Potential min: " << gMin(potential.internalField()) << ", max = " << gMax(potential.internalField()) << ", delta(potential) = " << gMax(mag(potential.internalField()-potential.oldTime().internalField())()) << endl;
 }
