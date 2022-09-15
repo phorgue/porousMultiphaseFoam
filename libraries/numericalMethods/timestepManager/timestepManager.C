@@ -73,7 +73,7 @@ Foam::timestepManager::timestepManager(
         V2max_ = max(SMALL, gMax(vf_.internalField()));
         dV2max_ = 2*truncationError_*(V2max_+VSMALL)/Foam::pow(runTime_.deltaTValue(),2);
     }
-    else
+    else if (timeScheme_ != "steadyState")
     {
         FatalErrorIn("timestepManager.C") << "time scheme " << timeScheme_
             << " does not work with timestepManager class" << exit(FatalError);
