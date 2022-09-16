@@ -62,11 +62,11 @@ class relativePermeabilityModel
 protected:
 
     // Protected data
-    word name_;
-    dictionary transportProperties_;
+    //- name of the saturation field
+    word Sname_;
 
-    //- reference to saturation field
-    const volScalarField& Sb_;
+    // Reference to the dictionary
+    const dictionary& transportProperties_;
 
     //- relative permeability and derivative for each phase
     volScalarField kra_,krb_;
@@ -96,11 +96,11 @@ public:
         relativePermeabilityModel,
         dictionary,
         (
-            const word& name,
+            const fvMesh& mesh,
             const dictionary& transportProperties,
-            const volScalarField& Sb
+            const word& Sname
         ),
-        (name, transportProperties, Sb)
+        (mesh, transportProperties, Sname)
     );
 
 
@@ -109,9 +109,9 @@ public:
     //- Return a reference to the selected relativePermeability model
     static autoPtr<relativePermeabilityModel> New
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& transportProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
 
@@ -120,9 +120,9 @@ public:
     //- Construct from components
     relativePermeabilityModel
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& transportProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
 
@@ -139,7 +139,7 @@ public:
             return transportProperties_;
         }
 
-    //- Return relative permeabilities
+    //- Return relative permeabilities for phase a and b
     tmp<volScalarField> kra() const
         {
             return kra_;
@@ -148,6 +148,18 @@ public:
     tmp<volScalarField> krb() const
         {
             return krb_;
+        }
+
+    //- Return relative permeabilities for fractures
+    tmp<volScalarField> krf() const
+        {
+            return krb_;
+        }
+
+    //- Return relative permeablities for matrix
+    tmp<volScalarField> krm() const
+        {
+            return kra_;
         }
 
     //- Return relative permeability (one cell)
@@ -179,10 +191,10 @@ public:
         }
 
     //- Correct the relative permeabilities
-    virtual void correct() = 0;
-    virtual void correcta() = 0;
-    virtual void correctb() = 0;
-    virtual void correctb(const label& celli) = 0;
+    virtual void correct(const volScalarField& Sb) = 0;
+    virtual void correctkra(const volScalarField& Sb) = 0;
+    virtual void correctkrb(const volScalarField& Sb) = 0;
+    virtual void correctkrb(const volScalarField& Sb, const label& celli) = 0;
 
 };
 
