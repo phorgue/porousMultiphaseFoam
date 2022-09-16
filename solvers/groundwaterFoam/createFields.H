@@ -74,7 +74,7 @@ volScalarField theta
 theta.dimensions().reset(dimless);
 
 // Relative permeability / Capillary pressure models
-autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,theta);
+autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New(mesh ,transportProperties, "theta");
 autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,theta);
 
 Info << nl << "Computing saturation field theta" << endl;

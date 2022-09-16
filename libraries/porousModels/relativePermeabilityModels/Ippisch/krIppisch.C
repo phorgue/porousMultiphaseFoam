@@ -51,37 +51,37 @@ addToRunTimeSelectionTable
 
 Foam::relativePermeabilityModels::krIppisch::krIppisch
 (
-    const word& name,
+    const fvMesh& mesh,
     const dictionary& transportProperties,
-    const volScalarField& Sb
+    const word& Sname
 )
     :
-    relativePermeabilityModel(name, transportProperties,Sb),
+    relativePermeabilityModel(mesh, transportProperties, Sname),
     Smin_
     (
         IOobject
         (
-            Sb_.name()+"min",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+"min",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        mesh,
+        transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
     ),
     Smax_
     (
         IOobject
         (
-            Sb_.name()+"max",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+"max",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+        mesh,
+        transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max",dimless,0))
     ),
     krIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
@@ -89,12 +89,12 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
         IOobject
         (
             "m",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("m",dimless,krIppischCoeffs_.getOrDefault<scalar>("m",0))
     ),
     n_(1/(1-m_)),
@@ -103,12 +103,12 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
         IOobject
         (
             "alpha",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("alpha",dimless,krIppischCoeffs_.getOrDefault<scalar>("alpha",GREAT))
     ),
     tau_
@@ -116,12 +116,12 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
         IOobject
         (
             "tau",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("tau",dimless,krIppischCoeffs_.getOrDefault<scalar>("tau",0.5))
     ),
     he_
@@ -129,18 +129,16 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
         IOobject
         (
             "he",
-            Sb_.time().timeName(),
-            Sb_.db(),
-
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("he",dimless,krIppischCoeffs_.getOrDefault<scalar>("he",0.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
-    Se_ = (Sb_-Smin_)/(Smax_-Smin_);
     if (gMin(m_) <= 0)
     {
         FatalErrorIn

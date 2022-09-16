@@ -1,5 +1,5 @@
 //- relative permeability (kr)
-krModel->correct();
+krModel->correct(Sb);
 const volScalarField& kra = krModel->kra();
 const volScalarField& krb = krModel->krb();
 const volScalarField& dkradS = krModel->dkradS();

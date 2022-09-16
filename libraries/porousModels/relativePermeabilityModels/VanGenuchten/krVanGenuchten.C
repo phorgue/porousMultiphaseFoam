@@ -51,37 +51,37 @@ addToRunTimeSelectionTable
 
 Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
 (
-    const word& name,
+    const fvMesh& mesh,
     const dictionary& transportProperties,
-    const volScalarField& Sb
+    const word& Sname
 )
     :
-    relativePermeabilityModel(name, transportProperties,Sb),
+    relativePermeabilityModel(mesh, transportProperties, Sname),
     Smin_
     (
         IOobject
         (
-            Sb_.name()+"min",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+"min",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        mesh,
+        transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
     ),
     Smax_
     (
         IOobject
         (
-            Sb_.name()+"max",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+"max",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+        mesh,
+        transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max",dimless,0))
     ),
     krVanGenuchtenCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
@@ -89,42 +89,41 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
         IOobject
         (
             "m",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("m",dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("m",0))
     ),
     kramax_
     (
         IOobject
         (
-            "kr"+Sb_.name()+"max",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            "kr"+Sname+"max",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
+        mesh,
+        dimensionedScalar("kr"+Sname+"max",dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("kr"+Sname+"max",1.0))
     ),
     krbmax_
     (
         IOobject
         (
-            "kr"+Sb_.name()+"max",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            "kr"+Sname+"max",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        dimensionedScalar("kr"+Sb_.name()+"max",dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("kr"+Sb_.name()+"max",1.0))
+        mesh,
+        dimensionedScalar("kr"+Sname+"max",dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("kr"+Sname+"max",1.0))
     )
 {
-    Se_ = (Sb_-Smin_)/(Smax_-Smin_);
     if (gMin(m_) <= 0)
     {
         FatalErrorIn
