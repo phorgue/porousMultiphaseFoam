@@ -95,7 +95,7 @@ const dimensionedScalar& mub = phaseb->mu();
 dimensionedScalar Mmu(mub/mua);//viscosity ratio
 
 // Relative permeability / Capillary pressure models 
-autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New("krModel",transportProperties,Sb);
+autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New(mesh, transportProperties, "Sb");
 scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
 autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,Sb);
 

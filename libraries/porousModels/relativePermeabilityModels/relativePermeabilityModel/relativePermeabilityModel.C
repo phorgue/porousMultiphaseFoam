@@ -42,77 +42,77 @@ defineRunTimeSelectionTable(relativePermeabilityModel, dictionary);
 
 Foam::relativePermeabilityModel::relativePermeabilityModel
 (
-    const word& name,
+    const fvMesh& mesh,
     const dictionary& transportProperties,
-    const volScalarField& Sb
+    const word& Sname
 )
     :
-    name_(name),
+    Sname_(Sname),
     transportProperties_(transportProperties),
-    Sb_(Sb),
     kra_
     (
         IOobject
         (
-            name+".kra",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+".kra",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionSet(0,0,0,0,0)
     ),
     krb_
     (
         IOobject
         (
-            name+".krb",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+".krb",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionSet(0,0,0,0,0)
     ),
     dkradS_
     (
         IOobject
         (
-            name+".dkradS",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+".dkradS",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionSet(0,0,0,0,0)
     ),
     dkrbdS_
     (
         IOobject
         (
-            name+".dkrbdS",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+".dkrbdS",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionSet(0,0,0,0,0)
     ),
     Se_
     (
         IOobject
         (
-            name+".Se",
-            Sb.time().timeName(),
-            Sb.db(),
+            Sname+".Se",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb,
+        mesh,
+        dimensionedScalar("", dimless, 0),
         calculatedFvPatchScalarField::typeName
     )
 {}

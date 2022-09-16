@@ -77,9 +77,9 @@ public:
     //- Construct from components
     krIppisch
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& transportProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
     //- Destructor
@@ -89,25 +89,25 @@ public:
     // Member Functions
 
     //- Correct the relative permeabilities
-     void correct()
+     void correct(const volScalarField& Sb)
         {
             FatalErrorIn("krIppisch.H") << " Ippisch model can be used only with groundwater solvers" << abort(FatalError);
         }
-    void correcta()
+    void correctkra(const volScalarField& Sb)
         {
             FatalErrorIn("krIppisch.H") << " Ippisch model can be used only with groundwater solvers" << abort(FatalError);
         }
-    void correctb()
+    void correctkrb(const volScalarField& Sb)
         {
-            Se_= (Sb_-Smin_)/(Smax_-Smin_);
+            Se_= (Sb-Smin_)/(Smax_-Smin_);
             krb_ = pow(Se_,tau_) * pow(
                 (1-pow(1-pow(Sc_*Se_,1/m_),m_)) /
                 (1-pow(1-pow(Sc_,1/m_),m_))
                 ,2);
         }
-    void correctb(const label& celli)
+    void correctkrb(const volScalarField& Sb, const label& celli)
         {
-            scalar Se = (Sb_[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
+            scalar Se = (Sb[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
             krb_[celli] = pow(Se_[celli],tau_[celli]) * pow(
                 (1-pow(1-pow(Sc_[celli]*Se,1/m_[celli]),m_[celli])) /
                 (1-pow(1-pow(Sc_[celli],1/m_[celli]),m_[celli]))

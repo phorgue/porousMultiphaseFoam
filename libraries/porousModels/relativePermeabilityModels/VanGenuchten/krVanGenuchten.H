@@ -78,9 +78,9 @@ public:
     //- Construct from components
     krVanGenuchten
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& transportProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
     //- Destructor
@@ -90,9 +90,9 @@ public:
     // Member Functions
 
     //- Correct the relative permeabilities
-    void correct()
+    void correct(const volScalarField& Sb)
         {
-            Se_= (Sb_-Smin_)/(Smax_-Smin_);
+            Se_= (Sb-Smin_)/(Smax_-Smin_);
             kra_ = kramax_ * pow(1-Se_,0.5) * pow(1-pow(Se_,1/m_),2*m_);
             krb_ = krbmax_ * pow(Se_,0.5) * pow(1-pow(1-pow(Se_,1/m_),m_),2);
 
@@ -106,27 +106,27 @@ public:
             dkrbdS_ *= 1/(Smax_ - Smin_);
             dkrbdS_ *= krbmax_;
         }
-    void correcta()
+    void correctkra(const volScalarField& Sb)
         {
-            Se_= (Sb_-Smin_)/(Smax_-Smin_);
+            Se_= (Sb-Smin_)/(Smax_-Smin_);
             kra_ = kramax_ * pow(1-Se_,0.5) * pow(1-pow(Se_,1/m_),2*m_);
             dkradS_ = - pow((1-pow(Se_,1/m_)+VSMALL),2*m_-1) * (-5*pow(Se_,1/m_+1)+4*pow(Se_,1/m_)+Se_);
             dkradS_ *= 1/(2*pow((1-Se_),0.5)*Se_);
             dkradS_ *=  1/(Smax_ - Smin_);
             dkradS_ *= kramax_;
         }
-    void correctb()
+    void correctkrb(const volScalarField& Sb)
         {
-            Se_= (Sb_-Smin_)/(Smax_-Smin_);
+            Se_= (Sb-Smin_)/(Smax_-Smin_);
             krb_ = krbmax_ * pow(Se_,0.5) * pow(1-pow(1-pow(Se_,1/m_),m_),2);
             dkrbdS_ = 0.5 * (1-pow((1-pow(Se_,1/m_)),m_));
             dkrbdS_ *= ( 4 * pow(Se_,1/m_-0.5) * pow( (1-pow(Se_,1/m_)+VSMALL) , m_-1)) - ( pow((1-pow(Se_,1/m_)),m_) -1) / pow(Se_,0.5);
             dkrbdS_ *= 1/(Smax_ - Smin_);
             dkrbdS_ *= krbmax_;
         }
-    void correctb(const label& celli)
+    void correctkrb(const volScalarField& Sb, const label& celli)
         {
-            scalar Se = (Sb_[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
+            scalar Se = (Sb[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
             krb_[celli] = krbmax_[celli] * pow(Se,0.5) * pow(1-pow(1-pow(Se,1/m_[celli]),m_[celli]),2);
         }
 };

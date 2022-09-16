@@ -33,9 +33,9 @@ License
 
 Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::New
 (
-    const word& name,
+    const fvMesh& mesh,
     const dictionary& transportProperties,
-    const volScalarField& Sb
+    const word& Sname
 )
 {
     const word modelType(transportProperties.lookup("relativePermeabilityModel"));
@@ -57,7 +57,7 @@ Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::
     }
 
     return autoPtr<relativePermeabilityModel>
-        (cstrIter()(name, transportProperties,Sb));
+        (cstrIter()(mesh, transportProperties, Sname));
 }
 
 
