@@ -51,50 +51,50 @@ namespace Foam
 
 Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
 (
- const word& name,
- const dictionary& transportProperties,
- const volScalarField& Sb
+    const fvMesh& mesh,
+    const dictionary& transportProperties,
+    const word& Sname
  )
     :
-  capillarityModel(name, transportProperties,Sb),	
+  capillarityModel(mesh, transportProperties, Sname),
   pcBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
   Smin_
   (
       IOobject
       (
-          Sb_.name()+"min",
-          Sb_.time().timeName(),
-          Sb_.db(),
+          Sname+"min",
+          mesh.time().timeName(),
+          mesh,
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
       ),
-      Sb.mesh(),
-      transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+      mesh,
+      transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
   ),
   Smax_
   (
       IOobject
       (
-          Sb_.name()+"max",
-          Sb_.time().timeName(),
-          Sb_.db(),
+          Sname+"max",
+          mesh.time().timeName(),
+          mesh,
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
       ),
-      Sb.mesh(),
-      transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+      mesh,
+      transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max",dimless,0))
   ),
   pc0_
   (
       IOobject
       (
           "pc0",
-          Sb_.time().timeName(),
-          Sb_.db(),
+          mesh.time().timeName(),
+          mesh,
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
       ),
-      Sb.mesh(),
+      mesh,
       pcBrooksAndCoreyCoeffs_.getOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
   ),
   hd_
@@ -102,12 +102,12 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       IOobject
       (
           "hd",
-          Sb_.time().timeName(),
-          Sb_.db(),
+          mesh.time().timeName(),
+          mesh,
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
       ),
-      Sb.mesh(),
+      mesh,
       dimensionedScalar("hd",dimLength,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("hd",0))
   ),
   alpha_
@@ -115,16 +115,15 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       IOobject
       (
           "alpha",
-          Sb_.time().timeName(),
-          Sb_.db(),
+          mesh.time().timeName(),
+          mesh,
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
       ),
-      Sb.mesh(),
+      mesh,
       dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("alpha",0))
   )
 {
-    Se_ = ((Sb_-Smin_)/(Smax_-Smin_));
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
 
     Info << "Brooks and Corey parameters for capillary pressure model" << nl << "{" << endl;

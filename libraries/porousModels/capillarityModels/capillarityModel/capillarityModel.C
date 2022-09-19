@@ -41,64 +41,64 @@ defineRunTimeSelectionTable(capillarityModel, dictionary);
 
 Foam::capillarityModel::capillarityModel
 (
-    const word& name,
+    const fvMesh& mesh,
     const dictionary& capillarityProperties,
-    const volScalarField& Sb
+    const word& Sname
 )
     :
-    name_(name),
+    Sname_(Sname),
     capillarityProperties_(capillarityProperties),
-    Sb_(Sb),
     pc_
     (
         IOobject
         (
-            name+".pc",
-            Sb.time().timeName(),
-            Sb.db(),
+            Sname+".pc",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionSet(1,-1,-2,0,0,0,0)
     ),
     dpcdS_
     (
         IOobject
         (
-            name+".dpcdS",
-            Sb.time().timeName(),
-            Sb.db(),
+            Sname+".dpcdS",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionSet(1,-1,-2,0,0,0,0)
     ),
     Ch_
     (
         IOobject
         (
-            name+".Ch",
-            Sb.time().timeName(),
-            Sb.db(),
+            Sname+".Ch",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionSet(0,-1,0,0,0,0,0)
     ),
     Se_
     (
         IOobject
         (
-            name+".Se",
-            Sb.time().timeName(),
-            Sb.db(),
+            Sname+".Se",
+            mesh.time().timeName(),
+            mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        Sb,
+        mesh,
+        dimensionedScalar("", dimless, 0),
         calculatedFvPatchScalarField::typeName
     )
 {}

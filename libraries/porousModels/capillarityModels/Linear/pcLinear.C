@@ -51,50 +51,50 @@ addToRunTimeSelectionTable
 
 Foam::capillarityModels::pcLinear::pcLinear
 (
-    const word& name,
+    const fvMesh& mesh,
     const dictionary& transportProperties,
-    const volScalarField& Sb
+    const word& Sname
 )
     :
-    capillarityModel(name, transportProperties,Sb),
+    capillarityModel(mesh, transportProperties, Sname),
     pcLinearCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     Smin_
     (
         IOobject
         (
-            Sb_.name()+"min",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+"min",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        mesh,
+        transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
     ),
     Smax_
     (
         IOobject
         (
-            Sb_.name()+"max",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+"max",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-       transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"max",dimless,0))
+        mesh,
+       transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max",dimless,0))
     ),
     pc0_
     (
         IOobject
         (
             "pc0",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         pcLinearCoeffs_.getOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
     ),
     pcMax_
@@ -102,16 +102,15 @@ Foam::capillarityModels::pcLinear::pcLinear
         IOobject
         (
             "pcMax",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         pcLinearCoeffs_.getOrDefault("pcMax",dimensionedScalar("pcMax",dimensionSet(1,-1,-2,0,0),0))
     )
 {
-    Se_ = ((Sb_-Smin_)/(Smax_-Smin_));
     Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    pc0 ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}

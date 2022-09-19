@@ -76,9 +76,9 @@ public:
     //- Construct from components
     pcLinear
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& transportProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
     //- Destructor
@@ -88,15 +88,15 @@ public:
     // Member Functions
 
     //- Correct the capillarity
-    void correct()
+    void correct(const volScalarField& Sb)
         {
-            Se_ = (Sb_- Smin_)/(Smax_-Smin_);
+            Se_ = (Sb - Smin_)/(Smax_-Smin_);
             pc_ = pc0_ + (1 - Se_) * (pcMax_ - pc0_);
             dpcdS_ =  pc0_ - pcMax_;
         }
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    volScalarField correctAndSb(volScalarField h)
+    volScalarField correctAndSb(volScalarField& h)
         {
             FatalErrorIn("volScalarField correctAndSb(volScalarField h) const")
                 << "Not implemented in pcLinear.H " << abort(FatalError);
@@ -104,9 +104,9 @@ public:
         };
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    scalar correctAndSb(const volScalarField& h, const label& celli)
+    scalar correctAndSb(volScalarField& h, const label& celli)
         {
-            FatalErrorIn("scalar correctOneCell(const volScalarField& h, const label& celli)")
+            FatalErrorIn("scalar correctAndSb(const volScalarField& h, const label& celli)")
                 << "Not implemented in pcLinear.H " << abort(FatalError);
             return 0;
         };
