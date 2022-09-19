@@ -1,3 +1,0 @@
-steadyGroundwater2DFoam.C  
-
-EXE = $(FOAM_USER_APPBIN)/steadyGroundwater2DFoam
