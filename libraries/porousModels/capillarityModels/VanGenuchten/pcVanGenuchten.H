@@ -72,9 +72,9 @@ public:
     //- Construct from components
     pcVanGenuchten
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& transportProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
     //- Destructor
@@ -84,15 +84,15 @@ public:
     // Member Functions
 
     //- Correct the capillary pressure
-    void correct()
+    void correct(const volScalarField& Sb)
         {
-            Se_ = (Sb_-Smin_)/(Smax_-Smin_);
+            Se_ = (Sb-Smin_)/(Smax_-Smin_);
             pc_ = pc0_ * pow(pow(Se_,-1/m_)-1,1/n_);
             dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smax_-Smin_)) * pow(pow(Se_+VSMALL,-1/m_)-1,(1/n_)-1) * pow(Se_+VSMALL,-(1+m_)/m_);
         }
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    volScalarField correctAndSb(volScalarField h)
+    volScalarField correctAndSb(volScalarField& h)
         {
             //- Compute Saturation from! head pressure
             h.dimensions().reset(dimless);
@@ -111,7 +111,7 @@ public:
         }
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    scalar correctAndSb(const volScalarField& h, const label& celli)
+    scalar correctAndSb(volScalarField& h, const label& celli)
         {
             //- Compute Saturation from! head pressure
             scalar Se =  neg(h[celli]) *pow(1.0+pow(alpha_[celli]*mag(h[celli]),n_[celli]),-m_[celli]) + pos(h[celli]+VSMALL)*(1);

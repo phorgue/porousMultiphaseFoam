@@ -51,50 +51,50 @@ addToRunTimeSelectionTable
 
 Foam::capillarityModels::pcIppisch::pcIppisch
 (
-    const word& name,
+    const fvMesh& mesh,
     const dictionary& transportProperties,
-    const volScalarField& Sb
+    const word& Sname
 )
     :
-    capillarityModel(name, transportProperties,Sb),
+    capillarityModel(mesh, transportProperties, Sname),
     pcIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     Smin_
     (
         IOobject
         (
-            Sb_.name()+"min",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+"min",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        transportProperties.getOrDefault(Sb_.name()+"min",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        mesh,
+        transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
     ),
     Smax_
     (
         IOobject
         (
-            Sb_.name()+"max",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            Sname+"max",
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
-        transportProperties.getOrDefault(Sb_.name()+"max",dimensionedScalar(Sb_.name()+"min",dimless,0))
+        mesh,
+        transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"min",dimless,0))
     ),
     m_
     (
         IOobject
         (
             "m",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("m",dimless,pcIppischCoeffs_.getOrDefault<scalar>("m",0))
     ),
     n_(1/(1-m_)),
@@ -103,12 +103,12 @@ Foam::capillarityModels::pcIppisch::pcIppisch
         IOobject
         (
             "alpha",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("alpha",dimless,pcIppischCoeffs_.getOrDefault<scalar>("alpha",GREAT))
     ),
     tau_
@@ -116,12 +116,12 @@ Foam::capillarityModels::pcIppisch::pcIppisch
         IOobject
         (
             "tau",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("tau",dimless,pcIppischCoeffs_.getOrDefault<scalar>("tau",1.))
     ),
     he_
@@ -129,17 +129,16 @@ Foam::capillarityModels::pcIppisch::pcIppisch
         IOobject
         (
             "he",
-            Sb_.time().timeName(),
-            Sb_.db(),
+            mesh.time().timeName(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        Sb.mesh(),
+        mesh,
         dimensionedScalar("he",dimless,pcIppischCoeffs_.getOrDefault<scalar>("he",1.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
-    Se_ = ((Sb_-Smin_)/(Smax_-Smin_));
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m = 0 in pcIppisch" << abort(FatalError);
     Info << "Ippisch parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    m ";
