@@ -21,6 +21,6 @@ surfaceScalarField Fbf ("Fbf",Mbf/Mf);
 volScalarField Fb ("Fb",(krb/mub) / ( (kra/mua) + (krb/mub) ));
 
 //- fluxes depending on saturation
-pcModel().correct();
+pcModel->correct(Sb);
 surfaceScalarField phiG("phiG",(Lf * g) & mesh.Sf());
-surfaceScalarField phiPc("phiPc",Mbf * fvc::interpolate(pcModel().dpcdS(),"pc")* fvc::snGrad(Sb) * mesh.magSf());
+surfaceScalarField phiPc("phiPc",Mbf * fvc::interpolate(pcModel->dpcdS(),"pc")* fvc::snGrad(Sb) * mesh.magSf());

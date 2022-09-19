@@ -104,7 +104,7 @@ theta.dimensions().reset(dimless);
 
 // Relative permeability model
 autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New(mesh, transportProperties, "theta");
-autoPtr<capillarityModel> pcModel = capillarityModel::New("pcModel",transportProperties,theta);
+autoPtr<capillarityModel> pcModel = capillarityModel::New(mesh, transportProperties, "theta");
 
 Info<< "Computing field theta \n" << endl;
 theta = pcModel->correctAndSb(h);

@@ -33,9 +33,9 @@ License
 
 Foam::autoPtr<Foam::capillarityModel> Foam::capillarityModel::New
 (
- const word& name,
+ const fvMesh& mesh,
  const dictionary& capillarityProperties,
- const volScalarField& Sb
+ const word& Sname
  )
 {
   const word modelType(capillarityProperties.lookup("capillarityModel"));
@@ -50,9 +50,9 @@ Foam::autoPtr<Foam::capillarityModel> Foam::capillarityModel::New
 	(
 	 "capillarityModel::New"
 	 "("
-	 "const word& name,"
+	 "const fvMesh& mesh,"
 	 "const dictionary& capillarityProperties,"
-	 "const volScalarField& Sb"
+	 "const word& Sname"
 	 ")"
 	 )
 	<< "Unknown capillarityModel type "
@@ -63,7 +63,7 @@ Foam::autoPtr<Foam::capillarityModel> Foam::capillarityModel::New
     }
 
   return autoPtr<capillarityModel>
-    (cstrIter()(name, capillarityProperties,Sb));
+    (cstrIter()(mesh, capillarityProperties, Sname));
 }
 
 

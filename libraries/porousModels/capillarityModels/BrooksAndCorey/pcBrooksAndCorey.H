@@ -75,9 +75,9 @@ public:
     //- Construct from components
     pcBrooksAndCorey
     (
-        const word& name,
-        const dictionary& transportProperties,
-        const volScalarField& Sb
+        const fvMesh& mesh,
+        const dictionary& capillarityProperties,
+        const word& Sname
     );
 
     //- Destructor
@@ -87,15 +87,15 @@ public:
     // Member Functions
 
     //- Correct the capillary pressure
-    void correct()
+    void correct(const volScalarField& Sb)
         {
-            Se_ = (Sb_-Smin_)/(Smax_ - Smin_);
+            Se_ = (Sb-Smin_)/(Smax_ - Smin_);
             pc_ = pc0_ * pow(Se_,-alpha_);
             dpcdS_= -alpha_*pc0_*(pow(Se_+VSMALL,-alpha_-1))/(Smax_-Smin_);
         }
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    volScalarField correctAndSb(volScalarField h) 
+    volScalarField correctAndSb(volScalarField& h)
         {
             if (gMax(hd_) == 0)
             {
@@ -120,7 +120,7 @@ public:
         };
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    scalar correctAndSb(const volScalarField& h, const label& celli)
+    scalar correctAndSb(volScalarField& h, const label& celli)
         {
             //- Compute saturation from head pressure
             scalar Se = neg(h[celli]-hd_[celli]) * pow(hd_[celli]/(h[celli]+VSMALL),alpha_[celli]) + pos(h[celli]-hd_[celli]+VSMALL);

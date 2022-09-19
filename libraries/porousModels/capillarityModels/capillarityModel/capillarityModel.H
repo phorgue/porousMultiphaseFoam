@@ -63,11 +63,11 @@ class capillarityModel
 protected:
 
     // Protected data
-    word name_;
-    dictionary capillarityProperties_;
+    //- name of the saturation field
+    word Sname_;
 
-    // reference to the saturation field 
-    const volScalarField& Sb_;
+    // Reference to the dictionary
+    const dictionary& capillarityProperties_;
 
     // capillary pressure, derivative and capillary capacity
     volScalarField pc_,dpcdS_,Ch_;
@@ -96,11 +96,11 @@ public:
         capillarityModel,
         dictionary,
         (
-            const word& name,
+            const fvMesh& mesh,
             const dictionary& capillarityProperties,
-            const volScalarField& Sb
+            const word& Sname
         ),
-        (name, capillarityProperties, Sb)
+        (mesh, capillarityProperties, Sname)
     );
 
 
@@ -109,9 +109,9 @@ public:
     //- Return a reference to the selected capillarity model
     static autoPtr<capillarityModel> New
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& capillarityProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
 
@@ -120,9 +120,9 @@ public:
     //- Construct from components
     capillarityModel
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& capillarityProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
 
@@ -175,11 +175,11 @@ public:
         }
     
     //- Correct the capillary pressure
-    virtual void correct() = 0; 
+    virtual void correct(const volScalarField& Sb) = 0;
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    virtual volScalarField correctAndSb(volScalarField h) = 0;
-    virtual scalar correctAndSb(const volScalarField& h, const label& celli) = 0;
+    virtual volScalarField correctAndSb(volScalarField& h) = 0;
+    virtual scalar correctAndSb(volScalarField& h, const label& celli) = 0;
 
 };
 

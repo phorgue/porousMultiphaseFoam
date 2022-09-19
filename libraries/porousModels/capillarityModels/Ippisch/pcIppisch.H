@@ -74,9 +74,9 @@ public:
     //- Construct from components
     pcIppisch
     (
-        const word& name,
+        const fvMesh& mesh,
         const dictionary& transportProperties,
-        const volScalarField& Sb
+        const word& Sname
     );
 
     //- Destructor
@@ -86,14 +86,14 @@ public:
     // Member Functions
 
     //- Correct the capillary pressure
-    void correct()
+    void correct(const volScalarField& Sb)
         {
             FatalErrorIn("void correct()")
                 << "Not implemented in pcIppish.H " << abort(FatalError);
         }
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    volScalarField correctAndSb(volScalarField h)
+    volScalarField correctAndSb(volScalarField& h)
         {
             //- Compute Saturation from head pressure
             h.dimensions().reset(dimless);
@@ -112,7 +112,7 @@ public:
         }
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    scalar correctAndSb(const volScalarField& h, const label& celli)
+    scalar correctAndSb(volScalarField& h, const label& celli)
         {
             //- Compute saturation from head pressure
             scalar Se = neg(h[celli]+he_[celli]) *(1.0/Sc_[celli])*pow(1.0+pow(alpha_[celli]*mag(h[celli]),n_[celli]),-m_[celli]) + pos(h[celli]+he_[celli]+VSMALL) ;

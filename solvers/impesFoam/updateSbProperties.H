@@ -18,6 +18,6 @@ Fbf = Mbf/Mf;
 Fb = (krb/mub) / ( (kra/mua) + (krb/mub) );
 
 //- compute fluxes
-pcModel().correct();
-phiPc = Mbf * fvc::interpolate(pcModel().dpcdS(),"pc")* fvc::snGrad(Sb) * mesh.magSf();
+pcModel->correct(Sb);
+phiPc = Mbf * fvc::interpolate(pcModel->dpcdS(),"pc")* fvc::snGrad(Sb) * mesh.magSf();
 phiG = (Lf * g) & mesh.Sf();
