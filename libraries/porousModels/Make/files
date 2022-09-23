@@ -11,6 +11,10 @@ capillarityModels/VanGenuchten/pcVanGenuchten.C
 capillarityModels/BrooksAndCorey/pcBrooksAndCorey.C
 capillarityModels/Ippisch/pcIppisch.C
 
+porousMediumModels/porousMediumModel/porousMediumModel.C
+porousMediumModels/porousMediumModel/porousMediumModelNew.C
+porousMediumModels/simplePorosity/simplePorosity.C
+
 dispersionModels/dispersionModel/dispersionModel.C
 dispersionModels/dispersionModel/dispersionModelNew.C
 dispersionModels/alphaDispersion/alphaDispersion.C

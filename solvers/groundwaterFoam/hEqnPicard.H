@@ -1,4 +1,6 @@
 {
+    porousModel->correct();
+
     h.storePrevIter();
 
     fvScalarMatrix hEqn
@@ -7,6 +9,7 @@
             - fvm::laplacian(Mf,h)
             + fvc::div(phiG)
             ==
+            porousModel->source()
             - sourceTerm
         );
     if (!steady)

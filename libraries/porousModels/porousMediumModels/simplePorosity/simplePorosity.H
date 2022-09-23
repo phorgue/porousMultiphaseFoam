@@ -25,96 +25,79 @@ License
     You should have received a copy of the GNU General Public License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
+Namespace
+    Foam::porousMediumModels::simplePorosity
+
 Class
-    Foam::relativePermeabilityModels::krBrooksAndCorey
+    Foam::simplePorosity
 
 Description
-    Standard Brooks and Corey relative permeability model.
+    Simple porosity model (one kr / one pc law)
 
 SourceFiles
-    krBrooksAndCorey.C
+    simplePorosity.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef krBrooksAndCorey_H
-#define krBrooksAndCorey_H
+#ifndef simplePorosity_H
+#define simplePorosity_H
 
+#include "volFields.H"
+#include "porousMediumModel.H"
 #include "relativePermeabilityModel.H"
+#include "capillarityModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace relativePermeabilityModels
+namespace porousMediumModels
 {
 
-/*---------------------------------------------------------------------------*\
-    Class krBrooksAndCorey Declaration
+/*---------------------------------------------------------------------------* \
+             Class simplePorosity Declaration
 \*---------------------------------------------------------------------------*/
 
-class krBrooksAndCorey
+class simplePorosity
 :
-    public relativePermeabilityModel
+    public porousMediumModel
 {
-    const dictionary& krBrooksAndCoreyCoeffs_;
-    volScalarField n_;
+protected:
 
-    //- end points
-    volScalarField kramax_;
-    volScalarField krbmax_;
-        
+    //- Disallow copy construct
+    simplePorosity(const simplePorosity&);
+
+    //- Disallow default bitwise assignment
+    void operator=(const simplePorosity&);
+
 public:
 
     //- Runtime type information
-    TypeName("BrooksAndCorey");
+    TypeName("simplePorosity");
 
     // Constructors
 
     //- Construct from components
-    krBrooksAndCorey
+    simplePorosity
     (
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const word& Sname
+        autoPtr<relativePermeabilityModel>& krModel,
+        autoPtr<capillarityModel>& pcModel
     );
 
     //- Destructor
-    ~krBrooksAndCorey()
+    ~simplePorosity()
         {}
 
-    // Member Functions
-
     //- Correct the relative permeabilities
-    void correct(const volScalarField& Sb)
-        {
-            Se_= (Sb-Smin_)/(Smax_-Smin_);
-            kra_ = kramax_* pow((scalar(1)-Se_),n_);
-            krb_ = krbmax_ * pow(Se_,n_);
-            dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
-            dkrbdS_ = krbmax_*n_*pow(Se_,n_-1)/(Smax_- Smin_);	
-        }
-    void correctkra(const volScalarField& Sb)
-        {
-            Se_= (Sb-Smin_)/(Smax_-Smin_);
-            kra_ = kramax_* pow((scalar(1)-Se_),n_);
-            dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
-        }
-    void correctkrb(const volScalarField& Sb)
-        {
-            Se_= (Sb-Smin_)/(Smax_-Smin_);
-            krb_ = krbmax_ * pow(Se_,n_);
-            dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
-        }
-    void correctkrb(const volScalarField& Sb, const label& celli)
-        {
-            scalar Se = (Sb[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
-            krb_[celli] = krbmax_[celli] * pow(Se,n_[celli]);
-        }
+    void correct();
+
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-} // End namespace relativePermeabilityModels
+} // End namespace porousMediumModels
 
 } // End namespace Foam
 

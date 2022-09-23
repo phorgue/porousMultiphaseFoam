@@ -76,6 +76,7 @@ theta.dimensions().reset(dimless);
 // Relative permeability / Capillary pressure models
 autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New(mesh ,transportProperties, "theta");
 autoPtr<capillarityModel> pcModel = capillarityModel::New(mesh, transportProperties, "theta");
+autoPtr<porousMediumModel> porousModel = porousMediumModel::New(mesh, transportProperties, krModel, pcModel);
 
 Info << nl << "Computing saturation field theta" << endl;
 theta = pcModel->correctAndSb(h);

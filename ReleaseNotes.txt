@@ -5,6 +5,14 @@
 
 ### Libraries
 
+- porousMediumModel(s)
+
+  - new abstract for handling simple/dual porosity models
+
+- simplePorosity
+
+  - porousMedium class for one porosity model (one Saturation, kr, pc...)
+
 - relativePermeability/capillarity:
 
   - Smin/Smax are common to all kr/pc model and included in general abstract. As
