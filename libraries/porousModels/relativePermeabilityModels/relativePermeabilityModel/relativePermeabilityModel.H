@@ -73,7 +73,7 @@ protected:
     volScalarField dkradS_,dkrbdS_;
 
     //- Effective saturation of phase b
-    volScalarField Se_;
+    volScalarField Smin_, Smax_, Se_;
 
     //- Disallow copy construct
     relativePermeabilityModel(const relativePermeabilityModel&);
