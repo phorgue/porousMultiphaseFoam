@@ -17,9 +17,7 @@ FoamFile
 
 activateCapillarity	1;
 
-eps		eps [0  0  0 0 0 0 0]	0.5;	
-Sbmin		Sbmin [0  0  0 0 0 0 0]	0;
-Sbmax		Sbmax [0  0  0 0 0 0 0]	0.999;
+eps		eps [0  0  0 0 0 0 0]	0.5;
 
 phase.a
 {
@@ -37,7 +35,9 @@ relativePermeabilityModel  BrooksAndCorey;
 
 BrooksAndCoreyCoeffs
 {
-    n 3; 
+    n 3; 	
+    Sbmin  Sbmin [0 0 0 0 0 0 0] 0;
+    Sbmax  Sbmax [0 0 0 0 0 0 0] 0.999;
 }
 
 capillarityModel	VanGenuchten;
@@ -46,6 +46,8 @@ VanGenuchtenCoeffs
 {
     pc0 pc0 [1 -1 -2 0 0 0 0] 100;
     m 0.5;	
+    Sbmin Sbmin [0  0  0 0 0 0 0] 0;
+    Sbmax Sbmax [0  0  0 0 0 0 0] 0.999;	
 }
 
 // ************************************************************************* //
