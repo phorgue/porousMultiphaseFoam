@@ -17,28 +17,27 @@ FoamFile
 
 activateCapillarity	1;
 
-eps		eps [0  0  0 0 0 0 0]	0.5;	
-Sbmin		Sbmin [0  0  0 0 0 0 0]	1e-3;
-Sbmax		Sbmax [0  0  0 0 0 0 0]	0.999;
+eps eps [0  0  0 0 0 0 0] 0.5;	
 
 phase.a
 {
-  rho	rho [1 -3 0 0 0 0 0] 	1e0;
-  mu	mu [1 -1 -1 0 0 0 0]	1.76e-5;
+  rho rho [1 -3 0 0 0 0 0] 1e0;
+  mu mu [1 -1 -1 0 0 0 0] 1.76e-5;
 }
 	
 phase.b
 {
-  rho	rho [1 -3 0 0 0 0 0] 	1e3;
-  mu	mu [1 -1 -1 0 0 0 0]	1e-3;
+  rho rho [1 -3 0 0 0 0 0] 1e3;
+  mu mu [1 -1 -1 0 0 0 0] 1e-3;
 }
-
 
 relativePermeabilityModel  BrooksAndCorey;
 
 BrooksAndCoreyCoeffs
 {
     n 3; 
+    Sbmin Sbmin [0 0 0 0 0 0 0] 1e-3;
+    Sbmax Sbmax [0 0 0 0 0 0 0] 0.999;
 }
 
 capillarityModel	linear;
@@ -47,6 +46,8 @@ linearCoeffs
 {
     pc0 pc0 [1 -1 -2 0 0 0 0] 0;
     pcMax pcMax [1 -1 -2 0 0 0 0] 19620;
+    Sbmin Sbmin [0 0 0 0 0 0 0]	1e-3;
+    Sbmax Sbmax [0 0 0 0 0 0 0]	0.999;
 }
 
 // ************************************************************************* //

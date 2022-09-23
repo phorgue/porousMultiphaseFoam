@@ -3,6 +3,15 @@
 ***
 ************************
 
+### Libraries
+
+- relativePermeability/capillarity:
+
+  - Smin/Smax are common to all kr/pc model and included in general abstract. As
+  a consequence, values are now read in the model dictionary (and not from the
+  global transportProperties dict). For example, the thetamin value for
+  Van Genuchten model is read in VanGenuchtenCoeffs.
+
 ### Solvers
 
 - steadyGroundwaterFoam/groundwaterFoam

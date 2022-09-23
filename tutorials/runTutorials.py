@@ -5,7 +5,7 @@
 
 # import
 from __future__ import with_statement
-import os, subprocess, sys, glob
+import os, subprocess, sys, glob, time
 
 # import list_cases
 from tutorialsList import tutorials as testCases
@@ -79,6 +79,7 @@ if __name__ == '__main__':
     print("                   RUNNING TEST CASES                   ")
     print("========================================================")
 
+    start_time = time.time()
     for case in testCases:
         test = testCase(case["solver"],case["case"])
         test.run()
@@ -86,6 +87,7 @@ if __name__ == '__main__':
     print(" ")
     print("========================================================")
     print("                        FINISHED                        ")
+    print("--- %s seconds ---" % (time.time() - start_time))
     print("========================================================")
 
     sys.exit(0)

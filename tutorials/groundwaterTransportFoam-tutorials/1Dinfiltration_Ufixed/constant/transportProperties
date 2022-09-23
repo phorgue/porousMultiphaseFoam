@@ -15,10 +15,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-//- fluid flow properties
-thetamin	thetamin [0 0 0 0 0 0 0]	0.102;
-thetamax	thetamax [0 0 0 0 0 0 0]	0.368;
-	
 phase.theta
 {
   rho	rho [1 -3 0 0 0 0 0] 	1e3;
@@ -31,6 +27,8 @@ capillarityModel	VanGenuchten;
 
 VanGenuchtenCoeffs
 {   
+    thetamin	thetamin [0 0 0 0 0 0 0]	0.102;
+    thetamax	thetamax [0 0 0 0 0 0 0]	0.368;
     m	0.5;
     alpha 3.35;
 }

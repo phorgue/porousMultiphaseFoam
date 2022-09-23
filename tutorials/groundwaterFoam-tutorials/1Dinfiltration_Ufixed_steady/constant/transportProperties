@@ -16,9 +16,6 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "../parameters.txt"
-
-thetamin  thetamin [0 0 0 0 0 0 0] $param_thetamin;
-thetamax thetamax [0 0 0 0 0 0 0] $param_thetamax;
 	
 phase.theta
 {
@@ -32,6 +29,8 @@ capillarityModel	VanGenuchten;
 
 VanGenuchtenCoeffs
 {   
+    thetamin  thetamin [0 0 0 0 0 0 0] $param_thetamin;
+    thetamax thetamax [0 0 0 0 0 0 0] $param_thetamax;
     m	$param_m;
     alpha $param_alpha;
 }
