@@ -58,32 +58,6 @@ Foam::capillarityModels::pcIppisch::pcIppisch
     :
     capillarityModel(mesh, transportProperties, Sname),
     pcIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    Smin_
-    (
-        IOobject
-        (
-            Sname+"min",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
-    ),
-    Smax_
-    (
-        IOobject
-        (
-            Sname+"max",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"min",dimless,0))
-    ),
     m_
     (
         IOobject
@@ -139,6 +113,10 @@ Foam::capillarityModels::pcIppisch::pcIppisch
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
+    dimensionedScalar Smin = pcIppischCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
+    if (Smin.value() > 0) Smin_ = Smin;
+    dimensionedScalar Smax = pcIppischCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
+    if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m = 0 in pcIppisch" << abort(FatalError);
     Info << "Ippisch parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    m ";

@@ -58,32 +58,6 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     :
     capillarityModel(mesh, transportProperties, Sname),
     pcVanGenuchtenCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    Smin_
-    (
-        IOobject
-        (
-            Sname+"min",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
-    ),
-    Smax_
-    (
-        IOobject
-        (
-            Sname+"max",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max",dimless,0))
-    ),
     m_
     (
         IOobject
@@ -125,6 +99,10 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
         pcVanGenuchtenCoeffs_.getOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0.))
     )
 {
+    dimensionedScalar Smin = pcVanGenuchtenCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
+    if (Smin.value() > 0) Smin_ = Smin;
+    dimensionedScalar Smax = pcVanGenuchtenCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
+    if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m = 0 in pcVanGenuchten" << abort(FatalError);
     Info << "Van Genuchten parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    m ";

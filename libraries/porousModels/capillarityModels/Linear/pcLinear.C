@@ -58,32 +58,6 @@ Foam::capillarityModels::pcLinear::pcLinear
     :
     capillarityModel(mesh, transportProperties, Sname),
     pcLinearCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    Smin_
-    (
-        IOobject
-        (
-            Sname+"min",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
-    ),
-    Smax_
-    (
-        IOobject
-        (
-            Sname+"max",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-       transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max",dimless,0))
-    ),
     pc0_
     (
         IOobject
@@ -111,6 +85,10 @@ Foam::capillarityModels::pcLinear::pcLinear
         pcLinearCoeffs_.getOrDefault("pcMax",dimensionedScalar("pcMax",dimensionSet(1,-1,-2,0,0),0))
     )
 {
+    dimensionedScalar Smin = pcLinearCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
+    if (Smin.value() > 0) Smin_ = Smin;
+    dimensionedScalar Smax = pcLinearCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
+    if (Smax.value() < 1) Smax_ = Smax;
     Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    pc0 ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}

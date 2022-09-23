@@ -87,6 +87,32 @@ Foam::capillarityModel::capillarityModel
         mesh,
         dimensionSet(0,-1,0,0,0,0,0)
     ),
+    Smin_
+    (
+      IOobject
+      (
+          Sname+"min",
+          mesh.time().timeName(),
+          mesh,
+          IOobject::READ_IF_PRESENT,
+          IOobject::NO_WRITE
+      ),
+      mesh,
+      dimensionedScalar(Sname+"min",dimless,0)
+    ),
+    Smax_
+    (
+        IOobject
+        (
+            Sname+"max",
+            mesh.time().timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar(Sname+"min",dimless,1)
+    ),
     Se_
     (
         IOobject
