@@ -14,9 +14,6 @@ FoamFile
   object      transportProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-thetamin	thetamin [0 0 0 0 0 0 0]	0.102;
-thetamax	thetamax [0 0 0 0 0 0 0]	0.368;
 	
 phase.theta
 {
@@ -30,6 +27,8 @@ capillarityModel	VanGenuchten;
 
 VanGenuchtenCoeffs
 {   
+    thetamin	thetamin [0 0 0 0 0 0 0] 0.102;
+    thetamax	thetamax [0 0 0 0 0 0 0] 0.368;
     m	0.5;
     alpha 3.35;
 }
