@@ -56,11 +56,7 @@ class krBrooksAndCorey
 :
     public relativePermeabilityModel
 {
-    //- Private data
-    volScalarField Smin_;
-    volScalarField Smax_;
-
-    dictionary krBrooksAndCoreyCoeffs_;
+    const dictionary& krBrooksAndCoreyCoeffs_;
     volScalarField n_;
 
     //- end points
