@@ -57,32 +57,6 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
 )
     :
     relativePermeabilityModel(mesh, transportProperties, Sname),
-    Smin_
-    (
-        IOobject
-        (
-            Sname+"min",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
-    ),
-    Smax_
-    (
-        IOobject
-        (
-            Sname+"max",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max",dimless,0))
-    ),
     krVanGenuchtenCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
     (
@@ -133,7 +107,10 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             << "Relative permeability coefficient m equal or less than 0" 
                 << exit(FatalError);
     }
-    
+    dimensionedScalar Smin = krVanGenuchtenCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
+    if (Smin.value() > 0) Smin_ = Smin;
+    dimensionedScalar Smax = krVanGenuchtenCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
+    if (Smax.value() < 1) Smax_ = Smax;
     Info << "Van Genuchten parameters for relative permeability model" << nl << "{" << endl;
     Info << "    m ";
     if (m_.headerOk()) { Info << "read file" << endl;}

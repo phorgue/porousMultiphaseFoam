@@ -56,12 +56,8 @@ class krVanGenuchten
 :
     public relativePermeabilityModel
 {
-    //- Private data
-    volScalarField Smin_;
-    volScalarField Smax_;
-
     //- Van Genuchten coefficients
-    dictionary krVanGenuchtenCoeffs_;
+    const dictionary& krVanGenuchtenCoeffs_;
     volScalarField m_;
 
     //- end points

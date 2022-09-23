@@ -56,12 +56,8 @@ class krIppisch
 :
     public relativePermeabilityModel
 {
-    //- Private data
-    volScalarField Smin_;
-    volScalarField Smax_;
-
     //- Van Genuchten coefficients
-    dictionary krIppischCoeffs_;
+    const dictionary& krIppischCoeffs_;
     volScalarField m_,n_,alpha_,tau_,he_;
 
     //- cut-off point saturation (computed with entry pressure)
