@@ -73,7 +73,7 @@ protected:
     volScalarField pc_,dpcdS_,Ch_;
 
     // Effective saturation field
-    volScalarField Se_;
+    volScalarField Smin_, Smax_, Se_;
 
     // Private Member Functions
 
@@ -133,47 +133,33 @@ public:
     // Member Functions
 
     //- Return the phase transport properties dictionary
-    const dictionary& capillarityProperties() const
-        {
-            return capillarityProperties_;
-        }
+    const dictionary& capillarityProperties() const{return capillarityProperties_;}
       
     //- Return the capillary pressure as a function of Sb 
-    tmp<volScalarField> pc() const
-        {
-            return pc_;
-        }
+    tmp<volScalarField> pc() const {return pc_;}
 
     //- Return the derivative of capillary pressure as a function of Sb
-    tmp<volScalarField> dpcdS() const
-        {
-            return dpcdS_;
-        }
+    tmp<volScalarField> dpcdS() const {return dpcdS_;}
 
     //- Return effective saturation
-    tmp<volScalarField> Se() const
-        {
-            return Se_;
-        }
+    tmp<volScalarField> Smin() const {return Smin_;}
+
+    //- Return effective saturation
+    tmp<volScalarField> Smax() const {return Smax_;}
+
+    //- Return effective saturation
+    tmp<volScalarField> Se() const {return Se_;}
 
     //- Capillary capacity (Richards' model)
-    tmp<volScalarField> Ch() const
-        {
-            return Ch_;
-        };
+    tmp<volScalarField> Ch() const {return Ch_;}
 
     //- Capillary capacity (one cell)
-    const scalar& Ch(const label& celli) const
-        {
-            return Ch_[celli];
-        }
+    const scalar& Ch(const label& celli) const {return Ch_[celli];}
 
     //- To set specific value of Ch
-    void setCh(const label& celli, const scalar& ChValue)
-        {
-            Ch_[celli] = ChValue;
-        }
+    void setCh(const label& celli, const scalar& ChValue) {Ch_[celli] = ChValue;}
     
+
     //- Correct the capillary pressure
     virtual void correct(const volScalarField& Sb) = 0;
 

@@ -58,7 +58,6 @@ class pcVanGenuchten
 {
     // pcVan Genuchten coefficients
     dictionary pcVanGenuchtenCoeffs_;
-    volScalarField Smin_,Smax_;
     volScalarField m_,n_,alpha_;
     volScalarField pc0_;
         

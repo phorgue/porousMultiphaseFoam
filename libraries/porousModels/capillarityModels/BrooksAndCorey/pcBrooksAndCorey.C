@@ -58,32 +58,6 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
     :
   capillarityModel(mesh, transportProperties, Sname),
   pcBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-  Smin_
-  (
-      IOobject
-      (
-          Sname+"min",
-          mesh.time().timeName(),
-          mesh,
-          IOobject::READ_IF_PRESENT,
-          IOobject::NO_WRITE
-      ),
-      mesh,
-      transportProperties.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min",dimless,0))
-  ),
-  Smax_
-  (
-      IOobject
-      (
-          Sname+"max",
-          mesh.time().timeName(),
-          mesh,
-          IOobject::READ_IF_PRESENT,
-          IOobject::NO_WRITE
-      ),
-      mesh,
-      transportProperties.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max",dimless,0))
-  ),
   pc0_
   (
       IOobject
@@ -124,8 +98,11 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
       dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("alpha",0))
   )
 {
+    dimensionedScalar Smin = pcBrooksAndCoreyCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
+    if (Smin.value() > 0) Smin_ = Smin;
+    dimensionedScalar Smax = pcBrooksAndCoreyCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
+    if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
-
     Info << "Brooks and Corey parameters for capillary pressure model" << nl << "{" << endl;
     Info << "    pc0 ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}

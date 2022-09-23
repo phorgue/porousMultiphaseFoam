@@ -58,7 +58,6 @@ class pcIppisch
 {
     //- Ippisch coefficients
     dictionary pcIppischCoeffs_;
-    volScalarField Smin_,Smax_;
     volScalarField m_,n_,alpha_,tau_,he_;
 
     //- cut-off point saturation (computed with entry pressure)

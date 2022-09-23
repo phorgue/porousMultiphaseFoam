@@ -58,9 +58,6 @@ class pcBrooksAndCorey
 {
     // pcBrooks and Corey coefficients
     dictionary pcBrooksAndCoreyCoeffs_;
-       
-    volScalarField Smin_;
-    volScalarField Smax_;
     volScalarField pc0_;
     volScalarField hd_;
     volScalarField alpha_;

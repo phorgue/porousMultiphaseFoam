@@ -60,9 +60,6 @@ class pcLinear
 {
     // pcVan Genuchten coefficients
     dictionary pcLinearCoeffs_;
-
-    volScalarField Smin_;
-    volScalarField Smax_;
     volScalarField pc0_;
     volScalarField pcMax_;
 
