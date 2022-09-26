@@ -132,6 +132,9 @@ public:
 
     // Member Functions
 
+    //- Return the name of the saturation field
+    const word& Sname() {return Sname_;}
+    
     //- Return the phase transport properties dictionary
     const dictionary& capillarityProperties() const{return capillarityProperties_;}
       
@@ -141,13 +144,9 @@ public:
     //- Return the derivative of capillary pressure as a function of Sb
     tmp<volScalarField> dpcdS() const {return dpcdS_;}
 
-    //- Return effective saturation
+    //- Return min/max/effective saturation
     tmp<volScalarField> Smin() const {return Smin_;}
-
-    //- Return effective saturation
     tmp<volScalarField> Smax() const {return Smax_;}
-
-    //- Return effective saturation
     tmp<volScalarField> Se() const {return Se_;}
 
     //- Capillary capacity (Richards' model)
@@ -158,7 +157,6 @@ public:
 
     //- To set specific value of Ch
     void setCh(const label& celli, const scalar& ChValue) {Ch_[celli] = ChValue;}
-    
 
     //- Correct the capillary pressure
     virtual void correct(const volScalarField& Sb) = 0;
