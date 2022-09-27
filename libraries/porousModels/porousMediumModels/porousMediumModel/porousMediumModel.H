@@ -64,11 +64,15 @@ class porousMediumModel
 protected:
 
     // Protected data
+    //- Name of the main saturation field
+    const word Sname_;
+
+    //- Reference to the main dictionary
     const dictionary& transportProperties_;
 
-    //- reference to saturation field
-    autoPtr<relativePermeabilityModel>& krModel_;
-    autoPtr<capillarityModel>& pcModel_;
+    //- kr/pc models
+    autoPtr<relativePermeabilityModel> krModel_;
+    autoPtr<capillarityModel> pcModel_;
 
     //- flow source term
     volScalarField sourceTerm_;
@@ -78,7 +82,6 @@ protected:
 
     //- Disallow default bitwise assignment
     void operator=(const porousMediumModel&);
-
 
 public:
 
@@ -93,24 +96,21 @@ public:
         porousMediumModel,
         dictionary,
         (
+            const word Sname,
             const fvMesh& mesh,
-            const dictionary& transportProperties,
-            autoPtr<relativePermeabilityModel>& krModel,
-            autoPtr<capillarityModel>& pcModel
+            const dictionary& transportProperties
         ),
-        (mesh, transportProperties, krModel, pcModel)
+        (Sname, mesh, transportProperties)
     );
-
 
     // Selectors
 
     //- Return a reference to the selected porousMedium model
     static autoPtr<porousMediumModel> New
     (
+        const word Sname,
         const fvMesh& mesh,
-        const dictionary& transportProperties,
-        autoPtr<relativePermeabilityModel>& krModel,
-        autoPtr<capillarityModel>& pcModel
+        const dictionary& transportProperties
     );
 
     // Constructors
@@ -118,10 +118,9 @@ public:
     //- Construct from components
     porousMediumModel
     (
+        const word Sname,
         const fvMesh& mesh,
-        const dictionary& transportProperties,
-        autoPtr<relativePermeabilityModel>& krModel,
-        autoPtr<capillarityModel>& pcModel
+        const dictionary& transportProperties
     );
 
     //- Destructor
@@ -129,31 +128,20 @@ public:
         {}
 
     // Member Functions
+    const word& Sname() const {return Sname_;}
+
     //- Return transport properties
-    const dictionary& transportProperties() const
-        {
-            return transportProperties_;
-        }
+    const dictionary& transportProperties() const {return transportProperties_;}
 
     //- Return relative permeabilities model
-     autoPtr<relativePermeabilityModel>& krModel() 
-        {
-            return krModel_;
-        }
+    autoPtr<relativePermeabilityModel>& krModel() {return krModel_;}
     //- Return capillary model
-    autoPtr<capillarityModel>& pcModel() 
-        {
-            return pcModel_;
-        }
+    autoPtr<capillarityModel>& pcModel() {return pcModel_;}
 
-    const volScalarField& source()
-        {
-            return sourceTerm_;
-        }
+    const volScalarField& source() {return sourceTerm_;}
     
     //- Correct 
     virtual void correct() = 0;
-    // virtual void correctpc() = 0;
 
 };
 
