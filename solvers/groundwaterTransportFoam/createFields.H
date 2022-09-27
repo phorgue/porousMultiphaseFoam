@@ -102,10 +102,10 @@ theta.dimensions().reset(dimless);
 //////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-// Relative permeability model
-autoPtr<relativePermeabilityModel> krModel = relativePermeabilityModel::New(mesh, transportProperties, "theta");
-autoPtr<capillarityModel> pcModel = capillarityModel::New(mesh, transportProperties, "theta");
-autoPtr<porousMediumModel> porousModel = porousMediumModel::New(mesh, transportProperties, krModel, pcModel);
+// Relative permeability / Capillary pressure models
+autoPtr<porousMediumModel> porousModel = porousMediumModel::New("theta", mesh, transportProperties);
+autoPtr<relativePermeabilityModel>& krModel = porousModel->krModel();
+autoPtr<capillarityModel>& pcModel = porousModel->pcModel();
 
 Info<< "Computing field theta \n" << endl;
 theta = pcModel->correctAndSb(h);
