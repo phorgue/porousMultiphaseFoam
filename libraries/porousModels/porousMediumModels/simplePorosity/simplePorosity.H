@@ -80,10 +80,9 @@ public:
     //- Construct from components
     simplePorosity
     (
+        const word Sname,
         const fvMesh& mesh,
-        const dictionary& transportProperties,
-        autoPtr<relativePermeabilityModel>& krModel,
-        autoPtr<capillarityModel>& pcModel
+        const dictionary& transportProperties
     );
 
     //- Destructor

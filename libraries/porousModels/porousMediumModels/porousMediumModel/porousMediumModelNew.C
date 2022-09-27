@@ -33,10 +33,9 @@ License
 
 Foam::autoPtr<Foam::porousMediumModel> Foam::porousMediumModel::New
 (
+    const word Sname,
     const fvMesh& mesh,
-    const dictionary& transportProperties,
-    autoPtr<relativePermeabilityModel>& krModel,
-    autoPtr<capillarityModel>& pcModel
+    const dictionary& transportProperties
 )
 {
     const word modelType(transportProperties.lookupOrDefault<word>("porousMediumModel", "simplePorosity"));
@@ -44,7 +43,6 @@ Foam::autoPtr<Foam::porousMediumModel> Foam::porousMediumModel::New
     Info<< "Selecting porousMedium model => " << modelType << "\n" << endl;
 
     auto cstrIter = dictionaryConstructorTablePtr_->find(modelType);
-
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
@@ -59,7 +57,7 @@ Foam::autoPtr<Foam::porousMediumModel> Foam::porousMediumModel::New
     }
 
     return autoPtr<porousMediumModel>
-        (cstrIter()(mesh, transportProperties, krModel, pcModel));
+        (cstrIter()(Sname, mesh, transportProperties));
 }
 
 

@@ -41,15 +41,13 @@ defineRunTimeSelectionTable(porousMediumModel, dictionary);
 
 Foam::porousMediumModel::porousMediumModel
 (
+    const word Sname,
     const fvMesh& mesh,
-    const dictionary& transportProperties,
-    autoPtr<relativePermeabilityModel>& krModel,
-    autoPtr<capillarityModel>& pcModel
+    const dictionary& transportProperties
 )
     :
+    Sname_(Sname),
     transportProperties_(transportProperties),
-    krModel_(krModel),
-    pcModel_(pcModel),
     sourceTerm_
     (
         IOobject
@@ -63,6 +61,9 @@ Foam::porousMediumModel::porousMediumModel
         mesh,
         dimensionedScalar(dimensionSet(0,0,-1,0,0),0.)
     )
-{}
+{
+    pcModel_ = capillarityModel::New(mesh, transportProperties, Sname);
+    krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname);
+}
 
 // ************************************************************************* //
