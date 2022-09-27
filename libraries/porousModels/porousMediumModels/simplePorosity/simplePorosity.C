@@ -52,13 +52,12 @@ addToRunTimeSelectionTable
 
 Foam::porousMediumModels::simplePorosity::simplePorosity
 (
+    const word Sname,
     const fvMesh& mesh,
-    const dictionary& transportProperties,
-    autoPtr<relativePermeabilityModel>& krModel,
-    autoPtr<capillarityModel>& pcModel
+    const dictionary& transportProperties
 )
     :
-    porousMediumModel(mesh, transportProperties, krModel, pcModel)
+    porousMediumModel(Sname, mesh, transportProperties)
 {}
 
 void Foam::porousMediumModels::simplePorosity::correct()

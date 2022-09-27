@@ -40,7 +40,7 @@ Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::
 {
     const word modelType(transportProperties.lookup("relativePermeabilityModel"));
 
-    Info<< "Selecting relativePermeability model => " << modelType << "\n" << endl;
+    Info<< "Selecting relativePermeability model for field "<< Sname << " => " << modelType << "\n" << endl;
 
     auto cstrIter = dictionaryConstructorTablePtr_->find(modelType);
 

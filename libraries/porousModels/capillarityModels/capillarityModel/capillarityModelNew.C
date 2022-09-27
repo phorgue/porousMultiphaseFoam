@@ -40,7 +40,7 @@ Foam::autoPtr<Foam::capillarityModel> Foam::capillarityModel::New
 {
   const word modelType(capillarityProperties.lookup("capillarityModel"));
 
-  Info<< "Selecting capillarity model => " << modelType << "\n" << endl;
+  Info<< "Selecting capillarity model for field " << Sname << " => " << modelType << "\n" << endl;
 
   auto cstrIter = dictionaryConstructorTablePtr_->find(modelType);
 
