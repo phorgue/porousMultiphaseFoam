@@ -73,15 +73,6 @@ volScalarField theta
 );
 theta.dimensions().reset(dimless);
 
-// Relative permeability / Capillary pressure models
-autoPtr<porousMediumModel> porousModel = porousMediumModel::New("theta", mesh, transportProperties);
-autoPtr<relativePermeabilityModel>& krModel = porousModel->krModel();
-autoPtr<capillarityModel>& pcModel = porousModel->pcModel();
-
-Info << nl << "Computing saturation field theta" << endl;
-theta = pcModel->correctAndSb(h);
-theta.write();
-
 ////////////////////////////////////////////////////////////////////
 /////////////////////////// PHASE MODEL ////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -104,6 +95,15 @@ surfaceScalarField phi
     ),
     linearInterpolate(Utheta) & mesh.Sf()
 );
+
+// Relative permeability / Capillary pressure models
+autoPtr<porousMediumModel> porousModel = porousMediumModel::New("theta", mesh, transportProperties, phasetheta);
+autoPtr<relativePermeabilityModel>& krModel = porousModel->krModel();
+autoPtr<capillarityModel>& pcModel = porousModel->pcModel();
+
+Info << nl << "Computing saturation field theta" << endl;
+theta = pcModel->correctAndSb(h);
+theta.write();
 
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////

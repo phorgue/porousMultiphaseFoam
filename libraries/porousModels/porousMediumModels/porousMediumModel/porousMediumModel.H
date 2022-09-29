@@ -46,7 +46,9 @@ SourceFiles
 #ifndef porousMediumModel_H
 #define porousMediumModel_H
 
+#include "surfaceFields.H"
 #include "volFields.H"
+#include "incompressiblePhase.H"
 #include "relativePermeabilityModel.H"
 #include "capillarityModel.H"
 
@@ -69,6 +71,9 @@ protected:
 
     //- Reference to the main dictionary
     const dictionary& transportProperties_;
+
+    //- Reference to the phase properties
+    const autoPtr<incompressiblePhase>& phase_;
 
     //- kr/pc models
     autoPtr<relativePermeabilityModel> krModel_;
@@ -98,9 +103,10 @@ public:
         (
             const word Sname,
             const fvMesh& mesh,
-            const dictionary& transportProperties
+            const dictionary& transportProperties,
+            const autoPtr<incompressiblePhase>& phase
         ),
-        (Sname, mesh, transportProperties)
+        (Sname, mesh, transportProperties, phase)
     );
 
     // Selectors
@@ -110,7 +116,8 @@ public:
     (
         const word Sname,
         const fvMesh& mesh,
-        const dictionary& transportProperties
+        const dictionary& transportProperties,
+        const autoPtr<incompressiblePhase>& phase
     );
 
     // Constructors
@@ -120,7 +127,8 @@ public:
     (
         const word Sname,
         const fvMesh& mesh,
-        const dictionary& transportProperties
+        const dictionary& transportProperties,
+        const autoPtr<incompressiblePhase>& phase
     );
 
     //- Destructor
@@ -133,6 +141,9 @@ public:
     //- Return transport properties
     const dictionary& transportProperties() const {return transportProperties_;}
 
+    //- Return phase
+    const autoPtr<incompressiblePhase>& phase() const {return phase_;}
+
     //- Return relative permeabilities model
     autoPtr<relativePermeabilityModel>& krModel() {return krModel_;}
     //- Return capillary model
@@ -140,8 +151,9 @@ public:
 
     const volScalarField& source() {return sourceTerm_;}
     
-    //- Correct 
+    //- Correct
     virtual void correct() = 0;
+    virtual void correct(const volScalarField& h, const bool steady = false, const bool conservative = true) = 0;
 
 };
 
