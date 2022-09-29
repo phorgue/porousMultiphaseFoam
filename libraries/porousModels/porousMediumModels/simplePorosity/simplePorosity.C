@@ -54,10 +54,11 @@ Foam::porousMediumModels::simplePorosity::simplePorosity
 (
     const word Sname,
     const fvMesh& mesh,
-    const dictionary& transportProperties
+    const dictionary& transportProperties,
+    const autoPtr<incompressiblePhase>& phase
 )
     :
-    porousMediumModel(Sname, mesh, transportProperties)
+    porousMediumModel(Sname, mesh, transportProperties, phase)
 {}
 
 void Foam::porousMediumModels::simplePorosity::correct()
@@ -65,4 +66,8 @@ void Foam::porousMediumModels::simplePorosity::correct()
     //- nothing for simple porosity model
 }
 
+void Foam::porousMediumModels::simplePorosity::correct(const volScalarField& h, const bool steady, const bool conservative)
+{
+    //- nothing for simple porosity model
+}
 // ************************************************************************* //

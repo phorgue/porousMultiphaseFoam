@@ -26,23 +26,24 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Namespace
-    Foam::porousMediumModels::simplePorosity
+    Foam::porousMediumModels::dualPorosity
 
 Class
-    Foam::simplePorosity
+    Foam::dualPorosity
 
 Description
-    Simple porosity model (one kr / one pc law)
+    Dual porosity model (one kr / one pc law)
 
 SourceFiles
-    simplePorosity.C
+    dualPorosity.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef simplePorosity_H
-#define simplePorosity_H
+#ifndef dualPorosity_H
+#define dualPorosity_H
 
 #include "volFields.H"
+#include "surfaceFields.H"
 #include "porousMediumModel.H"
 #include "relativePermeabilityModel.H"
 #include "capillarityModel.H"
@@ -56,30 +57,41 @@ namespace porousMediumModels
 {
 
 /*---------------------------------------------------------------------------* \
-             Class simplePorosity Declaration
+             Class dualPorosity Declaration
 \*---------------------------------------------------------------------------*/
 
-class simplePorosity
+class dualPorosity
 :
     public porousMediumModel
 {
-protected:
+    const word SnameM_;
+
+    volScalarField hMatrix_;
+    volScalarField Smatrix_;
+    volScalarField Km_;
+    surfaceScalarField Kmf_;
+    volVectorField Umatrix_;
+    surfaceScalarField phiMatrix_;
+
+    //- kr/pc model for the matrix
+    autoPtr<relativePermeabilityModel> matrixKrModel_;
+    autoPtr<capillarityModel> matrixPcModel_;
 
     //- Disallow copy construct
-    simplePorosity(const simplePorosity&);
+    dualPorosity(const dualPorosity&);
 
     //- Disallow default bitwise assignment
-    void operator=(const simplePorosity&);
+    void operator=(const dualPorosity&);
 
 public:
 
     //- Runtime type information
-    TypeName("simplePorosity");
+    TypeName("dualPorosity");
 
     // Constructors
 
     //- Construct from components
-    simplePorosity
+    dualPorosity
     (
         const word Sname,
         const fvMesh& mesh,
@@ -88,7 +100,7 @@ public:
     );
 
     //- Destructor
-    ~simplePorosity()
+    ~dualPorosity()
         {}
 
     //- Correct the relative permeabilities

@@ -43,11 +43,13 @@ Foam::porousMediumModel::porousMediumModel
 (
     const word Sname,
     const fvMesh& mesh,
-    const dictionary& transportProperties
+    const dictionary& transportProperties,
+    const autoPtr<incompressiblePhase>& phase
 )
     :
     Sname_(Sname),
     transportProperties_(transportProperties),
+    phase_(phase),
     sourceTerm_
     (
         IOobject
