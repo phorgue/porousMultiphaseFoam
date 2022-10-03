@@ -1,4 +1,6 @@
 {
+    porousModel->correct(h, steady, massConservative);
+
     h.storePrevIter();
     const volScalarField& dkrthetadS = krModel ->dkrbdS();
     volScalarField dLdS( pcModel->Ch() * rhotheta * K * dkrthetadS / mutheta );

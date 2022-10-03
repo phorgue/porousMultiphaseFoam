@@ -1,5 +1,5 @@
 {
-    porousModel->correct();
+    porousModel->correct(h, steady, massConservative);
 
     h.storePrevIter();
 
@@ -14,14 +14,15 @@
         );
     if (!steady)
     {
-        hEqn +=
-            //- accumulation terms
-            (Ss*pcModel->Se() + pcModel->Ch()) * fvm::ddt(h)
+        //- accumulation terms
+        hEqn += (Ss*pcModel->Se() + pcModel->Ch()) * fvm::ddt(h);
+
+        if (massConservative)
+        {
             //-mass conservative terms
-            + massConservativeTerms * (
-                pcModel->Ch()*(h.oldTime()-h.prevIter())
-                + ( theta - theta.oldTime()))
-            /runTime.deltaT();
+            hEqn += (pcModel->Ch()*(h.oldTime()-h.prevIter())
+            + (theta - theta.oldTime())) / runTime.deltaT();
+        }
     }
 
     #include "updateForcing.H"

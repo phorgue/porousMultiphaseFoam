@@ -58,5 +58,3 @@ if (!PicardDict.found("tolerance") && !NewtonDict.found("tolerance"))
 
 //- to switch between conservative mixed formulation (by default) and head pressure (non conservative)
 bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
-scalar massConservativeTerms = 0;
-if (massConservative) massConservativeTerms = 1;

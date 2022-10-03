@@ -27,9 +27,9 @@ h.correctBoundaryConditions();
 ResiduN = - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;
 if (!steady)
 {
-    ResiduN += Ss*pcModel->Se() * fvc::ddt(h)
-        + massConservativeTerms * fvc::ddt(theta)
-        + (1 - massConservativeTerms) * pcModel->Ch() * fvc::ddt(h);
+    ResiduN += Ss*pcModel->Se() * fvc::ddt(h);
+    if (massConservative) ResiduN += fvc::ddt(theta);
+    else ResiduN += pcModel->Ch() * fvc::ddt(h);
 }
 
 forAll(fixedPotentialIDList, pointi) ResiduN[fixedPotentialIDList[pointi]]=0;
