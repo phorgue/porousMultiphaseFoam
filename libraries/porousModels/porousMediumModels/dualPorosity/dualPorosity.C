@@ -60,40 +60,51 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
 )
     :
     porousMediumModel(Sname, mesh, transportProperties, phase),
-    SnameM_(Sname+"M"),
+    SnameMatrix_(Sname+"Matrix"),
+    mesh_(mesh),
+    g
+    (
+        IOobject
+        (
+            "g",
+            mesh.time().constant(),
+            mesh,
+            IOobject::MUST_READ_IF_MODIFIED,
+            IOobject::NO_WRITE,
+            false
+        )
+    ),
     hMatrix_
     (
         IOobject
         (
-            "hM",
+            "hMatrix",
             mesh.time().timeName(),
             mesh,
-            IOobject::NO_READ,
+            IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
-        mesh,
-        dimless,
-        calculatedFvPatchScalarField::typeName
+        mesh
     ),
     Smatrix_
     (
         IOobject
         (
-            SnameM_,
+            SnameMatrix_,
             mesh.time().timeName(),
             mesh,
-            IOobject::NO_READ,
+            IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
         mesh,
         dimless,
         calculatedFvPatchScalarField::typeName
     ),
-    Km_
+    KMatrix_
     (
         IOobject
         (
-            "K",
+            "KMatrix",
             mesh.time().constant(),
             mesh,
             IOobject::MUST_READ,
@@ -101,12 +112,12 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         ),
         mesh
     ),
-    Kmf_(fvc::interpolate(Km_, "K")),
-    Umatrix_
+    KMatrixf_(fvc::interpolate(KMatrix_, "K")),
+    UMatrix_
     (
         IOobject
         (
-            "UM",
+            "U"+SnameMatrix_,
             mesh.time().timeName(),
             mesh,
             IOobject::MUST_READ,
@@ -114,22 +125,51 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         ),
         mesh
     ),
+    LMatrixf_(phase_->rho()*KMatrixf_/phase_->mu()),
+    MMatrixf_(mag(g)*LMatrixf_),
+    phiGMatrixf_((LMatrixf_ * g) & mesh_.Sf()),
     phiMatrix_
     (
         IOobject
         (
-            "phiM",
+            "phiMatrix",
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::AUTO_WRITE
         ),
-        linearInterpolate(Umatrix_) & mesh.Sf()
+        linearInterpolate(UMatrix_) & mesh.Sf()
     )
 {
-    matrixPcModel_ = capillarityModel::New(mesh, transportProperties, SnameM_);
-    matrixKrModel_ = relativePermeabilityModel::New(mesh, transportProperties, SnameM_);
+    matrixPcModel_ = capillarityModel::New(mesh, transportProperties, SnameMatrix_);
+    matrixKrModel_ = relativePermeabilityModel::New(mesh, transportProperties, SnameMatrix_);
+    updateMatrixProperties();
 }
+
+// * * * * * * * * * * * * * * Private Members  * * * * * * * * * * * * * * //
+
+void Foam::porousMediumModels::dualPorosity::updateMatrixProperties()
+{
+    //- update matrix properties
+    Smatrix_ = matrixPcModel_->correctAndSb(hMatrix_);
+    matrixKrModel_->correctkrb(Smatrix_);
+    surfaceScalarField krthetaMatrixf = fvc::interpolate(matrixKrModel_->krb(), "krthetaMatrix");
+    LMatrixf_ = phase_->rho()*KMatrixf_*krthetaMatrixf/phase_->mu();
+    MMatrixf_ = mag(g)*LMatrixf_;
+    phiGMatrixf_ = (LMatrixf_ * g) & mesh_.Sf();
+    phiMatrix_ = phiGMatrixf_-(MMatrixf_*fvc::snGrad(hMatrix_))*mesh_.magSf();
+    UMatrix_ = fvc::reconstruct(phiMatrix_);
+    UMatrix_.correctBoundaryConditions();
+    forAll(UMatrix_.boundaryField(),patchi)
+    {
+        if (isA< fixedValueFvPatchField<vector> >(UMatrix_.boundaryField()[patchi]))
+        {
+            phiMatrix_.boundaryFieldRef()[patchi] = UMatrix_.boundaryField()[patchi] & mesh_.Sf().boundaryField()[patchi];
+        }
+    }
+}
+
+// * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
 
 void Foam::porousMediumModels::dualPorosity::correct()
 {
@@ -138,22 +178,14 @@ void Foam::porousMediumModels::dualPorosity::correct()
 
 void Foam::porousMediumModels::dualPorosity::correct(const volScalarField& h, const bool steady, const bool conservative)
 {
-
-    const meshObjects::gravity& g = meshObjects::gravity::New(hMatrix_.time());
-    surfaceScalarField krthetaMf("krthetaf",fvc::interpolate(matrixKrModel_->krb(),"krtheta"));
-
-    surfaceScalarField Lf ("Lf",phase_->rho()*Kmf_*krthetaMf/phase_->mu());
-    surfaceScalarField Mf ("Mf",mag(g)*Lf);
-    surfaceScalarField phiG("phiG",(Lf * g) & hMatrix_.mesh().Sf());
-
     hMatrix_.storePrevIter();
     
     //- solve matrix equation
     fvScalarMatrix hMEqn
         (
             //- transport terms
-            - fvm::laplacian(Mf,hMatrix_)
-            + fvc::div(phiG)
+            - fvm::laplacian(MMatrixf_,hMatrix_)
+            + fvc::div(phiGMatrixf_)
         );
     if (!steady)
     {
@@ -164,12 +196,16 @@ void Foam::porousMediumModels::dualPorosity::correct(const volScalarField& h, co
         {
             //-mass conservative terms
             hMEqn += (matrixPcModel_->Ch()*(hMatrix_.oldTime()-hMatrix_.prevIter())
-                + ( Smatrix_ - Smatrix_.oldTime()))
-                /hMatrix_.time().deltaT();
+                + ( Smatrix_ - Smatrix_.oldTime())) / hMatrix_.time().deltaT();
         }
     }
+    hMEqn.solve();
 
-    
+    //- relax if steady formulation
+    if (steady) hMatrix_.relax();
+
+    //- update properties using new solution
+    updateMatrixProperties();
 }
 
 // ************************************************************************* //

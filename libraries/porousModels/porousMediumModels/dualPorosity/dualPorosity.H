@@ -64,18 +64,25 @@ class dualPorosity
 :
     public porousMediumModel
 {
-    const word SnameM_;
-
+    const word SnameMatrix_;
+    const fvMesh& mesh_;
+    const uniformDimensionedVectorField g;
     volScalarField hMatrix_;
     volScalarField Smatrix_;
-    volScalarField Km_;
-    surfaceScalarField Kmf_;
-    volVectorField Umatrix_;
+    volScalarField KMatrix_;
+    surfaceScalarField KMatrixf_;
+    volVectorField UMatrix_;
+    surfaceScalarField LMatrixf_;
+    surfaceScalarField MMatrixf_;
+    surfaceScalarField phiGMatrixf_;
     surfaceScalarField phiMatrix_;
 
     //- kr/pc model for the matrix
     autoPtr<relativePermeabilityModel> matrixKrModel_;
     autoPtr<capillarityModel> matrixPcModel_;
+
+    //- Update properties of the matrix part
+    void updateMatrixProperties();
 
     //- Disallow copy construct
     dualPorosity(const dualPorosity&);
