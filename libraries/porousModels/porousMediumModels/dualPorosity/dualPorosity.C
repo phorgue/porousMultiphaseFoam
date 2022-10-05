@@ -60,6 +60,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
 )
     :
     porousMediumModel(Sname, mesh, transportProperties, phase),
+    dualPorosityCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     SnameMatrix_(Sname+"Matrix"),
     mesh_(mesh),
     g
@@ -124,7 +125,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::AUTO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, transportProperties.get<scalar>("Wf"))
+        dimensionedScalar(dimless, dualPorosityCoeffs_.get<scalar>("Wf"))
     ),
     geomFactor_
     (
@@ -137,7 +138,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::AUTO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless/dimArea, transportProperties.get<scalar>("geomFactor"))
+        dimensionedScalar(dimless/dimArea, dualPorosityCoeffs_.get<scalar>("geomFactor"))
     ),
     UMatrix_
     (
