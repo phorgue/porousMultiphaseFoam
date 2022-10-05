@@ -71,6 +71,8 @@ class dualPorosity
     volScalarField Smatrix_;
     volScalarField KMatrix_;
     surfaceScalarField KMatrixf_;
+    volScalarField Wf_;
+    volScalarField  geomFactor_;
     volVectorField UMatrix_;
     surfaceScalarField LMatrixf_;
     surfaceScalarField MMatrixf_;
@@ -112,7 +114,7 @@ public:
 
     //- Correct the relative permeabilities
     void correct();
-    void correct(const volScalarField& h, const bool steady = false, const bool conservative = true);
+    void correct(volScalarField& h, const bool steady = false, const bool conservative = true);
 
 };
 
