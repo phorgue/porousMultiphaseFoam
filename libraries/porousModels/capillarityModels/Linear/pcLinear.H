@@ -93,11 +93,11 @@ public:
         }
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    volScalarField correctAndSb(volScalarField& h)
+    tmp<volScalarField> correctAndSb(volScalarField& h)
         {
             FatalErrorIn("volScalarField correctAndSb(volScalarField h) const")
                 << "Not implemented in pcLinear.H " << abort(FatalError);
-            return Se_;
+            return NULL;
         };
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
@@ -108,6 +108,13 @@ public:
             return 0;
         };
 
+    //- Compute saturation from given head pressure
+    tmp<volScalarField> S(volScalarField& h)
+        {
+            FatalErrorIn("tmp<volScalarField> S(const volScalarField& h)")
+                << "Not implemented in pcLinear.H " << abort(FatalError);
+            return 0;
+        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

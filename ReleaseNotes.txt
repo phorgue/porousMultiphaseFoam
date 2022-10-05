@@ -34,6 +34,16 @@
   option, i.e. :
        groundwater2DFoam -steady
 
+### Minor changes
+
+- massConservativeTerm has been replaced by
+
+- new kr(volfield) function added to relativePermeability classes to compute
+  relative permeability from a given saturation
+
+- new S(volfield) function added to capillaryModel classes to compute saturation
+  from a given pressure head field
+
 ************************
 *** PMFv2107.2
 *** Minor fixes for PMFv2107.1

@@ -139,18 +139,18 @@ public:
     const dictionary& capillarityProperties() const{return capillarityProperties_;}
       
     //- Return the capillary pressure as a function of Sb 
-    tmp<volScalarField> pc() const {return pc_;}
+    const volScalarField& pc() const {return pc_;}
 
     //- Return the derivative of capillary pressure as a function of Sb
-    tmp<volScalarField> dpcdS() const {return dpcdS_;}
+    const volScalarField& dpcdS() const {return dpcdS_;}
 
     //- Return min/max/effective saturation
-    tmp<volScalarField> Smin() const {return Smin_;}
-    tmp<volScalarField> Smax() const {return Smax_;}
-    tmp<volScalarField> Se() const {return Se_;}
+    const volScalarField& Smin() const {return Smin_;}
+    const volScalarField& Smax() const {return Smax_;}
+    const volScalarField& Se() const {return Se_;}
 
     //- Capillary capacity (Richards' model)
-    tmp<volScalarField> Ch() const {return Ch_;}
+    const volScalarField& Ch() const {return Ch_;}
 
     //- Capillary capacity (one cell)
     const scalar& Ch(const label& celli) const {return Ch_[celli];}
@@ -162,9 +162,11 @@ public:
     virtual void correct(const volScalarField& Sb) = 0;
 
     //- Compute capillary capacity from head pressure and return moisture (Richards' model)
-    virtual volScalarField correctAndSb(volScalarField& h) = 0;
+    virtual tmp<volScalarField> correctAndSb(volScalarField& h) = 0;
     virtual scalar correctAndSb(volScalarField& h, const label& celli) = 0;
 
+    //- Compute saturation for given head pressure
+    virtual tmp<volScalarField> S(volScalarField& h) = 0;
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
