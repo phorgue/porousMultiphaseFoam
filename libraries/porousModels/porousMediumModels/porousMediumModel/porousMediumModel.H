@@ -153,7 +153,7 @@ public:
     
     //- Correct
     virtual void correct() = 0;
-    virtual void correct(const volScalarField& h, const bool steady = false, const bool conservative = true) = 0;
+    virtual void correct(volScalarField& h, const bool steady = false, const bool conservative = true) = 0;
 
 };
 

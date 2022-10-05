@@ -66,7 +66,7 @@ void Foam::porousMediumModels::simplePorosity::correct()
     //- nothing for simple porosity model
 }
 
-void Foam::porousMediumModels::simplePorosity::correct(const volScalarField& h, const bool steady, const bool conservative)
+void Foam::porousMediumModels::simplePorosity::correct(volScalarField& h, const bool steady, const bool conservative)
 {
     //- nothing for simple porosity model
 }

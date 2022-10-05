@@ -93,7 +93,7 @@ public:
 
     //- Correct the relative permeabilities
     void correct();
-    void correct(const volScalarField& h, const bool steady = false, const bool conservative = true);
+    void correct(volScalarField& h, const bool steady = false, const bool conservative = true);
 
 };
 
