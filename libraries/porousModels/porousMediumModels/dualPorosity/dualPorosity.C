@@ -113,6 +113,32 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         mesh
     ),
     KMatrixf_(fvc::interpolate(KMatrix_, "K")),
+    Wf_
+    (
+        IOobject
+        (
+            "Wf",
+            mesh.time().constant(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar(dimless, transportProperties.get<scalar>("Wf"))
+    ),
+    geomFactor_
+    (
+        IOobject
+        (
+            "geomFactor",
+            mesh.time().constant(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar(dimless/dimArea, transportProperties.get<scalar>("geomFactor"))
+    ),
     UMatrix_
     (
         IOobject
@@ -176,17 +202,24 @@ void Foam::porousMediumModels::dualPorosity::correct()
     FatalErrorIn("dualPorosity.C") << " dualPorosity cannot be used with impesFoam/anisoImpesFoam " << abort(FatalError);
 }
 
-void Foam::porousMediumModels::dualPorosity::correct(const volScalarField& h, const bool steady, const bool conservative)
+void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, const bool steady, const bool conservative)
 {
     hMatrix_.storePrevIter();
-    
+
+    volScalarField SFracture = matrixPcModel_->S(hFracture);
+    volScalarField krExchange = (matrixKrModel_->kr(SFracture)+matrixKrModel_->krb())/2.0;
+    volScalarField alphaW = geomFactor_*phase_->rho()*mag(g)*KMatrix_*krExchange/phase_->mu();
     //- solve matrix equation
     fvScalarMatrix hMEqn
         (
             //- transport terms
             - fvm::laplacian(MMatrixf_,hMatrix_)
             + fvc::div(phiGMatrixf_)
+            ==
+            (alphaW/Wf_) * hFracture
+            - fvm::Sp(alphaW/Wf_, hMatrix_)
         );
+
     if (!steady)
     {
         //- accumulation terms
