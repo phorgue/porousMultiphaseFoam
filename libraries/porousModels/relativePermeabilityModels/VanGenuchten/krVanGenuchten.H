@@ -125,6 +125,11 @@ public:
             scalar Se = (Sb[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
             krb_[celli] = krbmax_[celli] * pow(Se,0.5) * pow(1-pow(1-pow(Se,1/m_[celli]),m_[celli]),2);
         }
+    tmp<volScalarField> kr(const volScalarField& S)
+        {
+            volScalarField Se = (S-Smin_)/(Smax_-Smin_);
+            return krbmax_ * pow(Se,0.5) * pow(1-pow(1-pow(Se,1/m_),m_),2);
+        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

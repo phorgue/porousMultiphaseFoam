@@ -164,6 +164,9 @@ public:
     virtual void correctkrb(const volScalarField& Sb) = 0;
     virtual void correctkrb(const volScalarField& Sb, const label& celli) = 0;
 
+    //- Compute and return relative permeability for a given saturation field
+    virtual tmp<volScalarField> kr(const volScalarField& S) = 0;
+
 };
 
 
