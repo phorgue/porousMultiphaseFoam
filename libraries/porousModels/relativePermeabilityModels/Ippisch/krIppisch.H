@@ -109,6 +109,14 @@ public:
                 (1-pow(1-pow(Sc_[celli],1/m_[celli]),m_[celli]))
                 ,2);
         }
+    tmp<volScalarField> kr(const volScalarField& S)
+        {
+            volScalarField Se = (S-Smin_)/(Smax_-Smin_);
+            return pow(Se,tau_) * pow(
+                (1-pow(1-pow(Sc_*Se,1/m_),m_)) /
+                (1-pow(1-pow(Sc_,1/m_),m_))
+                ,2);
+        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
