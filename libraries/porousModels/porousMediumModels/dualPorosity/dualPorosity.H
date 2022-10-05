@@ -64,6 +64,7 @@ class dualPorosity
 :
     public porousMediumModel
 {
+    const dictionary dualPorosityCoeffs_;
     const word SnameMatrix_;
     const fvMesh& mesh_;
     const uniformDimensionedVectorField g;
