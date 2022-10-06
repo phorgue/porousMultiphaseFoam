@@ -38,10 +38,10 @@ capillarityModel	BrooksAndCorey;
 BrooksAndCoreyCoeffs
 {
     n 3;
-    pc0 pc0 [1 -1 -2 0 0 0 0] 1000;
+    pc0 1000;
     alpha 0.5;
-    Sbmin Sbmin [0 0 0 0 0 0 0] 1e-3;
-    Sbmax Sbmax [0 0 0 0 0 0 0] 0.999;
+    Sbmin 1e-3;
+    Sbmax 0.999;
 }
 
 // ************************************************************************* //
