@@ -53,63 +53,64 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
 (
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const word& Sname
+    const word& Sname,
+    const word mediumName
 )
     :
-    relativePermeabilityModel(mesh, transportProperties, Sname),
+    relativePermeabilityModel(mesh, transportProperties, Sname, mediumName),
     krIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
     (
         IOobject
         (
-            "m",
+            "m"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("m",dimless,krIppischCoeffs_.getOrDefault<scalar>("m",0))
+        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("m"+mediumName,0))
     ),
     n_(1/(1-m_)),
     alpha_
     (
         IOobject
         (
-            "alpha",
+            "alpha"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("alpha",dimless,krIppischCoeffs_.getOrDefault<scalar>("alpha",GREAT))
+        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("alpha"+mediumName,GREAT))
     ),
     tau_
     (
         IOobject
         (
-            "tau",
+            "tau"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("tau",dimless,krIppischCoeffs_.getOrDefault<scalar>("tau",0.5))
+        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("tau"+mediumName,0.5))
     ),
     he_
     (
         IOobject
         (
-            "he",
+            "he"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("he",dimless,krIppischCoeffs_.getOrDefault<scalar>("he",0.))
+        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("he"+mediumName,0.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {

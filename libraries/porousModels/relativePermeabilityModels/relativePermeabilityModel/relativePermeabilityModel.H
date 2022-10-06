@@ -98,9 +98,10 @@ public:
         (
             const fvMesh& mesh,
             const dictionary& transportProperties,
-            const word& Sname
+            const word& Sname,
+            const word mediumName
         ),
-        (mesh, transportProperties, Sname)
+        (mesh, transportProperties, Sname, mediumName)
     );
 
 
@@ -111,7 +112,8 @@ public:
     (
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const word& Sname
+        const word& Sname,
+        const word mediumName = ""
     );
 
 
@@ -122,7 +124,8 @@ public:
     (
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const word& Sname
+        const word& Sname,
+        const word mediumName = ""
     );
 
 
