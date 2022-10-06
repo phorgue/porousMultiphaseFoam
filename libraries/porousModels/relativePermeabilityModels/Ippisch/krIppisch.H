@@ -75,7 +75,8 @@ public:
     (
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const word& Sname
+        const word& Sname,
+        const word mediumName = ""
     );
 
     //- Destructor
