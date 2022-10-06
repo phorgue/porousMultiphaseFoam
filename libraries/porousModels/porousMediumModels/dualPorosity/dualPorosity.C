@@ -238,6 +238,9 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
     //- relax if steady formulation
     if (steady) hMatrix_.relax();
 
+    //- compute source term using update hMatrix field
+    sourceTerm_ = (alphaW / (1-Wf_)) * (hFracture - hMatrix_);
+
     //- update properties using new solution
     updateMatrixProperties();
 }
