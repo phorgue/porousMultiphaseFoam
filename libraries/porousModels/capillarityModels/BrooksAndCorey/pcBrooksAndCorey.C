@@ -53,50 +53,51 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
 (
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const word& Sname
- )
+    const word& Sname,
+    const word mediumName
+)
     :
-  capillarityModel(mesh, transportProperties, Sname),
-  pcBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-  pc0_
-  (
-      IOobject
-      (
-          "pc0",
-          mesh.time().timeName(),
-          mesh,
-          IOobject::READ_IF_PRESENT,
-          IOobject::NO_WRITE
-      ),
-      mesh,
-      pcBrooksAndCoreyCoeffs_.getOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0))
-  ),
-  hd_
-  (
-      IOobject
-      (
-          "hd",
-          mesh.time().timeName(),
-          mesh,
-          IOobject::READ_IF_PRESENT,
-          IOobject::NO_WRITE
-      ),
-      mesh,
-      dimensionedScalar("hd",dimLength,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("hd",0))
-  ),
-  alpha_
-  (
-      IOobject
-      (
-          "alpha",
-          mesh.time().timeName(),
-          mesh,
-          IOobject::READ_IF_PRESENT,
-          IOobject::NO_WRITE
-      ),
-      mesh,
-      dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("alpha",0))
-  )
+    capillarityModel(mesh, transportProperties, Sname, mediumName),
+    pcBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    pc0_
+    (
+        IOobject
+        (
+            "pc0"+mediumName,
+            mesh.time().timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("pc0"+mediumName,0))
+    ),
+    hd_
+    (
+        IOobject
+        (
+            "hd"+mediumName,
+            mesh.time().timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("hd",dimLength,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("hd"+mediumName,0))
+    ),
+    alpha_
+    (
+        IOobject
+        (
+            "alpha"+mediumName,
+            mesh.time().timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("alpha"+mediumName,0))
+    )
 {
     dimensionedScalar Smin = pcBrooksAndCoreyCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
     if (Smin.value() > 0) Smin_ = Smin;
