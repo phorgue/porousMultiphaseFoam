@@ -53,49 +53,50 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
 (
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const word& Sname
+    const word& Sname,
+    const word mediumName
 )
     :
-    relativePermeabilityModel(mesh, transportProperties, Sname),
+    relativePermeabilityModel(mesh, transportProperties, Sname, mediumName),
     krBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     n_
     (
         IOobject
         (
-            "n",
+            "n"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("n",dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("n",0))
+        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("n"+mediumName,0))
     ),
     kramax_
     (
         IOobject
         (
-            "kr"+Sname+"max",
+            "kr"+Sname+"max"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("kr"+Sname+"max",dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max",1.0))
+        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+mediumName,1.0))
     ),
     krbmax_
     (
         IOobject
         (
-            "kr"+Sname+"max",
+            "kr"+Sname+"max"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("kr"+Sname+"max",dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max",1.0))
+        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+mediumName,1.0))
     )
 {
     if (gMin(n_) <= 0)
