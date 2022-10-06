@@ -53,63 +53,64 @@ Foam::capillarityModels::pcIppisch::pcIppisch
 (
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const word& Sname
+    const word& Sname,
+    const word mediumName
 )
     :
-    capillarityModel(mesh, transportProperties, Sname),
+    capillarityModel(mesh, transportProperties, Sname, mediumName),
     pcIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
     (
         IOobject
         (
-            "m",
+            "m"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("m",dimless,pcIppischCoeffs_.getOrDefault<scalar>("m",0))
+        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("m"+mediumName,0))
     ),
     n_(1/(1-m_)),
     alpha_
     (
         IOobject
         (
-            "alpha",
+            "alpha"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("alpha",dimless,pcIppischCoeffs_.getOrDefault<scalar>("alpha",GREAT))
+        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("alpha"+mediumName,GREAT))
     ),
     tau_
     (
         IOobject
         (
-            "tau",
+            "tau"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("tau",dimless,pcIppischCoeffs_.getOrDefault<scalar>("tau",1.))
+        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("tau"+mediumName,1.))
     ),
     he_
     (
         IOobject
         (
-            "he",
+            "he"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("he",dimless,pcIppischCoeffs_.getOrDefault<scalar>("he",1.))
+        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("he"+mediumName,1.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {

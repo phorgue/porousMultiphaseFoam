@@ -53,7 +53,8 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
 (
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const word& Sname
+    const word& Sname,
+    const word mediumName
 )
     :
     capillarityModel(mesh, transportProperties, Sname),
@@ -62,41 +63,41 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     (
         IOobject
         (
-            "m",
+            "m"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("m",dimless,pcVanGenuchtenCoeffs_.getOrDefault<scalar>("m",0))
+        dimensionedScalar(dimless, pcVanGenuchtenCoeffs_.getOrDefault<scalar>("m"+mediumName, 0))
     ),
     n_(1/(1-m_)),
     alpha_ // necessary for Richards solver
     (
         IOobject
         (
-            "alpha",
+            "alpha"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("alpha",dimless,pcVanGenuchtenCoeffs_.getOrDefault<scalar>("alpha",0))
+        dimensionedScalar(dimless, pcVanGenuchtenCoeffs_.getOrDefault<scalar>("alpha"+mediumName, 0))
     ),
     pc0_
     (
         IOobject
         (
-            "pc0",
+            "pc0"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        pcVanGenuchtenCoeffs_.getOrDefault("pc0",dimensionedScalar("pc0",dimensionSet(1,-1,-2,0,0),0.))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcVanGenuchtenCoeffs_.getOrDefault<scalar>("pc0"+mediumName,0))
     )
 {
     dimensionedScalar Smin = pcVanGenuchtenCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));

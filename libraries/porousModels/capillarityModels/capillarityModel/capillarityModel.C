@@ -43,7 +43,8 @@ Foam::capillarityModel::capillarityModel
 (
     const fvMesh& mesh,
     const dictionary& capillarityProperties,
-    const word& Sname
+    const word& Sname,
+    const word mediumName
 )
     :
     Sname_(Sname),
@@ -52,7 +53,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            Sname+".pc",
+            Sname+mediumName+".pc",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -65,7 +66,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            Sname+".dpcdS",
+            Sname+mediumName+".dpcdS",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -78,7 +79,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            Sname+".Ch",
+            Sname+mediumName+".Ch",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -91,40 +92,40 @@ Foam::capillarityModel::capillarityModel
     (
       IOobject
       (
-          Sname+"min",
+          Sname+"min"+mediumName,
           mesh.time().timeName(),
           mesh,
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
       ),
       mesh,
-      dimensionedScalar(Sname+"min",dimless,0)
+      dimensionedScalar(dimless,0)
     ),
     Smax_
     (
         IOobject
         (
-            Sname+"max",
+            Sname+"max"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(Sname+"min",dimless,1)
+        dimensionedScalar(dimless,1)
     ),
     Se_
     (
         IOobject
         (
-            Sname+".Se",
+            Sname+".Se"+mediumName,
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("", dimless, 0),
+        dimensionedScalar(dimless, 0),
         calculatedFvPatchScalarField::typeName
     )
 {}

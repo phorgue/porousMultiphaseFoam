@@ -74,7 +74,8 @@ public:
     (
         const fvMesh& mesh,
         const dictionary& capillarityProperties,
-        const word& Sname
+        const word& Sname,
+        const word mediumName = ""
     );
 
     //- Destructor
