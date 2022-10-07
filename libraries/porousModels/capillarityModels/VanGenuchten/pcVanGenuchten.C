@@ -104,21 +104,21 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     if (Smin.value() > 0) Smin_ = Smin;
     dimensionedScalar Smax = pcVanGenuchtenCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
-    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m = 0 in pcVanGenuchten" << abort(FatalError);
+    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m" << mediumName << "=0 in pcVanGenuchten" << abort(FatalError);
     Info << "Van Genuchten parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    m ";
+    Info << "    m" << mediumName << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-    Info << "    pc0 ";
+    Info << "    pc0" << mediumName << " ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pc0_).value() << endl;}
-    Info << "    alpha ";
+    Info << "    alpha" << mediumName << " ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-    Info <<  "    Smin ";
+    Info <<  "    Smin" << mediumName << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info << "    Smax ";
+    Info << "    Smax" << mediumName << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
     Info << "} \n" << endl;
