@@ -105,19 +105,19 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
     if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
     Info << "Brooks and Corey parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    pc0 ";
+    Info << "    pc0" << mediumName << " ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pc0_).value() << endl;}
-    Info << "    alpha ";
+    Info << "    alpha" << mediumName << " ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-    Info << "    hd ";
+    Info << "    hd" << mediumName << " ";
     if (hd_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(hd_).value() << endl;}
-    Info <<  "    Smin ";
+    Info <<  "    Smin" << mediumName << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info << "    Smax ";
+    Info << "    Smax" << mediumName << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
     Info << "} \n" << endl;

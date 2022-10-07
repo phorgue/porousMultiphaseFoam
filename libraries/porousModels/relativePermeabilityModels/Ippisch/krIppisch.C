@@ -120,7 +120,8 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             (
                 "in krIppisch.C"
             )
-            << "Relative permeability coefficient m equal or less than 0" 
+            << "Relative permeability coefficient m equal or less than 0"
+                << nl << "m" + mediumName << " is required"
                 << exit(FatalError);
     }
     dimensionedScalar Smin = krIppischCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
@@ -128,25 +129,25 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
     dimensionedScalar Smax = krIppischCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
     Info << "Ippisch-Vogel-Bastian parameters for relative permeability model" << nl << "{" << endl;
-    Info << "    m ";
+    Info << "    m" << mediumName << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-    Info << "    Smax ";
+    Info << "    Smax" << mediumName << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
-    Info <<  "    Smin ";
+    Info <<  "    Smin" << mediumName << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info <<  "    m ";
+    Info <<  "    m" << mediumName << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-        Info <<  "    alpha ";
+        Info <<  "    alpha" << mediumName << " ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-        Info <<  "    tau ";
+        Info <<  "    tau" << mediumName << " ";
     if (tau_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(tau_).value() << endl;}
-    Info <<  "    he ";
+    Info <<  "    he" << mediumName << " ";
     if (he_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(he_).value() << endl;}
     Info << "} \n" << endl;   
