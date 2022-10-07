@@ -59,7 +59,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     const autoPtr<incompressiblePhase>& phase
 )
     :
-    porousMediumModel(Sname, mesh, transportProperties, phase),
+    porousMediumModel(Sname, mesh, transportProperties, phase, "Fracture"),
     dualPorosityCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     SnameMatrix_(Sname+"Matrix"),
     mesh_(mesh),
@@ -122,7 +122,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             mesh.time().constant(),
             mesh,
             IOobject::READ_IF_PRESENT,
-            IOobject::AUTO_WRITE
+            IOobject::NO_WRITE
         ),
         mesh,
         dimensionedScalar(dimless, dualPorosityCoeffs_.get<scalar>("Wf"))
@@ -135,7 +135,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             mesh.time().constant(),
             mesh,
             IOobject::READ_IF_PRESENT,
-            IOobject::AUTO_WRITE
+            IOobject::NO_WRITE
         ),
         mesh,
         dimensionedScalar(dimless/dimArea, dualPorosityCoeffs_.get<scalar>("geomFactor"))
@@ -168,8 +168,8 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         linearInterpolate(UMatrix_) & mesh.Sf()
     )
 {
-    matrixPcModel_ = capillarityModel::New(mesh, transportProperties, SnameMatrix_);
-    matrixKrModel_ = relativePermeabilityModel::New(mesh, transportProperties, SnameMatrix_);
+    matrixPcModel_ = capillarityModel::New(mesh, transportProperties, SnameMatrix_, "Matrix");
+    matrixKrModel_ = relativePermeabilityModel::New(mesh, transportProperties, SnameMatrix_, "Matrix");
     updateMatrixProperties();
 }
 

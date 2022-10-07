@@ -36,7 +36,8 @@ Foam::autoPtr<Foam::porousMediumModel> Foam::porousMediumModel::New
     const word Sname,
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const autoPtr<incompressiblePhase>& phase
+    const autoPtr<incompressiblePhase>& phase,
+    const word mediumName
 )
 {
     const word modelType(transportProperties.lookupOrDefault<word>("porousMediumModel", "simplePorosity"));
@@ -58,7 +59,7 @@ Foam::autoPtr<Foam::porousMediumModel> Foam::porousMediumModel::New
     }
 
     return autoPtr<porousMediumModel>
-        (cstrIter()(Sname, mesh, transportProperties, phase));
+        (cstrIter()(Sname, mesh, transportProperties, phase, mediumName));
 }
 
 

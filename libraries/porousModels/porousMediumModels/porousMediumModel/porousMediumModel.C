@@ -44,7 +44,8 @@ Foam::porousMediumModel::porousMediumModel
     const word Sname,
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const autoPtr<incompressiblePhase>& phase
+    const autoPtr<incompressiblePhase>& phase,
+    const word mediumName
 )
     :
     Sname_(Sname),
@@ -64,8 +65,8 @@ Foam::porousMediumModel::porousMediumModel
         dimensionedScalar(dimensionSet(0,0,-1,0,0),0.)
     )
 {
-    pcModel_ = capillarityModel::New(mesh, transportProperties, Sname);
-    krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname);
+    pcModel_ = capillarityModel::New(mesh, transportProperties, Sname, mediumName);
+    krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname, mediumName);
 }
 
 // ************************************************************************* //
