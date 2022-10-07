@@ -105,7 +105,8 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             (
                 "in krVanGenuchten.C"
             )
-            << "Relative permeability coefficient m equal or less than 0" 
+            << "Relative permeability coefficient m equal or less than 0"
+                << nl << "m" + mediumName << " is required"
                 << exit(FatalError);
     }
     dimensionedScalar Smin = krVanGenuchtenCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
@@ -113,19 +114,19 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
     dimensionedScalar Smax = krVanGenuchtenCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
     Info << "Van Genuchten parameters for relative permeability model" << nl << "{" << endl;
-    Info << "    m ";
+    Info << "    m" << mediumName << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-    Info << "    Smax ";
+    Info << "    Smax" << mediumName << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
-    Info <<  "    Smin ";
+    Info <<  "    Smin" << mediumName << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info << "    kramax ";
+    Info << "    kramax" << mediumName << " ";
     if (kramax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(kramax_).value() << endl;}
-    Info << "    krbmax ";
+    Info << "    krbmax" << mediumName << " ";
     if (krbmax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(krbmax_).value() << endl;}
     Info << "} \n" << endl;   

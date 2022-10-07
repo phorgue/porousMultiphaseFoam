@@ -118,21 +118,21 @@ Foam::capillarityModels::pcIppisch::pcIppisch
     if (Smin.value() > 0) Smin_ = Smin;
     dimensionedScalar Smax = pcIppischCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
-    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m = 0 in pcIppisch" << abort(FatalError);
+    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m"<< mediumName << "=0 in pcIppisch" << abort(FatalError);
     Info << "Ippisch parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    m ";
+    Info << "    m" << mediumName << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-    Info <<  "    n ";
+    Info <<  "    n" << mediumName << " ";
     if (n_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(n_).value() << endl;}
-        Info <<  "    alpha ";
+        Info <<  "    alpha" << mediumName << " ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-        Info <<  "    tau ";
+        Info <<  "    tau" << mediumName << " ";
     if (tau_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(tau_).value() << endl;}
-    Info <<  "    he ";
+    Info <<  "    he" << mediumName << " ";
     if (he_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(he_).value() << endl;}
     Info << "} \n" << endl;     

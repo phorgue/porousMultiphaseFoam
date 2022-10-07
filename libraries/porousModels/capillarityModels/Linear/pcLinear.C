@@ -91,16 +91,16 @@ Foam::capillarityModels::pcLinear::pcLinear
     dimensionedScalar Smax = pcLinearCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
     Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    pc0 ";
+    Info << "    pc0" << mediumName << " ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pc0_).value() << endl;}
-    Info << "    pcMax ";
+    Info << "    pcMax" << mediumName << " ";
     if (pcMax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pcMax_).value() << endl;}
-    Info <<  "    Smin ";
+    Info <<  "    Smin" << mediumName << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info << "    Smax ";
+    Info << "    Smax" << mediumName << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
     Info << "} \n" << endl;
