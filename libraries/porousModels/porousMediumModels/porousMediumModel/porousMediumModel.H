@@ -104,7 +104,8 @@ public:
             const word Sname,
             const fvMesh& mesh,
             const dictionary& transportProperties,
-            const autoPtr<incompressiblePhase>& phase
+            const autoPtr<incompressiblePhase>& phase,
+            const word mediumName
         ),
         (Sname, mesh, transportProperties, phase)
     );
@@ -117,7 +118,8 @@ public:
         const word Sname,
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const autoPtr<incompressiblePhase>& phase
+        const autoPtr<incompressiblePhase>& phase,
+        const word mediumName = ""
     );
 
     // Constructors
@@ -128,7 +130,8 @@ public:
         const word Sname,
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const autoPtr<incompressiblePhase>& phase
+        const autoPtr<incompressiblePhase>& phase,
+        const word mediumName = ""
     );
 
     //- Destructor
