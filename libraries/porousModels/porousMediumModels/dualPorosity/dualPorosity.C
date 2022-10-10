@@ -101,19 +101,33 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         dimless,
         calculatedFvPatchScalarField::typeName
     ),
-    KMatrix_
+    Kmatrix_
     (
         IOobject
         (
-            "KMatrix",
+            "Kmatrix",
             mesh.time().constant(),
             mesh,
             IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
-        mesh
+        mesh,
+        dimensionedScalar(dimArea, dualPorosityCoeffs_.get<scalar>("Kmatrix"))
     ),
-    KMatrixf_(fvc::interpolate(KMatrix_, "K")),
+    Kmatrixf_(fvc::interpolate(Kmatrix_, "K")),
+    Kexchange_
+    (
+        IOobject
+        (
+            "Kexchange",
+            mesh.time().constant(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar(dimArea, dualPorosityCoeffs_.get<scalar>("Kexchange"))
+    ),
     Wf_
     (
         IOobject
@@ -138,7 +152,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless/dimArea, dualPorosityCoeffs_.get<scalar>("geomFactor"))
+        dimensionedScalar(dimless, dualPorosityCoeffs_.get<scalar>("geomFactor"))
     ),
     UMatrix_
     (
@@ -152,7 +166,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         ),
         mesh
     ),
-    LMatrixf_(phase_->rho()*KMatrixf_/phase_->mu()),
+    LMatrixf_(phase_->rho()*Kmatrixf_/phase_->mu()),
     MMatrixf_(mag(g)*LMatrixf_),
     phiGMatrixf_((LMatrixf_ * g) & mesh_.Sf()),
     phiMatrix_
@@ -181,7 +195,7 @@ void Foam::porousMediumModels::dualPorosity::updateMatrixProperties()
     Smatrix_ = matrixPcModel_->correctAndSb(hMatrix_);
     matrixKrModel_->correctkrb(Smatrix_);
     surfaceScalarField krthetaMatrixf = fvc::interpolate(matrixKrModel_->krb(), "krthetaMatrix");
-    LMatrixf_ = phase_->rho()*KMatrixf_*krthetaMatrixf/phase_->mu();
+    LMatrixf_ = phase_->rho()*Kmatrixf_*krthetaMatrixf/phase_->mu();
     MMatrixf_ = mag(g)*LMatrixf_;
     phiGMatrixf_ = (LMatrixf_ * g) & mesh_.Sf();
     phiMatrix_ = phiGMatrixf_-(MMatrixf_*fvc::snGrad(hMatrix_))*mesh_.magSf();
@@ -209,7 +223,7 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
 
     volScalarField SFracture = matrixPcModel_->S(hFracture);
     volScalarField krExchange = (matrixKrModel_->kr(SFracture)+matrixKrModel_->krb())/2.0;
-    volScalarField alphaW = geomFactor_*phase_->rho()*mag(g)*KMatrix_*krExchange/phase_->mu();
+    volScalarField alphaW = geomFactor_*phase_->rho()*mag(g)*Kexchange_*krExchange/phase_->mu();
     //- solve matrix equation
     fvScalarMatrix hMEqn
         (
