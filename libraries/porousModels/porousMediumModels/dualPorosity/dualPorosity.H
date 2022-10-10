@@ -70,8 +70,9 @@ class dualPorosity
     const uniformDimensionedVectorField g;
     volScalarField hMatrix_;
     volScalarField Smatrix_;
-    volScalarField KMatrix_;
-    surfaceScalarField KMatrixf_;
+    volScalarField Kmatrix_;
+    surfaceScalarField Kmatrixf_;
+    volScalarField Kexchange_;
     volScalarField Wf_;
     volScalarField  geomFactor_;
     volVectorField UMatrix_;
