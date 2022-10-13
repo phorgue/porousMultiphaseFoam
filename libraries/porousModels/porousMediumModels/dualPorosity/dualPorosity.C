@@ -238,8 +238,8 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
             - fvm::laplacian(MMatrixf_,hMatrix_)
             + fvc::div(phiGMatrixf_)
             ==
-            (alphaW/Wf_) * hFracture
-            - fvm::Sp(alphaW/Wf_, hMatrix_)
+            alphaW * hFracture
+            - fvm::Sp(alphaW, hMatrix_)
         );
 
     if (!steady)
@@ -260,7 +260,7 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
     if (steady) hMatrix_.relax();
 
     //- compute source term using update hMatrix field
-    sourceTerm_ = (alphaW / (1-Wf_)) * (hFracture - hMatrix_);
+    sourceTerm_ = (alphaW) * (hFracture - hMatrix_);
 
     Info  << "delta(hMatrix) = " << gMax((hMatrix_-hMatrix_.prevIter())().internalField()) << endl;
     //- update properties using new solution
