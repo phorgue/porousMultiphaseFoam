@@ -11,6 +11,7 @@ tutorials = [{'solver' : "impesFoam", 'case' : "Buckley-Leverett/BrooksAndCorey"
              {'solver' : "groundwaterFoam", 'case' : "1Dinfiltration"}, \
              {'solver' : "groundwaterFoam", 'case' : "1Dinfiltration_Ufixed"}, \
              {'solver' : "groundwaterFoam", 'case' : "1Dinfiltration_variable"}, \
+             {'solver' : "groundwaterFoam", 'case' : "1Dinfiltration_dualPorosity"}, \
              {'solver' : "groundwaterFoam", 'case' : "realCase"}, \
              {'solver' : "darcyFoam", 'case' : "SPE10"}, \
              {'solver' : "porousScalarTransportFoam", 'case' : "1DeventFlux_Euler"}, \
