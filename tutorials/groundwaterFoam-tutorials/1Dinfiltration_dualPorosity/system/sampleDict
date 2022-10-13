@@ -1,0 +1,44 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    class           dictionary;
+    location        system;
+    object          sampleDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type sets;
+libs ("libsampling.so");
+
+interpolationScheme cellPoint; 
+
+setFormat csv;
+
+surfaceFormat   vtk;
+
+sets
+(
+    acrossFlow
+    {
+        type    midPoint;
+        axis    y;
+        start   ( 0.02 0 0.02 );
+        end     ( 0.02 0.40 0.02);
+    }
+);
+
+surfaces        ();
+
+fields          ( theta thetaMatrix );
+
+// *********************************************************************** //
