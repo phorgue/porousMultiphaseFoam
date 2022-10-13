@@ -29,21 +29,21 @@ solvers
         solver          PBiCG;
         preconditioner  DILU;
         tolerance       1e-12;
-        relTol          0;
+        relTol          0.001;
     }
 }
 
 
 Picard
 {
-    tolerance 1e-07;
+    tolerance 1e-01;
     maxIter 10;
 }
 
-// Newton
-// {
-//     tolerance 1e-10;
-//     maxIter 50;
-// }
+Newton
+{
+    tolerance 1e-08;
+    maxIter 50;
+}
 
 // ************************************************************************* //
