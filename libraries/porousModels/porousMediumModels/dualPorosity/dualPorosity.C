@@ -128,19 +128,6 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         mesh,
         dimensionedScalar(dimArea, dualPorosityCoeffs_.get<scalar>("Kexchange"))
     ),
-    Wf_
-    (
-        IOobject
-        (
-            "Wf",
-            mesh.time().constant(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar(dimless, dualPorosityCoeffs_.get<scalar>("Wf"))
-    ),
     geomFactor_
     (
         IOobject
