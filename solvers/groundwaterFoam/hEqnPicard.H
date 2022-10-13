@@ -9,7 +9,7 @@
             - fvm::laplacian(Mf,h)
             + fvc::div(phiG)
             ==
-            porousModel->source()
+            - porousModel->source()
             - sourceTerm
         );
     if (!steady)

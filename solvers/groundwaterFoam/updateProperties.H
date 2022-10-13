@@ -24,7 +24,7 @@ forAll(mesh.boundary(),patchi)
 h.correctBoundaryConditions();
 
 //- Compute h equation residual
-ResiduN = - fvc::laplacian(Mf,h) + fvc::div(phiG) + sourceTerm;
+ResiduN = - fvc::laplacian(Mf,h) + fvc::div(phiG) + porousModel->source() + sourceTerm;
 if (!steady)
 {
     ResiduN += Ss*pcModel->Se() * fvc::ddt(h);
