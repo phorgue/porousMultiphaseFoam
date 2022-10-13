@@ -92,6 +92,7 @@ public:
         {}
 
     //- Correct the relative permeabilities
+    void rewindTime();
     void correct();
     void correct(volScalarField& h, const bool steady = false, const bool conservative = true);
 

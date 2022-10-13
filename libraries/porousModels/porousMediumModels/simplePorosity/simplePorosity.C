@@ -61,6 +61,11 @@ Foam::porousMediumModels::simplePorosity::simplePorosity
     porousMediumModel(Sname, mesh, transportProperties, phase)
 {}
 
+void Foam::porousMediumModels::simplePorosity::rewindTime()
+{
+    //- nothing for simple porosity model
+}
+
 void Foam::porousMediumModels::simplePorosity::correct()
 {
     //- nothing for simple porosity model
