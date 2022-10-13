@@ -153,8 +153,9 @@ public:
     autoPtr<capillarityModel>& pcModel() {return pcModel_;}
 
     const volScalarField& source() {return sourceTerm_;}
-    
+
     //- Correct
+    virtual void rewindTime() = 0;
     virtual void correct() = 0;
     virtual void correct(volScalarField& h, const bool steady = false, const bool conservative = true) = 0;
 
