@@ -42,7 +42,7 @@ Picard
 
 Newton
 {
-    tolerance 1e-08;
+    tolerance 1e-010;
     maxIter 50;
 }
 
