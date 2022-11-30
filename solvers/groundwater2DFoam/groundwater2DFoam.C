@@ -49,13 +49,13 @@ using namespace Foam;
 int main(int argc, char *argv[])
 {
     argList::addBoolOption("steady", "to run steady flow simulation");
-
+;
     #include "setRootCase.H"
+    bool steady = args.found("steady");
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
     #include "readFixedPoints.H"
-    bool steady = args.found("steady");
     #include "readTimeControls.H"
     #include "readEvent.H"
 
