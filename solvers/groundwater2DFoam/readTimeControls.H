@@ -62,6 +62,7 @@ const bool eventTimeTracking =
 
 const dictionary& residualControl = mesh.solutionDict().subOrEmptyDict("residualControl");
 const scalar residualPotential = residualControl.lookupOrDefault<scalar>("potential", 0);
+scalar maxResidual = GREAT;
 if (steady && residualPotential ==0)
 {
     FatalErrorIn("readTimeControls.h") << "residualControl.potential should be specified in system/fvSolution" << abort(FatalError);

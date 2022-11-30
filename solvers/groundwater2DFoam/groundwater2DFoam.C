@@ -91,14 +91,13 @@ int main(int argc, char *argv[])
         //- Residual computation
         if (steady)
         {
-            scalarField ResiduN = -fvc::laplacian(transmissivity,potential,"laplacian(transmissivity,potential)") + infiltration + seepageTerm;
-            forAll(dryCellIDList, celli)  ResiduN[dryCellIDList[celli]] = 0;
-            forAll(fixedPotentialIDList, celli)  ResiduN[fixedPotentialIDList[celli]] = 0;
-            scalar maxResidual = gMax(mag(ResiduN));
-            Info << "Potential equation residual = " << maxResidual << endl;
             if (maxResidual < residualPotential)
             {
                 runTime.writeAndEnd();
+            }
+            else
+            {
+                runTime.write();
             }
         }
         else
