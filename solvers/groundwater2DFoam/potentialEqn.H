@@ -13,7 +13,7 @@
 
     #include "updateForcing.H"
 
-    potentialEqn.solve();
+    maxResidual = potentialEqn.solve().initialResidual();
 
     if (steady) potential.relax();
 
