@@ -75,4 +75,8 @@ if (adjustTimeStep)
 const bool eventTimeTracking =
      runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
+//- required for steady groundwater2DFoam
+scalar maxResidual = GREAT;
+maxResidual *= 0;
+
 // ************************************************************************* //
