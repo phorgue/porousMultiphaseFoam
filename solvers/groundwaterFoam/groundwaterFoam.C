@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
     argList::addBoolOption("steady", "to run steady flow simulation");
 
     #include "setRootCase.H"
+    #include "../headerPMF.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "readGravitationalAcceleration.H"

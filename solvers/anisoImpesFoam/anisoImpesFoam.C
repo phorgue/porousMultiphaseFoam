@@ -51,6 +51,7 @@ using namespace Foam;
 int main(int argc, char *argv[])
 {
     #include "setRootCase.H"
+    #include "../headerPMF.H"
     #include "createTime.H"
     #include "createMesh.H"
     #include "createTimeControls.H"
