@@ -3,6 +3,10 @@
 ***
 ************************
 
+### General
+
+- All solvers display current version of PMF.
+
 ### Libraries
 
 - porousMediumModel(s)
