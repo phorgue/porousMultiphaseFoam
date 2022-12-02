@@ -50,22 +50,19 @@ const scalar dTFactDecrease =
 
 timestepManager dtManager(runTime, h, truncationError_h);
 
+//- Derivative initialisation to keep 1st user-defined time step
 if (adjustTimeStep)
 {
-    //- Derivative initialisation to keep 1st user-defined time step
-    if (adjustTimeStep)
-    {
-        Info << "Timestepping is based on time-scheme truncation error with :"
-            << nl << "{"
-            << nl << "    truncationError = " << truncationError_h
-            << nl << "    dTFactDecrease  = " << dTFactDecrease
-            << nl << "}"
-            << endl;
-    }
-    else
-    {
-        Info << "Timestep is fixed";
-    }
+    Info << "Timestepping is based on time-scheme truncation error with :"
+        << nl << "{"
+        << nl << "    truncationError = " << truncationError_h
+        << nl << "    dTFactDecrease  = " << dTFactDecrease
+        << nl << "}"
+        << endl;
+}
+else
+{
+    Info << "Timestep is fixed";
 }
 
 const bool eventTimeTracking =
