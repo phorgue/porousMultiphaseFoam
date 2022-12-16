@@ -1,75 +1,19 @@
-name: OpenSuse mingw CI (docker image)
+name: Windows release
 
 on:
-  push:
-    branches:
-      - main
-      - dev
-      - features/*
-      - feature/*
-  
+  release:
+    types: [created]
+
 jobs:
-
-  docker_publish:
-          
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        openfoam_version: [ v2106, v2112 ]
-        include:
-          - openfoam_version: v2106
-            openfoam_branch: maintenance-v2106
-          - openfoam_version: v2112
-            openfoam_branch: OpenFOAM-v2112
-    
-    steps:
-    
-    - uses: actions/checkout@master
-      with:
-        fetch-depth: 0
-        
-    - name: Get changed files
-      id: changed-files
-      uses: tj-actions/changed-files@v1.1.2
-      with:
-        files: |
-          docker/opensuse-mingw
-          
-    - name: Log in to the Container registry
-      #if: steps.changed-files.outputs.modified_files != ''
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Push to GitHub Packages ${{matrix.openfoam_version}}
-      if: steps.changed-files.outputs.modified_files != ''
-      uses: docker/build-push-action@v1
-      with:
-        registry: ghcr.io
-        tags: openfoam-${{matrix.openfoam_version}}-opensuse-mingw
-        dockerfile: docker/opensuse-mingw
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        build_args: OPENFOAM_BRANCH=${{matrix.openfoam_branch}}
-
   build:
-
+    name: Build
     runs-on: ubuntu-latest
-    needs: docker_publish
 
     strategy:
       matrix:
-        openfoam_version: [ v2106, v2112 ]
-        include:
-          - openfoam_version: v2106
-            output_build: -v2106
-          - openfoam_version: v2112
-            output_build: user-v2112
+        openfoam_version: [ v2206]
 
-    container: 'ghcr.io/${{github.actor}}/porousmultiphasefoam:openfoam-${{matrix.openfoam_version}}-opensuse-mingw'
+    container: 'ghcr.io/phorgue/porousmultiphasefoam:openfoam-${{matrix.openfoam_version}}-opensuse-mingw'
 
     steps:
 
@@ -82,10 +26,27 @@ jobs:
     - name: Build
       run: |
            FOAM_VERBOSE=true &&  source /openfoam/etc/bashrc /openfoam/etc-mingw/prefs.sh && ls && ./Allwmake -j
+           zypper install -y zip
+           cd /github/home/OpenFOAM/user-${{matrix.openfoam_version}}/platforms/linux64MingwDPInt32Opt/
+           zip -r pmf-opensuse-mingw-${{matrix.openfoam_version}}.zip .           
 
-    - name: Build artifact upload
-      uses: actions/upload-artifact@v2
+    - name: Installer archive upload push
+      uses: actions/upload-artifact@v3
       with:
-        name: pmf-opensuse-mingw-${{matrix.openfoam_version}}
-        path: /github/home/OpenFOAM/${{matrix.output_build}}/platforms/linux64MingwDPInt32Opt/
-        
+          name: pmf-opensuse-mingw-${{matrix.openfoam_version}}
+          path: /github/home/OpenFOAM/user-${{matrix.openfoam_version}}/platforms/linux64MingwDPInt32Opt/pmf-opensuse-mingw-${{matrix.openfoam_version}}.zip
+
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Publish assets
+      uses: alexellis/upload-assets@0.4.0
+      env:
+          GITHUB_TOKEN: ${{ github.token }}
+      with:
+          asset_paths: '["*/*.zip"]'
