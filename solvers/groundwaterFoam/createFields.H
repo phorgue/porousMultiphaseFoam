@@ -172,3 +172,5 @@ if (CSVoutput)
     }
     waterMassBalanceCSV << endl;
 }
+
+bool writeResiduals=runTime.controlDict().lookupOrDefault<bool>("writeResiduals",false);
