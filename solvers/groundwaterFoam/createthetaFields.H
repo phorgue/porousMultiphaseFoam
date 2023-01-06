@@ -37,3 +37,8 @@ volScalarField ResiduN
            + fvc::div(phiG)
            + sourceTerm
     );
+if (writeResiduals)
+{
+    ResiduN.writeOpt()=IOobject::AUTO_WRITE;
+    ResiduN.rename("hEqnResidual");
+}

@@ -140,6 +140,7 @@ noConvergence :
         #include "waterMassBalance.H"
         if (steady)
         {
+            runTime.write();
             if (writeResiduals)
             {
                 OFstream residualFile("residuals.csv", IOstreamOption(), true);
