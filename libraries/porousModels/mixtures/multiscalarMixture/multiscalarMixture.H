@@ -86,7 +86,8 @@ public:
             const EpsType& eps,
             List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
             const word& sourceEventDtFieldNameOverride = "",
-            const dimensionSet& sourceTermDimFactor = dimless
+            const dimensionSet& sourceTermDimFactor = dimless,
+            const word& porousMediumName = ""
         );
 
     // Member Functions
