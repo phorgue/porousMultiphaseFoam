@@ -16,6 +16,10 @@ porousMediumModels/porousMediumModel/porousMediumModelNew.C
 porousMediumModels/simplePorosity/simplePorosity.C
 porousMediumModels/dualPorosity/dualPorosity.C
 
+
+porousMediumModelsTransport/porousMediumModelTransport/porousMediumModelTransport.C
+porousMediumModelsTransport/porousMediumModelTransport/porousMediumModelTransportNew.C
+
 dispersionModels/dispersionModel/dispersionModel.C
 dispersionModels/dispersionModel/dispersionModelNew.C
 dispersionModels/alphaDispersion/alphaDispersion.C
