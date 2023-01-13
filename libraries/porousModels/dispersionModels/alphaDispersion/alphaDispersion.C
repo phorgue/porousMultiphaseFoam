@@ -108,7 +108,7 @@ Foam::dispersionModels::alphaDispersion::alphaDispersion
     Info << "    alphaT ";
     if (alphaT_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alphaT_).value() << endl;}
-    Info << "} \n" << endl;
+    Info << "}" << endl;
 }
 
 // ************************************************************************* //

@@ -41,7 +41,8 @@ inline Foam::multiscalarMixture::multiscalarMixture
     const EpsType& eps,
     List<sourceEventFile*>* sourceEventFileRegistry,
     const word& sourceEventDtFieldNameOverride,
-    const dimensionSet& sourceTermDimFactor
+    const dimensionSet& sourceTermDimFactor,
+    const word& porousMediumName
 )
 :
     basicMultiComponentMixture(dict, speciesNames, mesh, phaseName),
@@ -57,10 +58,11 @@ inline Foam::multiscalarMixture::multiscalarMixture
     forAll(speciesNames, speciesi)
     {
 
-        Info<< "Species " << speciesNames[speciesi] << endl;
+        Info<< nl << "*** Specie " << speciesNames[speciesi] << " ***" << endl;
 
-        dictionary speciesDict(dict.optionalSubDict(speciesNames[speciesi]));
-        dictionary porousTransport(speciesDict.subDict("porousTransport"));
+        dictionary specieDict(dict.optionalSubDict(speciesNames[speciesi]));
+        specieDict = specieDict.optionalSubDict(porousMediumName);
+        dictionary porousTransport(specieDict.subDict("porousTransport"));
 
         dimensionedScalar Kd(porousTransport.getOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
         Kd_[speciesi] = Kd.value();
@@ -72,7 +74,14 @@ inline Foam::multiscalarMixture::multiscalarMixture
         lambdas_[speciesi].dimensions().reset(dimensionSet(0,0,-1,0,0));
         lambdas_[speciesi] = porousTransport.getOrDefault("lambda",dimensionedScalar("lambda_default",dimensionSet(0,0,-1,0,0),0.));
 
-        Info << nl << "porousTransport parameters" << nl << "{" << endl;
+        if (porousMediumName != "")
+        {
+            Info << nl << "porousTransport " << porousMediumName << " parameters" << nl << "{" << endl;
+        }
+        else
+        {
+            Info << nl << "porousTransport parameters" << nl << "{" << endl;
+        }
         Info << "    " << Kd.name() << " : " << Kd.value() << endl;
         Info << "    " << rs.name() << " : " << rs.value() << endl;
         Info << "    " << epsTotal.name() << " : " << epsTotal.value() << endl;
@@ -88,7 +97,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
             (
                 IOobject
                 (
-                    Y(speciesi).name() + "_R",
+                    Y(speciesi).name() + porousMediumName + "_R",
                     mesh.time().timeName(),
                     mesh,
                     IOobject::NO_READ,
@@ -105,16 +114,16 @@ inline Foam::multiscalarMixture::multiscalarMixture
         Info << "Min(R) = " << gMin(R_[speciesi]) << " Max(R) = " << gMax(R_[speciesi]) << endl;
 
         //- creation of dispersion model
-        dispersionModels_.set(speciesi, dispersionModel::New("DeffModel", speciesDict, mesh));
+        dispersionModels_.set(speciesi, dispersionModel::New("DeffModel", specieDict, mesh));
 
         //Handle source events
 
         const dimensionSet dimSourceTerm = Y(speciesi).dimensions()*sourceTermDimFactor/dimTime;
 
         //- read source event if present
-        if(speciesDict.found("eventFileTracerSource"))
+        if(specieDict.found("eventFileTracerSource"))
         {
-            word sourceEventFileName = speciesDict.getOrDefault<word>("eventFileTracerSource","");
+            word sourceEventFileName = specieDict.getOrDefault<word>("eventFileTracerSource","");
             sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
 
             const word& dtFieldName = 
