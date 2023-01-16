@@ -54,36 +54,36 @@ Foam::capillarityModels::pcLinear::pcLinear
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& Sname,
-    const word mediumName
+    const word porousRegion
 )
     :
-    capillarityModel(mesh, transportProperties, Sname, mediumName),
+    capillarityModel(mesh, transportProperties, Sname, porousRegion),
     pcLinearCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     pc0_
     (
         IOobject
         (
-            "pc0"+mediumName,
+            "pc0"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcLinearCoeffs_.getOrDefault<scalar>("pc0"+mediumName,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcLinearCoeffs_.getOrDefault<scalar>("pc0"+porousRegion,0))
     ),
     pcMax_
     (
         IOobject
         (
-            "pcMax"+mediumName,
+            "pcMax"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcLinearCoeffs_.getOrDefault<scalar>("pcMax"+mediumName,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcLinearCoeffs_.getOrDefault<scalar>("pcMax"+porousRegion,0))
     )
 {
     dimensionedScalar Smin = pcLinearCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
@@ -91,16 +91,16 @@ Foam::capillarityModels::pcLinear::pcLinear
     dimensionedScalar Smax = pcLinearCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
     Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    pc0" << mediumName << " ";
+    Info << "    pc0" << porousRegion << " ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pc0_).value() << endl;}
-    Info << "    pcMax" << mediumName << " ";
+    Info << "    pcMax" << porousRegion << " ";
     if (pcMax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pcMax_).value() << endl;}
-    Info <<  "    Smin" << mediumName << " ";
+    Info <<  "    Smin" << porousRegion << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info << "    Smax" << mediumName << " ";
+    Info << "    Smax" << porousRegion << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
     Info << "} \n" << endl;

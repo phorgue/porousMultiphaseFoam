@@ -105,7 +105,7 @@ public:
             const fvMesh& mesh,
             const dictionary& transportProperties,
             const autoPtr<incompressiblePhase>& phase,
-            const word mediumName
+            const word porousRegion
         ),
         (Sname, mesh, transportProperties, phase)
     );
@@ -119,7 +119,7 @@ public:
         const fvMesh& mesh,
         const dictionary& transportProperties,
         const autoPtr<incompressiblePhase>& phase,
-        const word mediumName = ""
+        const word porousRegion = ""
     );
 
     // Constructors
@@ -131,7 +131,7 @@ public:
         const fvMesh& mesh,
         const dictionary& transportProperties,
         const autoPtr<incompressiblePhase>& phase,
-        const word mediumName = ""
+        const word porousRegion = ""
     );
 
     //- Destructor

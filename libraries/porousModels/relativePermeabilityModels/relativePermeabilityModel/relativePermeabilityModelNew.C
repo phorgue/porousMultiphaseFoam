@@ -36,7 +36,7 @@ Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& Sname,
-    const word mediumName
+    const word porousRegion
 )
 {
     const word modelType(transportProperties.lookup("relativePermeabilityModel"));
@@ -58,7 +58,7 @@ Foam::autoPtr<Foam::relativePermeabilityModel> Foam::relativePermeabilityModel::
     }
 
     return autoPtr<relativePermeabilityModel>
-        (cstrIter()(mesh, transportProperties, Sname, mediumName));
+        (cstrIter()(mesh, transportProperties, Sname, porousRegion));
 }
 
 
