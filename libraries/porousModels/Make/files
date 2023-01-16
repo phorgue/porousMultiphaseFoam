@@ -16,9 +16,9 @@ porousMediumModels/porousMediumModel/porousMediumModelNew.C
 porousMediumModels/simplePorosity/simplePorosity.C
 porousMediumModels/dualPorosity/dualPorosity.C
 
-
 porousMediumTransportModels/porousMediumTransportModel/porousMediumTransportModel.C
 porousMediumTransportModels/porousMediumTransportModel/porousMediumTransportModelNew.C
+porousMediumTransportModels/simplePorosityTransport/simplePorosityTransport.C
 
 dispersionModels/dispersionModel/dispersionModel.C
 dispersionModels/dispersionModel/dispersionModelNew.C
