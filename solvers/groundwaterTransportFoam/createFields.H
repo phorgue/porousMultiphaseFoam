@@ -116,22 +116,13 @@ theta.write();
 /////////////////////////////////////////////////////////////////////////////
 
 // Intrinsic permeability
-Info<< "Reading permeability field K\n" << endl;
-volScalarField K
-(
-    IOobject
-    (
-        "K",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
+const volScalarField& K = porousModel->K();
 
 // permeability interpolation (harmonic by default)
 surfaceScalarField Kf(fvc::interpolate(K,"K"));
+
+// Porosity
+const volScalarField& eps = porousModel->eps();
 
 // specific storage
 dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
@@ -159,22 +150,6 @@ volScalarField sourceTerm
 ///////////////////////////////////////////////////////////////////////
 ////////////////////////// SCALAR TRANSPORT  //////////////////////////
 ///////////////////////////////////////////////////////////////////////
-
-Info<< "Reading porosity field eps (if present)" << endl;
-dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
-volScalarField eps
-(
-    IOobject
-    (
-        "eps",
-        runTime.constant(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    epsScalar
-);
 
 Info<< "Reading composition\n" << endl;
 wordList speciesNames(transportProperties.lookupOrDefault("species", wordList(1, "C")));
