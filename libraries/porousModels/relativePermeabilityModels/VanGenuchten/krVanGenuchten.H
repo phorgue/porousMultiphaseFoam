@@ -77,7 +77,7 @@ public:
         const fvMesh& mesh,
         const dictionary& transportProperties,
         const word& Sname,
-        const word mediumName = ""
+        const word porousRegion = ""
     );
 
     //- Destructor
