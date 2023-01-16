@@ -51,6 +51,31 @@ Foam::porousMediumModel::porousMediumModel
     Sname_(Sname),
     transportProperties_(transportProperties),
     phase_(phase),
+    eps_
+    (
+        IOobject
+        (
+            "eps",
+            mesh.time().constant(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.))
+    ),
+    K_
+    (
+        IOobject
+        (
+            "K",
+            mesh.time().constant(),
+            mesh,
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh
+    ),
     sourceTerm_
     (
         IOobject
@@ -65,6 +90,12 @@ Foam::porousMediumModel::porousMediumModel
         dimensionedScalar(dimensionSet(0,0,-1,0,0),0.)
     )
 {
+    scalar Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
+    if (Kfactor != 1)
+    {
+        K_ *= Kfactor;
+        Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
+    }
     pcModel_ = capillarityModel::New(mesh, transportProperties, Sname, porousRegion);
     krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname, porousRegion);
 }

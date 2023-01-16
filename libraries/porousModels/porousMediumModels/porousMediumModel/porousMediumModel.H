@@ -75,6 +75,12 @@ protected:
     //- Reference to the phase properties
     const autoPtr<incompressiblePhase>& phase_;
 
+    //- porosity field
+    volScalarField eps_;
+
+    //- permeability field
+    volScalarField K_;
+
     //- kr/pc models
     autoPtr<relativePermeabilityModel> krModel_;
     autoPtr<capillarityModel> pcModel_;
@@ -146,6 +152,12 @@ public:
 
     //- Return phase
     const autoPtr<incompressiblePhase>& phase() const {return phase_;}
+
+    //- Return porosity
+    const volScalarField& eps() const {return eps_;}
+
+    //- Return permeability
+    const volScalarField& K() const {return K_;}
 
     //- Return relative permeabilities model
     autoPtr<relativePermeabilityModel>& krModel() {return krModel_;}
