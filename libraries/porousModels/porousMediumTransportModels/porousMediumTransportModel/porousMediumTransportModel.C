@@ -27,19 +27,19 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "porousMediumModelTransport.H"
+#include "porousMediumTransportModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-defineTypeNameAndDebug(porousMediumModelTransport, 0);
-defineRunTimeSelectionTable(porousMediumModelTransport, dictionary);
+defineTypeNameAndDebug(porousMediumTransportModel, 0);
+defineRunTimeSelectionTable(porousMediumTransportModel, dictionary);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::porousMediumModelTransport::porousMediumModelTransport
+Foam::porousMediumTransportModel::porousMediumTransportModel
 (
     const word Sname,
     const fvMesh& mesh,
