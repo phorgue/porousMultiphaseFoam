@@ -27,11 +27,11 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "porousMediumModelTransport.H"
+#include "porousMediumTransportModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::porousMediumModelTransport> Foam::porousMediumModelTransport::New
+Foam::autoPtr<Foam::porousMediumTransportModel> Foam::porousMediumTransportModel::New
 (
     const word Sname,
     const fvMesh& mesh,
@@ -50,15 +50,15 @@ Foam::autoPtr<Foam::porousMediumModelTransport> Foam::porousMediumModelTransport
     {
         FatalErrorIn
             (
-                "porousMediumModelTransport::New(...)"
-            )   << "Unknown porousMediumModelTransport type "
+                "porousMediumTransportModel::New(...)"
+            )   << "Unknown porousMediumTransportModel type "
                 << modelType << nl << nl
-                << "Valid porousMediumModelTransports are : " << endl
+                << "Valid porousMediumTransportModels are : " << endl
                 << dictionaryConstructorTablePtr_->sortedToc()
                 << exit(FatalError);
     }
 
-    return autoPtr<porousMediumModelTransport>
+    return autoPtr<porousMediumTransportModel>
         (cstrIter()(Sname, mesh, transportProperties, pmModel, mediumName));
 }
 

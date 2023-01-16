@@ -26,25 +26,26 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Namespace
-    Foam::porousMediumModelTransport
+    Foam::porousMediumTransportModel
 
 Description
-    A namespace for various relative permeability implementations.
+    A namespace for various transport models in porous media implementations.
 
 Class
-    Foam::porousMediumModelTransport
+    Foam::porousMediumTransportModel
 
 Description
-    An abstract base class for relative permeability models.
+    An abstract base class for transport models in porous medium (simple or
+    dual porosity)
 
 SourceFiles
-    porousMediumModelTransport.C
-    porousMediumModelTransportNew.C
+    porousMediumTransportModel.C
+    porousMediumTransportModelNew.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef porousMediumModelTransport_H
-#define porousMediumModelTransport_H
+#ifndef porousMediumTransportModel_H
+#define porousMediumTransportModel_H
 
 #include "surfaceFields.H"
 #include "volFields.H"
@@ -56,10 +57,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-             Class porousMediumModelTransport Declaration
+             Class porousMediumTransportModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class porousMediumModelTransport
+class porousMediumTransportModel
 {
 protected:
 
@@ -74,22 +75,22 @@ protected:
     const porousMediumModel& pmModel_;
 
     //- Disallow copy construct
-    porousMediumModelTransport(const porousMediumModelTransport&);
+    porousMediumTransportModel(const porousMediumTransportModel&);
 
     //- Disallow default bitwise assignment
-    void operator=(const porousMediumModelTransport&);
+    void operator=(const porousMediumTransportModel&);
 
 public:
 
     //- Runtime type information
-    TypeName("porousMediumModelTransport");
+    TypeName("porousMediumTransportModel");
 
     // Declare run-time constructor selection table
 
     declareRunTimeSelectionTable
     (
         autoPtr,
-        porousMediumModelTransport,
+        porousMediumTransportModel,
         dictionary,
         (
             const word Sname,
@@ -98,13 +99,13 @@ public:
             const porousMediumModel& pmModel,
             const word mediumName
         ),
-        (Sname, mesh, transportProperties, pmModel)
+        (Sname, mesh, transportProperties, pmModel, mediumName)
     );
 
     // Selectors
 
     //- Return a reference to the selected porousMedium model
-    static autoPtr<porousMediumModelTransport> New
+    static autoPtr<porousMediumTransportModel> New
     (
         const word Sname,
         const fvMesh& mesh,
@@ -116,7 +117,7 @@ public:
     // Constructors
 
     //- Construct from components
-    porousMediumModelTransport
+    porousMediumTransportModel
     (
         const word Sname,
         const fvMesh& mesh,
@@ -126,7 +127,7 @@ public:
     );
 
     //- Destructor
-    virtual ~porousMediumModelTransport()
+    virtual ~porousMediumTransportModel()
         {}
 
     // Member Functions
@@ -138,8 +139,8 @@ public:
     //- Return porousMediumModel
     const porousMediumModel& pmModel() const {return pmModel_;}
 
-    //- Correct/compute transport in porousMediumModel
-    virtual void correct(volScalarField& C) = 0;
+    //- Correct/compute transport in porous medium
+    virtual void correct() = 0;
 
 };
 
