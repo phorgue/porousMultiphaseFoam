@@ -110,23 +110,7 @@ theta.write();
 /////////////////////////////////////////////////////////////////////////////
 
 // Intrinsic permeability
-Info  << nl << "Reading permeability field K" << endl;
-volScalarField K
-(
-    IOobject
-    (
-        "K",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
-
-scalar Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
-K *= Kfactor;
-Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
+const volScalarField& K = porousModel->K();
 
 // permeability interpolation
 surfaceScalarField Kf(fvc::interpolate(K,"K"));
