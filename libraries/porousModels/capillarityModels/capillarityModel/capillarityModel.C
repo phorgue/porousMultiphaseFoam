@@ -44,7 +44,7 @@ Foam::capillarityModel::capillarityModel
     const fvMesh& mesh,
     const dictionary& capillarityProperties,
     const word& Sname,
-    const word mediumName
+    const word porousRegion
 )
     :
     Sname_(Sname),
@@ -53,7 +53,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            Sname+mediumName+".pc",
+            Sname+porousRegion+".pc",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -66,7 +66,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            Sname+mediumName+".dpcdS",
+            Sname+porousRegion+".dpcdS",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -79,7 +79,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            Sname+mediumName+".Ch",
+            Sname+porousRegion+".Ch",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -92,7 +92,7 @@ Foam::capillarityModel::capillarityModel
     (
       IOobject
       (
-          Sname+"min"+mediumName,
+          Sname+"min"+porousRegion,
           mesh.time().timeName(),
           mesh,
           IOobject::READ_IF_PRESENT,
@@ -105,7 +105,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            Sname+"max"+mediumName,
+            Sname+"max"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
@@ -118,7 +118,7 @@ Foam::capillarityModel::capillarityModel
     (
         IOobject
         (
-            Sname+".Se"+mediumName,
+            Sname+".Se"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,

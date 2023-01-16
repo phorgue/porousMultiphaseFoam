@@ -54,63 +54,63 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& Sname,
-    const word mediumName
+    const word porousRegion
 )
     :
-    relativePermeabilityModel(mesh, transportProperties, Sname, mediumName),
+    relativePermeabilityModel(mesh, transportProperties, Sname, porousRegion),
     krIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
     (
         IOobject
         (
-            "m"+mediumName,
+            "m"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("m"+mediumName,0))
+        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("m"+porousRegion,0))
     ),
     n_(1/(1-m_)),
     alpha_
     (
         IOobject
         (
-            "alpha"+mediumName,
+            "alpha"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("alpha"+mediumName,GREAT))
+        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("alpha"+porousRegion,GREAT))
     ),
     tau_
     (
         IOobject
         (
-            "tau"+mediumName,
+            "tau"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("tau"+mediumName,0.5))
+        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("tau"+porousRegion,0.5))
     ),
     he_
     (
         IOobject
         (
-            "he"+mediumName,
+            "he"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("he"+mediumName,0.))
+        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("he"+porousRegion,0.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
@@ -121,7 +121,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
                 "in krIppisch.C"
             )
             << "Relative permeability coefficient m equal or less than 0"
-                << nl << "m" + mediumName << " is required"
+                << nl << "m" + porousRegion << " is required"
                 << exit(FatalError);
     }
     dimensionedScalar Smin = krIppischCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
@@ -129,25 +129,25 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
     dimensionedScalar Smax = krIppischCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
     Info << "Ippisch-Vogel-Bastian parameters for relative permeability model" << nl << "{" << endl;
-    Info << "    m" << mediumName << " ";
+    Info << "    m" << porousRegion << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-    Info << "    Smax" << mediumName << " ";
+    Info << "    Smax" << porousRegion << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
-    Info <<  "    Smin" << mediumName << " ";
+    Info <<  "    Smin" << porousRegion << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info <<  "    m" << mediumName << " ";
+    Info <<  "    m" << porousRegion << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-        Info <<  "    alpha" << mediumName << " ";
+        Info <<  "    alpha" << porousRegion << " ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-        Info <<  "    tau" << mediumName << " ";
+        Info <<  "    tau" << porousRegion << " ";
     if (tau_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(tau_).value() << endl;}
-    Info <<  "    he" << mediumName << " ";
+    Info <<  "    he" << porousRegion << " ";
     if (he_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(he_).value() << endl;}
     Info << "} \n" << endl;   

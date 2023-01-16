@@ -54,7 +54,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& Sname,
-    const word mediumName
+    const word porousRegion
 )
     :
     capillarityModel(mesh, transportProperties, Sname),
@@ -63,62 +63,62 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     (
         IOobject
         (
-            "m"+mediumName,
+            "m"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, pcVanGenuchtenCoeffs_.getOrDefault<scalar>("m"+mediumName, 0))
+        dimensionedScalar(dimless, pcVanGenuchtenCoeffs_.getOrDefault<scalar>("m"+porousRegion, 0))
     ),
     n_(1/(1-m_)),
     alpha_ // necessary for Richards solver
     (
         IOobject
         (
-            "alpha"+mediumName,
+            "alpha"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, pcVanGenuchtenCoeffs_.getOrDefault<scalar>("alpha"+mediumName, 0))
+        dimensionedScalar(dimless, pcVanGenuchtenCoeffs_.getOrDefault<scalar>("alpha"+porousRegion, 0))
     ),
     pc0_
     (
         IOobject
         (
-            "pc0"+mediumName,
+            "pc0"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcVanGenuchtenCoeffs_.getOrDefault<scalar>("pc0"+mediumName,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcVanGenuchtenCoeffs_.getOrDefault<scalar>("pc0"+porousRegion,0))
     )
 {
     dimensionedScalar Smin = pcVanGenuchtenCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
     if (Smin.value() > 0) Smin_ = Smin;
     dimensionedScalar Smax = pcVanGenuchtenCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
-    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m" << mediumName << "=0 in pcVanGenuchten" << abort(FatalError);
+    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m" << porousRegion << "=0 in pcVanGenuchten" << abort(FatalError);
     Info << "Van Genuchten parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    m" << mediumName << " ";
+    Info << "    m" << porousRegion << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-    Info << "    pc0" << mediumName << " ";
+    Info << "    pc0" << porousRegion << " ";
     if (pc0_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pc0_).value() << endl;}
-    Info << "    alpha" << mediumName << " ";
+    Info << "    alpha" << porousRegion << " ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-    Info <<  "    Smin" << mediumName << " ";
+    Info <<  "    Smin" << porousRegion << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info << "    Smax" << mediumName << " ";
+    Info << "    Smax" << porousRegion << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
     Info << "} \n" << endl;

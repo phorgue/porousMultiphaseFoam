@@ -99,9 +99,9 @@ public:
             const fvMesh& mesh,
             const dictionary& transportProperties,
             const word& Sname,
-            const word mediumName
+            const word porousRegion
         ),
-        (mesh, transportProperties, Sname, mediumName)
+        (mesh, transportProperties, Sname, porousRegion)
     );
 
 
@@ -113,7 +113,7 @@ public:
         const fvMesh& mesh,
         const dictionary& transportProperties,
         const word& Sname,
-        const word mediumName = ""
+        const word porousRegion = ""
     );
 
 
@@ -125,7 +125,7 @@ public:
         const fvMesh& mesh,
         const dictionary& transportProperties,
         const word& Sname,
-        const word mediumName = ""
+        const word porousRegion = ""
     );
 
 

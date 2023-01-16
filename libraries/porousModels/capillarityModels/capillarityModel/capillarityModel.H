@@ -99,9 +99,9 @@ public:
             const fvMesh& mesh,
             const dictionary& capillarityProperties,
             const word& Sname,
-            const word mediumName
+            const word porousRegion
         ),
-        (mesh, capillarityProperties, Sname, mediumName)
+        (mesh, capillarityProperties, Sname, porousRegion)
     );
 
 
@@ -113,7 +113,7 @@ public:
         const fvMesh& mesh,
         const dictionary& capillarityProperties,
         const word& Sname,
-        const word mediumName = ""
+        const word porousRegion = ""
     );
 
 
@@ -125,7 +125,7 @@ public:
         const fvMesh& mesh,
         const dictionary& capillarityProperties,
         const word& Sname,
-        const word mediumName = ""
+        const word porousRegion = ""
     );
 
 

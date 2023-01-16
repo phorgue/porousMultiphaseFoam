@@ -42,7 +42,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
     List<sourceEventFile*>* sourceEventFileRegistry,
     const word& sourceEventDtFieldNameOverride,
     const dimensionSet& sourceTermDimFactor,
-    const word& porousMediumName
+    const word& porousRegion
 )
 :
     basicMultiComponentMixture(dict, speciesNames, mesh, phaseName),
@@ -61,7 +61,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
         Info<< nl << "*** Specie " << speciesNames[speciesi] << " ***" << endl;
 
         dictionary specieDict(dict.optionalSubDict(speciesNames[speciesi]));
-        specieDict = specieDict.optionalSubDict(porousMediumName);
+        specieDict = specieDict.optionalSubDict(porousRegion);
         dictionary porousTransport(specieDict.subDict("porousTransport"));
 
         dimensionedScalar Kd(porousTransport.getOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
@@ -74,9 +74,9 @@ inline Foam::multiscalarMixture::multiscalarMixture
         lambdas_[speciesi].dimensions().reset(dimensionSet(0,0,-1,0,0));
         lambdas_[speciesi] = porousTransport.getOrDefault("lambda",dimensionedScalar("lambda_default",dimensionSet(0,0,-1,0,0),0.));
 
-        if (porousMediumName != "")
+        if (porousRegion != "")
         {
-            Info << nl << "porousTransport " << porousMediumName << " parameters" << nl << "{" << endl;
+            Info << nl << "porousTransport " << porousRegion << " parameters" << nl << "{" << endl;
         }
         else
         {
@@ -97,7 +97,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
             (
                 IOobject
                 (
-                    Y(speciesi).name() + porousMediumName + "_R",
+                    Y(speciesi).name() + porousRegion + "_R",
                     mesh.time().timeName(),
                     mesh,
                     IOobject::NO_READ,

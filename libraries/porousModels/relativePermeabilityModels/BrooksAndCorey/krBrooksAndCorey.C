@@ -54,49 +54,49 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& Sname,
-    const word mediumName
+    const word porousRegion
 )
     :
-    relativePermeabilityModel(mesh, transportProperties, Sname, mediumName),
+    relativePermeabilityModel(mesh, transportProperties, Sname, porousRegion),
     krBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     n_
     (
         IOobject
         (
-            "n"+mediumName,
+            "n"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("n"+mediumName,0))
+        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("n"+porousRegion,0))
     ),
     kramax_
     (
         IOobject
         (
-            "kr"+Sname+"max"+mediumName,
+            "kr"+Sname+"max"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+mediumName,1.0))
+        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
     ),
     krbmax_
     (
         IOobject
         (
-            "kr"+Sname+"max"+mediumName,
+            "kr"+Sname+"max"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+mediumName,1.0))
+        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
     )
 {
     if (gMin(n_) <= 0)
@@ -106,7 +106,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
                 "in krBrooksAndCorey.C"
             )
             << "Relative permeability coefficient n equal or less than 0"
-                << nl << "n" + mediumName << " is required"
+                << nl << "n" + porousRegion << " is required"
                 << exit(FatalError);
     }
     dimensionedScalar Smin = krBrooksAndCoreyCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
@@ -114,19 +114,19 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
     dimensionedScalar Smax = krBrooksAndCoreyCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
     Info << "Brooks and Corey parameters for relative permeability model" << nl << "{" << endl;
-    Info << "    n" << mediumName << " ";
+    Info << "    n" << porousRegion << " ";
     if (n_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(n_).value() << endl;}
-    Info << "    Smax" << mediumName << " ";
+    Info << "    Smax" << porousRegion << " ";
     if (Smax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smax_).value() << endl;}
-    Info <<  "    Smin" << mediumName << " ";
+    Info <<  "    Smin" << porousRegion << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
-    Info << "    kramax" << mediumName << " ";
+    Info << "    kramax" << porousRegion << " ";
     if (kramax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(kramax_).value() << endl;}
-    Info << "    krbmax" << mediumName << " ";
+    Info << "    krbmax" << porousRegion << " ";
     if (krbmax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(krbmax_).value() << endl;}
     Info << "} \n" << endl;

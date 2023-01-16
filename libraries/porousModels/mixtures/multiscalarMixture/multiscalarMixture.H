@@ -68,10 +68,8 @@ public:
     //- Run time type information
     TypeName("multiscalarMixture");
 
-
     //- The base class of the mixture
     typedef multiscalarMixture basicMixtureType;
-
 
     // Constructors
 
@@ -87,7 +85,7 @@ public:
             List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
             const word& sourceEventDtFieldNameOverride = "",
             const dimensionSet& sourceTermDimFactor = dimless,
-            const word& porousMediumName = ""
+            const word& porousRegion = ""
         );
 
     // Member Functions
@@ -95,11 +93,8 @@ public:
         //- Retard coefficient [-]
         inline const volScalarField& R(const label speciesi) const;
 
-
         //- Decay coefficient [1/s]
         inline const dimensionedScalar& lambda(const label speciesi) const;
-
-
 
         //- Update effective diffusivities and source terms
         template<typename ThetaType>
@@ -117,10 +112,8 @@ public:
             const EpsType& eps
         );
 
-
         //- Effective diffusivity [m^2/s]
         inline const volTensorField& Deff(const label speciesi) const;
-
 
         //- Source term [Y(speciesi).dimensions()*sourceTermDimFactor/s]
         inline const volScalarField& sourceTerm(const label speciesi) const;

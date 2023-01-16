@@ -36,7 +36,7 @@ Foam::autoPtr<Foam::capillarityModel> Foam::capillarityModel::New
     const fvMesh& mesh,
     const dictionary& capillarityProperties,
     const word& Sname,
-    const word mediumName
+    const word porousRegion
 )
 {
     const word modelType(capillarityProperties.lookup("capillarityModel"));
@@ -64,7 +64,7 @@ Foam::autoPtr<Foam::capillarityModel> Foam::capillarityModel::New
     }
 
     return autoPtr<capillarityModel>
-        (cstrIter()(mesh, capillarityProperties, Sname, mediumName));
+        (cstrIter()(mesh, capillarityProperties, Sname, porousRegion));
 }
 
 

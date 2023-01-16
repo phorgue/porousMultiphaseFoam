@@ -54,63 +54,63 @@ Foam::capillarityModels::pcIppisch::pcIppisch
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& Sname,
-    const word mediumName
+    const word porousRegion
 )
     :
-    capillarityModel(mesh, transportProperties, Sname, mediumName),
+    capillarityModel(mesh, transportProperties, Sname, porousRegion),
     pcIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
     (
         IOobject
         (
-            "m"+mediumName,
+            "m"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("m"+mediumName,0))
+        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("m"+porousRegion,0))
     ),
     n_(1/(1-m_)),
     alpha_
     (
         IOobject
         (
-            "alpha"+mediumName,
+            "alpha"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("alpha"+mediumName,GREAT))
+        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("alpha"+porousRegion,GREAT))
     ),
     tau_
     (
         IOobject
         (
-            "tau"+mediumName,
+            "tau"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("tau"+mediumName,1.))
+        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("tau"+porousRegion,1.))
     ),
     he_
     (
         IOobject
         (
-            "he"+mediumName,
+            "he"+porousRegion,
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("he"+mediumName,1.))
+        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("he"+porousRegion,1.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
@@ -118,21 +118,21 @@ Foam::capillarityModels::pcIppisch::pcIppisch
     if (Smin.value() > 0) Smin_ = Smin;
     dimensionedScalar Smax = pcIppischCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
-    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m"<< mediumName << "=0 in pcIppisch" << abort(FatalError);
+    if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m"<< porousRegion << "=0 in pcIppisch" << abort(FatalError);
     Info << "Ippisch parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    m" << mediumName << " ";
+    Info << "    m" << porousRegion << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-    Info <<  "    n" << mediumName << " ";
+    Info <<  "    n" << porousRegion << " ";
     if (n_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(n_).value() << endl;}
-        Info <<  "    alpha" << mediumName << " ";
+        Info <<  "    alpha" << porousRegion << " ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-        Info <<  "    tau" << mediumName << " ";
+        Info <<  "    tau" << porousRegion << " ";
     if (tau_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(tau_).value() << endl;}
-    Info <<  "    he" << mediumName << " ";
+    Info <<  "    he" << porousRegion << " ";
     if (he_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(he_).value() << endl;}
     Info << "} \n" << endl;     
