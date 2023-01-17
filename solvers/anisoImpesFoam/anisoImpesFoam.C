@@ -37,7 +37,6 @@ Description
 
 #include "fvCFD.H"
 #include "incompressiblePhase.H"
-#include "porousMediumModel.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "sourceEventFile.H"

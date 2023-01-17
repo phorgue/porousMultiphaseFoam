@@ -94,47 +94,21 @@ const dimensionedScalar& mub = phaseb->mu();
 
 dimensionedScalar Mmu(mub/mua);//viscosity ratio
 
+/////////////////////////////////////////////////////////////////////////////
+////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
 // Relative permeability / Capillary pressure models 
 autoPtr<porousMediumModel> porousModel = porousMediumModel::New("Sb", mesh, transportProperties, phaseb);
 autoPtr<relativePermeabilityModel>& krModel = porousModel->krModel();
 autoPtr<capillarityModel>& pcModel = porousModel->pcModel();
 scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
 
-/////////////////////////////////////////////////////////////////////////////
-////////////////////////// POROUS MEDIA PROPERTIES //////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
 // Porosity
-Info << nl << "Reading porosity field eps" << endl;
-dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
-volScalarField eps
-(
-    IOobject
-    (
-        "eps",
-        runTime.constant(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    epsScalar
-);
+const volScalarField& eps = porousModel->eps();
 
 // Intrinsic permeability       
-Info << nl << "Reading permeability field K" << endl;
-volScalarField K
-(
-    IOobject
-    (
-        "K",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
+const volScalarField& K = porousModel->K();
 
 // permeability interpolation
 surfaceScalarField Kf(fvc::interpolate(K,"K"));
