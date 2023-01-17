@@ -35,6 +35,8 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "fluidPhase.H"
+#include "porousMediumModel.H"
 #include "multiscalarMixture.H"
 #include "sourceEventFile.H"
 #include "patchEventFile.H"

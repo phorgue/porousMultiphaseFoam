@@ -52,9 +52,15 @@ multiscalarMixture composition
     "C"
 );
 
+///////////////////////////////////////////////////////////////////
+///////////////////// VELOCITY - FLUXES ///////////////////////////
+///////////////////////////////////////////////////////////////////
 
-Info<< "Reading phaseName" << endl;
+Info<< "Creating fluidPhase" << endl;
 word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDefault<word>("phaseName",""));
+autoPtr<fluidPhase> phase = fluidPhase::New(mesh, transportProperties, phaseName);
+volVectorField& U = phase->U();
+surfaceScalarField& phi = phase->phi();
 
 ///////////////////////////////////////////////////////////////////
 ////////////////////// POTENTIAL-SATURATION ///////////////////////
@@ -107,47 +113,6 @@ else
         Info << "===> Saturation file not found (saturated flow)" << endl;
     }
 }
-
-/////////////////////////////////////////////////////////////////////////////
-////////////////////////// VELOCITY - FLUXES ////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-Info<< nl << "Reading field U" << phaseName << endl;
-volVectorField U
-(
-    IOobject
-    (
-        Uname,
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
-    ),
-    mesh
-);
-
-surfaceScalarField phi
-(
-    IOobject
-    (
-        "phi"+phaseName,
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    fvc::flux(U)
-);
-
-if (phi.headerOk())
-{
-    Info << nl << "Reading field phi" << phaseName << endl;
-}
-else
-{
-    Info<< nl << "Computing field phi" << phaseName << " from field U" << phaseName << endl;
-}
-
 
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////
