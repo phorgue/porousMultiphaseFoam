@@ -31,7 +31,6 @@ License
 #include "fixedValueFvPatchFields.H"
 #include "linear.H"
 
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::fluidPhase::fluidPhase
@@ -41,7 +40,7 @@ Foam::fluidPhase::fluidPhase
     const word& phaseName
 )
     :  
-    phase(mesh,transportProperties,phaseName),
+    phase(mesh, transportProperties, phaseName),
     U_
     (
         IOobject
@@ -55,6 +54,30 @@ Foam::fluidPhase::fluidPhase
         mesh_
     )
 {
+    wordList phiTypes
+        (
+            U_.boundaryField().size(),
+            calculatedFvPatchScalarField::typeName
+        );
+
+    phiPtr_.reset
+        (
+            new surfaceScalarField
+            (
+                IOobject
+                (
+                    "phi"+phaseName,
+                    mesh.time().timeName(),
+                    mesh,
+                    IOobject::READ_IF_PRESENT,
+                    IOobject::NO_WRITE
+                ),
+                Foam::linearInterpolate(U_) & mesh.Sf(),
+                phiTypes
+            )
+        );
+    if (phiPtr_->headerOk()) Info << nl << "Reading field phi" << phaseName << endl;
+    else Info<< nl << "Computing field phi" << phaseName << " from field U" << phaseName << endl;
 }
 
 
@@ -75,6 +98,5 @@ Foam::autoPtr<Foam::fluidPhase> Foam::fluidPhase::New
 
 Foam::fluidPhase::~fluidPhase()
 {}
-
 
 // ************************************************************************* //
