@@ -37,6 +37,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "fluidPhase.H"
 #include "multiscalarMixture.H"
 #include "sourceEventFile.H"
 #include "patchEventFile.H"

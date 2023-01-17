@@ -31,9 +31,6 @@ volScalarField eps
     epsScalar
 );
 
-Info<< "Reading phaseName" << endl;
-word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDefault<word>("phaseName",""));
-
 //- list that receives pointers to the event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;
 eventFlux::setEventFileRegistry(&patchEventList, "C");
@@ -124,43 +121,11 @@ if (gMin(hwater.internalField()) < 0)
 ////////////////////////// VELOCITY - FLUXES ////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-Info << nl << "Reading field U" << phaseName << endl;
-volVectorField U
-(
-    IOobject
-    (
-        "U"+phaseName,
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
-    ),
-    mesh
-);
-
-surfaceScalarField phi
-(
-    IOobject
-    (
-        "phi"+phaseName,
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    fvc::flux(U)
-);
-
-if (phi.headerOk())
-{
-    Info << nl << "Reading field phi" << phaseName << endl;
-}
-else
-{
-    Info<< "Computing field phi" << phaseName << " from field U" << phaseName << nl << endl;
-    phi.write();
-}
-
+Info<< "Creating fluidPhase" << endl;
+word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDefault<word>("phaseName",""));
+autoPtr<fluidPhase> phase = fluidPhase::New(mesh, transportProperties, phaseName);
+volVectorField& U = phase->U();
+surfaceScalarField& phi = phase->phi();
 surfaceScalarField phihwater("phihwater", phi * fvc::interpolate(hwater));
 
 ///////////////////////////////////////////////////////////////////
