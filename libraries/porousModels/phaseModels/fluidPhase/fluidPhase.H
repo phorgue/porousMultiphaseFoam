@@ -62,6 +62,9 @@ protected:
     //- phase velocity
     volVectorField U_;
 
+    //- phase fluxes
+    autoPtr<surfaceScalarField> phiPtr_;
+
 public:
 
     // Constructors
@@ -88,20 +91,11 @@ public:
     virtual ~fluidPhase();
 
     // Member Functions
-    const word& name() const
-        {
-            return name_;
-        }
-    
-    const volVectorField& U() const
-        {
-            return U_;
-        }
-
-    volVectorField& U()
-        {
-            return U_;
-        }
+    const word& name() const {return name_;}
+    const volVectorField& U() const {return U_;}
+    volVectorField& U(){return U_;}
+    const surfaceScalarField& phi() const {return phiPtr_();}
+    surfaceScalarField& phi() {return phiPtr_();}
 
 };
 

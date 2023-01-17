@@ -56,11 +56,11 @@ class phase
 
 protected:
 
-    //- reference to the mesh
+    //- Reference to the mesh
     const fvMesh& mesh_;
 
-    // Private data
-    dictionary dict_;
+    //- Global transportProperties dict
+    const dictionary& dict_;
 
     //- Name of phase
     word name_;
@@ -90,15 +90,9 @@ public:
     virtual ~phase();
 
     // Member Functions
-    const word& name() const
-        {
-            return name_;
-        }
-
-    const fvMesh& mesh() const
-        {
-            return mesh_;
-        }
+    const word& name() const {return name_;}
+    const fvMesh& mesh() const {return mesh_;}
+    const dictionary& transportProperties() {return dict_;}
 
 };
 

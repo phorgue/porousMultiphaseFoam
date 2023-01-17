@@ -54,15 +54,14 @@ namespace Foam
     :
     public fluidPhase
     {
+        //- phase dictionary
+        const dictionary& phaseDict_;
 
         //- dynamic viscosity
         dimensionedScalar mu_;
 
         //- density
         dimensionedScalar rho_;
-
-        //- phase fluxes
-        autoPtr<surfaceScalarField> phiPtr_;
 
     public:
 
@@ -89,25 +88,9 @@ namespace Foam
         virtual ~incompressiblePhase();
 
         // Member Functions
-        const dimensionedScalar& mu() const
-            {
-                return mu_;
-            }
-        
-        const dimensionedScalar& rho() const
-            {
-                return rho_;
-            }
-        
-        const surfaceScalarField& phi() const
-            {
-                return phiPtr_();
-            }
-        
-        surfaceScalarField& phi()
-            {
-                return phiPtr_();
-            }
+        const dimensionedScalar& mu() const {return mu_;}
+        const dimensionedScalar& rho() const {return rho_;}
+
     };
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

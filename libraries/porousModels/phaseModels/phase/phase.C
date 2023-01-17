@@ -37,19 +37,11 @@ Foam::phase::phase
     const dictionary& transportProperties,
     const word& phaseName
 )
-:  
+:
     mesh_(mesh),
-    dict_(),
+    dict_(transportProperties),
     name_(phaseName)
 {
-    if (phaseName == "")
-    {
-        dict_ = transportProperties;
-    }
-    else
-    {
-        dict_ = transportProperties.subDict("phase."+phaseName);
-    }
 }
 
 Foam::autoPtr<Foam::phase> Foam::phase::New
@@ -61,7 +53,7 @@ Foam::autoPtr<Foam::phase> Foam::phase::New
 {
     return autoPtr<phase>
     (
-        new phase(mesh, transportProperties, "phase."+phaseName)
+        new phase(mesh, transportProperties, phaseName)
     );
 }
 
