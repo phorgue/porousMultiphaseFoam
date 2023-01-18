@@ -99,7 +99,7 @@ dimensionedScalar Mmu(mub/mua);//viscosity ratio
 /////////////////////////////////////////////////////////////////////////////
 
 // Relative permeability / Capillary pressure models 
-autoPtr<porousMediumModel> porousModel = porousMediumModel::New("Sb", mesh, transportProperties, phaseb);
+autoPtr<twophasePorousMediumModel> porousModel = twophasePorousMediumModel::New("Sb", mesh, transportProperties, phaseb);
 autoPtr<relativePermeabilityModel>& krModel = porousModel->krModel();
 autoPtr<capillarityModel>& pcModel = porousModel->pcModel();
 scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));

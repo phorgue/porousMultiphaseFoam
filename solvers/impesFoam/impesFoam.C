@@ -38,7 +38,7 @@ Description
 #include "fvCFD.H"
 #include "harmonic.H"
 #include "incompressiblePhase.H"
-#include "porousMediumModel.H"
+#include "twophasePorousMediumModel.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "sourceEventFile.H"
