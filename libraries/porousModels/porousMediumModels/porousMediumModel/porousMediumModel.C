@@ -66,10 +66,11 @@ Foam::porousMediumModel::porousMediumModel
             "K"+porousRegion,
             mesh.time().constant(),
             mesh,
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
         ),
-        mesh
+        mesh,
+        transportProperties.lookupOrDefault("K",dimensionedScalar("",dimArea,0.))
     )
 {
     scalar Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
@@ -77,6 +78,24 @@ Foam::porousMediumModel::porousMediumModel
     {
         K_ *= Kfactor;
         Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
+    }
+}
+
+void Foam::porousMediumModel::check_eps()
+{
+    if (gMax(eps_) == 0)
+    {
+        FatalErrorIn("porousMediumModel.C") <<
+            "Field " << eps_.name() << " is equal to zero. You should specify value in transportProperties or field in constant/" << abort(FatalError);
+    }
+}
+
+void Foam::porousMediumModel::check_K()
+{
+    if (gMax(K_) == 0)
+    {
+        FatalErrorIn("porousMediumModel.C") <<
+            "Field " << K_.name() << " is equal to zero. You should specify value in transportProperties or field in constant/" << abort(FatalError);
     }
 }
 
