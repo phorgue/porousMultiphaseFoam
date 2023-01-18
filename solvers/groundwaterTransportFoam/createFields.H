@@ -116,12 +116,14 @@ theta.write();
 /////////////////////////////////////////////////////////////////////////////
 
 // Intrinsic permeability
+porousModel->check_K();
 const volScalarField& K = porousModel->K();
 
 // permeability interpolation (harmonic by default)
 surfaceScalarField Kf(fvc::interpolate(K,"K"));
 
 // Porosity
+porousModel->check_eps();
 const volScalarField& eps = porousModel->eps();
 
 // specific storage

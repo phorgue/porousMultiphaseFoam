@@ -105,9 +105,11 @@ autoPtr<capillarityModel>& pcModel = porousModel->pcModel();
 scalar activateCapillarity(transportProperties.lookupOrDefault<scalar>("activateCapillarity",0.));
 
 // Porosity
+porousModel->check_eps();
 const volScalarField& eps = porousModel->eps();
 
-// Intrinsic permeability       
+// Intrinsic permeability
+porousModel->check_K();
 const volScalarField& K = porousModel->K();
 
 // permeability interpolation
