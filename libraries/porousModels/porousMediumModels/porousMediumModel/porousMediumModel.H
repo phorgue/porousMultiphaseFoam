@@ -35,7 +35,7 @@ Class
     Foam::porousMediumModel
 
 Description
-    An abstract base class for relative permeability models.
+    An base class for relative permeability models.
 
 SourceFiles
     porousMediumModel.C
@@ -48,9 +48,6 @@ SourceFiles
 
 #include "surfaceFields.H"
 #include "volFields.H"
-#include "incompressiblePhase.H"
-#include "relativePermeabilityModel.H"
-#include "capillarityModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -66,27 +63,14 @@ class porousMediumModel
 protected:
 
     // Protected data
-    //- Name of the main saturation field
-    const word Sname_;
-
     //- Reference to the main dictionary
     const dictionary& transportProperties_;
-
-    //- Reference to the phase properties
-    const autoPtr<incompressiblePhase>& phase_;
 
     //- porosity field
     volScalarField eps_;
 
     //- permeability field
     volScalarField K_;
-
-    //- kr/pc models
-    autoPtr<relativePermeabilityModel> krModel_;
-    autoPtr<capillarityModel> pcModel_;
-
-    //- flow source term
-    volScalarField sourceTerm_;
 
     //- Disallow copy construct
     porousMediumModel(const porousMediumModel&);
@@ -99,77 +83,28 @@ public:
     //- Runtime type information
     TypeName("porousMediumModel");
 
-    // Declare run-time constructor selection table
-
-    declareRunTimeSelectionTable
-    (
-        autoPtr,
-        porousMediumModel,
-        dictionary,
-        (
-            const word Sname,
-            const fvMesh& mesh,
-            const dictionary& transportProperties,
-            const autoPtr<incompressiblePhase>& phase,
-            const word porousRegion
-        ),
-        (Sname, mesh, transportProperties, phase)
-    );
-
-    // Selectors
-
-    //- Return a reference to the selected porousMedium model
-    static autoPtr<porousMediumModel> New
-    (
-        const word Sname,
-        const fvMesh& mesh,
-        const dictionary& transportProperties,
-        const autoPtr<incompressiblePhase>& phase,
-        const word porousRegion = ""
-    );
-
     // Constructors
 
     //- Construct from components
     porousMediumModel
     (
-        const word Sname,
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const autoPtr<incompressiblePhase>& phase,
-        const word porousRegion = ""
+        const word porousRegion
     );
 
     //- Destructor
     virtual ~porousMediumModel()
         {}
 
-    // Member Functions
-    const word& Sname() const {return Sname_;}
-
     //- Return transport properties
     const dictionary& transportProperties() const {return transportProperties_;}
-
-    //- Return phase
-    const autoPtr<incompressiblePhase>& phase() const {return phase_;}
 
     //- Return porosity
     const volScalarField& eps() const {return eps_;}
 
     //- Return permeability
     const volScalarField& K() const {return K_;}
-
-    //- Return relative permeabilities model
-    autoPtr<relativePermeabilityModel>& krModel() {return krModel_;}
-    //- Return capillary model
-    autoPtr<capillarityModel>& pcModel() {return pcModel_;}
-
-    const volScalarField& source() {return sourceTerm_;}
-
-    //- Correct
-    virtual void rewindTime() = 0;
-    virtual void correct() = 0;
-    virtual void correct(volScalarField& h, const bool steady = false, const bool conservative = true) = 0;
 
 };
 
