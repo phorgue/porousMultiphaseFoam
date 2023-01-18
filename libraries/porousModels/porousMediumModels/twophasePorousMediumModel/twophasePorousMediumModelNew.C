@@ -27,11 +27,11 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "porousMediumModel.H"
+#include "twophasePorousMediumModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::porousMediumModel> Foam::porousMediumModel::New
+Foam::autoPtr<Foam::twophasePorousMediumModel> Foam::twophasePorousMediumModel::New
 (
     const word Sname,
     const fvMesh& mesh,
@@ -42,7 +42,7 @@ Foam::autoPtr<Foam::porousMediumModel> Foam::porousMediumModel::New
 {
     const word modelType(transportProperties.lookupOrDefault<word>("porousMediumModel", "simplePorosity"));
 
-    Info<< "Selecting porousMedium model => " << modelType << "\n" << endl;
+    Info<< "Selecting twophasePorousMedium model => " << modelType << "\n" << endl;
 
     auto cstrIter = dictionaryConstructorTablePtr_->find(modelType);
 
@@ -50,15 +50,15 @@ Foam::autoPtr<Foam::porousMediumModel> Foam::porousMediumModel::New
     {
         FatalErrorIn
             (
-                "porousMediumModel::New(...)"
-            )   << "Unknown porousMediumModel type "
+                "twophasePorousMediumModel::New(...)"
+            )   << "Unknown twophasePorousMediumModel type "
                 << modelType << nl << nl
-                << "Valid porousMediumModels are : " << endl
+                << "Valid twophasePorousMediumModels are : " << endl
                 << dictionaryConstructorTablePtr_->sortedToc()
                 << exit(FatalError);
     }
 
-    return autoPtr<porousMediumModel>
+    return autoPtr<twophasePorousMediumModel>
         (cstrIter()(Sname, mesh, transportProperties, phase, porousRegion));
 }
 
