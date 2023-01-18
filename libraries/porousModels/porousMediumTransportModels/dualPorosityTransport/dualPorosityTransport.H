@@ -26,93 +26,81 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Namespace
-    Foam::porousMediumModel
-
-Description
-    A namespace for various relative permeability implementations.
+    Foam::porousMediumModels::dualPorosityTransport
 
 Class
-    Foam::porousMediumModel
+    Foam::dualPorosityTransport
 
 Description
-    An base class for relative permeability models.
+    Dual porosity model (one kr / one pc law)
 
 SourceFiles
-    porousMediumModel.C
-    porousMediumModelNew.C
+    dualPorosityTransport.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef porousMediumModel_H
-#define porousMediumModel_H
+#ifndef dualPorosityTransport_H
+#define dualPorosityTransport_H
 
-#include "surfaceFields.H"
 #include "volFields.H"
+#include "surfaceFields.H"
+#include "porousMediumModelTransport.H"
+#include "incompressiblePhase.H"
+#include "mul
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+namespace porousMediumTransportModels
+{
 
-/*---------------------------------------------------------------------------*\
-             Class porousMediumModel Declaration
+/*---------------------------------------------------------------------------* \
+             Class dualPorosityTransport Declaration
 \*---------------------------------------------------------------------------*/
 
-class porousMediumModel
+class dualPorosityTransport
+:
+    public porousMediumTransportModel
 {
-protected:
-
-    // Protected data
-    //- Reference to the main dictionary
-    const dictionary& transportProperties_;
-
-    //- porosity field
-    volScalarField eps_;
-
-    //- permeability field
-    volScalarField K_;
+    const dictionary dualPorosityTransportCoeffs_;
+    const fvMesh& mesh_;
 
     //- Disallow copy construct
-    porousMediumModel(const porousMediumModel&);
+    dualPorosityTransport(const dualPorosityTransport&);
 
     //- Disallow default bitwise assignment
-    void operator=(const porousMediumModel&);
+    void operator=(const dualPorosityTransport&);
 
 public:
 
     //- Runtime type information
-    TypeName("porousMediumModel");
+    TypeName("dualPorosityTransport");
 
     // Constructors
 
     //- Construct from components
-    porousMediumModel
+    dualPorosityTransport
     (
+        const word Sname,
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const word porousRegion
+        const porousMediumModel& pmModel
+)
     );
 
     //- Destructor
-    virtual ~porousMediumModel()
+    ~dualPorosityTransport()
         {}
 
-    //- Return transport properties
-    const dictionary& transportProperties() const {return transportProperties_;}
+    //- Correct
+    void correct();
 
-    //- Return porosity
-    const volScalarField& eps() const {return eps_;}
-
-    //- Return permeability
-    const volScalarField& K() const {return K_;}
-
-    //- Check functions
-    void check_eps();
-    void check_K();
 };
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace porousMediumTransportModels
 
 } // End namespace Foam
 

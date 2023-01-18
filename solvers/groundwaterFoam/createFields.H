@@ -110,6 +110,7 @@ theta.write();
 /////////////////////////////////////////////////////////////////////////////
 
 // Intrinsic permeability
+porousModel->check_K();
 const volScalarField& K = porousModel->K();
 
 // permeability interpolation
