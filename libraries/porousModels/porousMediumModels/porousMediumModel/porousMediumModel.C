@@ -34,28 +34,23 @@ License
 namespace Foam
 {
 defineTypeNameAndDebug(porousMediumModel, 0);
-defineRunTimeSelectionTable(porousMediumModel, dictionary);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::porousMediumModel::porousMediumModel
 (
-    const word Sname,
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const autoPtr<incompressiblePhase>& phase,
     const word porousRegion
 )
     :
-    Sname_(Sname),
     transportProperties_(transportProperties),
-    phase_(phase),
     eps_
     (
         IOobject
         (
-            "eps",
+            "eps"+porousRegion,
             mesh.time().constant(),
             mesh,
             IOobject::READ_IF_PRESENT,
@@ -68,26 +63,13 @@ Foam::porousMediumModel::porousMediumModel
     (
         IOobject
         (
-            "K",
+            "K"+porousRegion,
             mesh.time().constant(),
             mesh,
             IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
         mesh
-    ),
-    sourceTerm_
-    (
-        IOobject
-        (
-            "porousMediumSourceTerm",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar(dimensionSet(0,0,-1,0,0),0.)
     )
 {
     scalar Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
@@ -96,8 +78,6 @@ Foam::porousMediumModel::porousMediumModel
         K_ *= Kfactor;
         Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
     }
-    pcModel_ = capillarityModel::New(mesh, transportProperties, Sname, porousRegion);
-    krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname, porousRegion);
 }
 
 // ************************************************************************* //

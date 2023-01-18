@@ -43,7 +43,7 @@ SourceFiles
 #define simplePorosity_H
 
 #include "volFields.H"
-#include "porousMediumModel.H"
+#include "twophasePorousMediumModel.H"
 #include "relativePermeabilityModel.H"
 #include "capillarityModel.H"
 #include "incompressiblePhase.H"
@@ -58,10 +58,9 @@ namespace porousMediumModels
 /*---------------------------------------------------------------------------* \
              Class simplePorosity Declaration
 \*---------------------------------------------------------------------------*/
-
 class simplePorosity
 :
-    public porousMediumModel
+    public twophasePorousMediumModel
 {
 protected:
 
@@ -84,7 +83,8 @@ public:
         const word Sname,
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const autoPtr<incompressiblePhase>& phase
+        const autoPtr<incompressiblePhase>& phase,
+        const word porousRegion
     );
 
     //- Destructor

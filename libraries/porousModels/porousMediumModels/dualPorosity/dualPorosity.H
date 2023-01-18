@@ -44,7 +44,7 @@ SourceFiles
 
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "porousMediumModel.H"
+#include "twophasePorousMediumModel.H"
 #include "relativePermeabilityModel.H"
 #include "capillarityModel.H"
 #include "incompressiblePhase.H"
@@ -62,11 +62,14 @@ namespace porousMediumModels
 
 class dualPorosity
 :
-    public porousMediumModel
+    public twophasePorousMediumModel
 {
     const dictionary dualPorosityCoeffs_;
-    const word SnameMatrix_;
     const fvMesh& mesh_;
+    const autoPtr<incompressiblePhase>& phase_;
+
+    //- flow field
+    const word SnameMatrix_;
     const uniformDimensionedVectorField g;
     volScalarField hMatrix_;
     volScalarField Smatrix_;
@@ -106,7 +109,8 @@ public:
         const word Sname,
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const autoPtr<incompressiblePhase>& phase
+        const autoPtr<incompressiblePhase>& phase,
+        const word& porousRegion
     );
 
     //- Destructor

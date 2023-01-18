@@ -27,30 +27,19 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "simplePorosity.H"
-#include "addToRunTimeSelectionTable.H"
+#include "twophasePorousMediumModel.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-namespace porousMediumModels
-{
-defineTypeNameAndDebug(simplePorosity, 0);
-
-addToRunTimeSelectionTable
-(
-    twophasePorousMediumModel,
-    simplePorosity,
-    dictionary
-);
-
-}
+defineTypeNameAndDebug(twophasePorousMediumModel, 0);
+defineRunTimeSelectionTable(twophasePorousMediumModel, dictionary);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::porousMediumModels::simplePorosity::simplePorosity
+Foam::twophasePorousMediumModel::twophasePorousMediumModel
 (
     const word Sname,
     const fvMesh& mesh,
@@ -59,21 +48,25 @@ Foam::porousMediumModels::simplePorosity::simplePorosity
     const word porousRegion
 )
     :
-    twophasePorousMediumModel(Sname, mesh, transportProperties, phase, porousRegion)
-{}
-
-void Foam::porousMediumModels::simplePorosity::rewindTime()
+    porousMediumModel(mesh, transportProperties, porousRegion),
+    Sname_(Sname),
+    sourceTerm_
+    (
+        IOobject
+        (
+            "porousMediumSourceTerm",
+            mesh.time().timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar(dimensionSet(0,0,-1,0,0),0.)
+    )
 {
-    //- nothing for simple porosity model
+    Info << "eh ouais : " << porousRegion << endl;
+    pcModel_ = capillarityModel::New(mesh, transportProperties, Sname, porousRegion);
+    krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname, porousRegion);
 }
 
-void Foam::porousMediumModels::simplePorosity::correct()
-{
-    //- nothing for simple porosity model
-}
-
-void Foam::porousMediumModels::simplePorosity::correct(volScalarField& h, const bool steady, const bool conservative)
-{
-    //- nothing for simple porosity model
-}
 // ************************************************************************* //

@@ -41,7 +41,7 @@ defineTypeNameAndDebug(dualPorosity, 0);
 
 addToRunTimeSelectionTable
 (
-    porousMediumModel,
+    twophasePorousMediumModel,
     dualPorosity,
     dictionary
 );
@@ -56,13 +56,15 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     const word Sname,
     const fvMesh& mesh,
     const dictionary& transportProperties,
-    const autoPtr<incompressiblePhase>& phase
+    const autoPtr<incompressiblePhase>& phase,
+    const word& porousRegion
 )
     :
-    porousMediumModel(Sname, mesh, transportProperties, phase, "Fracture"),
+    twophasePorousMediumModel(Sname, mesh, transportProperties, phase, "Fracture"),
     dualPorosityCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
-    SnameMatrix_(Sname+"Matrix"),
     mesh_(mesh),
+    phase_(phase),
+    SnameMatrix_(Sname+"Matrix"),
     g
     (
         IOobject

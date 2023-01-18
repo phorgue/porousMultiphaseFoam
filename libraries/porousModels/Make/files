@@ -12,7 +12,8 @@ capillarityModels/BrooksAndCorey/pcBrooksAndCorey.C
 capillarityModels/Ippisch/pcIppisch.C
 
 porousMediumModels/porousMediumModel/porousMediumModel.C
-porousMediumModels/porousMediumModel/porousMediumModelNew.C
+porousMediumModels/twophasePorousMediumModel/twophasePorousMediumModel.C
+porousMediumModels/twophasePorousMediumModel/twophasePorousMediumModelNew.C
 porousMediumModels/simplePorosity/simplePorosity.C
 porousMediumModels/dualPorosity/dualPorosity.C
 
