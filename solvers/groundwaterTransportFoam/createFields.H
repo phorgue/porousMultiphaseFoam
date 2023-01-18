@@ -206,3 +206,5 @@ if (CSVoutput)
         CmassBalanceCSV << endl;
     }
 }
+
+bool writeResiduals=false;

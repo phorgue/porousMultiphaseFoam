@@ -31,7 +31,11 @@
   - solvers have been merged. Steady simulations can be done using -steady
   option, i.e. :
        groundwaterFoam -steady
-       
+
+  - Picard residuals can be written in residuals.csv file by adding option in
+  controlDict (works for steady run) :
+	      writeResiduals true;
+
 - steadyGroundwater2DFoam/groundwater2DFoam
 
   - solvers have been merge. Steady simulations can be done using -steady
