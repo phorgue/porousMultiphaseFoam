@@ -1,28 +1,44 @@
 ************************
-*** PMF
-***
+*** PMF v2301.1
+*** Dual porosity model (flow only)
 ************************
+
+### Bug fix
+
+- parallel issue for source-injection/fixed points
+
+- parallel issue in time derivative computation (used for timesteps management) 
 
 ### General
 
 - All solvers display current version of PMF.
 
+- Global reorganization of libraries for dual porosity developements.
+
 ### Libraries
 
-- porousMediumModel(s)
+- porousMediumModel
 
-  - new abstract for handling simple/dual porosity models
+  - new class for handling porosity (eps) and permeability (K)
+
+- twophasePorousMediumModel
+
+  - new asbtract class for handling simple/dual porosity model (flow only)
 
 - simplePorosity
 
   - porousMedium class for one porosity model (one Saturation, kr, pc...)
+
+- dualPorosity
+
+  - porousMedium class for dual porosity model (fractureMatrix)
 
 - relativePermeability/capillarity:
 
   - Smin/Smax are common to all kr/pc model and included in general abstract. As
   a consequence, values are now read in the model dictionary (and not from the
   global transportProperties dict). For example, the thetamin value for
-  Van Genuchten model is read in VanGenuchtenCoeffs.
+  Van Genuchten model is read in VanGenuchtenCoeffs
 
 ### Solvers
 
@@ -42,9 +58,20 @@
   option, i.e. :
        groundwater2DFoam -steady
 
-### Minor changes
+- groundwaterFoam (steady mode)
 
-- massConservativeTerm has been replaced by
+  - residual field and max values can be written during the run with the
+  controlDict option:
+
+  writeResiduals yes;
+
+### Tutorials
+
+- 1Dinfiltration_dualPorosity
+
+  validation case for dual porosity model using METIS results
+
+### Minor changes
 
 - new kr(volfield) function added to relativePermeability classes to compute
   relative permeability from a given saturation
