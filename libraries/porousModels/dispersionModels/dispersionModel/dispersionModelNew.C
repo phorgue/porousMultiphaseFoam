@@ -40,7 +40,7 @@ Foam::autoPtr<Foam::dispersionModel> Foam::dispersionModel::New
 {
     const word modelType(transportProperties.lookup("dispersionModel"));
 
-    Info<< "Selecting dispersion model => " << modelType << "\n" << endl;
+    Info << nl << "Selecting dispersion model => " << modelType << "\n" << endl;
 
     auto cstrIter = dictionaryConstructorTablePtr_->find(modelType);
 

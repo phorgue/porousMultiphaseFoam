@@ -53,7 +53,7 @@ forAll(composition.Y(), speciei)
 
 if (adjustTimeStep)
 {
-    Info << "Timestepping is based on time-scheme truncation error with :"
+    Info << nl << "Timestepping is based on time-scheme truncation error with :"
         << nl << "{"
         << nl << "    truncationError = " << truncationError_C
         << nl << "}"
