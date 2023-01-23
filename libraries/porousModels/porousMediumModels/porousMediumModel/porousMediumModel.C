@@ -45,6 +45,7 @@ Foam::porousMediumModel::porousMediumModel
     const word porousRegion
 )
     :
+    mesh_(mesh),
     transportProperties_(transportProperties),
     eps_
     (
