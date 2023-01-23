@@ -63,6 +63,9 @@ class porousMediumModel
 protected:
 
     // Protected data
+    //- Reference to the mesh
+    const fvMesh& mesh_;
+
     //- Reference to the main dictionary
     const dictionary& transportProperties_;
 
@@ -90,12 +93,15 @@ public:
     (
         const fvMesh& mesh,
         const dictionary& transportProperties,
-        const word porousRegion
+        const word porousRegion = ""
     );
 
     //- Destructor
     virtual ~porousMediumModel()
         {}
+
+    //- Return mesh
+    const fvMesh& mesh() const {return mesh_;}
 
     //- Return transport properties
     const dictionary& transportProperties() const {return transportProperties_;}

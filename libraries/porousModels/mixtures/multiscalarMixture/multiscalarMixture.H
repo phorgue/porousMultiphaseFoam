@@ -73,50 +73,52 @@ public:
 
     // Constructors
 
-        //- Construct from dictionary, species names, mesh and phase name
-        template<typename EpsType>
-        inline multiscalarMixture
-        (
-            const dictionary& dict,
-            const wordList& speciesNames,
-            const fvMesh& mesh,
-            const word& phaseName,
-            const EpsType& eps,
-            List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
-            const word& sourceEventDtFieldNameOverride = "",
-            const dimensionSet& sourceTermDimFactor = dimless,
-            const word& porousRegion = ""
-        );
+    //- Construct from dictionary, species names, mesh and phase name
+    template<typename EpsType>
+    inline multiscalarMixture
+    (
+        const dictionary& dict,
+        const wordList& speciesNames,
+        const fvMesh& mesh,
+        const word& phaseName,
+        const EpsType& eps,
+        List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
+        const word& sourceEventDtFieldNameOverride = "",
+        const dimensionSet& sourceTermDimFactor = dimless,
+        const word& porousRegion = ""
+    );
 
     // Member Functions
 
-        //- Retard coefficient [-]
-        inline const volScalarField& R(const label speciesi) const;
+    //- Retard coefficient [-]
+    inline const volScalarField& R(const label speciesi) const;
 
-        //- Decay coefficient [1/s]
-        inline const dimensionedScalar& lambda(const label speciesi) const;
+    //- Decay coefficient [1/s]
+    inline const dimensionedScalar& lambda(const label speciesi) const;
 
-        //- Update effective diffusivities and source terms
-        template<typename ThetaType>
-        inline void correct
-        (
-            const volVectorField& U,
-            const ThetaType& theta
-        );
+    //- Update effective diffusivities and source terms
+    template<typename ThetaType>
+    inline void correct
+    (
+        const volVectorField& U,
+        const ThetaType& theta
+    );
 
-        template<typename SaturationType, typename EpsType>
-        inline void correct
-        (
-            const volVectorField& U,
-            const SaturationType& saturation,
-            const EpsType& eps
-        );
+    template<typename SaturationType, typename EpsType>
+    inline void correct
+    (
+        const volVectorField& U,
+        const SaturationType& saturation,
+        const EpsType& eps
+    );
 
-        //- Effective diffusivity [m^2/s]
-        inline const volTensorField& Deff(const label speciesi) const;
+    //- Effective diffusivity [m^2/s]
+    inline const volTensorField& Deff(const label speciesi) const;
 
-        //- Source term [Y(speciesi).dimensions()*sourceTermDimFactor/s]
-        inline const volScalarField& sourceTerm(const label speciesi) const;
+    //- Source term [Y(speciesi).dimensions()*sourceTermDimFactor/s]
+    inline const volScalarField& sourceTerm(const label speciesi) const;
+
+    const PtrList<sourceEventFile>& sourceEvents() const {return sourceEvents_;}
 
 private:
     PtrList<volScalarField> R_;
