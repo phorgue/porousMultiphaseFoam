@@ -81,21 +81,15 @@ public:
     //- Construct from components
     simplePorosityTransport
     (
-        const word Sname,
-        const fvMesh& mesh,
-        const dictionary& transportProperties,
-        const porousMediumModel& pmModel,
-        const word mediumName = ""
+        const porousMediumModel& pmModel
     );
 
     //- Destructor
     ~simplePorosityTransport()
         {}
 
-    //- Correct the relative permeabilities
-    void rewindTime();
+    //- Nothing to correct with simple porosity
     void correct();
-    void correct(volScalarField& h, const bool steady = false, const bool conservative = true);
 
 };
 
