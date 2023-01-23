@@ -50,6 +50,8 @@ SourceFiles
 #include "surfaceFields.H"
 #include "volFields.H"
 #include "porousMediumModel.H"
+#include "multiscalarMixture.H"
+#include "sourceEventFile.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -65,14 +67,21 @@ class porousMediumTransportModel
 protected:
 
     // Protected data
-    //- Name of the main saturation field
-    const word Sname_;
 
     //- Reference to the main dictionary
     const dictionary& transportProperties_;
 
+    //- List of the transported species
+    wordList speciesNames_;
+
     //- Reference to the 
     const porousMediumModel& pmModel_;
+
+    //- List of sourceEvent for each component
+    List<sourceEventFile*> sourceEventList_;
+
+    //- Composition
+    multiscalarMixture composition_;
 
     //- Disallow copy construct
     porousMediumTransportModel(const porousMediumTransportModel&);
@@ -86,20 +95,15 @@ public:
     TypeName("porousMediumTransportModel");
 
     // Declare run-time constructor selection table
-
     declareRunTimeSelectionTable
     (
         autoPtr,
         porousMediumTransportModel,
         dictionary,
         (
-            const word Sname,
-            const fvMesh& mesh,
-            const dictionary& transportProperties,
-            const porousMediumModel& pmModel,
-            const word mediumName
+            const porousMediumModel& pmModel
         ),
-        (Sname, mesh, transportProperties, pmModel, mediumName)
+        (pmModel)
     );
 
     // Selectors
@@ -107,11 +111,7 @@ public:
     //- Return a reference to the selected porousMedium model
     static autoPtr<porousMediumTransportModel> New
     (
-        const word Sname,
-        const fvMesh& mesh,
-        const dictionary& transportProperties,
-        const porousMediumModel& pmModel,
-        const word mediumName = ""
+        const porousMediumModel& pmModel
     );
 
     // Constructors
@@ -119,11 +119,7 @@ public:
     //- Construct from components
     porousMediumTransportModel
     (
-        const word Sname,
-        const fvMesh& mesh,
-        const dictionary& transportProperties,
-        const porousMediumModel& pmModel,
-        const word mediumName = ""
+        const porousMediumModel& pmModel
     );
 
     //- Destructor
@@ -131,13 +127,18 @@ public:
         {}
 
     // Member Functions
-    const word& Sname() const {return Sname_;}
 
     //- Return transport properties
     const dictionary& transportProperties() const {return transportProperties_;}
 
     //- Return porousMediumModel
     const porousMediumModel& pmModel() const {return pmModel_;}
+
+    //- Access to the list of sourceEvent
+    List<sourceEventFile*>& sourceEventList() {return sourceEventList_;}
+
+    //- Access to composition
+    multiscalarMixture& composition() {return composition_;}
 
     //- Correct/compute transport in porous medium
     virtual void correct() = 0;
