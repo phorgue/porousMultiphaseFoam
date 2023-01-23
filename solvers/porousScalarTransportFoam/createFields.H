@@ -15,48 +15,22 @@ IOdictionary transportProperties
     )
 );
 
-Info<< "Reading porosity field eps (if present)" << endl;
-dimensionedScalar epsScalar(transportProperties.lookupOrDefault("eps",dimensionedScalar("",dimless,0.)));
-volScalarField eps
-(
-    IOobject
-    (
-        "eps",
-        runTime.constant(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    epsScalar
-);
-
 //- list that receives event files for active event-based boundary conditions
 List<patchEventFile*> patchEventList;
 eventFlux::setEventFileRegistry(&patchEventList, "C");
 
-List<sourceEventFile*> sourceEventList;
-
-wordList speciesNames(transportProperties.lookupOrDefault("species", wordList(1, "C")));
-
-Info<< "Reading composition\n" << endl;
-
-multiscalarMixture composition
-(
-    transportProperties,
-    speciesNames,
-    mesh,
-    word::null,
-    eps,
-    &sourceEventList,
-    "C"
-);
+porousMediumModel pmModel(mesh, transportProperties, "");
+pmModel.check_eps();
+const volScalarField& eps = pmModel.eps();
+autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New(pmModel);
+multiscalarMixture& composition = pmTransportModel->composition();
+List<sourceEventFile*>& sourceEventList = pmTransportModel->sourceEventList();
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////// VELOCITY - FLUXES ///////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-Info<< "Creating fluidPhase" << endl;
+Info << nl << "Creating fluidPhase" << endl;
 word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDefault<word>("phaseName",""));
 autoPtr<fluidPhase> phase = fluidPhase::New(mesh, transportProperties, phaseName);
 volVectorField& U = phase->U();
