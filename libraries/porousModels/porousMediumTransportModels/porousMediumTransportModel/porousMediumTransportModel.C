@@ -41,16 +41,21 @@ defineRunTimeSelectionTable(porousMediumTransportModel, dictionary);
 
 Foam::porousMediumTransportModel::porousMediumTransportModel
 (
-    const word Sname,
-    const fvMesh& mesh,
-    const dictionary& transportProperties,
-    const porousMediumModel& pmModel,
-    const word mediumName
+    const porousMediumModel& pmModel
 )
     :
-    Sname_(Sname),
-    transportProperties_(transportProperties),
-    pmModel_(pmModel)
+    transportProperties_(pmModel.transportProperties()),
+    speciesNames_(transportProperties_.lookupOrDefault("species", wordList(1, "C"))),
+    pmModel_(pmModel),
+    composition_(
+        transportProperties_,
+        speciesNames_,
+        pmModel_.mesh(),
+        word::null,
+        pmModel_.eps(),
+        &sourceEventList_,
+        "C"
+    )
 {
 }
 
