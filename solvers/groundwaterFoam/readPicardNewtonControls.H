@@ -47,7 +47,7 @@ Info << nl << "Picard loop control" << nl << "{"
 Info << nl << "Newton loop control" << nl << "{"
 << nl << "    tolerance = " << toleranceNewton
 << "    maximum number of iteration = " << maxIterNewton
-<< nl << "}" << nl << endl;
+<< nl << "}" << endl;
 
 if (!PicardDict.found("tolerance") && !NewtonDict.found("tolerance"))
 {

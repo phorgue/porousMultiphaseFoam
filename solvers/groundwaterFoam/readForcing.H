@@ -8,7 +8,7 @@ scalarList fixedPotentialValueList(0);
 
 if (patchDEM == "none")
 {
-    Info << nl << nl << "no DEM patch (no seepage condition)" << endl;
+    Info << nl << "no DEM patch (no seepage condition)" << endl;
 }
 else
 {
@@ -18,7 +18,7 @@ else
     }
     else
     {
-        Info << nl << nl << "DEM patch used for seepage = " << patchDEM << " (id=" << patchDEMID << ")" << endl;
+        Info << nl << "DEM patch used for seepage = " << patchDEM << " (id=" << patchDEMID << ")" << endl;
         topCellID.resize(mesh.boundaryMesh()[patchDEMID].size());
         topCellID = mesh.boundaryMesh()[patchDEMID].faceCells();
         distanceToDEM.resize(mesh.boundaryMesh()[patchDEMID].size());
