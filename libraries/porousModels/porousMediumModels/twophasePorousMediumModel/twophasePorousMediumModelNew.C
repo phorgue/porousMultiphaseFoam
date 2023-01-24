@@ -42,7 +42,7 @@ Foam::autoPtr<Foam::twophasePorousMediumModel> Foam::twophasePorousMediumModel::
 {
     const word modelType(transportProperties.lookupOrDefault<word>("porousMediumModel", "simplePorosity"));
 
-    Info<< "Selecting twophasePorousMedium model => " << modelType << "\n" << endl;
+    Info << nl << "Selecting porousMedium model => " << modelType << "\n" << endl;
 
     auto cstrIter = dictionaryConstructorTablePtr_->find(modelType);
 

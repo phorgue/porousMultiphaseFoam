@@ -218,7 +218,7 @@ scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
 ////////////////////////// TRACER PART ////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-Info<< "Reading composition\n" << endl;
+Info<< "Reading composition" << endl;
 wordList speciesNames(transportProperties.lookupOrDefault("species", wordList(1, "C")));
 
 List<sourceEventFile*> sourceEventList;

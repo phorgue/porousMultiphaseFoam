@@ -63,14 +63,14 @@ forAll(composition.Y(), speciei)
 //- Derivative initialisation to keep 1st user-defined time step
 if (adjustTimeStep)
 {
-    Info << "Timestepping for h equation is based on time-scheme truncation error with :"
+    Info << nl << "Timestepping for h equation is based on time-scheme truncation error with :"
         << nl << "{"
         << nl << "    truncationError = " << truncationError_h
         << nl << "    dTFactDecrease  = " << dTFactDecrease
         << nl << "}"
         << endl;
 
-    Info << "Timestepping for C equation is based on time-scheme truncation error with :"
+    Info << nl << "Timestepping for C equation is based on time-scheme truncation error with :"
         << nl << "{"
         << nl << "    truncationError = " << truncationError_C
         << nl << "}"
