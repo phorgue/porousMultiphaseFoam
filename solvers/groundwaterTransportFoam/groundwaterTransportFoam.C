@@ -38,6 +38,7 @@ Description
 #include "fvCFD.H"
 #include "incompressiblePhase.H"
 #include "twophasePorousMediumModel.H"
+#include "porousMediumTransportModel.H"
 #include "capillarityModel.H"
 #include "relativePermeabilityModel.H"
 #include "multiscalarMixture.H"

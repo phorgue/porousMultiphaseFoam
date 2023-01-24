@@ -35,8 +35,7 @@ deltah == dimensionedScalar("",dimLength,0);
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////////
 
-Info<< "Reading transportProperties\n" << endl;
-
+Info<< "Reading transportProperties" << endl;
 IOdictionary transportProperties
 (
     IOobject
@@ -78,10 +77,16 @@ surfaceScalarField phi
 );
 
 /////////////////////////////////////////////////////////////////////////////
-///////////////////////// SATURATION INITIALIZATION /////////////////////////
+//////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-//Minimal and Maximal saturation (physical condition)
+// Relative permeability / Capillary pressure models
+autoPtr<twophasePorousMediumModel> porousModel = twophasePorousMediumModel::New("theta", mesh, transportProperties, phasetheta);
+autoPtr<relativePermeabilityModel>& krModel = porousModel->krModel();
+autoPtr<capillarityModel>& pcModel = porousModel->pcModel();
+
+// Water content computation
+Info<< "Computing field theta \n" << endl;
 volScalarField theta
 (
     IOobject
@@ -96,18 +101,6 @@ volScalarField theta
     dimless,
     calculatedFvPatchScalarField::typeName
 );
-theta.dimensions().reset(dimless);
-
-/////////////////////////////////////////////////////////////////////////////
-//////////////// RELATIVE PERMABILITY - CAPILLARY MODEL /////////////////////
-/////////////////////////////////////////////////////////////////////////////
-
-// Relative permeability / Capillary pressure models
-autoPtr<twophasePorousMediumModel> porousModel = twophasePorousMediumModel::New("theta", mesh, transportProperties, phasetheta);
-autoPtr<relativePermeabilityModel>& krModel = porousModel->krModel();
-autoPtr<capillarityModel>& pcModel = porousModel->pcModel();
-
-Info<< "Computing field theta \n" << endl;
 theta = pcModel->correctAndSb(h);
 theta.write();
 
@@ -121,10 +114,6 @@ const volScalarField& K = porousModel->K();
 
 // permeability interpolation (harmonic by default)
 surfaceScalarField Kf(fvc::interpolate(K,"K"));
-
-// Porosity
-porousModel->check_eps();
-const volScalarField& eps = porousModel->eps();
 
 // specific storage
 dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
@@ -153,20 +142,11 @@ volScalarField sourceTerm
 ////////////////////////// SCALAR TRANSPORT  //////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-Info<< "Reading composition\n" << endl;
-wordList speciesNames(transportProperties.lookupOrDefault("species", wordList(1, "C")));
+Info<< "Reading composition" << endl;
+autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New(porousModel);
+multiscalarMixture& composition = pmTransportModel->composition();
+List<sourceEventFile*>& tracerSourceEventList = pmTransportModel->sourceEventList();
 
-List<sourceEventFile*> tracerSourceEventList;
-multiscalarMixture composition
-(
-    transportProperties,
-    speciesNames,
-    mesh,
-    word::null,
-    eps,
-    &tracerSourceEventList,
-    "C"
-);
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////
 ////////////////////////////////////////////////////

@@ -64,7 +64,6 @@ Foam::twophasePorousMediumModel::twophasePorousMediumModel
         dimensionedScalar(dimensionSet(0,0,-1,0,0),0.)
     )
 {
-    Info << "eh ouais : " << porousRegion << endl;
     pcModel_ = capillarityModel::New(mesh, transportProperties, Sname, porousRegion);
     krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname, porousRegion);
 }
