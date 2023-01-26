@@ -43,7 +43,7 @@ Foam::twophasePorousMediumModel::twophasePorousMediumModel
 (
     const word Sname,
     const fvMesh& mesh,
-    const dictionary& transportProperties,
+    const IOdictionary& transportProperties,
     const autoPtr<incompressiblePhase>& phase,
     const word porousRegion
 )

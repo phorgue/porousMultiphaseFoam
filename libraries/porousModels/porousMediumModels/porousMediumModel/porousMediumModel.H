@@ -67,7 +67,7 @@ protected:
     const fvMesh& mesh_;
 
     //- Reference to the main dictionary
-    const dictionary& transportProperties_;
+    const IOdictionary& transportProperties_;
 
     //- porosity field
     volScalarField eps_;
@@ -92,7 +92,7 @@ public:
     porousMediumModel
     (
         const fvMesh& mesh,
-        const dictionary& transportProperties,
+        const IOdictionary& transportProperties,
         const word porousRegion = ""
     );
 
@@ -104,7 +104,7 @@ public:
     const fvMesh& mesh() const {return mesh_;}
 
     //- Return transport properties
-    const dictionary& transportProperties() const {return transportProperties_;}
+    const IOdictionary& transportProperties() const {return transportProperties_;}
 
     //- Return porosity
     const volScalarField& eps() const {return eps_;}
