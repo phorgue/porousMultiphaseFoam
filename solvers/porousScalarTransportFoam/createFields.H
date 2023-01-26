@@ -24,7 +24,7 @@ pmModel.check_eps();
 const volScalarField& eps = pmModel.eps();
 autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New(pmModel);
 multiscalarMixture& composition = pmTransportModel->composition();
-List<sourceEventFile*>& sourceEventList = pmTransportModel->sourceEventList();
+List<sourceEventFile*>& tracerSourceEventList = pmTransportModel->sourceEventList();
 
 ///////////////////////////////////////////////////////////////////
 ///////////////////// VELOCITY - FLUXES ///////////////////////////
@@ -33,7 +33,7 @@ List<sourceEventFile*>& sourceEventList = pmTransportModel->sourceEventList();
 Info << nl << "Creating fluidPhase" << endl;
 word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDefault<word>("phaseName",""));
 autoPtr<fluidPhase> phase = fluidPhase::New(mesh, transportProperties, phaseName);
-volVectorField& U = phase->U();
+volVectorField& Utheta = phase->U();
 surfaceScalarField& phi = phase->phi();
 
 ///////////////////////////////////////////////////////////////////
@@ -72,19 +72,18 @@ volScalarField Saturation
 word Uname="U"+phaseName;
 if (theta.headerOk())
 {
-    Saturation = theta/eps;
-    Uname = "U";
     Info << "===> field S" << phaseName << " computed from theta/eps, min = " << gMin(Saturation.internalField()) << " ; max = " << gMax(Saturation.internalField()) << endl;
 }
 else
 {
     if (Saturation.headerOk())
     {
+        theta = Saturation * eps;
         Info << "===> field S" << phaseName << " read, min = " << gMin(Saturation.internalField()) << " ; max = " << gMax(Saturation.internalField()) <<  endl;
     }
     else
     {
-        Info << "===> Saturation file not found (saturated flow)" << endl;
+        Info << "===> Saturation/Water content file not found (saturated flow)" << endl;
     }
 }
 

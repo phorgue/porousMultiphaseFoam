@@ -38,7 +38,7 @@ eventFlux::setEventFileRegistry(&patchEventList, "C");
 Info<< "Reading composition\n" << endl;
 wordList speciesNames(transportProperties.lookupOrDefault("species", wordList(1, "C")));
 
-List<sourceEventFile*> sourceEventList;
+List<sourceEventFile*> tracerSourceEventList;
 multiscalarMixture composition
 (
     transportProperties,
@@ -46,7 +46,7 @@ multiscalarMixture composition
     mesh,
     word::null,
     eps,
-    &sourceEventList,
+    &tracerSourceEventList,
     "C",
     dimLength
 );

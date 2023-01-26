@@ -1,8 +1,8 @@
-forAll(sourceEventList,sourceEventi)
+forAll(tracerSourceEventList,sourceEventi)
 {
-	sourceEventList[sourceEventi]->updateIndex(runTime.startTime().value());
-	sourceEventList[sourceEventi]->updateValue(runTime);
-	sourceEventList[sourceEventi]->storeOldValues();
+	tracerSourceEventList[sourceEventi]->updateIndex(runTime.startTime().value());
+	tracerSourceEventList[sourceEventi]->updateValue(runTime);
+	tracerSourceEventList[sourceEventi]->storeOldValues();
 }
 
 forAll(patchEventList,patchEventi)

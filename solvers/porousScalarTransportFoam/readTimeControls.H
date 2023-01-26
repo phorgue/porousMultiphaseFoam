@@ -45,10 +45,10 @@ scalar truncationError_C =
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
-PtrList<timestepManager> dtManager(0);
+PtrList<timestepManager> dtManagerC(0);
 forAll(composition.Y(), speciei)
 {
-    dtManager.append(new timestepManager(runTime, composition.Y()[speciei], truncationError_C));
+    dtManagerC.append(new timestepManager(runTime, composition.Y()[speciei], truncationError_C));
 }
 
 if (adjustTimeStep)
