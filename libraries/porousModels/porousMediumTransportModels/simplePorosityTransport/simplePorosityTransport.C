@@ -58,7 +58,9 @@ Foam::porousMediumTransportModels::simplePorosityTransport::simplePorosityTransp
     porousMediumTransportModel(pmModel)
 {}
 
-void Foam::porousMediumTransportModels::simplePorosityTransport::correct()
+void Foam::porousMediumTransportModels::simplePorosityTransport::correct
+(
+)
 {
     //- nothing for simple porosity model
 }

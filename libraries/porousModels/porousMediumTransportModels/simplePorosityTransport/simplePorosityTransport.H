@@ -65,7 +65,7 @@ class simplePorosityTransport
 {
 protected:
 
-    //- Disallow copy construct
+    //- Disallow copy constructn
     simplePorosityTransport(const simplePorosityTransport&);
 
     //- Disallow default bitwise assignment
@@ -88,7 +88,7 @@ public:
     ~simplePorosityTransport()
         {}
 
-    //- Nothing to correct with simple porosity
+    //- No correction required for simplePorosity class
     void correct();
 
 };
