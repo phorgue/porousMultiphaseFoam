@@ -140,8 +140,13 @@ public:
     //- Access to composition
     multiscalarMixture& composition() {return composition_;}
 
-    //- Correct dispersion and compute transport in porous medium
-    virtual void correct() = 0;
+    //- Solve tracer tranport equation
+    virtual void solveTransport
+    (
+        const volVectorField& U,
+        const surfaceScalarField& phi,
+        const volScalarField& theta
+    ) = 0;
 
 };
 
