@@ -31,6 +31,7 @@ License
 #include "dualPorosityTransport.H"
 #include "addToRunTimeSelectionTable.H"
 #include "linear.H"
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
@@ -41,7 +42,7 @@ defineTypeNameAndDebug(dualPorosityTransport, 0);
 
 addToRunTimeSelectionTable
 (
-    porousMediumModel,
+    porousMediumTransportModel,
     dualPorosityTransport,
     dictionary
 );
@@ -53,63 +54,63 @@ addToRunTimeSelectionTable
 
 Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
 (
-    const word Sname,
-    const fvMesh& mesh,
-    const dictionary& transportProperties,
     const porousMediumModel& pmModel
 )
     :
-    porousMediumModelTransport(Sname, mesh, transportProperties, pmModel),
-    multiscalarMixture(
-        transportProperties,
-        wordList(transportProperties.lookupOrDefault("species", wordList(1, "C"))),
-        mesh,
+    porousMediumTransportModel(pmModel),
+    composition_(
+        transportProperties_,
+        wordList(transportProperties_.lookupOrDefault("species", wordList(1, "C"))),
+        pmModel.mesh(),
         word::null,
-        eps,
-        &sourceEventList,
+        pmModel.eps(),
+        &sourceEventList_,
         "C",
         dimless,
         "Matrix"
-    );
+    ),
+    UMatrix_(transportProperties_.db().lookupObject<volVectorField>("UMatrix")),
+    phiMatrix_(transportProperties_.db().lookupObject<surfaceScalarField>("phiMatrix")),
+    thetaMatrix_(transportProperties_.db().lookupObject<volScalarField>("thetaMatrix"))
 {
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
 
-void Foam::porousMediumModels::dualPorosityTransport::correct()
+void Foam::porousMediumTransportModels::dualPorosityTransport::correct
+(
+)
 {
-  
-    // forAll(composition.Y(), speciesi)
-    // {
-    //     const auto& speciesName = composition.species()[speciesi];
+    //- Correct matrix dispersion
+    composition_.correct<volScalarField>(UMatrix_, thetaMatrix_);
+
+    forAll(composition_.Y(), speciesi)
+    {
+        const auto& speciesName = composition_.species()[speciesi];
     
-    //     auto& C = composition.Y(speciesi);
-    //     const auto& R = composition.R(speciesi);
-    //     const auto& Deff = composition.Deff(speciesi);
-    //     const auto& lambda = composition.lambda(speciesi);
-    //     const auto& sourceTerm = composition.sourceTerm(speciesi);
+        auto& C = composition_.Y(speciesi);
+        const auto& R = composition_.R(speciesi);
+        const auto& Deff = composition_.Deff(speciesi);
+        const auto& lambda = composition_.lambda(speciesi);
+        const auto& sourceTerm = composition_.sourceTerm(speciesi);
 
-    //     fvScalarMatrix CEqn
-    //         (
-    //             eps * R * Saturation * fvm::ddt(C)
-    //             + fvm::div(phi, C, "div(phi,C)")
-    //             -  fvm::laplacian(eps * Saturation * Deff, C, "laplacian(Deff,C)")
-    //             ==
-    //             - sourceTerm
-    //             - eps * R * Saturation * fvm::Sp(lambda,C)
-    //         );
+        fvScalarMatrix CMatrixEqn
+            (
+                R * fvm::ddt(thetaMatrix_, C)
+                + fvm::div(phiMatrix_, C, "div(phi,C)")
+                -  fvm::laplacian(thetaMatrix_* Deff, C, "laplacian(Deff,C)")
+                ==
+                - sourceTerm
+                - thetaMatrix_ * R * fvm::Sp(lambda,C)
+            );
 
-    //     CEqn.solve(mesh.solver("C"));
+        CMatrixEqn.solve(pmModel_.mesh().solver("C"));
 
-    //     dtManager[speciesi].updateDerivatives();
-
-    //     Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField()) 
-    //         << " Max(" << speciesName << ") = " << gMax(C.internalField())
-    //         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*Saturation*eps).value()
-    //         << " dCmax = " << dtManager[speciesi].dVmax()*runTime.deltaTValue()
-    //         << endl;
-
-    // }
+        Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField())
+            << " Max(" << speciesName << ") = " << gMax(C.internalField())
+            << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*thetaMatrix_).value()
+            << endl;
+    }
 }
 
 // ************************************************************************* //

@@ -44,9 +44,9 @@ SourceFiles
 
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "porousMediumModelTransport.H"
+#include "porousMediumTransportModel.H"
 #include "incompressiblePhase.H"
-#include "mul
+#include "multiscalarMixture.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,8 +63,19 @@ class dualPorosityTransport
 :
     public porousMediumTransportModel
 {
+    //- Dictionary for matrix parameters
     const dictionary dualPorosityTransportCoeffs_;
-    const fvMesh& mesh_;
+
+    //- List of sourceEvent for each component
+    List<sourceEventFile*> sourceEventList_;
+
+    //- Composition
+    multiscalarMixture composition_;
+
+    //- Reference to required fields
+    const volVectorField& UMatrix_;
+    const surfaceScalarField& phiMatrix_;
+    const volScalarField& thetaMatrix_;
 
     //- Disallow copy construct
     dualPorosityTransport(const dualPorosityTransport&);
@@ -82,20 +93,15 @@ public:
     //- Construct from components
     dualPorosityTransport
     (
-        const word Sname,
-        const fvMesh& mesh,
-        const dictionary& transportProperties,
         const porousMediumModel& pmModel
-)
     );
 
     //- Destructor
     ~dualPorosityTransport()
         {}
 
-    //- Correct
+    //- Correct dispersion and compute transport in porous medium
     void correct();
-
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
