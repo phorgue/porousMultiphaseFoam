@@ -70,7 +70,7 @@ class dualPorosityTransport
     List<sourceEventFile*> sourceEventList_;
 
     //- Composition
-    multiscalarMixture composition_;
+    multiscalarMixture matrixComposition_;
 
     //- Reference to required fields
     const volVectorField& UMatrix_;
@@ -100,8 +100,13 @@ public:
     ~dualPorosityTransport()
         {}
 
-    //- Correct dispersion and compute transport in porous medium
-    void correct();
+    //- Solve tracer tranport equation
+    void solveTransport
+    (
+        const volVectorField& U,
+        const surfaceScalarField& phi,
+        const volScalarField& theta
+    );
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
