@@ -57,6 +57,7 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
 )
     :
     porousMediumTransportModel(pmModel),
+    dualPorosityTransportCoeffs_(transportProperties_.subDict("dualPorosity")),
     matrixComposition_(
         transportProperties_,
         wordList(transportProperties_.lookupOrDefault("species", wordList(1, "C"))),
@@ -68,10 +69,27 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
         dimless,
         "Matrix"
     ),
+    alphaS_
+    (
+        IOobject
+        (
+            "alphaS",
+             pmModel.mesh().time().constant(),
+             pmModel.mesh(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        pmModel.mesh(),
+        dualPorosityTransportCoeffs_.lookupOrDefault("alphaS",dimensionedScalar("",dimless/dimTime,0.))
+    ),
     UMatrix_(transportProperties_.db().lookupObject<volVectorField>("UMatrix")),
     phiMatrix_(transportProperties_.db().lookupObject<surfaceScalarField>("phiMatrix")),
     thetaMatrix_(transportProperties_.db().lookupObject<volScalarField>("thetaMatrix"))
 {
+    if (gMax(alphaS_) == 0)
+    {
+        FatalErrorIn("dualPorosityTransport.C") << "Exchange coefficient alphaS should be specified as field or as scalar in dualPorosity dictionary" << abort(FatalError);
+    }
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
@@ -90,6 +108,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
     forAll(composition_.Y(), speciesi)
     {
         auto& C = composition_.Y(speciesi);
+        const auto& Cmatrix = matrixComposition_.Y(speciesi);
         const auto& R = composition_.R(speciesi);
         const auto& Deff = composition_.Deff(speciesi);
         const auto& lambda = composition_.lambda(speciesi);
@@ -103,6 +122,8 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
                 ==
                 - sourceTerm_tracer
                 - R * theta * fvm::Sp(lambda,C)
+                + alphaS_ * thetaMatrix_ * Cmatrix
+                - alphaS_ * fvm::Sp(thetaMatrix_,C)
             );
 
         CEqn.solve(solverDict);
@@ -116,6 +137,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
         const auto& speciesName = matrixComposition_.species()[speciesi];
 
         auto& C = matrixComposition_.Y(speciesi);
+        const auto& Cfracture = composition_.Y(speciesi);
         const auto& R = matrixComposition_.R(speciesi);
         const auto& Deff = matrixComposition_.Deff(speciesi);
         const auto& lambda = matrixComposition_.lambda(speciesi);
@@ -129,6 +151,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
                 ==
                 - sourceTerm
                 - thetaMatrix_ * R * fvm::Sp(lambda,C)
+                + alphaS_ * thetaMatrix_ * (Cfracture - C)
             );
 
         CMatrixEqn.solve(pmModel_.mesh().solver("C"));
