@@ -69,7 +69,7 @@ protected:
     // Protected data
 
     //- Reference to the main dictionary
-    const dictionary& transportProperties_;
+    const IOdictionary& transportProperties_;
 
     //- List of the transported species
     wordList speciesNames_;
@@ -140,7 +140,7 @@ public:
     //- Access to composition
     multiscalarMixture& composition() {return composition_;}
 
-    //- Correct/compute transport in porous medium
+    //- Correct dispersion and compute transport in porous medium
     virtual void correct() = 0;
 
 };
