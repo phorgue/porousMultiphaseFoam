@@ -72,6 +72,9 @@ class dualPorosityTransport
     //- Composition
     multiscalarMixture matrixComposition_;
 
+    //- Fracture/matrix echange coefficent
+    const volScalarField alphaS_;
+
     //- Reference to required fields
     const volVectorField& UMatrix_;
     const surfaceScalarField& phiMatrix_;
