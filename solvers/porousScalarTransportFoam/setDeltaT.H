@@ -46,7 +46,7 @@ if (adjustTimeStep)
         dtForC = min
             (
                 dtForC,
-                dtManager[speciei].computeTimestep()
+                dtManagerC[speciei].computeTimestep()
             );
     }
 
@@ -64,7 +64,7 @@ if (adjustTimeStep)
     if (eventTimeTracking)
     {
         scalar timeOfNextEvent = GREAT;
-        forAll(sourceEventList,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList[sourceEventi]->currentEventEndTime());
+        forAll(tracerSourceEventList,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,tracerSourceEventList[sourceEventi]->currentEventEndTime());
         forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
 
         scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
@@ -79,11 +79,11 @@ if (adjustTimeStep)
         if (nSteps == 0)
         {
             scalar timeToCloseEvent = GREAT;
-            forAll(sourceEventList,sourceEventi)
+            forAll(tracerSourceEventList,sourceEventi)
             {
-                if (sourceEventList[sourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                if (tracerSourceEventList[sourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    timeToCloseEvent = min(timeToCloseEvent,sourceEventList[sourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                    timeToCloseEvent = min(timeToCloseEvent,tracerSourceEventList[sourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
             forAll(patchEventList,patchEventi)

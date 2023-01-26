@@ -1,6 +1,6 @@
 //- update dispersion tensor coefficients and source terms
 forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
-forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateValue(runTime);
+forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->updateValue(runTime);
 composition.correct(U, eps);
 
 forAll(composition.Y(), speciesi)
@@ -26,11 +26,11 @@ forAll(composition.Y(), speciesi)
 
     CEqn.solve(mesh.solver("C"));
 
-    dtManager[speciesi].updateDerivatives();
+    dtManagerC[speciesi].updateDerivatives();
 
     Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField())
         << " Max(" << speciesName << ") = " << gMax(C.internalField())
         << " mass(" <<speciesName << ") = " << fvc::domainIntegrate(R*C*hwater*eps).value()/zScale
-        << " dCmax = " << dtManager[speciesi].dVmax()*runTime.deltaTValue() << endl;
+        << " dCmax = " << dtManagerC[speciesi].dVmax()*runTime.deltaTValue() << endl;
 
 }
