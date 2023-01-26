@@ -30,7 +30,6 @@ License
 #include "fvCFD.H"
 #include "dualPorosityTransport.H"
 #include "addToRunTimeSelectionTable.H"
-#include "linear.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -58,7 +57,7 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
 )
     :
     porousMediumTransportModel(pmModel),
-    composition_(
+    matrixComposition_(
         transportProperties_,
         wordList(transportProperties_.lookupOrDefault("species", wordList(1, "C"))),
         pmModel.mesh(),
@@ -77,22 +76,50 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
 
-void Foam::porousMediumTransportModels::dualPorosityTransport::correct
+void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
 (
+    const volVectorField& U,
+    const surfaceScalarField& phi,
+    const volScalarField& theta
 )
 {
-    //- Correct matrix dispersion
-    composition_.correct<volScalarField>(UMatrix_, thetaMatrix_);
+    //- fracture part
+    composition_.correct(U, theta);
 
+    dictionary solverDict = pmModel_.mesh().solver("C");
     forAll(composition_.Y(), speciesi)
     {
-        const auto& speciesName = composition_.species()[speciesi];
-    
         auto& C = composition_.Y(speciesi);
         const auto& R = composition_.R(speciesi);
         const auto& Deff = composition_.Deff(speciesi);
         const auto& lambda = composition_.lambda(speciesi);
-        const auto& sourceTerm = composition_.sourceTerm(speciesi);
+        const auto& sourceTerm_tracer = composition_.sourceTerm(speciesi);
+
+        fvScalarMatrix CEqn
+            (
+                R * fvm::ddt(theta,C)
+                + fvm::div(phi, C, "div(phi,C)")
+                - fvm::laplacian(theta*Deff, C, "laplacian(Deff,C)")
+                ==
+                - sourceTerm_tracer
+                - R * theta * fvm::Sp(lambda,C)
+            );
+
+        CEqn.solve(solverDict);
+    }
+
+    //- matrix part
+    matrixComposition_.correct<volScalarField>(UMatrix_, thetaMatrix_);
+
+    forAll(matrixComposition_.Y(), speciesi)
+    {
+        const auto& speciesName = matrixComposition_.species()[speciesi];
+
+        auto& C = matrixComposition_.Y(speciesi);
+        const auto& R = matrixComposition_.R(speciesi);
+        const auto& Deff = matrixComposition_.Deff(speciesi);
+        const auto& lambda = matrixComposition_.lambda(speciesi);
+        const auto& sourceTerm = matrixComposition_.sourceTerm(speciesi);
 
         fvScalarMatrix CMatrixEqn
             (

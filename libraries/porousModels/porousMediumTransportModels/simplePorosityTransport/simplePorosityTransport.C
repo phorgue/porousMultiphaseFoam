@@ -27,6 +27,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "fvCFD.H"
 #include "simplePorosityTransport.H"
 #include "addToRunTimeSelectionTable.H"
 
@@ -58,11 +59,38 @@ Foam::porousMediumTransportModels::simplePorosityTransport::simplePorosityTransp
     porousMediumTransportModel(pmModel)
 {}
 
-void Foam::porousMediumTransportModels::simplePorosityTransport::correct
+// * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
+
+void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
 (
+    const volVectorField& U,
+    const surfaceScalarField& phi,
+    const volScalarField& theta
 )
 {
-    //- nothing for simple porosity model
+    composition_.correct(U, theta);
+
+    dictionary solverDict = pmModel_.mesh().solver("C");
+    forAll(composition_.Y(), speciesi)
+    {
+        auto& C = composition_.Y(speciesi);
+        const auto& R = composition_.R(speciesi);
+        const auto& Deff = composition_.Deff(speciesi);
+        const auto& lambda = composition_.lambda(speciesi);
+        const auto& sourceTerm_tracer = composition_.sourceTerm(speciesi);
+
+        fvScalarMatrix CEqn
+            (
+                R * fvm::ddt(theta,C)
+                + fvm::div(phi, C, "div(phi,C)")
+                - fvm::laplacian(theta*Deff, C, "laplacian(Deff,C)")
+                ==
+                - sourceTerm_tracer
+                - R * theta * fvm::Sp(lambda,C)
+            );
+
+        CEqn.solve(solverDict);
+    }
 }
 
 // ************************************************************************* //

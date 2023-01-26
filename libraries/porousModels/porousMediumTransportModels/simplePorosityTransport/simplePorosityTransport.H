@@ -88,8 +88,13 @@ public:
     ~simplePorosityTransport()
         {}
 
-    //- No correction required for simplePorosity class
-    void correct();
+    //- Solve tracer tranport equation
+    void solveTransport
+    (
+        const volVectorField& U,
+        const surfaceScalarField& phi,
+        const volScalarField& theta
+    );
 
 };
 
