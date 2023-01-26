@@ -41,7 +41,7 @@ defineTypeNameAndDebug(porousMediumModel, 0);
 Foam::porousMediumModel::porousMediumModel
 (
     const fvMesh& mesh,
-    const dictionary& transportProperties,
+    const IOdictionary& transportProperties,
     const word porousRegion
 )
     :
