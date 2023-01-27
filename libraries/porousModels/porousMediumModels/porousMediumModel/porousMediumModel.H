@@ -75,6 +75,12 @@ protected:
     //- permeability field
     volScalarField K_;
 
+    //- injection/extraction source term
+    volScalarField sourceTerm_;
+
+    //- injection/extraction source term
+    volScalarField exchangeTerm_;
+
     //- Disallow copy construct
     porousMediumModel(const porousMediumModel&);
 
@@ -111,6 +117,12 @@ public:
 
     //- Return permeability
     const volScalarField& K() const {return K_;}
+
+    //- Return source term
+    volScalarField& sourceTerm() {return sourceTerm_;}
+
+    //- Return exchange term
+    const volScalarField& exchangeTerm() const {return exchangeTerm_;}
 
     //- Check functions
     void check_eps();

@@ -49,20 +49,7 @@ Foam::twophasePorousMediumModel::twophasePorousMediumModel
 )
     :
     porousMediumModel(mesh, transportProperties, porousRegion),
-    Sname_(Sname),
-    sourceTerm_
-    (
-        IOobject
-        (
-            "porousMediumSourceTerm",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar(dimensionSet(0,0,-1,0,0),0.)
-    )
+    Sname_(Sname)
 {
     pcModel_ = capillarityModel::New(mesh, transportProperties, Sname, porousRegion);
     krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname, porousRegion);

@@ -6,4 +6,3 @@
 runApplication blockMesh
 runApplication groundwaterFoam 
 runApplication postProcess -func sampleDict 
-python plot_results.py

@@ -72,9 +72,6 @@ protected:
     //- Name of the main saturation field
     const word Sname_;
 
-    //- flow source term
-    volScalarField sourceTerm_;
-
     //- kr/pc models
     autoPtr<relativePermeabilityModel> krModel_;
     autoPtr<capillarityModel> pcModel_;
@@ -142,8 +139,6 @@ public:
     autoPtr<relativePermeabilityModel>& krModel() {return krModel_;}
     //- Return capillary model
     autoPtr<capillarityModel>& pcModel() {return pcModel_;}
-
-    const volScalarField& source() {return sourceTerm_;}
 
     //- Correct
     virtual void rewindTime() = 0;
