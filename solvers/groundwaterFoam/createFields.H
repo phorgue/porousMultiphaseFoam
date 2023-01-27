@@ -120,24 +120,8 @@ surfaceScalarField Kf(fvc::interpolate(K,"K"));
 dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
 Info << nl << "Reading speficic storage : Ss = " << Ss.value() << endl;
 
-///////////////////////////////////////////////////////////////////
-////////////////////////// FORCING TERMS //////////////////////////
-///////////////////////////////////////////////////////////////////
-
 //- For constant or event source injection/extraction
-volScalarField sourceTerm
-(
-    IOobject
-    (
-        "sourceTerm",
-        runTime.timeName(),
-        mesh,
-        IOobject::READ_IF_PRESENT,
-        IOobject::NO_WRITE
-    ),
-    mesh,
-    dimensionedScalar("",dimless/dimTime,0)
-);
+volScalarField& sourceTerm = porousModel->sourceTerm();
 
 ////////////////////////////////////////////////////
 //////////////////// OUTPUT CSV ////////////////////

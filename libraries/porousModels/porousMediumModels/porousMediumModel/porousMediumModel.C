@@ -72,6 +72,32 @@ Foam::porousMediumModel::porousMediumModel
         ),
         mesh,
         transportProperties.lookupOrDefault("K",dimensionedScalar("",dimArea,0.))
+    ),
+    sourceTerm_
+    (
+        IOobject
+        (
+            "sourceTerm",
+            mesh.time().timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("",dimless/dimTime,0)
+    ),
+    exchangeTerm_
+    (
+        IOobject
+        (
+            "exchangeTerm",
+            mesh.time().timeName(),
+            mesh,
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("",dimless/dimTime,0)
     )
 {
     scalar Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
