@@ -114,15 +114,15 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
     dimensionedScalar Smax = krVanGenuchtenCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
     Info << "Van Genuchten parameters for relative permeability model" << nl << "{" << endl;
+    Info <<  "    " << Sname << porousRegion << "min" << " ";
+    if (Smin_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smin_).value() << endl;}
+    Info << "    " << Sname << porousRegion << "max" << " ";
+    if (Smax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smax_).value() << endl;}
     Info << "    m" << porousRegion << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
-    Info << "    Smax" << porousRegion << " ";
-    if (Smax_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smax_).value() << endl;}
-    Info <<  "    Smin" << porousRegion << " ";
-    if (Smin_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smin_).value() << endl;}
     Info << "    kramax" << porousRegion << " ";
     if (kramax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(kramax_).value() << endl;}
