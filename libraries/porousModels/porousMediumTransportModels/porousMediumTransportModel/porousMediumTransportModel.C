@@ -61,4 +61,14 @@ Foam::porousMediumTransportModel::porousMediumTransportModel
 {
 }
 
+Foam::wordList Foam::porousMediumTransportModel::speciesNames(Foam::word porousRegion)
+{
+    wordList speciesNamesList = wordList(speciesNames_);
+    forAll(speciesNamesList, wordi)
+    {
+        speciesNamesList[wordi] += porousRegion;
+    }
+    return speciesNamesList;
+}
+
 // ************************************************************************* //

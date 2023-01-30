@@ -58,7 +58,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
     forAll(speciesNames, speciesi)
     {
 
-        Info<< nl << "*** Specie " << speciesNames[speciesi] << " ***" << endl;
+        Info<< nl << "******** Specie " << speciesNames[speciesi] << porousRegion << " ********" << endl;
 
         dictionary specieDict(dict.optionalSubDict(speciesNames[speciesi]));
         specieDict = specieDict.optionalSubDict(porousRegion);
