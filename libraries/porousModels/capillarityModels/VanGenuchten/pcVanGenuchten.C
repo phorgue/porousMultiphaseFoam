@@ -106,6 +106,12 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m" << porousRegion << "=0 in pcVanGenuchten" << abort(FatalError);
     Info << "Van Genuchten parameters for capillary pressure model" << nl << "{" << endl;
+    Info <<  "    " << Sname << porousRegion << "min" << " ";
+    if (Smin_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smin_).value() << endl;}
+    Info << "    " << Sname << porousRegion << "max" << " ";
+    if (Smax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smax_).value() << endl;}
     Info << "    m" << porousRegion << " ";
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
@@ -115,12 +121,6 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     Info << "    alpha" << porousRegion << " ";
     if (alpha_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(alpha_).value() << endl;}
-    Info <<  "    Smin" << porousRegion << " ";
-    if (Smin_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smin_).value() << endl;}
-    Info << "    Smax" << porousRegion << " ";
-    if (Smax_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smax_).value() << endl;}
     Info << "} \n" << endl;
     
 }

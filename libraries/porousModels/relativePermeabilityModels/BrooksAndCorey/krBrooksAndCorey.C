@@ -114,15 +114,15 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
     dimensionedScalar Smax = krBrooksAndCoreyCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
     if (Smax.value() < 1) Smax_ = Smax;
     Info << "Brooks and Corey parameters for relative permeability model" << nl << "{" << endl;
-    Info << "    n" << porousRegion << " ";
-    if (n_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(n_).value() << endl;}
-    Info << "    Smax" << porousRegion << " ";
-    if (Smax_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Smax_).value() << endl;}
-    Info <<  "    Smin" << porousRegion << " ";
+     Info <<  "    " << Sname << porousRegion << "min" << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
+    Info << "    " << Sname << porousRegion << "max" << " ";
+    if (Smax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smax_).value() << endl;}
+   Info << "    n" << porousRegion << " ";
+    if (n_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(n_).value() << endl;}
     Info << "    kramax" << porousRegion << " ";
     if (kramax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(kramax_).value() << endl;}

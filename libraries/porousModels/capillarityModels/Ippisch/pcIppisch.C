@@ -120,7 +120,12 @@ Foam::capillarityModels::pcIppisch::pcIppisch
     if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m"<< porousRegion << "=0 in pcIppisch" << abort(FatalError);
     Info << "Ippisch parameters for capillary pressure model" << nl << "{" << endl;
-    Info << "    m" << porousRegion << " ";
+    Info <<  "    " << Sname << porousRegion << "min" << " ";
+    if (Smin_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smin_).value() << endl;}
+    Info << "    " << Sname << porousRegion << "max" << " ";
+    if (Smax_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Smax_).value() << endl;}
     if (m_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(m_).value() << endl;}
     Info <<  "    n" << porousRegion << " ";
