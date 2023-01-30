@@ -137,6 +137,9 @@ public:
     //- Return transport properties
     const dictionary& transportProperties() const {return transportProperties_;}
 
+    //- Return species names (adding option porous region name)
+    wordList speciesNames(word porousRegion="");
+
     //- Return porousMediumModel
     const porousMediumModel& pmModel() const {return pmModel_;}
 
