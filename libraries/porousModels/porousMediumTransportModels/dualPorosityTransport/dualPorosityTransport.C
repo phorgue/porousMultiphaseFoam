@@ -61,7 +61,7 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
     dualPorosityTransportCoeffs_(transportProperties_.subDict("dualPorosityCoeffs")),
     matrixComposition_(
         transportProperties_,
-        wordList(transportProperties_.lookupOrDefault("species", wordList(1, "C"))),
+        speciesNames("Matrix"),
         pmModel.mesh(),
         word::null,
         pmModel.eps(),
