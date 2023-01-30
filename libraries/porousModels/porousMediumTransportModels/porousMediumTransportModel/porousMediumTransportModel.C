@@ -41,10 +41,12 @@ defineRunTimeSelectionTable(porousMediumTransportModel, dictionary);
 
 Foam::porousMediumTransportModel::porousMediumTransportModel
 (
+    const word& phaseName,
     const porousMediumModel& pmModel
 )
     :
     transportProperties_(pmModel.transportProperties()),
+    phaseName_(phaseName),
     speciesNames_(transportProperties_.lookupOrDefault("species", wordList(1, "C"))),
     pmModel_(pmModel),
     composition_(

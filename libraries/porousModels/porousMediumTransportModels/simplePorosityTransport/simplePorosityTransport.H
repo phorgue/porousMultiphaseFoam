@@ -81,6 +81,7 @@ public:
     //- Construct from components
     simplePorosityTransport
     (
+        const word& phaseName,
         const porousMediumModel& pmModel
     );
 
