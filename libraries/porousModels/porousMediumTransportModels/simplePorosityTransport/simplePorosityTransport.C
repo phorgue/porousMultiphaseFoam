@@ -53,10 +53,11 @@ addToRunTimeSelectionTable
 
 Foam::porousMediumTransportModels::simplePorosityTransport::simplePorosityTransport
 (
+    const word& phaseName,
     const porousMediumModel& pmModel
 )
     :
-    porousMediumTransportModel(pmModel)
+    porousMediumTransportModel(phaseName, pmModel)
 {}
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //

@@ -74,6 +74,8 @@ class dualPorosityTransport
 
     //- Fracture/matrix echange coefficent
     const volScalarField alphaS_;
+    //- Fracture/matrix fields for tracer-water transfers
+    volScalarField exchangeTermFromFracture_, exchangeTermFromMatrix_;
 
     //- Reference to required fields
     const volVectorField& UMatrix_;
@@ -96,6 +98,7 @@ public:
     //- Construct from components
     dualPorosityTransport
     (
+        const word& phaseName,
         const porousMediumModel& pmModel
     );
 

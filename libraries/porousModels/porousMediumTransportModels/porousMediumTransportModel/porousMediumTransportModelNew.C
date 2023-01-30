@@ -33,6 +33,7 @@ License
 
 Foam::autoPtr<Foam::porousMediumTransportModel> Foam::porousMediumTransportModel::New
 (
+    const word& phaseName,
     const porousMediumModel& pmModel
 )
 {
@@ -55,7 +56,7 @@ Foam::autoPtr<Foam::porousMediumTransportModel> Foam::porousMediumTransportModel
     }
 
     return autoPtr<porousMediumTransportModel>
-        (cstrIter()( pmModel));
+        (cstrIter()(phaseName, pmModel));
 }
 
 

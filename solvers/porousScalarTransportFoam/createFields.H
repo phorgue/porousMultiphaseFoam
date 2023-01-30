@@ -15,17 +15,6 @@ IOdictionary transportProperties
     )
 );
 
-//- list that receives event files for active event-based boundary conditions
-List<patchEventFile*> patchEventList;
-eventFlux::setEventFileRegistry(&patchEventList, "C");
-
-porousMediumModel pmModel(mesh, transportProperties, "");
-pmModel.check_eps();
-const volScalarField& eps = pmModel.eps();
-autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New(pmModel);
-multiscalarMixture& composition = pmTransportModel->composition();
-List<sourceEventFile*>& tracerSourceEventList = pmTransportModel->sourceEventList();
-
 ///////////////////////////////////////////////////////////////////
 ///////////////////// VELOCITY - FLUXES ///////////////////////////
 ///////////////////////////////////////////////////////////////////
@@ -35,6 +24,18 @@ word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDe
 autoPtr<fluidPhase> phase = fluidPhase::New(mesh, transportProperties, phaseName);
 volVectorField& Utheta = phase->U();
 surfaceScalarField& phi = phase->phi();
+
+//- list that receives event files for active event-based boundary conditions
+List<patchEventFile*> patchEventList;
+eventFlux::setEventFileRegistry(&patchEventList, "C");
+
+porousMediumModel pmModel(mesh, transportProperties, "");
+pmModel.check_eps();
+const volScalarField& eps = pmModel.eps();
+autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New(phaseName, pmModel);
+multiscalarMixture& composition = pmTransportModel->composition();
+List<sourceEventFile*>& tracerSourceEventList = pmTransportModel->sourceEventList();
+
 
 ///////////////////////////////////////////////////////////////////
 ////////////////////// POTENTIAL-SATURATION ///////////////////////
