@@ -71,6 +71,9 @@ protected:
     //- Reference to the main dictionary
     const IOdictionary& transportProperties_;
 
+    //- Name of the saturation field for transported species
+    word phaseName_;
+
     //- List of the transported species
     wordList speciesNames_;
 
@@ -101,9 +104,10 @@ public:
         porousMediumTransportModel,
         dictionary,
         (
+            const word& phaseName,
             const porousMediumModel& pmModel
         ),
-        (pmModel)
+        (phaseName, pmModel)
     );
 
     // Selectors
@@ -111,6 +115,7 @@ public:
     //- Return a reference to the selected porousMedium model
     static autoPtr<porousMediumTransportModel> New
     (
+        const word& phaseName,
         const porousMediumModel& pmModel
     );
 
@@ -119,6 +124,7 @@ public:
     //- Construct from components
     porousMediumTransportModel
     (
+        const word& phaseName,
         const porousMediumModel& pmModel
     );
 
