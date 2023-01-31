@@ -76,7 +76,7 @@ class dualPorosity
     volScalarField Kmatrix_;
     surfaceScalarField Kmatrixf_;
     volScalarField Kexchange_;
-    volScalarField  geomFactor_;
+    dimensionedScalar a_, beta_, gammaW_, geomFactor_;
     volVectorField UMatrix_;
     surfaceScalarField LMatrixf_;
     surfaceScalarField MMatrixf_;
