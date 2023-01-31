@@ -130,19 +130,10 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         mesh,
         dimensionedScalar(dimArea, dualPorosityCoeffs_.get<scalar>("Kexchange"))
     ),
-    geomFactor_
-    (
-        IOobject
-        (
-            "geomFactor",
-            mesh.time().constant(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar(dimless/dimArea, dualPorosityCoeffs_.get<scalar>("geomFactor"))
-    ),
+    a_(dimensionedScalar(dimLength, dualPorosityCoeffs_.get<scalar>("a"))),
+    beta_(dimensionedScalar(dimless, dualPorosityCoeffs_.get<scalar>("beta"))),
+    gammaW_(dimensionedScalar(dimless, dualPorosityCoeffs_.get<scalar>("gammaW"))),
+    geomFactor_(beta_/(a_*a_)*gammaW_),
     UMatrix_
     (
         IOobject
@@ -171,6 +162,17 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         linearInterpolate(UMatrix_) & mesh.Sf()
     )
 {
+    Info << "Dual porosity parameters for water flow " << nl << "{" << endl;
+    Info << "    a " << a_.value() << endl;
+    Info << "    beta " << beta_.value() << endl;
+    Info << "    gammaW " << gammaW_.value() << endl;
+    Info << "    Kmatrix ";
+    if (Kmatrix_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Kmatrix_).value() << endl;}
+    Info << "    Kexchange ";
+    if (Kexchange_.headerOk()) { Info << "read file" << endl;}
+    else {Info << average(Kexchange_).value() << endl;}
+    Info << "} \n" << endl;
     sourceTerm_.writeOpt(IOobject::AUTO_WRITE);
     matrixPcModel_ = capillarityModel::New(mesh, transportProperties, SnameMatrix_, "Matrix");
     matrixKrModel_ = relativePermeabilityModel::New(mesh, transportProperties, SnameMatrix_, "Matrix");
@@ -249,7 +251,7 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
     if (steady) hMatrix_.relax();
 
     //- compute source term using update hMatrix field
-    exchangeTerm_ = (alphaW) * (hFracture - hMatrix_);
+    exchangeTerm_ = alphaW* (hFracture - hMatrix_);
 
     Info  << "delta(hMatrix) = " << gMax((hMatrix_-hMatrix_.prevIter())().internalField()) << endl;
     //- update properties using new solution
