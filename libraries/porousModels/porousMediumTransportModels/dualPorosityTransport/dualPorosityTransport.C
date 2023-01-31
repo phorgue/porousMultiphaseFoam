@@ -70,29 +70,15 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
         dimless,
         "Matrix"
     ),
-    alphaS_
-    (
-        IOobject
-        (
-            "alphaS",
-             pmModel.mesh().time().constant(),
-             pmModel.mesh(),
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        pmModel.mesh(),
-        dimensionedScalar(dimless/dimTime, dualPorosityTransportCoeffs_.getOrDefault<scalar>("alphaS", 0))
-    ),
+    a_(dimensionedScalar(dimLength, dualPorosityTransportCoeffs_.get<scalar>("a"))),
+    beta_(dimensionedScalar(dimless, dualPorosityTransportCoeffs_.get<scalar>("beta"))),
+    alphaS_(matrixComposition_.Dm(0)*beta_/(a_*a_)),
     exchangeTermFromFracture_("exchangeTermFromFracture", pmModel_.exchangeTerm()),
     exchangeTermFromMatrix_("exchangeTermFromMatrix", pmModel_.exchangeTerm()),
     UMatrix_(transportProperties_.db().lookupObject<volVectorField>("U"+phaseName_+"Matrix")),
     phiMatrix_(transportProperties_.db().lookupObject<surfaceScalarField>("phiMatrix")),
     thetaMatrix_(transportProperties_.db().lookupObject<volScalarField>(phaseName_+"Matrix"))
 {
-    if (gMax(alphaS_) == 0)
-    {
-        FatalErrorIn("dualPorosityTransport.C") << "Exchange coefficient alphaS should be specified as field or as scalar in dualPorosity dictionary" << abort(FatalError);
-    }
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //

@@ -26,8 +26,10 @@ phase.theta
 porousMediumModel dualPorosity;
 
 dualPorosityCoeffs
-{   
-    geomFactor 12000;
+{
+    a 0.01;
+    beta 3;
+    gammaW 0.4;
     Kmatrix 1.1798e-14; // 1 cm/day
     Kexchange 1.17982e-16; // 0.01 cm/day
 }
