@@ -73,7 +73,7 @@ class dualPorosityTransport
     multiscalarMixture matrixComposition_;
 
     //- Fracture/matrix echange coefficent
-    dimensionedScalar a_, beta_, alphaS_;
+    dimensionedScalar a_, beta_, gammaW_, alphaS_;
 
     //- Fracture/matrix fields for tracer-water transfers
     volScalarField exchangeTermFromFracture_, exchangeTermFromMatrix_;
