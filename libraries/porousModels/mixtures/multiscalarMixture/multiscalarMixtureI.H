@@ -225,6 +225,10 @@ inline void Foam::multiscalarMixture::correct
     }
 }
 
+inline const Foam::dimensionedScalar& Foam::multiscalarMixture::Dm(const label speciesi) const
+{
+    return dispersionModels_[speciesi].Dm();
+}
 
 inline const Foam::volTensorField& Foam::multiscalarMixture::Deff(const label speciesi) const
 {

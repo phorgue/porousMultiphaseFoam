@@ -112,6 +112,9 @@ public:
         const EpsType& eps
     );
 
+    //-  Molar diffusivity [m^2/s]
+    inline const dimensionedScalar& Dm(const label speciesi) const;
+
     //- Effective diffusivity [m^2/s]
     inline const volTensorField& Deff(const label speciesi) const;
 
