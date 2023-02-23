@@ -1,6 +1,6 @@
 ************************
-*** PMF v2301.1
-*** Dual porosity model (flow only)
+*** PMF v2301.2
+*** Dual porosity model
 ************************
 
 ### Bug fix
@@ -14,6 +14,12 @@
 - All solvers display current version of PMF.
 
 - Global reorganization of libraries for dual porosity developements.
+
+- To handle scalar transport in simple/dual porosity models, CEqn.H has been
+  moved in porousMediumTransportModel classes (and removed from solver). The
+  transport equation is solved as for example:
+
+  pmTransportModel->solveTransport(Utheta, phi, theta);
 
 ### Libraries
 
@@ -31,8 +37,21 @@
 
 - dualPorosity
 
-  - porousMedium class for dual porosity model (fractureMatrix)
+  - porousMedium class for dual porosity model (with Fracture and Matrix)
 
+- porousMediumTransportModel
+
+  - new  class for handling simple/dual porosity model (transport)
+
+- simplePorosityTransport
+
+  - porousMedium class for scalar transport in one porosity model
+
+- dualPorosityTransport
+
+  - porousMedium class for scalar transport in dual porosity model
+  (witt Fracture and Matrix)
+  
 - relativePermeability/capillarity:
 
   - Smin/Smax are common to all kr/pc model and included in general abstract. As
