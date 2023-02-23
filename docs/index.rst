@@ -1,6 +1,9 @@
 .. _index:
 
-Welcome to the porousMultiphaseFoam wiki!
+porousMultiphaseFoam Documentation
+==================================
+
+Welcome to the porousMultiphaseFoam documentation.
 
 .. toctree::
    :maxdepth: 2
@@ -8,3 +11,4 @@ Welcome to the porousMultiphaseFoam wiki!
    solvers
    utilities
    libraries
+   publications
