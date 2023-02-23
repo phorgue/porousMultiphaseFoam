@@ -9,3 +9,4 @@ linux64GccDPInt32Debug/
 lnInclude/
 darwin*
 *.bak
+docs/build
