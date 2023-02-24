@@ -18,8 +18,8 @@ forAll(sourceEventList,sourceEventi)
 }
 
 //- Water Source event (injection/extraction)
-bool waterSourceEventIsPresent = transportProperties.found("eventFileWaterSource");
-word waterSourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
+bool waterSourceEventIsPresent = transportProperties.found("sourceEventFileWaterSource");
+word waterSourceEventFileName = transportProperties.lookupOrDefault<word>("sourceEventFileWater","");
 sourceEventFile waterSourceEvent(waterSourceEventFileName);
 if (waterSourceEventIsPresent)
 {
@@ -29,8 +29,6 @@ if (waterSourceEventIsPresent)
     waterSourceEvent.updateValue(runTime);
     waterSourceEvent.storeOldValues();
 }
-
-
 
 
 //- Updating infiltration value using event file
@@ -67,8 +65,8 @@ forAll(patchEventList,patchEventi)
 }
 
 //- Output event reading
-bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
-word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+bool outputEventIsPresent = runTime.controlDict().found("outputEventFile");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
 outputEventFile outputEvent(outputEventFileName);
 if (outputEventIsPresent)
 {

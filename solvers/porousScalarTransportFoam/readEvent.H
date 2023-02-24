@@ -12,8 +12,8 @@ forAll(patchEventList,patchEventi)
     patchEventList[patchEventi]->storeOldValues();
 }
 
-bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
-word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+bool outputEventIsPresent = runTime.controlDict().found("outputEventFile");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
 outputEventFile outputEvent(outputEventFileName);
 if (outputEventIsPresent)
 {

@@ -1,8 +1,6 @@
-
 ////////////////////////////////////////////////////////
 ////////////////// INFILTRATION EVENT //////////////////
 ////////////////////////////////////////////////////////
-
 bool infiltrationEventIsPresent = transportProperties.found("eventFileInfiltration");
 word infiltrationEventFileName = transportProperties.lookupOrDefault<word>("eventFileInfiltration","");
 infiltrationEventFile infiltrationEvent(infiltrationEventFileName);
@@ -48,8 +46,8 @@ if (infiltrationEventIsPresent)
 //////////////////// SOURCE EVENT ////////////////////
 //////////////////////////////////////////////////////
 
-bool waterSourceEventIsPresent = transportProperties.found("eventFileWaterSource");
-word waterSourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
+bool waterSourceEventIsPresent = transportProperties.found("sourceEventFileWater");
+word waterSourceEventFileName = transportProperties.lookupOrDefault<word>("sourceEventFileWater","");
 sourceEventFile waterSourceEvent(waterSourceEventFileName);
 if (waterSourceEventIsPresent)
 {
@@ -64,8 +62,8 @@ if (waterSourceEventIsPresent)
 //////////////////// OUTPUT EVENT ////////////////////
 //////////////////////////////////////////////////////
 
-bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
-word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+bool outputEventIsPresent = runTime.controlDict().found("outputEventFile");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
 outputEventFile outputEvent(outputEventFileName);
 if (outputEventIsPresent)
 {

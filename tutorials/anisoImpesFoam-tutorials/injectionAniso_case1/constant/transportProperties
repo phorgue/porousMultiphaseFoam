@@ -52,6 +52,6 @@ BrooksAndCoreyCoeffs
     Sbmax 0.999;
 }
 
-eventFileWaterSource "injection.evt";
+sourceEventFileWater "injection.evt";
 
 // ************************************************************************* //

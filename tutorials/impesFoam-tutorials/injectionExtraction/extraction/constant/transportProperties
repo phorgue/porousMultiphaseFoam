@@ -53,6 +53,6 @@ BrooksAndCoreyCoeffs
     Sbmax Sbmax 0.999;
 }
 
-eventFileWaterSource "extraction.evt";
+sourceEventFileWater "extraction.evt";
 
 // ************************************************************************* //
