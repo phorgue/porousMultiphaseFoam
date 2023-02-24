@@ -6,12 +6,16 @@ groundwaterTransportFoam solver
 Description
 -----------
 
-This solver is a merge between :ref:`groundwaterFoam` and :ref:`porousScalarTransportFoam` (see dedicated wiki pages for details)
+This solver is a merge between :ref:`groundwaterFoam` and :ref:`porousScalarTransportFoam` (see dedicated pages for details)
 
 At each time iteration, it solves
 
     - the Richards' equation for the water flow
     - passive scalar transport equation for the species
+
+Multiple time-dependent water injection source points can be specified using the keyword *sourceEventFileWater* in **constant/transportProperties** (see :ref:`sourceEventFile`).
+
+Multiple time-dependent tracer injection source points can be specified using the keyword *sourceEventFileTracer* in **constant/transportProperties** (see :ref:`sourceEventFile`).
 
 Configuration files
 -------------------
@@ -62,8 +66,8 @@ Configuration files
         alphaT alphaT [0 1 0 0 0 0 0] 0.002; // transverse dispersivity
     }
 
-    eventFileTracerSource injection.dat; // to specify event file for tracer source term
-    eventFileWaterSource water_injection.dat; // to specify event file for water source term
+    sourceEventFileTracer injection.dat; // to specify event file for tracer source term
+    sourceEventFileWater water_injection.dat; // to specify event file for water source term
 
 **system/controlDict :**
 

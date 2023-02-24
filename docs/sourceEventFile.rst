@@ -34,13 +34,13 @@ To use source event file, you should specify the file in **transportProperties**
 
 .. code::
 
-    eventFileWaterSource "path/to/the/eventFile";
+    sourceEventFileWater "path/to/the/eventFile";
 
 if considering a *flow rate source* and 
 
 .. code::
 
-    eventFileTracerSource "path/to/the/eventFile";
+    sourceEventFileTracer "path/to/the/eventFile";
 
 if considering a *tracer source*.
 

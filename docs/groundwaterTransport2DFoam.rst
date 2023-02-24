@@ -7,12 +7,16 @@ groundwaterTransport2DFoam solver
 Description
 -----------
 
-This solver is a merge between :ref:`groundwater2DFoam` and :ref:`porousScalarTransport2DFoam` (see dedicated wiki pages for details).
+This solver is a merge between :ref:`groundwater2DFoam` and :ref:`porousScalarTransport2DFoam` (see dedicated documentation pages for details).
 
 At each time iteration, it solves
 
     - the free-surface flow equation in porous media
     - passive scalar transport equation for the species
+
+Time-dependent infiltration can be specified using the keyword *infiltrationEventFile* in **constant/transportProperties** (see :ref:`infiltrationEventFile`).
+
+Multiple time-dependent tracer injection source points can be specified using the keyword *sourceEventFileTracer* in **constant/transportProperties** (see :ref:`sourceEventFile`).
 
 Configuration files
 -------------------
@@ -28,7 +32,7 @@ Configuration files
 
     infiltration infiltration [0 1 -1 0 0 0 0] -5e-9; // constant uniform infiltration velocity
 
-    eventFileInfiltration "infiltrationOverTime.dat"; // to specify time-varying infiltration (uniform or non-uniform)
+    infiltrationEventFile "infiltrationOverTime.dat"; // to specify time-varying infiltration (uniform or non-uniform)
 
     seepage yes; // Seepage activation (requires constant/potentialDEM field)
 
@@ -61,7 +65,7 @@ Configuration files
         alphaT alphaT [0 1 0 0 0 0 0] 0.002; // transverse dispersivity
     }
 
-    eventFileTracerSource injection.dat; // to specify event file for time-dependent source term
+    sourceEventFileTracer injection.dat; // to specify event file for time-dependent source term
 
 **system/controlDict :**
 
@@ -72,7 +76,7 @@ Configuration files
     //- for Scalar transport time step control
     truncationError 0.001; // global truncation error used to manage time-step
     truncationError_potential 0.001; // (optional) potential only truncation error used to manage time-step
-    truncationError_C 0.001; // (optional) tracer only truncation error used to manage time-step
+    truncationkError_C 0.001; // (optional) tracer only truncation error used to manage time-step
 
     CSVoutput       true; // active the CmassBalance.csv output
 

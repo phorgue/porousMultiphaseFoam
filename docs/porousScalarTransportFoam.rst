@@ -6,9 +6,14 @@ porousScalarTransportFoam solver
 Description
 -----------
 
-Solves the transport equation for a passive scalar in porous media with dispersion coefficient model.
+Solves the transport equation for a passive scalar in porous media with dispersion and retard coefficient model.
+
+Multiple time-dependent injection source points can be specificied using the keyword *sourceEventFileTracer* in **constant/transportProperties** (see :ref:`sourceEventFile`).
 
 The transport is implicitly solved using a pre-computed flux **phi** or velocity **U** and optional water content **theta** or saturation **S**
+
+Time step is managed using an estimation of the time truncation error of the scalar variation.
+
 
 Configuration files
 -------------------
@@ -41,7 +46,7 @@ Example for one specie transport (or multi-species with similar properties):
     alphaT alphaT [0 1 0 0 0 0 0] 0.002; // transverse dispersivity
   }
 
-  eventFileTracerSource injection.dat; // to specify event file for time-dependent source term
+  sourceEventFileTracer injection.dat; // to specify event file for time-dependent source term
 
 Example for multi-species transport (C1/C2 species) :
 

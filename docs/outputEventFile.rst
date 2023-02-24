@@ -27,7 +27,7 @@ To use output event file, you should specify the file in **controlDict** as
 
 .. code::
 
-    eventFileOutput "path/to/the/eventFile";
+    outputEventFile "path/to/the/eventFile";
 
 Restrictions
 ------------
