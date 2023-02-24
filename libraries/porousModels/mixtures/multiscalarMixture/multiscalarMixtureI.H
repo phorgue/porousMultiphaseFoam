@@ -121,9 +121,9 @@ inline Foam::multiscalarMixture::multiscalarMixture
         const dimensionSet dimSourceTerm = Y(speciesi).dimensions()*sourceTermDimFactor/dimTime;
 
         //- read source event if present
-        if(specieDict.found("eventFileTracerSource"))
+        if(specieDict.found("sourceEventFileTracer"))
         {
-            word sourceEventFileName = specieDict.getOrDefault<word>("eventFileTracerSource","");
+            word sourceEventFileName = specieDict.getOrDefault<word>("sourceEventFileTracer","");
             sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
 
             const word& dtFieldName = 
@@ -140,7 +140,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
             else
             {
                 FatalErrorIn("multiscalarMixtureI.H")
-                    << "eventFileTracerSource used with an incompatible solver"
+                    << "sourceEventFileTracer used with an incompatible solver"
                     << abort(FatalError);
             }
 
