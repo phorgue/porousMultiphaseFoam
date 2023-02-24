@@ -55,6 +55,6 @@ alphaDispersionCoeffs
     alphaT alphaT [0 1 0 0 0 0 0] 0.002;
 }
 
-eventFileTracerSource "Cinjection.evt";
+sourceEventFileTracer "Cinjection.evt";
 
 // ************************************************************************* //

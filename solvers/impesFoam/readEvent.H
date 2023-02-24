@@ -1,5 +1,5 @@
-bool sourceEventIsPresent = transportProperties.found("eventFileWaterSource");
-word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
+bool sourceEventIsPresent = transportProperties.found("sourceEventFileWater");
+word sourceEventFileName = transportProperties.lookupOrDefault<word>("sourceEventFileWater","");
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)
 {
@@ -18,8 +18,8 @@ forAll(patchEventList,patchEventi)
     patchEventList[patchEventi]->storeOldValues();
 }
 
-bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
-word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+bool outputEventIsPresent = runTime.controlDict().found("outputEventFile");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
 outputEventFile outputEvent(outputEventFileName);
 if (outputEventIsPresent)
 {

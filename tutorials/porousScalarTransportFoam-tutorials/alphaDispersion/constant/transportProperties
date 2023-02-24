@@ -43,6 +43,6 @@ alphaDispersionCoeffs
     alphaT alphaT [0 1 0 0 0 0 0] 0.002;
 }
 
-eventFileTracerSource injection.evt;
+sourceEventFileTracer injection.evt;
 
 // ************************************************************************* //
