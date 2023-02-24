@@ -31,12 +31,12 @@ Publications using derived not open-source versions
 - `Assessment of solute transfer between static and dynamic water during percolation through a solid leach bed in dry batch anaerobic digestion processes <https://link.springer.com/article/10.1007/s12649-017-0011-1>`_
   A Shewani, P Horgue, S Pommier, G Debenest, X Lefebvre, S Decremps, E. Paul
   *Waste and Biomass Valorization 9, 2081-2089*, **2017**
-  
+
 - `Assessment of percolation through a solid leach bed in dry batch anaerobic digestion processes <https://www.sciencedirect.com/science/article/pii/S0960852414014291>`_
   A Shewani, P Horgue, S Pommier, G Debenest, X Lefebvre, E Gandon, E Paul
   *Bioresource technology 178, 209-216*, **2015**
 
-  
+
 Not peer-reviewed documents
 ---------------------------
 
