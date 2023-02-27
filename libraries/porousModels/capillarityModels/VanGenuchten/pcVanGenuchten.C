@@ -57,8 +57,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
     const word porousRegion
 )
     :
-    capillarityModel(mesh, transportProperties, Sname),
-    pcVanGenuchtenCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    capillarityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
     m_
     (
         IOobject
@@ -70,7 +69,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, pcVanGenuchtenCoeffs_.getOrDefault<scalar>("m"+porousRegion, 0))
+        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("m"+porousRegion, 0))
     ),
     n_(1/(1-m_)),
     alpha_ // necessary for Richards solver
@@ -84,7 +83,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, pcVanGenuchtenCoeffs_.getOrDefault<scalar>("alpha"+porousRegion, 0))
+        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("alpha"+porousRegion, 0))
     ),
     pc0_
     (
@@ -97,15 +96,11 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcVanGenuchtenCoeffs_.getOrDefault<scalar>("pc0"+porousRegion,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.getOrDefault<scalar>("pc0"+porousRegion,0))
     )
 {
-    dimensionedScalar Smin = pcVanGenuchtenCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
-    if (Smin.value() > 0) Smin_ = Smin;
-    dimensionedScalar Smax = pcVanGenuchtenCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
-    if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m" << porousRegion << "=0 in pcVanGenuchten" << abort(FatalError);
-    Info << "Van Genuchten parameters for capillary pressure model" << nl << "{" << endl;
+    Info << "Van Genuchten parameters for capillarity pressure model" << nl << "{" << endl;
     Info <<  "    " << Sname << porousRegion << "min" << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
