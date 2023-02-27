@@ -56,7 +56,6 @@ class krBrooksAndCorey
 :
     public relativePermeabilityModel
 {
-    const dictionary& krBrooksAndCoreyCoeffs_;
     volScalarField n_;
 
     //- end points

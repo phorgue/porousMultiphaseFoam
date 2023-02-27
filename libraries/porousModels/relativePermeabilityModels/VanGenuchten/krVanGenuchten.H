@@ -57,7 +57,6 @@ class krVanGenuchten
     public relativePermeabilityModel
 {
     //- Van Genuchten coefficients
-    const dictionary& krVanGenuchtenCoeffs_;
     volScalarField m_;
 
     //- end points
