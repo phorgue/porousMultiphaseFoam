@@ -69,7 +69,6 @@ class dualPorosity
     const autoPtr<incompressiblePhase>& phase_;
 
     //- flow field
-    const word SnameMatrix_;
     const uniformDimensionedVectorField g;
     volScalarField hMatrix_;
     volScalarField Smatrix_;

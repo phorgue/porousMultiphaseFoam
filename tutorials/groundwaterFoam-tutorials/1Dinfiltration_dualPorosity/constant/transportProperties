@@ -41,8 +41,8 @@ capillarityModel	VanGenuchten;
 VanGenuchtenCoeffs
 {
     //- fracture properties
-    thetamin 0;
-    thetamax 0.025;
+    thetaFracturemin 0;
+    thetaFracturemax 0.025;
     alphaFracture 5.0; 
     mFracture 0.5;
     //- matrix properties
