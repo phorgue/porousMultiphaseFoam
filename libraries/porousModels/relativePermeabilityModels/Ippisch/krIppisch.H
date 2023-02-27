@@ -56,8 +56,7 @@ class krIppisch
 :
     public relativePermeabilityModel
 {
-    //- Van Genuchten coefficients
-    const dictionary& krIppischCoeffs_;
+    //- Ippisch coefficients
     volScalarField m_,n_,alpha_,tau_,he_;
 
     //- cut-off point saturation (computed with entry pressure)

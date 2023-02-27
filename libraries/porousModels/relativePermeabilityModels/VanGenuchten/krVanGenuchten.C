@@ -57,8 +57,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
     const word porousRegion
 )
     :
-    relativePermeabilityModel(mesh, transportProperties, Sname, porousRegion),
-    krVanGenuchtenCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    relativePermeabilityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
     m_
     (
         IOobject
@@ -70,7 +69,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("m"+porousRegion,0))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("m"+porousRegion,0))
     ),
     kramax_
     (
@@ -83,7 +82,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
     ),
     krbmax_
     (
@@ -96,7 +95,7 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krVanGenuchtenCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
     )
 {
     if (gMin(m_) <= 0)
@@ -109,10 +108,6 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
                 << nl << "m" + porousRegion << " is required"
                 << exit(FatalError);
     }
-    dimensionedScalar Smin = krVanGenuchtenCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
-    if (Smin.value() > 0) Smin_ = Smin;
-    dimensionedScalar Smax = krVanGenuchtenCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
-    if (Smax.value() < 1) Smax_ = Smax;
     Info << "Van Genuchten parameters for relative permeability model" << nl << "{" << endl;
     Info <<  "    " << Sname << porousRegion << "min" << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
