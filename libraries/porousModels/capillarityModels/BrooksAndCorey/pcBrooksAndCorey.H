@@ -29,7 +29,7 @@ Class
     Foam::capillarityModels::pcBrooksAndCorey
 
 Description
-    Standard Brooks and Corey capillary pressure model.
+    Standard Brooks and Corey capillarity pressure model.
 
 SourceFiles
     pcBrooksAndCorey.C
@@ -57,7 +57,6 @@ class pcBrooksAndCorey
     public capillarityModel
 {
     // pcBrooks and Corey coefficients
-    dictionary pcBrooksAndCoreyCoeffs_;
     volScalarField pc0_;
     volScalarField hd_;
     volScalarField alpha_;
@@ -84,7 +83,7 @@ public:
 
     // Member Functions
 
-    //- Correct the capillary pressure
+    //- Correct the capillarity pressure
     void correct(const volScalarField& Sb)
         {
             Se_ = (Sb-Smin_)/(Smax_ - Smin_);
@@ -92,13 +91,13 @@ public:
             dpcdS_= -alpha_*pc0_*(pow(Se_+VSMALL,-alpha_-1))/(Smax_-Smin_);
         }
 
-    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    //- Compute capillarity capacity from head pressure and return moisture (Richards' model)
     tmp<volScalarField> correctAndSb(volScalarField& h)
         {
             if (gMax(hd_) == 0)
             {
                 FatalErrorIn("pcBrooksAndCorey.H")
-                    << "hd equal to zero in Brooks and Corey capillary pressure model"
+                    << "hd equal to zero in Brooks and Corey capillarity pressure model"
                         << abort(FatalError);
             }
 
@@ -107,7 +106,7 @@ public:
             Se_ = neg(h-hd_) * pow(hd_/(h+VSMALL),alpha_) + pos(h-hd_+VSMALL);
             h.dimensions().reset(dimLength);
 
-            //- Update  capillary capacity
+            //- Update  capillarity capacity
             Ch_.dimensions().reset(dimless);
             Ch_ = neg(h-hd_) * (alpha_ * (Smax_-Smin_) / mag(hd_)) * pow(hd_/(h+VSMALL),alpha_+1) + pos(h-hd_+VSMALL);
             Ch_.dimensions().reset(dimless/dimLength);
@@ -116,13 +115,13 @@ public:
             return Smin_+(Smax_-Smin_)*Se_;
         };
 
-    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    //- Compute capillarity capacity from head pressure and return moisture (Richards' model)
     scalar correctAndSb(volScalarField& h, const label& celli)
         {
             //- Compute saturation from head pressure
             scalar Se = neg(h[celli]-hd_[celli]) * pow(hd_[celli]/(h[celli]+VSMALL),alpha_[celli]) + pos(h[celli]-hd_[celli]+VSMALL);
 
-            //- Update capillary capacity
+            //- Update capillarity capacity
             Ch_[celli] = neg(h[celli]-hd_[celli]) * (alpha_[celli] * (Smax_[celli]-Smin_[celli]) / mag(hd_[celli])) * pow(hd_[celli]/(h[celli]+VSMALL),alpha_[celli]+1) + pos(h[celli]-hd_[celli]+VSMALL);
 
             //- Return moisture value

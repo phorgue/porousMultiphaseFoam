@@ -57,8 +57,7 @@ Foam::capillarityModels::pcLinear::pcLinear
     const word porousRegion
 )
     :
-    capillarityModel(mesh, transportProperties, Sname, porousRegion),
-    pcLinearCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    capillarityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
     pc0_
     (
         IOobject
@@ -70,7 +69,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcLinearCoeffs_.getOrDefault<scalar>("pc0"+porousRegion,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.getOrDefault<scalar>("pc0"+porousRegion,0))
     ),
     pcMax_
     (
@@ -83,14 +82,10 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcLinearCoeffs_.getOrDefault<scalar>("pcMax"+porousRegion,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.getOrDefault<scalar>("pcMax"+porousRegion,0))
     )
 {
-    dimensionedScalar Smin = pcLinearCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
-    if (Smin.value() > 0) Smin_ = Smin;
-    dimensionedScalar Smax = pcLinearCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
-    if (Smax.value() < 1) Smax_ = Smax;
-    Info << "Linear parameters for capillary pressure model" << nl << "{" << endl;
+    Info << "Linear parameters for capillarity pressure model" << nl << "{" << endl;
     Info <<  "    " << Sname << porousRegion << "min" << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
@@ -103,8 +98,7 @@ Foam::capillarityModels::pcLinear::pcLinear
     Info << "    pcMax" << porousRegion << " ";
     if (pcMax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(pcMax_).value() << endl;}
-    Info << "} \n" << endl;
-    
+    Info << "} \n" << endl;   
 }
 
 // ************************************************************************* //

@@ -49,8 +49,8 @@ BrooksAndCoreyCoeffs
     pc0 5;
     alpha 0.2;
     	
-    Sbmin Sbmin 0.001;
-    Sbmax Sbmax 0.999;
+    Sbmin 0.001;
+    Sbmax 0.999;
 }
 
 sourceEventFileWater "extraction.evt";

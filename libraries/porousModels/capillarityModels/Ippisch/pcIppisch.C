@@ -58,7 +58,6 @@ Foam::capillarityModels::pcIppisch::pcIppisch
 )
     :
     capillarityModel(mesh, transportProperties, Sname, porousRegion),
-    pcIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     m_
     (
         IOobject
@@ -70,7 +69,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("m"+porousRegion,0))
+        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("m"+porousRegion,0))
     ),
     n_(1/(1-m_)),
     alpha_
@@ -84,7 +83,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("alpha"+porousRegion,GREAT))
+        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("alpha"+porousRegion,GREAT))
     ),
     tau_
     (
@@ -97,7 +96,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("tau"+porousRegion,1.))
+        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("tau"+porousRegion,1.))
     ),
     he_
     (
@@ -110,16 +109,12 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,pcIppischCoeffs_.getOrDefault<scalar>("he"+porousRegion,1.))
+        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("he"+porousRegion,1.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
-    dimensionedScalar Smin = pcIppischCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
-    if (Smin.value() > 0) Smin_ = Smin;
-    dimensionedScalar Smax = pcIppischCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
-    if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcIppisch::pcIppisch") << "m"<< porousRegion << "=0 in pcIppisch" << abort(FatalError);
-    Info << "Ippisch parameters for capillary pressure model" << nl << "{" << endl;
+    Info << "Ippisch parameters for capillarity pressure model" << nl << "{" << endl;
     Info <<  "    " << Sname << porousRegion << "min" << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}
