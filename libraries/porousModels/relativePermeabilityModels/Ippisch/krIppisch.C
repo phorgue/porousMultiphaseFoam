@@ -57,8 +57,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
     const word porousRegion
 )
     :
-    relativePermeabilityModel(mesh, transportProperties, Sname, porousRegion),
-    krIppischCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    relativePermeabilityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
     m_
     (
         IOobject
@@ -70,7 +69,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("m"+porousRegion,0))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("m"+porousRegion,0))
     ),
     n_(1/(1-m_)),
     alpha_
@@ -84,7 +83,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("alpha"+porousRegion,GREAT))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("alpha"+porousRegion,GREAT))
     ),
     tau_
     (
@@ -97,7 +96,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("tau"+porousRegion,0.5))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("tau"+porousRegion,0.5))
     ),
     he_
     (
@@ -110,7 +109,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krIppischCoeffs_.getOrDefault<scalar>("he"+porousRegion,0.))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("he"+porousRegion,0.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {
@@ -124,10 +123,6 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
                 << nl << "m" + porousRegion << " is required"
                 << exit(FatalError);
     }
-    dimensionedScalar Smin = krIppischCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
-    if (Smin.value() > 0) Smin_ = Smin;
-    dimensionedScalar Smax = krIppischCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
-    if (Smax.value() < 1) Smax_ = Smax;
     Info << "Ippisch-Vogel-Bastian parameters for relative permeability model" << nl << "{" << endl;
     Info <<  "    " << Sname << porousRegion << "min" << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}

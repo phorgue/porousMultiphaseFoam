@@ -66,7 +66,7 @@ protected:
     word Sname_;
 
     // Reference to the dictionary
-    const dictionary& transportProperties_;
+    const dictionary& modelProperties_;
 
     //- relative permeability and derivative for each phase
     volScalarField kra_,krb_;
@@ -97,11 +97,11 @@ public:
         dictionary,
         (
             const fvMesh& mesh,
-            const dictionary& transportProperties,
+            const dictionary& modelProperties,
             const word& Sname,
             const word porousRegion
         ),
-        (mesh, transportProperties, Sname, porousRegion)
+        (mesh, modelProperties, Sname, porousRegion)
     );
 
 
@@ -111,7 +111,7 @@ public:
     static autoPtr<relativePermeabilityModel> New
     (
         const fvMesh& mesh,
-        const dictionary& transportProperties,
+        const dictionary& modelProperties,
         const word& Sname,
         const word porousRegion = ""
     );
@@ -123,7 +123,7 @@ public:
     relativePermeabilityModel
     (
         const fvMesh& mesh,
-        const dictionary& transportProperties,
+        const dictionary& modelProperties,
         const word& Sname,
         const word porousRegion = ""
     );
@@ -140,7 +140,7 @@ public:
     const word& Sname() {return Sname_;}
 
     //- Return the phase transport properties dictionary
-    const dictionary& transportProperties() const {return transportProperties_;}
+    const dictionary& modelProperties() const {return modelProperties_;}
 
     //- Return relative permeabilities for phase a and b
     tmp<volScalarField> kra() const {return kra_;}

@@ -57,8 +57,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
     const word porousRegion
 )
     :
-    relativePermeabilityModel(mesh, transportProperties, Sname, porousRegion),
-    krBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    relativePermeabilityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
     n_
     (
         IOobject
@@ -70,7 +69,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("n"+porousRegion,0))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("n"+porousRegion,0))
     ),
     kramax_
     (
@@ -83,7 +82,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
     ),
     krbmax_
     (
@@ -96,7 +95,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,krBrooksAndCoreyCoeffs_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
+        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("kr"+Sname+"max"+porousRegion,1.0))
     )
 {
     if (gMin(n_) <= 0)
@@ -109,10 +108,6 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
                 << nl << "n" + porousRegion << " is required"
                 << exit(FatalError);
     }
-    dimensionedScalar Smin = krBrooksAndCoreyCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
-    if (Smin.value() > 0) Smin_ = Smin;
-    dimensionedScalar Smax = krBrooksAndCoreyCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
-    if (Smax.value() < 1) Smax_ = Smax;
     Info << "Brooks and Corey parameters for relative permeability model" << nl << "{" << endl;
      Info <<  "    " << Sname << porousRegion << "min" << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
