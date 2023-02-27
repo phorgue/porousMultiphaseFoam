@@ -29,8 +29,8 @@ capillarityModel	Ippisch;
 
 IppischCoeffs
 {   
-    thetamin	thetamin [0 0 0 0 0 0 0] 0.102;
-    thetamax	thetamax [0 0 0 0 0 0 0] 0.368;
+    thetamin 0.102;
+    thetamax 0.368;
     m	0.5;
     alpha 3.35;
     tau     0.4;

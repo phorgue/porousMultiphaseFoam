@@ -29,7 +29,7 @@ Class
     Foam::capillarityModels::linear
 
 Description
-    Standard linear model for capillary pressure
+    Standard linear model for capillarity pressure
 
 SourceFiles
     pcLinear.C
@@ -59,7 +59,6 @@ class pcLinear
     public capillarityModel
 {
     // pcVan Genuchten coefficients
-    dictionary pcLinearCoeffs_;
     volScalarField pc0_;
     volScalarField pcMax_;
 
@@ -93,7 +92,7 @@ public:
             dpcdS_ =  pc0_ - pcMax_;
         }
 
-    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    //- Compute capillarity capacity from head pressure and return moisture (Richards' model)
     tmp<volScalarField> correctAndSb(volScalarField& h)
         {
             FatalErrorIn("volScalarField correctAndSb(volScalarField h) const")
@@ -101,7 +100,7 @@ public:
             return NULL;
         };
 
-    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    //- Compute capillarity capacity from head pressure and return moisture (Richards' model)
     scalar correctAndSb(volScalarField& h, const label& celli)
         {
             FatalErrorIn("scalar correctAndSb(const volScalarField& h, const label& celli)")
