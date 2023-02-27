@@ -29,7 +29,7 @@ Class
     Foam::capillarityModels::VanGenuchten
 
 Description
-    Standard Van Genuchten capillary pressure model
+    Standard Van Genuchten capillarity pressure model
 
 SourceFiles
     pcVanGenuchten.C
@@ -57,7 +57,6 @@ class pcVanGenuchten
     public capillarityModel
 {
     // pcVan Genuchten coefficients
-    dictionary pcVanGenuchtenCoeffs_;
     volScalarField m_,n_,alpha_;
     volScalarField pc0_;
         
@@ -83,7 +82,7 @@ public:
 
     // Member Functions
 
-    //- Correct the capillary pressure
+    //- Correct the capillarity pressure
     void correct(const volScalarField& Sb)
         {
             Se_ = (Sb-Smin_)/(Smax_-Smin_);
@@ -91,7 +90,7 @@ public:
             dpcdS_ = - (1/(n_*m_)) * (pc0_/(Smax_-Smin_)) * pow(pow(Se_+VSMALL,-1/m_)-1,(1/n_)-1) * pow(Se_+VSMALL,-(1+m_)/m_);
         }
 
-    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    //- Compute capillarity capacity from head pressure and return moisture (Richards' model)
     tmp<volScalarField> correctAndSb(volScalarField& h)
         {
             //- Compute Saturation from head pressure
@@ -99,7 +98,7 @@ public:
             Se_ =  neg(h+VSMALL) *pow(1.0+pow(alpha_*mag(h),n_),-m_) + pos(h+VSMALL)*1;
             h.dimensions().reset(dimLength);
 
-            //- Update capillary capacity
+            //- Update capillarity capacity
             Ch_.dimensions().reset(dimless);
             Ch_ = alpha_*m_*(Smax_-Smin_)/(1.0-m_)*pow(Se_,1.0/m_)*pow(1.0-pow(Se_,1.0/m_),m_) ;
             Ch_.dimensions().reset(dimless/dimLength);
@@ -108,13 +107,13 @@ public:
             return Smin_+(Smax_-Smin_)*Se_;
         }
 
-    //- Compute capillary capacity from head pressure and return moisture (Richards' model)
+    //- Compute capillarity capacity from head pressure and return moisture (Richards' model)
     scalar correctAndSb(volScalarField& h, const label& celli)
         {
             //- Compute Saturation from head pressure
             scalar Se =  neg(h[celli]) *pow(1.0+pow(alpha_[celli]*mag(h[celli]),n_[celli]),-m_[celli]) + pos(h[celli]+VSMALL)*(1);
 
-            //- Update capillary capacity
+            //- Update capillarity capacity
             Ch_[celli] = alpha_[celli]*m_[celli]*(Smax_[celli]-Smin_[celli])/(1.0-m_[celli])*pow(Se,1.0/m_[celli])*pow(1.0-pow(Se,1.0/m_[celli]),m_[celli]) ;
 
             //- Return moisture value

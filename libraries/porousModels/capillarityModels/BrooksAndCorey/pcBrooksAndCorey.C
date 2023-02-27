@@ -57,8 +57,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
     const word porousRegion
 )
     :
-    capillarityModel(mesh, transportProperties, Sname, porousRegion),
-    pcBrooksAndCoreyCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
+    capillarityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
     pc0_
     (
         IOobject
@@ -70,7 +69,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("pc0"+porousRegion,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.getOrDefault<scalar>("pc0"+porousRegion,0))
     ),
     hd_
     (
@@ -83,7 +82,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("hd",dimLength,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("hd"+porousRegion,0))
+        dimensionedScalar("hd",dimLength,capillarityProperties_.getOrDefault<scalar>("hd"+porousRegion,0))
     ),
     alpha_
     (
@@ -96,15 +95,11 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("alpha",dimless,pcBrooksAndCoreyCoeffs_.getOrDefault<scalar>("alpha"+porousRegion,0))
+        dimensionedScalar("alpha",dimless,capillarityProperties_.getOrDefault<scalar>("alpha"+porousRegion,0))
     )
 {
-    dimensionedScalar Smin = pcBrooksAndCoreyCoeffs_.getOrDefault(Sname+"min",dimensionedScalar(Sname+"min", dimless, 0));
-    if (Smin.value() > 0) Smin_ = Smin;
-    dimensionedScalar Smax = pcBrooksAndCoreyCoeffs_.getOrDefault(Sname+"max",dimensionedScalar(Sname+"max", dimless, 1));
-    if (Smax.value() < 1) Smax_ = Smax;
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);
-    Info << "Brooks and Corey parameters for capillary pressure model" << nl << "{" << endl;
+    Info << "Brooks and Corey parameters for capillarity pressure model" << nl << "{" << endl;
     Info <<  "    " << Sname << porousRegion << "min" << " ";
     if (Smin_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Smin_).value() << endl;}

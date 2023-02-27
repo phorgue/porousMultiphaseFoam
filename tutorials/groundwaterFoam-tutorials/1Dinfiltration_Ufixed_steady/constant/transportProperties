@@ -29,9 +29,9 @@ capillarityModel	VanGenuchten;
 
 VanGenuchtenCoeffs
 {   
-    thetamin  thetamin [0 0 0 0 0 0 0] $param_thetamin;
-    thetamax thetamax [0 0 0 0 0 0 0] $param_thetamax;
-    m	$param_m;
+    thetamin $param_thetamin;
+    thetamax $param_thetamax;
+    m $param_m;
     alpha $param_alpha;
 }
 
