@@ -43,18 +43,18 @@ defineRunTimeSelectionTable(relativePermeabilityModel, dictionary);
 Foam::relativePermeabilityModel::relativePermeabilityModel
 (
     const fvMesh& mesh,
-    const dictionary& transportProperties,
+    const dictionary& modelProperties,
     const word& Sname,
     const word porousRegion
 )
     :
     Sname_(Sname),
-    transportProperties_(transportProperties),
+    modelProperties_(modelProperties),
     kra_
     (
         IOobject
         (
-            Sname+".kra",
+            Sname+porousRegion+".kra",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -67,7 +67,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     (
         IOobject
         (
-            Sname+".krb",
+            Sname+porousRegion+".krb",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -80,7 +80,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     (
         IOobject
         (
-            Sname+".dkradS",
+            Sname+porousRegion+".dkradS",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -93,7 +93,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     (
         IOobject
         (
-            Sname+".dkrbdS",
+            Sname+porousRegion+".dkrbdS",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
@@ -106,33 +106,33 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
     (
       IOobject
       (
-          Sname+"min",
+          Sname+porousRegion+"min",
           mesh.time().timeName(),
           mesh,
           IOobject::READ_IF_PRESENT,
           IOobject::NO_WRITE
       ),
       mesh,
-      dimensionedScalar(Sname+"min",dimless,0)
+      dimensionedScalar(dimless, modelProperties.getOrDefault<scalar>(Sname+porousRegion+"min", 0))
     ),
     Smax_
     (
         IOobject
         (
-            Sname+"max",
+            Sname+porousRegion+"max",
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(Sname+"min",dimless,1)
+        dimensionedScalar(dimless, modelProperties.getOrDefault<scalar>(Sname+porousRegion+"max", 1))
     ),
     Se_
     (
         IOobject
         (
-            Sname+".Se",
+            Sname+porousRegion+".Se",
             mesh.time().timeName(),
             mesh,
             IOobject::NO_READ,
