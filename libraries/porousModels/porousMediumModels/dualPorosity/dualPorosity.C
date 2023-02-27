@@ -64,7 +64,6 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     dualPorosityCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     mesh_(mesh),
     phase_(phase),
-    SnameMatrix_(Sname+"Matrix"),
     g
     (
         IOobject
@@ -93,7 +92,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     (
         IOobject
         (
-            SnameMatrix_,
+            Sname_+"Matrix",
             mesh.time().timeName(),
             mesh,
             IOobject::READ_IF_PRESENT,
@@ -138,7 +137,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     (
         IOobject
         (
-            "U"+SnameMatrix_,
+            "U"+Sname_+"Matrix",
             mesh.time().timeName(),
             mesh,
             IOobject::MUST_READ,
@@ -174,8 +173,8 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     else {Info << average(Kexchange_).value() << endl;}
     Info << "} \n" << endl;
     sourceTerm_.writeOpt(IOobject::AUTO_WRITE);
-    matrixPcModel_ = capillarityModel::New(mesh, transportProperties, SnameMatrix_, "Matrix");
-    matrixKrModel_ = relativePermeabilityModel::New(mesh, transportProperties, SnameMatrix_, "Matrix");
+    matrixPcModel_ = capillarityModel::New(mesh, transportProperties, Sname_, "Matrix");
+    matrixKrModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname_, "Matrix");
     updateMatrixProperties();
     Smatrix_.write();
 }
