@@ -37,15 +37,15 @@ In the case of dual porosity model, you may specify the properties of the second
 
 .. code::
 
-   KFracture 1.1798e-12;
+   KFracture [0 2 0 0 0 0 0] 1.1798e-12;
 
    dualPorosityCoeffs
    {
-     a 0.01;
-     beta 3;
-     gammaW 0.4;
-     Kmatrix 1.1798e-14;
-     Kexchange 1.17982e-16;
+     a [0 1 0 0 0 0 0] 0.01;
+     beta [0 0 0 0 0 0 0] 3;
+     gammaW [0 0 0 0 0 0 0] 0.4;
+     Kmatrix [0 2 0 0 0 0 0] 1.1798e-14;
+     Kexchange [0 2 0 0 0 0 0] 1.17982e-16;
    }
 
 
