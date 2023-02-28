@@ -29,11 +29,11 @@ porousMediumModel dualPorosity;
 
 dualPorosityCoeffs
 {
-    a 0.01;
-    beta 3;
-    gammaW 0.4;
-    Kmatrix 1.1798e-14; // 1 cm/day
-    Kexchange 1.17982e-16; // 0.01 cm/day
+    a [0 1 0 0 0 0 0] 0.01;
+    beta [0 0 0 0 0 0 0] 3;
+    gammaW [0 0 0 0 0 0 0] 0.4;
+    Kmatrix [0 2 0 0 0 0 0] 1.1798e-14; // 1 cm/day
+    Kexchange [0 2 0 0 0 0 0] 1.17982e-16; // 0.01 cm/day
 }
 
 relativePermeabilityModel  VanGenuchten;

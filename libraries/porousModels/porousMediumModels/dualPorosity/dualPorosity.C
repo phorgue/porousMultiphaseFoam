@@ -113,7 +113,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimArea, dualPorosityCoeffs_.get<scalar>("Kmatrix"))
+        dualPorosityCoeffs_.get<dimensionedScalar>("Kmatrix")
     ),
     Kmatrixf_(fvc::interpolate(Kmatrix_, "K")),
     Kexchange_
@@ -127,11 +127,11 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimArea, dualPorosityCoeffs_.get<scalar>("Kexchange"))
+        dualPorosityCoeffs_.get<dimensionedScalar>("Kexchange")
     ),
-    a_(dimensionedScalar(dimLength, dualPorosityCoeffs_.get<scalar>("a"))),
-    beta_(dimensionedScalar(dimless, dualPorosityCoeffs_.get<scalar>("beta"))),
-    gammaW_(dimensionedScalar(dimless, dualPorosityCoeffs_.get<scalar>("gammaW"))),
+    a_(dualPorosityCoeffs_.get<dimensionedScalar>("a")),
+    beta_(dualPorosityCoeffs_.get<dimensionedScalar>("beta")),
+    gammaW_(dualPorosityCoeffs_.get<dimensionedScalar>("gammaW")),
     geomFactor_(beta_/(a_*a_)*gammaW_),
     UMatrix_
     (

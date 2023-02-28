@@ -58,7 +58,7 @@ Foam::porousMediumModel::porousMediumModel
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, transportProperties.lookupOrDefault("eps"+porousRegion, 0.))
+        transportProperties.lookupOrDefault("eps"+porousRegion, dimensionedScalar(dimless, 0))
     ),
     K_
     (
@@ -71,7 +71,7 @@ Foam::porousMediumModel::porousMediumModel
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimArea, transportProperties.lookupOrDefault("K"+porousRegion, 0.))
+        transportProperties.lookupOrDefault("K"+porousRegion, dimensionedScalar(dimArea, 0))
     ),
     sourceTerm_
     (
