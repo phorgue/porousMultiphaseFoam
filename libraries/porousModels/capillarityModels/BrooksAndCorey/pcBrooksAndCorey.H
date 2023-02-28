@@ -72,7 +72,7 @@ public:
     pcBrooksAndCorey
     (
         const fvMesh& mesh,
-        const dictionary& capillarityProperties,
+        const dictionary& transportProperties,
         const word& Sname,
         const word porousRegion = ""
     );
