@@ -3,4 +3,13 @@
 porousModels library
 ====================
 
-TODO
+.. toctree::
+   :maxdepth: 1
+
+   capillarityModels
+   dispersionModels
+   mixtures
+   phaseModels
+   porousMediumModels
+   porousMediumTransportModels
+   relativePermeabilityModels

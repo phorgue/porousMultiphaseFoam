@@ -17,6 +17,8 @@ Multiple time-dependent water injection source points can be specified using the
 
 Multiple time-dependent tracer injection source points can be specified using the keyword *sourceEventFileTracer* in **constant/transportProperties** (see :ref:`sourceEventFile`).
 
+As :ref:`groundwaterFoam`, this solver allows the use of *dualPorosity* model for both flow and transport, see :ref:`porousMediumModels` and :ref:`porousMediumTransportModels` for details.
+
 Configuration files
 -------------------
 

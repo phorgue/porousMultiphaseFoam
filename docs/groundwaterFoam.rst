@@ -23,7 +23,8 @@ Seepage can be activated by specifying the name of the patch *patchDEM* (represe
 
 .. warning::
    The Newton's algorithm does not handle correctly the seepage function and should be deactivated when seepage occurs in a simulation (by setting tolerance Newton equal to 1)
- 
+
+This solver allows the use of *dualPorosity* model, see :ref:`porousMediumModels` for details.
 
 Configuration files
 -------------------
