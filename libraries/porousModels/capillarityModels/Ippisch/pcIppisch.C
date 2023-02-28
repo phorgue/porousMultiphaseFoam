@@ -57,7 +57,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
     const word porousRegion
 )
     :
-    capillarityModel(mesh, transportProperties, Sname, porousRegion),
+    capillarityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
     m_
     (
         IOobject
