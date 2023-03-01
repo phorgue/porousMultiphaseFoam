@@ -1,0 +1,5 @@
+.. _mixtures:
+
+Mixture models
+==============
+

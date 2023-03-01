@@ -1,7 +1,7 @@
 .. _porousMediumModels:
 
-porousMediumModels
-==================
+Porous medium models
+====================
 
 This class allows the optional activation of a double porosity model for fluid flow in porous medium.
 
@@ -25,8 +25,8 @@ For the simple porosity model, you may specifiy uniform porosity or permeability
 
 .. code::
 
-   eps 0.305;
-   K 1.25e-12;
+   eps [0 0 0 0 0 0 0] 0.305;
+   K [0 2 0 0 0 0 0] 1.25e-12;
 
 Note that you may specify non-uniform permeability or porosity field in **constant/K** or **constant/eps**.
 
