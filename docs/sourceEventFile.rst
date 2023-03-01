@@ -6,7 +6,7 @@ sourceEventFile class
 Description
 -----------
 
-Event file handler/reader for the porousMultiphaseFoam toolbox which contain *m* dates with *n* source points where (mass) flow rate is expressed in kg/s or m3/s. Source terms are applied in the closest cells to the given point. Intermediate values are computed by linear interpolation. Infiltration before time *1* and after time *m* is equal to 0. 
+Event file handler/reader for the porousMultiphaseFoam toolbox which contain *m* dates with *n* source points where (mass) flow rate is expressed in kg/s or m3/s. Source terms are applied in the closest cells to the given point. Intermediate values are computed by linear interpolation. Source terms before *time1* and after *timem* are equal to 0. 
 
 Format
 ------
