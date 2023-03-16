@@ -70,9 +70,9 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
         dimless,
         "Matrix"
     ),
-    a_(dimensionedScalar(dimLength, dualPorosityTransportCoeffs_.get<scalar>("a"))),
-    beta_(dimensionedScalar(dimless, dualPorosityTransportCoeffs_.get<scalar>("beta"))),
-    gammaW_(dimensionedScalar(dimless, dualPorosityTransportCoeffs_.get<scalar>("gammaW"))),
+    a_(dualPorosityTransportCoeffs_.get<dimensionedScalar>("a")),
+    beta_(dualPorosityTransportCoeffs_.get<dimensionedScalar>("beta")),
+    gammaW_(dualPorosityTransportCoeffs_.get<dimensionedScalar>("gammaW")),
     alphaS_(gammaW_*matrixComposition_.Dm(0)*beta_/(a_*a_)),
     exchangeTermFromFracture_("exchangeTermFromFracture", pmModel_.exchangeTerm()),
     exchangeTermFromMatrix_("exchangeTermFromMatrix", pmModel_.exchangeTerm()),
