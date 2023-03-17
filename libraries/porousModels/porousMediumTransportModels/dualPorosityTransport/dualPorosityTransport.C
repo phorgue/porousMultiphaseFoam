@@ -122,7 +122,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
 
         fvScalarMatrix CEqn
             (
-                R * fvm::ddt(theta,C)
+                R * fvm::ddt(theta, C)
                 + fvm::div(phi, C, "div(phi,C)")
                 - fvm::laplacian(theta*Deff, C, "laplacian(Deff,C)")
                 ==

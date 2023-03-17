@@ -113,7 +113,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::NO_WRITE
         ),
         mesh,
-        dualPorosityCoeffs_.get<dimensionedScalar>("Kmatrix")
+        transportProperties.get<dimensionedScalar>("Kmatrix")
     ),
     Kmatrixf_(fvc::interpolate(Kmatrix_, "K")),
     Kexchange_

@@ -25,12 +25,16 @@ phase.theta
 
 porousMediumModel dualPorosity;
 
+epsFracture [0 0 0 0 0 0 0] 0.50;
+Kmatrix [0 2 0 0 0 0 0] 1.1798e-14;
+epsMatrix [0 0 0 0 0 0 0] 0.50;
+
+
 dualPorosityCoeffs
 {
     a [0 1 0 0 0 0 0] 0.01;
     beta [0 0 0 0 0 0 0] 3;
     gammaW [0 0 0 0 0 0 0] 0.4;
-    Kmatrix [0 2 0 0 0 0 0] 1.1798e-14; // 1 cm/day
     Kexchange [0 2 0 0 0 0 0] 1.17982e-16; // 0.01 cm/day   
 }
 
@@ -54,8 +58,6 @@ VanGenuchtenCoeffs
 
 //- tracer transport properties
 Dm Dm [0 2 -1 0 0 0 0] 5.8e-10;
-epsFracture [0 0 0 0 0 0 0] 0.50;
-epsMatrix [0 0 0 0 0 0 0] 0.50;
 
 porousTransport
 {
