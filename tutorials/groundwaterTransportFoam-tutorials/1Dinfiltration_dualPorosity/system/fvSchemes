@@ -17,7 +17,15 @@ FoamFile
 
 ddtSchemes
 {
-    default         Euler;
+    default         none;
+    //- transport time schemes
+    ddt(C)    backward;
+    ddt(theta,C) backward;
+    ddt(thetaMatrix,CMatrix) backward;
+    //- flow time schemes
+    ddt(h) Euler;
+    ddt(hMatrix) Euler;
+    ddt(theta)      Euler;
 }
 
 gradSchemes
@@ -28,6 +36,7 @@ gradSchemes
 divSchemes
 {
     default         Gauss linear;
+    div(phi,C)      Gauss vanLeer phi;
 }
 
 laplacianSchemes
