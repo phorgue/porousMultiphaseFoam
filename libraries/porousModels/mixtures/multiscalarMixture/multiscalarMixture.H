@@ -74,14 +74,13 @@ public:
     // Constructors
 
     //- Construct from dictionary, species names, mesh and phase name
-    template<typename EpsType>
     inline multiscalarMixture
     (
         const dictionary& dict,
         const wordList& speciesNames,
         const fvMesh& mesh,
         const word& phaseName,
-        const EpsType& eps,
+        const volScalarField& eps,
         List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
         const word& sourceEventDtFieldNameOverride = "",
         const dimensionSet& sourceTermDimFactor = dimless,
@@ -97,19 +96,17 @@ public:
     inline const dimensionedScalar& lambda(const label speciesi) const;
 
     //- Update effective diffusivities and source terms
-    template<typename ThetaType>
     inline void correct
     (
         const volVectorField& U,
-        const ThetaType& theta
+        const volScalarField& theta
     );
 
-    template<typename SaturationType, typename EpsType>
     inline void correct
     (
         const volVectorField& U,
-        const SaturationType& saturation,
-        const EpsType& eps
+        const volScalarField& saturation,
+        const volScalarField& eps
     );
 
     //-  Molar diffusivity [m^2/s]
@@ -123,6 +120,9 @@ public:
 
     const PtrList<sourceEventFile>& sourceEvents() const {return sourceEvents_;}
 
+    //- Check if eps is defined (for retard coefficient)
+    bool check_eps();
+
 private:
     PtrList<volScalarField> R_;
     List<dimensionedScalar> lambdas_;
@@ -132,6 +132,7 @@ private:
     List<dimensionedScalar> Kd_;
     List<dimensionedScalar> rs_;
     List<dimensionedScalar> epsTotal_;
+    const volScalarField& eps_;
 
 };
 

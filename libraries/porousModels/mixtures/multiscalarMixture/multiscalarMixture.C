@@ -36,6 +36,21 @@ namespace Foam
     defineTypeNameAndDebug(multiscalarMixture, 0);
 }
 
+bool Foam::multiscalarMixture::check_eps()
+{
+    forAll(Y(), speciesi)
+        {
+            if (rs_[speciesi].value() != 0 &&  Kd_[speciesi].value() != 0)
+            {
+                if (gMax(eps_) > 1)
+                {
+                    FatalErrorIn("multiscalarMixture.C") <<
+                        "Field " << eps_.name() << " seems to be uninitialized. You should specify value in transportProperties or field in constant/" << abort(FatalError);
+                }
+            }
+        }
+    return false;
+}
 
 
 // ************************************************************************* //

@@ -59,6 +59,7 @@ Foam::porousMediumTransportModel::porousMediumTransportModel
         "C"
     )
 {
+    composition_.check_eps();
 }
 
 Foam::wordList Foam::porousMediumTransportModel::speciesNames(Foam::word porousRegion)
