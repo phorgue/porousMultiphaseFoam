@@ -118,7 +118,7 @@ volScalarField K
         runTime.constant(),
         mesh,
         IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
+        IOobject::NO_WRITE
     ),
     mesh
 );
