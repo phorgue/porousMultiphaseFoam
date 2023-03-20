@@ -25,10 +25,9 @@ phase.theta
 
 porousMediumModel dualPorosity;
 
-epsFracture [0 0 0 0 0 0 0] 0.50;
+//epsFracture [0 0 0 0 0 0 0] 0.50;
+//epsMatrix [0 0 0 0 0 0 0] 0.50;
 Kmatrix [0 2 0 0 0 0 0] 1.1798e-14;
-epsMatrix [0 0 0 0 0 0 0] 0.50;
-
 
 dualPorosityCoeffs
 {
@@ -50,7 +49,7 @@ VanGenuchtenCoeffs
     alphaFracture 5.0; 
     mFracture 0.5;
     //- matrix properties
-    thetaMatrixmin 0.10;
+   thetaMatrixmin 0.10;
     thetaMatrixmax 0.475;
     alphaMatrix 0.5;
     mMatrix 0.333333;
@@ -63,8 +62,8 @@ porousTransport
 {
     phaseName theta;
     Kd [-1 3 0 0 0 0 0] 1e-3;
-    rs [1 -3 0 0 0 0 0] 0;
-    epsTotal [0 0 0 0 0 0 0] 0.50;
+    rs [1 -3 0 0 0 0 0] 0e-3;
+    // epsTotal [0 0 0 0 0 0 0] 0.50;
     lambda [0 0 -1 0 0 0 0 ] 0;//1.1574e-6;
 }
 dispersionModel alphaDispersion;

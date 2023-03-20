@@ -69,6 +69,9 @@ class dualPorosityTransport
     //- List of sourceEvent for each component
     List<sourceEventFile*> sourceEventList_;
 
+    //- Porosity for matrix retard coefficient
+    volScalarField epsMatrix_;
+
     //- Composition
     multiscalarMixture matrixComposition_;
 

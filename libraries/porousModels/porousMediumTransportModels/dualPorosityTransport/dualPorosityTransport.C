@@ -59,12 +59,25 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
     :
     porousMediumTransportModel(phaseName, pmModel),
     dualPorosityTransportCoeffs_(transportProperties_.subDict("dualPorosityCoeffs")),
+    epsMatrix_
+    (
+        IOobject
+        (
+            "epsMatrix",
+            pmModel.mesh().time().constant(),
+            pmModel.mesh(),
+            IOobject::READ_IF_PRESENT,
+            IOobject::NO_WRITE
+        ),
+        pmModel.mesh(),
+        transportProperties_.getOrDefault<dimensionedScalar>("epsMatrix", dimensionedScalar(dimless, 2))
+    ),
     matrixComposition_(
         transportProperties_,
         speciesNames("Matrix"),
         pmModel.mesh(),
         word::null,
-        pmModel.eps(),
+        epsMatrix_,
         &sourceEventList_,
         "C",
         dimless,
@@ -80,6 +93,7 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
     phiMatrix_(transportProperties_.db().lookupObject<surfaceScalarField>("phiMatrix")),
     thetaMatrix_(transportProperties_.db().lookupObject<volScalarField>(phaseName_+"Matrix"))
 {
+    matrixComposition_.check_eps();
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
@@ -138,7 +152,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
     }
 
     //- matrix part
-    matrixComposition_.correct<volScalarField>(UMatrix_, thetaMatrix_);
+    matrixComposition_.correct(UMatrix_, thetaMatrix_);
 
     forAll(matrixComposition_.Y(), speciesi)
     {
