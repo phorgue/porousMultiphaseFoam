@@ -31,14 +31,13 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<typename EpsType>
 inline Foam::multiscalarMixture::multiscalarMixture
 (
     const dictionary& dict,
     const wordList& speciesNames,
     const fvMesh& mesh,
     const word& phaseName,
-    const EpsType& eps,
+    const volScalarField& eps,
     List<sourceEventFile*>* sourceEventFileRegistry,
     const word& sourceEventDtFieldNameOverride,
     const dimensionSet& sourceTermDimFactor,
@@ -53,7 +52,8 @@ inline Foam::multiscalarMixture::multiscalarMixture
     sourceTerms_(speciesNames.size()),
     Kd_(speciesNames.size()),
     rs_(speciesNames.size()),
-    epsTotal_(speciesNames.size())
+    epsTotal_(speciesNames.size()),
+    eps_(eps)
 {
     forAll(speciesNames, speciesi)
     {
@@ -64,15 +64,15 @@ inline Foam::multiscalarMixture::multiscalarMixture
         specieDict = specieDict.optionalSubDict(porousRegion);
         dictionary porousTransport(specieDict.subDict("porousTransport"));
 
-        dimensionedScalar Kd(porousTransport.getOrDefault("Kd",dimensionedScalar("Kd_default",dimensionSet(-1,3,0,0,0),0.)));
+        dimensionedScalar Kd(porousTransport.getOrDefault("Kd", dimensionedScalar(dimensionSet(-1,3,0,0,0), 0)));
         Kd_[speciesi] = Kd.value();
-        dimensionedScalar rs(porousTransport.getOrDefault("rs",dimensionedScalar("rs_default",dimensionSet(1,-3,0,0,0),0.)));
+        dimensionedScalar rs(porousTransport.getOrDefault("rs", dimensionedScalar(dimensionSet(1,-3,0,0,0), 0)));
         rs_[speciesi] = rs.value();
-        dimensionedScalar epsTotal(porousTransport.getOrDefault("epsTotal",dimensionedScalar("epsTotal_default",dimless,1.)));
+        dimensionedScalar epsTotal(porousTransport.getOrDefault("epsTotal", dimensionedScalar(dimless, 1)));
         epsTotal_[speciesi] = epsTotal.value();
 
         lambdas_[speciesi].dimensions().reset(dimensionSet(0,0,-1,0,0));
-        lambdas_[speciesi] = porousTransport.getOrDefault("lambda",dimensionedScalar("lambda_default",dimensionSet(0,0,-1,0,0),0.));
+        lambdas_[speciesi] = porousTransport.getOrDefault("lambda", dimensionedScalar(dimensionSet(0,0,-1,0,0), 0));
 
         if (porousRegion != "")
         {
@@ -109,8 +109,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
                 zeroGradientFvPatchField<scalar>::typeName
             )
         );
-
-        R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / eps;
+        R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / eps_;
         Info << "Min(R) = " << gMin(R_[speciesi]) << " Max(R) = " << gMax(R_[speciesi]) << endl;
 
         //- creation of dispersion model
@@ -186,12 +185,10 @@ inline const Foam::dimensionedScalar& Foam::multiscalarMixture::lambda(const lab
     return lambdas_[speciesi];
 }
 
-
-template<typename ThetaType>
 inline void Foam::multiscalarMixture::correct
 (
     const volVectorField& U,
-    const ThetaType& theta
+    const volScalarField& theta
 )
 {
     forAll(Y(), speciesi)
@@ -205,12 +202,11 @@ inline void Foam::multiscalarMixture::correct
     }
 }
 
-template<typename SaturationType, typename EpsType>
 inline void Foam::multiscalarMixture::correct
 (
     const volVectorField& U,
-    const SaturationType& saturation,
-    const EpsType& eps
+    const volScalarField& saturation,
+    const volScalarField& eps
 )
 {
 
@@ -240,7 +236,5 @@ inline const Foam::volScalarField& Foam::multiscalarMixture::sourceTerm(const la
 {
     return sourceTerms_[speciesi];
 }
-
-
 
 // ************************************************************************* //
