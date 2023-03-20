@@ -56,31 +56,33 @@ Development branches
 ^^^^^^^^^^^^^^^^^^^^
 
 - branch **dev** works with OpenFOAM-v2206 `openfoam.com <https://www.openfoam.com/>`_
-- branch **dev_org** works with OpenFOAM-v9 `openfoam.org <https://www.openfoam.org/>`_
+- branch **dev_org** works with OpenFOAM-v10 `openfoam.org <https://www.openfoam.org/>`_
 
-Updated branches: PMFv2107.2
+Updated branches: PMFv2103.0
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - branch **openfoam-v2206**
 - branch **openfoam-v2106**
-- branch **openfoam-v2006**
-- branch **openfoam-v10**
-- branch **openfoam-v9**
-- branch **openfoam-v8**
 
 *openfoam-v10 has errors when using postProcess/setSet in tutorials*
 
 Old branches not updated
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+- branch **openfoam-v2006**  > PMFv2107.2
 - branch **openfoam-v1906**  > PMFv2107.1
-- branch **openfoam-v7**     > PMFv2107
 - branch **openfoam-v1812**  > PMFv1906
-- branch **openfoam-v6**     > PMFv1906
-- branch **openfoam-v5**     > PMFv1809
-- branch **foam-extend-4.0** > PMFv1809
 - branch **openfoam-v1806**  > PMFv1809
 - branch **openfoam-v1712**  > PMFv1805
+
+- branch **openfoam-v10**    > PMFv2107.2
+- branch **openfoam-v9**     > PMFv2107.2
+- branch **openfoam-v8**     > PMFv2107.2
+- branch **openfoam-v7**     > PMFv2107
+- branch **openfoam-v6**     > PMFv1906
+- branch **openfoam-v5**     > PMFv1809
+
+- branch **foam-extend-4.0** > PMFv1809
 
 Version not supported
 ^^^^^^^^^^^^^^^^^^^^^
