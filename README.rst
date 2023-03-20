@@ -8,6 +8,8 @@ About
 
 It is based on the OpenFOAM environment and therefore benefits from its multiple feature such as pre-and post-processing tools or parallel efficiency for example.
 
+Read the `PMF documentation <https://porousmultiphasefoam.readthedocs.io/en/dev/>`_ for more information.
+
 This toolbox needs only a standard OpenFOAM installation and is compatible with the two main forks: `www.openfoam.com <https://www.openfoam.com>`_ and `www.openfoam.org <https://www.openfoam.org>`_.
 
 
