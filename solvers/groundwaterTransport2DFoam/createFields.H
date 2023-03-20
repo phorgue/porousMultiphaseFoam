@@ -50,7 +50,7 @@ volScalarField z0
         runTime.constant(),
         mesh,
         IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
+        IOobject::NO_WRITE
     ),
     mesh
 );
@@ -118,7 +118,7 @@ volScalarField K
         runTime.constant(),
         mesh,
         IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
+        IOobject::NO_WRITE
     ),
     mesh
 );
@@ -178,7 +178,7 @@ volScalarField infiltration
         runTime.timeName(),
         mesh,
         IOobject::READ_IF_PRESENT,
-        IOobject::AUTO_WRITE
+        IOobject::NO_WRITE
     ),
     mesh,
     infiltrationScalar
@@ -206,7 +206,7 @@ volScalarField waterSourceTerm
         runTime.timeName(),
         mesh,
         IOobject::NO_READ,
-        IOobject::AUTO_WRITE
+        IOobject::NO_WRITE
     ),
     mesh,
     dimensionedScalar("water_source_term",dimLength/dimTime,0.)
