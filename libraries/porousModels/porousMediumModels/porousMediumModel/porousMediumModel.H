@@ -125,8 +125,8 @@ public:
     const volScalarField& exchangeTerm() const {return exchangeTerm_;}
 
     //- Check functions
-    void check_eps();
-    void check_K();
+    void check_eps() const;
+    void check_K() const;
 };
 
 

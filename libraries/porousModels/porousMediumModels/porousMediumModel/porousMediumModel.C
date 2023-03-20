@@ -58,7 +58,7 @@ Foam::porousMediumModel::porousMediumModel
             IOobject::NO_WRITE
         ),
         mesh,
-        transportProperties.lookupOrDefault("eps"+porousRegion, dimensionedScalar(dimless, 0))
+        transportProperties.lookupOrDefault("eps"+porousRegion, dimensionedScalar(dimless, 2))
     ),
     K_
     (
@@ -108,16 +108,16 @@ Foam::porousMediumModel::porousMediumModel
     }
 }
 
-void Foam::porousMediumModel::check_eps()
+void Foam::porousMediumModel::check_eps() const
 {
-    if (gMax(eps_) == 0)
+    if (gMax(eps_) > 1)
     {
         FatalErrorIn("porousMediumModel.C") <<
-            "Field " << eps_.name() << " is equal to zero. You should specify value in transportProperties or field in constant/" << abort(FatalError);
+            "Field " << eps_.name() << " seems to be uninitialized. You should specify value in transportProperties or field in constant/" << abort(FatalError);
     }
 }
 
-void Foam::porousMediumModel::check_K()
+void Foam::porousMediumModel::check_K() const
 {
     if (gMax(K_) == 0)
     {
