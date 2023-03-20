@@ -15,33 +15,32 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-eps eps [0 0 0 0 0 0 0] 0.5;
+eps [0 0 0 0 0 0 0] 0.5;
 
 //- flow properties
-rho rho [1 -3 0 0 0 0 0] 1000;
-mu mu [1 -1 -1 0 0 0 0] 1e-03;
+rho [1 -3 0 0 0 0 0] 1000;
+mu [1 -1 -1 0 0 0 0] 1e-3;
 
 eventFileInfiltration waterInfiltration.evt;
 
 //- transportProperties
-
-Dm Dm [0 2 -1 0 0 0 0] 1e-9;
+Dm [0 2 -1 0 0 0 0] 1e-9;
 
 porousTransport
 {
-    Kd Kd [-1 3 0 0 0 0 0] 1e-3;
-    rs rs [1 -3 0 0 0 0 0] 1e3;
-    epsTotal epsTotal [0 0 0 0 0 0 0] 0.30;
-    lambda lambda [0 0 -1 0 0 0 0 ] 0;//1.1574e-6;
+    Kd [-1 3 0 0 0 0 0] 1e-3;
+    rs [1 -3 0 0 0 0 0] 1e3;
+    epsTotal [0 0 0 0 0 0 0] 0.30;
+    lambda [0 0 -1 0 0 0 0 ] 0;
 }
 
 dispersionModel alphaDispersion;
 
 alphaDispersionCoeffs
 {
-    tau tau [0 0 0 0 0 0 0] 2;
-    alphaL alphaL [0 1 0 0 0 0 0] 0.001;
-    alphaT alphaT [0 1 0 0 0 0 0] 0.002;
+    tau [0 0 0 0 0 0 0] 2;
+    alphaL [0 1 0 0 0 0 0] 0.001;
+    alphaT [0 1 0 0 0 0 0] 0.002;
 }
 
 sourceEventFileTracer tracerInjection.evt;

@@ -19,8 +19,8 @@ FoamFile
 	
 phase.theta
 {
-  rho	rho [1 -3 0 0 0 0 0] $param_rho;
-  mu	mu [1 -1 -1 0 0 0 0] $param_mu;
+  rho [1 -3 0 0 0 0 0] $param_rho;
+  mu [1 -1 -1 0 0 0 0] $param_mu;
 }
 
 relativePermeabilityModel  VanGenuchten;
