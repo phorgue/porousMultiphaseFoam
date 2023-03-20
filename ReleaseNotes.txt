@@ -1,6 +1,6 @@
 ************************
-*** PMF v2301.2
-*** Dual porosity model
+*** PMF v2303
+*** Dual porosity model + readthedocs
 ************************
 
 ### Bug fix
@@ -50,7 +50,7 @@
 - dualPorosityTransport
 
   - porousMedium class for scalar transport in dual porosity model
-  (witt Fracture and Matrix)
+  (with Fracture and Matrix)
   
 - relativePermeability/capillarity:
 
@@ -86,7 +86,7 @@
 
 ### Tutorials
 
-- 1Dinfiltration_dualPorosity
+- 1Dinfiltration_dualPorosity (for flow and flow+transport)
 
   validation case for dual porosity model using METIS results
 
