@@ -35,18 +35,3 @@ jobs:
       with:
           name: pmf-opensuse-mingw-${{matrix.openfoam_version}}
           path: /github/home/OpenFOAM/user-${{matrix.openfoam_version}}/platforms/linux64MingwDPInt32Opt/pmf-opensuse-mingw-${{matrix.openfoam_version}}.zip
-
-  publish:
-    name: Publish
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Download all artifacts
-      uses: actions/download-artifact@v3
-
-    - name: Publish assets
-      uses: alexellis/upload-assets@0.4.0
-      env:
-          GITHUB_TOKEN: ${{ github.token }}
-      with:
-          asset_paths: '["*/*.zip"]'
