@@ -112,7 +112,7 @@ public:
         }
     tmp<volScalarField> kr(const volScalarField& S)
         {
-            volScalarField Se= (S-Smin_)/(Smax_-Smin_);
+            volScalarField Se((S-Smin_)/(Smax_-Smin_));
             return krbmax_ * pow(Se,n_);
         }
 };
