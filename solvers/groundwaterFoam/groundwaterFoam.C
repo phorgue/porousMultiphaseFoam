@@ -143,7 +143,11 @@ noConvergence :
             runTime.write();
             if (writeResiduals)
             {
+#if OPENFOAM >= 2212
+                OFstream residualFile("residuals.csv", IOstreamOption(), IOstreamOption::APPEND);
+#else
                 OFstream residualFile("residuals.csv", IOstreamOption(), true);
+#endif
                 residualFile << runTime.timeName() << " " << mag(hEqnResidual) << endl;
             }
             if (hEqnResidual < tolerancePicard) runTime.writeAndEnd();
