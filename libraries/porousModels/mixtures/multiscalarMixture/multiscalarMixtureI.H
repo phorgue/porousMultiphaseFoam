@@ -195,9 +195,9 @@ inline void Foam::multiscalarMixture::correct
     {
         dispersionModels_[speciesi].correct(Y(speciesi), U, theta);
         R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / theta;
-        if(sourceEvents_(speciesi))
+        if(auto event = sourceEvents_.get(speciesi))
         {
-            sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
+            sourceTerms_.set(speciesi, event->dtValuesAsField());
         }
     }
 }
@@ -214,9 +214,9 @@ inline void Foam::multiscalarMixture::correct
     {
         dispersionModels_[speciesi].correct(Y(speciesi), U, saturation, eps);
         R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / (eps*saturation);
-        if(sourceEvents_(speciesi))
+        if(auto event = sourceEvents_.get(speciesi))
         {
-            sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
+            sourceTerms_.set(speciesi, event->dtValuesAsField());
         }
     }
 }
