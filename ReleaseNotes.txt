@@ -1,3 +1,11 @@
+
+
+### Compatibility / Minor changes
+
+- fix partial compatibility for Clang and v2212
+
+- rename libraries to PMFXXXX.so
+
 ************************
 *** PMF v2303
 *** Dual porosity model + readthedocs

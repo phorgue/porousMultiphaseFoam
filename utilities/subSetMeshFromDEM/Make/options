@@ -9,5 +9,5 @@ EXE_LIBS = \
     -lmeshTools \
     -ldynamicMesh \
     -L$(FOAM_USER_LIBBIN) \
-    -lporousBoundaryConditions \
-    -ltoolsGIS
+    -lPMFporousBoundaryConditions \
+    -lPMFtoolsGIS

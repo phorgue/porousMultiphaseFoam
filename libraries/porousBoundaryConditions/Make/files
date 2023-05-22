@@ -4,4 +4,4 @@ darcyGradPressureAniso/darcyGradPressureAniso.C
 eventFlux/eventFlux.C
 eventInfiltration/eventInfiltration.C
 
-LIB = $(FOAM_USER_LIBBIN)/libporousBoundaryConditions
+LIB = $(FOAM_USER_LIBBIN)/libPMFporousBoundaryConditions

@@ -20,17 +20,17 @@ then
     rm -f $FOAM_USER_APPBIN/impesFoam
     rm -f $FOAM_USER_APPBIN/porousScalarTransport2DFoam
     rm -f $FOAM_USER_APPBIN/porousScalarTransportFoam
-    rm -f $FOAM_USER_APPBIN/steadyGroundwater2DFoam
-    rm -f $FOAM_USER_APPBIN/steadyGroundwaterFoam
     # clean utilities
     rm -f $FOAM_USER_APPBIN/darcyFoam
+    rm -f $FOAM_USER_APPBIN/mapFieldsFrom2D
     rm -f $FOAM_USER_APPBIN/setBoundaryWaterLevel
     rm -f $FOAM_USER_APPBIN/setFieldsFromDEM
     rm -f $FOAM_USER_APPBIN/setFieldsFromXY
+    rm -f $FOAM_USER_APPBIN/subsetMeshFromDEM
     # clean dynamic libraries
-    rm -f $FOAM_USER_LIBBIN/libporousBoundaryConditions.so
-    rm -f $FOAM_USER_LIBBIN/libporousModels.so
-    rm -f $FOAM_USER_LIBBIN/libtoolsGIS.so
-    # clean obsolete executables
-    rm -f $FOAM_USER_APPBIN/setBoundaryHeadPressure
+
+    rm -f $FOAM_USER_LIBBIN/libPMFnumericalMethods.so
+    rm -f $FOAM_USER_LIBBIN/libPMFporousBoundaryConditions.so
+    rm -f $FOAM_USER_LIBBIN/libPMFporousModels.so
+    rm -f $FOAM_USER_LIBBIN/libPMFtoolsGIS.so
 fi

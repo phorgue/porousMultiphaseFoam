@@ -14,10 +14,10 @@ EXE_LIBS = \
     -ltoolsGIS
 
 LIB_LIBS = \
-    -L$(FOAM_USER_LIBBIN) \
     -lfiniteVolume \
     -lspecie \
     -lfluidThermophysicalModels \
     -lreactionThermophysicalModels \
-    -ltoolsGIS
+    -L$(FOAM_USER_LIBBIN) \
+    -lPMFtoolsGIS
 

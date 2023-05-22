@@ -32,5 +32,5 @@ phaseModels/incompressiblePhase/incompressiblePhase.C
 
 mixtures/multiscalarMixture/multiscalarMixture.C
 
-LIB = $(FOAM_USER_LIBBIN)/libporousModels
+LIB = $(FOAM_USER_LIBBIN)/libPMFporousModels
 

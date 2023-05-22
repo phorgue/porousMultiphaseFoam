@@ -7,5 +7,5 @@ EXE_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -L$(FOAM_USER_LIBBIN) \
-    -lporousBoundaryConditions \
-    -ltoolsGIS
+    -lPMFporousBoundaryConditions \
+    -lPMFtoolsGIS
