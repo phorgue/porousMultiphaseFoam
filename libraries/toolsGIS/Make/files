@@ -7,5 +7,5 @@ eventFile/sourceEventFile.C
 eventFile/patchEventFile.C
 eventFile/infiltrationEventFile.C
 
-LIB = $(FOAM_USER_LIBBIN)/libtoolsGIS
+LIB = $(FOAM_USER_LIBBIN)/libPMFtoolsGIS
 
