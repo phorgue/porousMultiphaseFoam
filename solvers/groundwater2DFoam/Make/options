@@ -9,6 +9,6 @@ EXE_LIBS = \
     -lfiniteVolume \
     -L$(FOAM_USER_LIBBIN) \
     -lPMFnumericalMethods \
-    -lporousBoundaryConditions \
-    -lporousModels \
-    -ltoolsGIS
+    -lPMFporousBoundaryConditions \
+    -lPMFporousModels \
+    -lPMFtoolsGIS
