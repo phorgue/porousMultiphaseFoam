@@ -15,8 +15,8 @@ EXE_LIBS = \
     -lfluidThermophysicalModels \
     -lreactionThermophysicalModels \
     -L$(FOAM_USER_LIBBIN) \
-    -lporousBoundaryConditions \
-    -lporousModels \
-    -ltoolsGIS \
+    -lPMFporousBoundaryConditions \
+    -lPMFporousModels \
+    -lPMFtoolsGIS \
     -lPMFnumericalMethods
     
