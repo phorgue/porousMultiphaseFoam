@@ -63,7 +63,7 @@ class testCase:
             if error_found:
                 print("[ ERROR OpenFOAM ] ")
             else:
-                print("[ OK ]")
+                print("[ OK ] in ")
 
             os.chdir(refDir)
 
@@ -80,9 +80,12 @@ if __name__ == '__main__':
     print("========================================================")
 
     start_time = time.time()
+    lap_time = start_time
     for case in testCases:
         test = testCase(case["solver"],case["case"])
         test.run()
+        print("--- %s seconds ---" % (time.time() - lap_time))
+        lap_time = time.time()
 
     print(" ")
     print("========================================================")
