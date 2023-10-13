@@ -38,9 +38,9 @@ dispersionModel alphaDispersion;
 
 alphaDispersionCoeffs
 {
-    tau [0 0 0 0 0 0 0] 2;
-    alphaL [0 1 0 0 0 0 0] 0.01;
-    alphaT [0 1 0 0 0 0 0] 0.002;
+    tau tau [0 0 0 0 0 0 0] 2;
+    alphaL alphaL [0 1 0 0 0 0 0] 0.01;
+    alphaT alphaT [0 1 0 0 0 0 0] 0.002;
 }
 
 sourceEventFileTracer injection.evt;

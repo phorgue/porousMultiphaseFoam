@@ -44,7 +44,9 @@ inline Foam::multiscalarMixture::multiscalarMixture
     const word& porousRegion
 )
 :
-    basicMultiComponentMixture(dict, speciesNames, mesh, phaseName),
+    basicMixture(dict, mesh, phaseName),
+    species_(speciesNames),
+    Y_(species_.size()),
     R_(speciesNames.size()),
     lambdas_(speciesNames.size()),
     dispersionModels_(speciesNames.size()),
@@ -59,6 +61,22 @@ inline Foam::multiscalarMixture::multiscalarMixture
     {
 
         Info<< nl << "******** Specie " << speciesNames[speciesi] << porousRegion << " ********" << endl;
+        Y_.set
+        (
+            speciesi,
+            new volScalarField
+            (
+                IOobject
+                (
+                    IOobject::groupName(species_[speciesi], phaseName),
+                    mesh.time().timeName(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh
+            )
+        );
 
         dictionary specieDict(dict.optionalSubDict(speciesNames[speciesi]));
         specieDict = specieDict.optionalSubDict(porousRegion);
@@ -195,9 +213,9 @@ inline void Foam::multiscalarMixture::correct
     {
         dispersionModels_[speciesi].correct(Y(speciesi), U, theta);
         R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / theta;
-        if(auto event = sourceEvents_.get(speciesi))
+        if(sourceEvents_(speciesi))
         {
-            sourceTerms_.set(speciesi, event->dtValuesAsField());
+            sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
         }
     }
 }
@@ -214,9 +232,9 @@ inline void Foam::multiscalarMixture::correct
     {
         dispersionModels_[speciesi].correct(Y(speciesi), U, saturation, eps);
         R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / (eps*saturation);
-        if(auto event = sourceEvents_.get(speciesi))
+        if(sourceEvents_(speciesi))
         {
-            sourceTerms_.set(speciesi, event->dtValuesAsField());
+            sourceTerms_.set(speciesi, sourceEvents_[speciesi].dtValuesAsField());
         }
     }
 }
