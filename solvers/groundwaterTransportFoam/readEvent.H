@@ -1,6 +1,6 @@
 //- Water source event reading
-word eventFileName_water = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
-bool eventIsPresent_water = transportProperties.found("eventFileWaterSource");
+word eventFileName_water = transportProperties.lookupOrDefault<word>("waterSourceEventFile","");
+bool eventIsPresent_water = transportProperties.found("waterSourceEventFile");
 sourceEventFile event_water(eventFileName_water);
 
 if (eventIsPresent_water)
@@ -20,8 +20,8 @@ forAll(patchEventList,patchEventi)
 }
 
 //- Output event reading
-bool outputEventIsPresent = runTime.controlDict().found("eventFileOutput");
-word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("eventFileOutput","");
+bool outputEventIsPresent = runTime.controlDict().found("outputEventFile");
+word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
 outputEventFile outputEvent(outputEventFileName);
 if (outputEventIsPresent)
 {
