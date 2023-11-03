@@ -90,6 +90,8 @@ noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         #include "computeSourceTerm.H"
+        #include "updateForcing.H"
+
         scalar deltahIter = 1;
         scalar hEqnResidual = 1.00001;
 
