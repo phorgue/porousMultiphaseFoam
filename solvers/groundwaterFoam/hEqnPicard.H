@@ -25,7 +25,7 @@
         }
     }
 
-    #include "updateForcing.H"
+    if (fixedPotentialIDList.size() > 0) hEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
 
     hEqn.solve();
 
