@@ -90,6 +90,7 @@ protected:
     
     //- Fixed flux value
     scalar fixedInfiltrationValue_;
+    vector orientation_;
 
     //- Event list (optional)
     label patchEventID_;
