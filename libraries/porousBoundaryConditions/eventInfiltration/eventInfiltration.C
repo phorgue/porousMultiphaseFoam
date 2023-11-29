@@ -30,6 +30,7 @@ License
 #include "eventInfiltration.H"
 #include "addToRunTimeSelectionTable.H"
 #include "surfaceFields.H"
+#include "gravityMeshObject.H"
 
 
 Foam::List<Foam::patchEventFile*>* Foam::eventInfiltration::eventFileRegistry_ = nullptr;
@@ -56,6 +57,7 @@ eventInfiltration
     :
     fixedValueFvPatchVectorField(h, iF),
     fixedInfiltrationValue_(0.),
+    orientation_(0,0,0),
     patchEventID_(-1),
     eventFile_()
 {}
@@ -120,6 +122,12 @@ eventInfiltration
     {
         Info << "eventInfiltration boundary condition without event file" << endl;
     }
+
+    const uniformDimensionedVectorField& g =
+        meshObjects::gravity::New(db().time());
+    orientation_ = -g.value();
+    orientation_.normalise();
+
 }
 
 
@@ -182,10 +190,7 @@ void Foam::eventInfiltration::updateCoeffs()
         valueEvent = eventFile_.dtValue(patchEventID_);
     }
 
-    //- Computing fixed value
-    
-    vectorField updatedFixedValue((fixedInfiltrationValue_+valueEvent)*patch().nf());
-    operator== (updatedFixedValue);
+    operator== ((fixedInfiltrationValue_+valueEvent)*orientation_);
     fixedValueFvPatchVectorField::updateCoeffs();
 }
 
