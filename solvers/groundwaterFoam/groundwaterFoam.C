@@ -101,14 +101,15 @@ noConvergence :
         {
             iterPicard++;
             #include "hEqnPicard.H"
-            #include "checkResidual.H"
+            h.relax();
+            #include "updateProperties.H"
             Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
         if ( !steady &&  hEqnResidual > tolerancePicard )
         {
             Info << endl;
             if (adjustTimeStep) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-            else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
+            else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step / add field h relaxation / increase number of Picard iterations" << exit(FatalError);
             #include "rewindTime.H"
             goto noConvergence;
         }
@@ -119,7 +120,9 @@ noConvergence :
         {
             iterNewton++;
             #include "hEqnNewton.H"
-            #include "checkResidual.H"
+            h.relax();
+            #include "updateProperties.H"
+            #include "computeResidualN.H"
             Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
         if ( !steady && hEqnResidual > toleranceNewton )

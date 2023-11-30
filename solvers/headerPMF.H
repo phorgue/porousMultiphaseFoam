@@ -1,5 +1,5 @@
 {
     Info << nl << "**********************************"
-        << nl <<  "Current version of PMF is 2311.0.0"
+        << nl <<  "Current version of PMF is 2311.1"
         << nl <<  "**********************************" << nl << endl;
 }
