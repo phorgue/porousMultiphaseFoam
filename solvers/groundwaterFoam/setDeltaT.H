@@ -37,11 +37,28 @@ if(adjustTimeStep)
     {
         runTime.setDeltaT(dTFactDecrease*runTime.deltaTValue());
     }
-    else
+    else if (truncation_mode)
     {
         scalar dtForh = dtManager.computeTimestep();
         scalar newDeltaT = min(dtForh, 1.2*runTime.deltaTValue());
         runTime.setDeltaT(min(newDeltaT, maxDeltaT));
+    }
+    else
+    {
+        if (iterPicard < nIterPicard)
+        {
+            nIterIncrease++;
+            if (nIterIncrease == 5)
+            {
+                runTime.setDeltaT(dTFactIncrease*runTime.deltaTValue());
+                nIterIncrease = 0;
+            }
+
+        }
+        else
+        {
+            nIterIncrease = 0;
+        }
     }
 
     //-Adjust time step to explicitly compute (source/patch) event time

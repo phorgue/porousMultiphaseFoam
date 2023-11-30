@@ -1,3 +1,17 @@
+
+### Solvers
+
+- groundwaterFoam
+
+  - Transient simulations use directly the OpenFOAM fvMatrix residuals to
+  evaluate Picard convergence. Relaxation factor can be used for transient.
+
+  - Two modes are available for time-stepping :
+
+    - truncation: based on truncation error (using truncationError value)
+    - nIterPicard: based on the number of Picard iteration requires at each
+    timestep (using nIterPicard)
+
 ### Bug fix
 
 - eventInfiltration compute velocity along gravity-axis (instead of patch
