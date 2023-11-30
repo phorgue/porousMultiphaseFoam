@@ -62,10 +62,10 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "readPicardNewtonControls.H"
+    #include "readForcing.H"
     #include "readTimeControls.H"
     #include "createthetaFields.H"
     #include "readEvent.H"
-    #include "readForcing.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
