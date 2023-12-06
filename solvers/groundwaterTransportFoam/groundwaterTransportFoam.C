@@ -89,6 +89,7 @@ noConvergence :
         #include "computeSourceTerm.H"
         scalar deltahIter = 1;
         scalar hEqnResidual = 1.00001;
+        scalar hEqnResidualMax = 1.00001;
 
         //- 1) Richard's equation (Picard loop)
         iterPicard = 0;
@@ -97,6 +98,7 @@ noConvergence :
             iterPicard++;
             #include "hEqnPicard.H"
             #include "updateProperties.H"
+            #include "computeResidualN.H"
             Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
         if ( hEqnResidual > tolerancePicard )
@@ -110,14 +112,15 @@ noConvergence :
 
         //--- 2) Newton loop
         iterNewton = 0;
-        while ( hEqnResidual > toleranceNewton && iterNewton != maxIterNewton)
+        while ( hEqnResidualMax > toleranceNewton && iterNewton != maxIterNewton)
         {
             iterNewton++;
             #include "hEqnNewton.H"
-            #include "checkResidual.H"
+            #include "updateProperties.H"
+            #include "computeResidualN.H"
             Info << "Newton iteration " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
         }
-        if ( hEqnResidual > toleranceNewton )
+        if ( hEqnResidualMax > toleranceNewton )
         {
             Info << endl;
             if (adjustTimeStep) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;

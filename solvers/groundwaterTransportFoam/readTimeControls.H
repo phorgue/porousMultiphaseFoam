@@ -34,20 +34,59 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+//-global parameters
 const scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+
+const scalar dTFactDecrease =
+    runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.8);
 
 const bool adjustTimeStep =
     runTime.controlDict().lookupOrDefault("adjustTimeStep", false);
 
+const word timeStepMode =
+    runTime.controlDict().lookupOrDefault<word>("timeStepMode", "truncation");
+
+bool truncation_mode = true;
+if (timeStepMode == "nIterPicard") truncation_mode = false;
+else if (timeStepMode != "truncation")
+{
+    FatalErrorIn("readTimeControls.H") << "timeStepMode " << timeStepMode << " unknown: should be truncation or nIterPicard"
+        << exit(FatalError);
+}
+
+//-truncation parameters
 const scalar truncationError_global =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError",0.01);
-
 const scalar truncationError_h =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError_h",truncationError_global);
 
-const scalar dTFactDecrease =
-    runTime.controlDict().lookupOrDefault<scalar>("dTFactDecrease",0.8);
+//-nIterPicard parameters
+const label nIterPicard =
+    runTime.controlDict().lookupOrDefault<scalar>("nIterPicard",0);
+const scalar dTFactIncrease =
+    runTime.controlDict().lookupOrDefault<scalar>("dTFactIncrease",1.25);
+label nIterIncrease = -1;
+
+if (adjustTimeStep)
+{
+    if (truncation_mode)
+    {
+        if (truncationError_h == 0)
+        {
+            FatalErrorIn("readTimeControls.H") << "truncationError is not defined for timestepping"
+        << exit(FatalError);
+        }
+    }
+    else
+    {
+        if (nIterPicard == 0)
+        {
+            FatalErrorIn("readTimeControls.H") << "nIterPicard is not defined for timestepping"
+        << exit(FatalError);
+        }
+    }
+}
 
 timestepManager dtManager(runTime, h, truncationError_h);
 
