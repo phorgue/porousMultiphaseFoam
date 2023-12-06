@@ -42,6 +42,7 @@
     }
 
     deltahEqn.solve();
+    deltah.relax();
 
     h = h.prevIter() + deltah;
     h.correctBoundaryConditions();
