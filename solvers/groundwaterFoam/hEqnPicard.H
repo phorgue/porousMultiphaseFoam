@@ -28,6 +28,7 @@
     if (fixedPotentialIDList.size() > 0) hEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
 
     hEqnResidual = hEqn.solve().initialResidual();
+    h.relax();
 
     deltah = h-h.prevIter();
     forAll(fixedPotentialIDList,celli) deltah[fixedPotentialIDList[celli]] = 0;
