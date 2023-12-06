@@ -39,8 +39,29 @@ if(adjustTimeStep)
     }
     else
     {
+        scalar dtForh = runTime.deltaTValue();
         //- h-variation control
-        scalar dtForh = dtManager.computeTimestep();
+        if (truncation_mode)
+        {
+            dtForh = dtManager.computeTimestep();
+        }
+        else
+        {
+            if (iterPicard < nIterPicard)
+            {
+                nIterIncrease++;
+                if (nIterIncrease == 5)
+                {
+                    dtForh = dTFactIncrease*runTime.deltaTValue();
+                    nIterIncrease = 0;
+                }
+
+            }
+            else
+            {
+                nIterIncrease = 0;
+            }
+        }
 
         //- C-variation control
         scalar dtForC = VGREAT;
