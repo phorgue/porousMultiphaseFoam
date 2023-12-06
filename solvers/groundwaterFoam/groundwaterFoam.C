@@ -102,7 +102,6 @@ noConvergence :
         {
             iterPicard++;
             #include "hEqnPicard.H"
-            h.relax();
             #include "updateProperties.H"
             #include "computeResidualN.H"
             Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", max(residual) = " << hEqnResidualMax << endl;
@@ -122,7 +121,6 @@ noConvergence :
         {
             iterNewton++;
             #include "hEqnNewton.H"
-            h.relax();
             #include "updateProperties.H"
             #include "computeResidualN.H"
             Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidualMax << endl;
