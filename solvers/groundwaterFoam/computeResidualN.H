@@ -8,4 +8,4 @@ if (!steady)
 }
 
 forAll(fixedPotentialIDList, pointi) ResiduN[fixedPotentialIDList[pointi]]=0;
-hEqnResidualMax = gMax(mag(ResiduN.internalField())());
+hEqnResidualN = gMax(mag(ResiduN.internalField())());

@@ -93,20 +93,27 @@ noConvergence :
         #include "updateForcing.H"
 
         scalar deltahIter = 1;
-        scalar hEqnResidual = 1.00001;
-        scalar hEqnResidualMax = 1.00001;
+        scalar hEqnResidualN = 1.00001;
+        scalar hEqnResidualP = 1.00001;
 
         //--- 1) Picard loop
         iterPicard = 0;
-        while ( hEqnResidual > tolerancePicard && iterPicard != maxIterPicard )
+        while ( hEqnResidualP > tolerancePicard && iterPicard != maxIterPicard )
         {
             iterPicard++;
             #include "hEqnPicard.H"
             #include "updateProperties.H"
             #include "computeResidualN.H"
-            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", max(residual) = " << hEqnResidualMax << endl;
+            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residualP = " << hEqnResidualP << ", residualN = " << hEqnResidualN << endl;
+            if ( hEqnResidualP > 10)
+            {
+                Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
+                iterPicard = maxIterPicard;
+                #include "rewindTime.H"
+                goto noConvergence;
+            }
         }
-        if ( !steady &&  hEqnResidual > tolerancePicard )
+        if ( !steady &&  hEqnResidualP > tolerancePicard )
         {
             Info << endl;
             if (adjustTimeStep) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
@@ -117,15 +124,27 @@ noConvergence :
 
         //--- 2) Newton loop
         iterNewton = 0;
-        while ( hEqnResidualMax > toleranceNewton && iterNewton != maxIterNewton)
+        while ( hEqnResidualN > toleranceNewton && iterNewton != maxIterNewton)
         {
+            if (iterPicard == 0)
+            {
+                #include "computeResidualN.H"
+                iterPicard++;
+            }
             iterNewton++;
             #include "hEqnNewton.H"
             #include "updateProperties.H"
             #include "computeResidualN.H"
-            Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidualMax << endl;
+            Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residualN = " << hEqnResidualN << endl;
+            if ( hEqnResidualN > 10)
+            {
+                Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
+                iterNewton = maxIterNewton;
+                #include "rewindTime.H"
+                goto noConvergence;
+            }
         }
-        if ( !steady && hEqnResidualMax > toleranceNewton )
+        if ( !steady && hEqnResidualN > toleranceNewton )
         {
             Info << endl;
             if (adjustTimeStep) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
@@ -149,9 +168,9 @@ noConvergence :
             if (writeResiduals)
             {
                 OFstream residualFile("residuals.csv", IOstreamOption(), true);
-                residualFile << runTime.timeName() << " " << mag(hEqnResidual) << endl;
+                residualFile << runTime.timeName() << " " << mag(hEqnResidualP) << endl;
             }
-            if (hEqnResidual < tolerancePicard) runTime.writeAndEnd();
+            if (hEqnResidualP < tolerancePicard) runTime.writeAndEnd();
         }
         else
         {
