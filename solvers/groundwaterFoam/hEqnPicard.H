@@ -27,11 +27,13 @@
 
     if (fixedPotentialIDList.size() > 0) hEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
 
-    hEqnResidual = hEqn.solve().initialResidual();
-    if (hEqnResidual > tolerancePicard) h.relax();
+    ResiduN.primitiveFieldRef() = hEqn.residual()/mesh.V();
+    hEqnResidualP = gMax(mag(ResiduN.internalField())());
+    hEqn.solve();
+
+    if (hEqnResidualP > tolerancePicard) h.relax();
 
     deltah = h-h.prevIter();
     forAll(fixedPotentialIDList,celli) deltah[fixedPotentialIDList[celli]] = 0;
     deltahIter = gMax(mag(deltah.internalField())());
-
 }
