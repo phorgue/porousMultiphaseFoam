@@ -88,39 +88,58 @@ noConvergence :
         //- Compute source term
         #include "computeSourceTerm.H"
         scalar deltahIter = 1;
-        scalar hEqnResidual = 1.00001;
-        scalar hEqnResidualMax = 1.00001;
+        scalar hEqnResidualN = 1.00001;
+        scalar hEqnResidualP = 1.00001;
 
         //- 1) Richard's equation (Picard loop)
         iterPicard = 0;
-        while (hEqnResidual > tolerancePicard && iterPicard != maxIterPicard )
+        while (hEqnResidualP > tolerancePicard && iterPicard != maxIterPicard )
         {
             iterPicard++;
             #include "hEqnPicard.H"
             #include "updateProperties.H"
             #include "computeResidualN.H"
-            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
+            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residualP = " << hEqnResidualP << ", residualN = " << hEqnResidualN << endl;
+            if ( hEqnResidualP > 10)
+            {
+                Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
+                iterPicard = maxIterPicard;
+                #include "rewindTime.H"
+                goto noConvergence;
+            }
         }
-        if ( hEqnResidual > tolerancePicard )
+        if ( hEqnResidualP > tolerancePicard )
         {
             Info << endl;
             if (adjustTimeStep) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-            else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
+            else FatalErrorIn("groundwaterTransportFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
             #include "rewindTime.H"
             goto noConvergence;
         }
 
         //--- 2) Newton loop
         iterNewton = 0;
-        while ( hEqnResidualMax > toleranceNewton && iterNewton != maxIterNewton)
+        while ( hEqnResidualN > toleranceNewton && iterNewton != maxIterNewton)
         {
+            if (iterPicard == 0)
+            {
+                #include "computeResidualN.H"
+                iterPicard++;
+            }
             iterNewton++;
             #include "hEqnNewton.H"
             #include "updateProperties.H"
             #include "computeResidualN.H"
-            Info << "Newton iteration " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
+            Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residualN = " << hEqnResidualN << endl;
+            if ( hEqnResidualN > 10)
+            {
+                Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
+                iterNewton = maxIterNewton;
+                #include "rewindTime.H"
+                goto noConvergence;
+            }
         }
-        if ( hEqnResidualMax > toleranceNewton )
+        if ( hEqnResidualN > toleranceNewton )
         {
             Info << endl;
             if (adjustTimeStep) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
