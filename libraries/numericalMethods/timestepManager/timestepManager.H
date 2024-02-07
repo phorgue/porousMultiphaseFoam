@@ -96,7 +96,7 @@ public:
     //- Construct from field
     timestepManager(
         const Time&, const volScalarField&, const scalar&,
-        const labelList* dryCells = NULL
+        const labelList* dryCells
     );
 
     virtual ~timestepManager();
