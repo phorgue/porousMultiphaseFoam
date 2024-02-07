@@ -10,13 +10,14 @@ forAll(composition.Y(), speciesi)
 {
     const volScalarField& C = composition.Y(speciesi);
     const word& speciesName = composition.species()[speciesi];
-    dtManagerC[speciesi].updateDerivatives();
+    timestepManager& dtm = MDTM.dtManager(speciesi);
+    dtm.updateDerivatives();
 
     Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField())
         << " Max(" << speciesName << ") = " << gMax(C.internalField())
-        << " d" << speciesName << "dTmax = " << dtManagerC[speciesi].dVmax()
+        << " d" << speciesName << "dTmax = " <<  dtm.dVmax()
         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(C*theta).value()
-        << " dCmax = " << dtManagerC[speciesi].dVmax()*runTime.deltaTValue()
+        << " dCmax = " << dtm.dVmax()*runTime.deltaTValue()
         << endl;
 
 }

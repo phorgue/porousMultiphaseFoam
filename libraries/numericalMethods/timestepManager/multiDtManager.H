@@ -1,0 +1,89 @@
+/*---------------------------------------------------------------------------*\
+  		  _______  ____    ____  ________  
+ 		 |_   __ \|_   \  /   _||_   __  | 
+   		   | |__) | |   \/   |    | |_ \_| 
+   		   |  ___/  | |\  /| |    |  _|    
+    		  _| |_    _| |_\/_| |_  _| |_     
+   		 |_____|  |_____||_____||_____|    
+   	     Copyright (C) Toulouse INP, Pierre Horgue
+
+License
+    This file is part of porousMultiphaseFoam, an extension of OpenFOAM
+    developed by Pierre Horgue (phorgue@imft.fr) and dedicated to multiphase 
+    flows through porous media.
+
+    OpenFOAM is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+    for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+
+Class
+    Foam::fv::multiDtManager
+
+Description
+    Class for manage timestep using multiple timestepManager (for each field)
+
+SourceFiles
+    multiDtManager.C
+
+\*---------------------------------------------------------------------------*/
+
+#ifndef multiDtManager_H
+#define multiDtManager_H
+
+#include "timestepManager.H"
+#include "sourceEventFile.H"
+#include "patchEventFile.H"
+
+namespace Foam
+{
+
+class multiDtManager
+{
+
+private:
+    Time& runTime_;
+
+    bool adjustTimeStep_;
+    scalar truncationError_;
+    scalar maxDeltaT_;
+    bool eventTimeTracking_;
+
+    PtrList<timestepManager> dtManager_;
+    const List<sourceEventFile*>& sourceEventList_;
+    const List<patchEventFile*>& patchEventList_;
+public:
+    // Constructors
+
+    //- Construct from field
+    multiDtManager(Time&, const List<sourceEventFile*>&, const List<patchEventFile*>&);
+
+    //- Destructor
+    virtual ~multiDtManager();
+
+    //- Access
+    timestepManager& dtManager(label index){return dtManager_[index];};
+    
+    //- Functions
+    void addField(const volScalarField&, const labelList* dryCells = nullptr);
+    void updateDt();
+    void adjustDeltaTUsingEvent();
+};
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+} // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
+
+// ************************************************************************* //
