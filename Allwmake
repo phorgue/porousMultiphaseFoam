@@ -6,8 +6,8 @@ if [ -f $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments ]
 then  . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 fi
 
-wmake libraries/numericalMethods
 wmake libraries/toolsGIS
+wmake libraries/numericalMethods
 wmake libraries/porousModels
 wmake libraries/porousBoundaryConditions
 
