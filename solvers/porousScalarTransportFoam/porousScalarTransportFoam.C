@@ -73,7 +73,12 @@ int main(int argc, char *argv[])
         runTime++;
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        #include "CEqn.H"
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+        forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
+
+        //- Correct pmTransportModel + dispersion for classical porosity
+        pmTransportModel->solveTransport(Utheta, phi, theta);
+        forAll(composition.Y(), speciesi) MDTM.dtManager(speciesi).updateDerivatives();
         #include "CmassBalance.H"
 
         #include "eventWrite.H"

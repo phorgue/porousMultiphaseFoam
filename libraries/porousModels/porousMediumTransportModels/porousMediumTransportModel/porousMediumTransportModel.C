@@ -62,7 +62,7 @@ Foam::porousMediumTransportModel::porousMediumTransportModel
     composition_.check_eps();
 }
 
-Foam::wordList Foam::porousMediumTransportModel::speciesNames(Foam::word porousRegion)
+Foam::wordList Foam::porousMediumTransportModel::speciesNames(const Foam::word& porousRegion)
 {
     wordList speciesNamesList = wordList(speciesNames_);
     forAll(speciesNamesList, wordi)

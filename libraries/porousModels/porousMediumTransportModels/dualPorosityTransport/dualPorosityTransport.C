@@ -149,6 +149,11 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
             );
 
         CEqn.solve(solverDict);
+
+        Info << "Concentration: Min(" << speciesNames_[speciesi] << ") = " << gMin(C.internalField())
+             << " Max(" << speciesNames_[speciesi] << ") = " << gMax(C.internalField())
+             << " mass(" << speciesNames_[speciesi] << ") = " << fvc::domainIntegrate(C * theta).value()
+             << endl;
     }
 
     //- matrix part
@@ -156,8 +161,6 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
 
     forAll(matrixComposition_.Y(), speciesi)
     {
-        const auto& speciesName = matrixComposition_.species()[speciesi];
-
         auto& C = matrixComposition_.Y(speciesi);
         const auto& Cfracture = composition_.Y(speciesi);
         const auto& R = matrixComposition_.R(speciesi);
@@ -180,9 +183,9 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
 
         CMatrixEqn.solve(pmModel_.mesh().solver("C"));
 
-        Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField())
-            << " Max(" << speciesName << ") = " << gMax(C.internalField())
-            << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*thetaMatrix_).value()
+        Info<< "Concentration: Min(" << speciesNames_[speciesi] << ") = " << gMin(C.internalField())
+            << " Max(" << speciesNames_[speciesi] << ") = " << gMax(C.internalField())
+            << " mass(" << speciesNames_[speciesi] << ") = " << fvc::domainIntegrate(R*C*thetaMatrix_).value()
             << endl;
     }
 }
