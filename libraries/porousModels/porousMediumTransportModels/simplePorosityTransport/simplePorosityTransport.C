@@ -91,6 +91,11 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
             );
 
         CEqn.solve(solverDict);
+
+        Info << "Concentration: Min(" << speciesNames_[speciesi] << ") = " << gMin(C.internalField())
+         << " Max(" << speciesNames_[speciesi] << ") = " << gMax(C.internalField())
+         << " mass(" << speciesNames_[speciesi] << ") = " << fvc::domainIntegrate(C * theta).value()
+         << endl;
     }
 }
 

@@ -1,1 +1,0 @@
-../porousScalarTransportFoam/CEqn.H
