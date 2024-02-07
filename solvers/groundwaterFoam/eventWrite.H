@@ -4,10 +4,10 @@ if (outputEventIsPresent)
     if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
     {
         //- compute and write time interpolated fields
-        volScalarField h_interpolated = outputEvent.timeInterpolate(h, runTime);
-        volScalarField theta_interpolated = outputEvent.timeInterpolate(theta, runTime);
-        volVectorField Utheta_interpolated = outputEvent.timeInterpolate(Utheta, runTime);
-        surfaceScalarField phi_interpolated = outputEvent.timeInterpolate(phi, runTime);
+        volScalarField h_interpolated = outputEvent.timeInterpolate(h, runTime, writeFields);
+        volScalarField theta_interpolated = outputEvent.timeInterpolate(theta, runTime, writeFields);
+        volVectorField Utheta_interpolated = outputEvent.timeInterpolate(Utheta, runTime, writeFields);
+        surfaceScalarField phi_interpolated = outputEvent.timeInterpolate(phi, runTime, writeFields);
 
         //- CSV output
         if (CSVoutput)

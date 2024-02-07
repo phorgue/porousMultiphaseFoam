@@ -128,6 +128,8 @@ volScalarField& sourceTerm = porousModel->sourceTerm();
 ////////////////////////////////////////////////////
 
 bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
+bool writeFields=runTime.controlDict().lookupOrDefault<bool>("writeFields", true);
+
 OFstream waterMassBalanceCSV("waterMassBalance.csv");
 if (CSVoutput)
 {
