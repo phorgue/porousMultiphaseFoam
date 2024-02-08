@@ -64,35 +64,43 @@ class outputEventFile
 {
 private:
 
-    scalar computeInterpolationFactor(const Time&);
+    bool isPresent_;
+    Time& runTime_;
+    scalar computeInterpolationFactor();
 
 public:
 
-    // Constructors    
+    static autoPtr<outputEventFile> New(Time&);
+
+    // Constructors
     //- Copy constructor
     outputEventFile
     (
         const outputEventFile& fileToCopy
     );
 
-    //- Construct from Istream
+    //- Construct from fileName
     outputEventFile
     (
-        const word& fileName
+        const word& fileName,
+        const bool& isPresent,
+        Time&
     );
-    
+
     // Selectors
 
     //- Destructor
     ~outputEventFile();
 
+    // Access function
+    bool isPresent() const{ return isPresent_;};
+
     // Member Functions
-    scalar timeInterpolate(const scalar&, const scalar&, const Time&);
-    volScalarField timeInterpolate(const volScalarField&, Time&, bool = true);
-    volVectorField timeInterpolate(const volVectorField&, Time&, bool = true);
-    surfaceScalarField timeInterpolate(const surfaceScalarField&, Time&, bool = true);
-    void checkControlDict(const Time&) const;
-    //- Access function
+    scalar timeInterpolate(const scalar&, const scalar&);
+    volScalarField timeInterpolate(const volScalarField&, bool = true);
+    volVectorField timeInterpolate(const volVectorField&, bool = true);
+    surfaceScalarField timeInterpolate(const surfaceScalarField&, bool = true);
+    void checkControlDict() const;
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

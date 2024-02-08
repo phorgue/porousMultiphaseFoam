@@ -32,95 +32,107 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
+Foam::autoPtr<Foam::outputEventFile> Foam::outputEventFile::New(Foam::Time& runTime)
+{
+    const bool isPresent = runTime.controlDict().found("outputEventFile");
+    word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
+    return autoPtr<Foam::outputEventFile>(new outputEventFile(outputEventFileName, isPresent, runTime));
+}
+
 Foam::outputEventFile::outputEventFile
 (
     const outputEventFile& eventFileToCopy
 )
     :
-    eventFile(eventFileToCopy)
+    eventFile(eventFileToCopy),
+    isPresent_(eventFileToCopy.isPresent_),
+    runTime_(eventFileToCopy.runTime_)
 {
 }
 
 Foam::outputEventFile::outputEventFile
 (
-    const word& fileName
+    const word& fileName,
+    const bool& isPresent,
+    Time& runTime
 )
     :
-    eventFile(fileName)
+    eventFile(fileName),
+    isPresent_(isPresent),
+    runTime_(runTime)
 {
-    if (fileName.size() != 0)
+    if (isPresent_)
     {
-        //- properties of a DEM file
-        string separator_ = " ";
-
-        //- file name
-        IFstream ifs(fileName);
-        DynamicList<scalar> datesRead;
-
-        Info << nl << "Reading output event file '" << fileName << "' ...";
-        // read data
-        while (ifs.good())
+        checkControlDict();
+        if (fileName.size() != 0)
         {
-            string line;
-            ifs.getLine(line);
+            //- properties of a DEM file
+            string separator_ = " ";
 
-            if (line != "")
-            {
+            //- file name
+            IFstream ifs(fileName);
+            DynamicList<scalar> datesRead;
 
-                label n = 0;
-                std::size_t pos = 0;
-                DynamicList<string> split;
-        
-                while (pos != std::string::npos)
-                {
-                    std::size_t nPos = line.find(separator_, pos);
-                    if (nPos == std::string::npos)
-                    {
-                        if (line.substr(pos).size() != 0)
-                        {
-                            split.append(line.substr(pos));
-                            n++;
+            Info << nl << "Reading output event file '" << fileName << "' ...";
+            // read data
+            while (ifs.good()) {
+                string line;
+                ifs.getLine(line);
+
+                if (line != "") {
+
+                    label n = 0;
+                    std::size_t pos = 0;
+                    DynamicList<string> split;
+
+                    while (pos != std::string::npos) {
+                        std::size_t nPos = line.find(separator_, pos);
+                        if (nPos == std::string::npos) {
+                            if (line.substr(pos).size() != 0) {
+                                split.append(line.substr(pos));
+                                n++;
+                            }
+                            pos = nPos;
+                        } else {
+                            if (nPos - pos != 0) {
+                                split.append(line.substr(pos, nPos - pos));
+                                n++;
+                            }
+                            pos = nPos + 1;
                         }
-                        pos = nPos;
                     }
-                    else
-                    {
-                        if (nPos - pos != 0)
-                        {
-                            split.append(line.substr(pos, nPos - pos));
-                            n++;
-                        }
-                        pos = nPos + 1;
+                    if (n == 1) {
+                        scalar newDate = readScalar(IStringStream(split[0])());
+                        datesRead.append(newDate);
+                    } else {
+                        FatalErrorIn("outputEventFile.C")
+                                << "wrong number of elements in event file :" << fileName
+                                << nl << " found " << split.size() << " elements instead of 1 "
+                                << nl << "List of read elements : " << split
+                                << abort(FatalError);
                     }
-                }    
-                if (n == 1)
-                {
-                    scalar newDate = readScalar(IStringStream(split[0])());
-                    datesRead.append(newDate);
-                }
-                else
-                {
-                    FatalErrorIn("outputEventFile.C")
-                        << "wrong number of elements in event file :" << fileName
-                            << nl << " found " << split.size() << " elements instead of 1 "
-                            << nl << "List of read elements : " << split
-                            << abort(FatalError);
                 }
             }
-        }
 
-        Info << "OK" << endl;
-        ndates_ = datesRead.size();
-    
-        //- Storing dates
-        dates_.resize(ndates_);
-        forAll(datesRead,datei)
-        {
-            dates_[datei] = datesRead[datei];
+            Info << "OK" << endl;
+            ndates_ = datesRead.size();
+
+            if (ndates_ == 0) {
+                FatalErrorIn("outputEventFile.C")
+                        << "Zero date in file : " << fileName
+                        << nl << "File is empty or not present"
+                        << abort(FatalError);
+            }
+
+            //- Storing dates
+            dates_.resize(ndates_);
+            forAll(datesRead, datei) {
+                dates_[datei] = datesRead[datei];
+            }
+
         }
-    
+        updateIndex(runTime_.startTime().value());
     }
-
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -129,14 +141,14 @@ Foam::outputEventFile::~outputEventFile()
 {}
 // * * * * * * * * * * * * Private Members * * * * * * * * * * * * * * * * * //
 
-Foam::scalar Foam::outputEventFile::computeInterpolationFactor(const Time& runTime)
+Foam::scalar Foam::outputEventFile::computeInterpolationFactor()
 {
-    scalar ifactor = (runTime.timeOutputValue()-currentEventEndTime())/runTime.deltaTValue();
+    scalar ifactor = (runTime_.timeOutputValue()-currentEventEndTime())/runTime_.deltaTValue();
     if (ifactor < 0 || ifactor > 1)
     {
         FatalErrorIn("outputEventFile.C")
             << " Unconsistent value for time interpolation = " << ifactor
-            << " current time is " << runTime.timeOutputValue()
+            << " current time is " << runTime_.timeOutputValue()
             << " and event end time is " << currentEventEndTime() << abort(FatalError);
     }
     return ifactor;
@@ -147,35 +159,33 @@ Foam::scalar Foam::outputEventFile::computeInterpolationFactor(const Time& runTi
 Foam::scalar Foam::outputEventFile::timeInterpolate
 (
     const scalar& prev,
-    const scalar& current,
-    const Time& runTime
+    const scalar& current
 )
 {
     //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor(runTime);
+    scalar interpolateFactor = computeInterpolationFactor();
     return  interpolateFactor*current+(1.0-interpolateFactor)*prev;
 }
 
 Foam::volScalarField Foam::outputEventFile::timeInterpolate
 (
     const volScalarField& vfield,
-    Time& runTime,
     bool writeField
 )
 {
     //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor(runTime);
+    scalar interpolateFactor = computeInterpolationFactor();
 
     //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
-    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
+    scalar timeOutputBackup = runTime_.timeOutputValue();
+    runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
 
     volScalarField ifield
         (
             IOobject
             (
                 vfield.name(),
-                runTime.timeName(),
+                runTime_.timeName(),
                 vfield.mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
@@ -185,30 +195,29 @@ Foam::volScalarField Foam::outputEventFile::timeInterpolate
     ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
     if (writeField) ifield.write();
 
-    runTime.setTime(timeOutputBackup,runTime.timeIndex());
+    runTime_.setTime(timeOutputBackup,runTime_.timeIndex());
     return ifield;
 }
 
 Foam::volVectorField Foam::outputEventFile::timeInterpolate
 (
     const volVectorField& vfield,
-    Time& runTime,
     bool writeField
 )
 {
     //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor(runTime);
+    scalar interpolateFactor = computeInterpolationFactor();
 
     //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
-    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
+    scalar timeOutputBackup = runTime_.timeOutputValue();
+    runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
 
     volVectorField ifield
         (
             IOobject
             (
                 vfield.name(),
-                runTime.timeName(),
+                runTime_.timeName(),
                 vfield.mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
@@ -218,30 +227,29 @@ Foam::volVectorField Foam::outputEventFile::timeInterpolate
     ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
     if (writeField) ifield.write();
 
-    runTime.setTime(timeOutputBackup,runTime.timeIndex());
+    runTime_.setTime(timeOutputBackup,runTime_.timeIndex());
     return ifield;
 }
 
 Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
 (
     const surfaceScalarField& vfield,
-    Time& runTime,
     bool writeField
 )
 {
     //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor(runTime);
+    scalar interpolateFactor = computeInterpolationFactor();
 
     //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
-    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
+    scalar timeOutputBackup = runTime_.timeOutputValue();
+    runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
 
     surfaceScalarField ifield
         (
             IOobject
             (
                 vfield.name(),
-                runTime.timeName(),
+                runTime_.timeName(),
                 vfield.mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
@@ -252,13 +260,13 @@ Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
     ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
     if (writeField) ifield.write();
 
-    runTime.setTime(timeOutputBackup,runTime.timeIndex());
+    runTime_.setTime(timeOutputBackup,runTime_.timeIndex());
     return ifield;
 }
 
-void Foam::outputEventFile::checkControlDict(const Time& runTime) const
+void Foam::outputEventFile::checkControlDict() const
 {
-    const dictionary& cDict = runTime.controlDict();
+    const dictionary& cDict = runTime_.controlDict();
     scalar endTimeValue(cDict.get<scalar>("endTime"));
     scalar writeIntervalValue(cDict.getOrDefault<scalar>("writeInterval",GREAT));
     if (cDict.found("writeFrequency"))

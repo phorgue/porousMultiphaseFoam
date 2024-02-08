@@ -52,15 +52,18 @@ int main(int argc, char *argv[])
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
 
-    Info<< "Create time\n" << Foam::endl;
+    Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);
 
     #include "createMesh.H"
     #include "createFields.H"
+
     multiDtManager MDTM(runTime, tracerSourceEventList, patchEventList);
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
-    #include "readEvent.H"
-    
+
+    forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
+    forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
