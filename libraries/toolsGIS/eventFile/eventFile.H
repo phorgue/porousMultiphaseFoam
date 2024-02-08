@@ -115,6 +115,7 @@ public:
         oldOldValues_ = oldValues_;
         oldValues_ = currentValues_;
     }
+    void init(const TimeState& currentTime);
     void updateIndex(const scalar& currentTime);
     void updateValue(const TimeState& currentTime);
     void addIntermediateTimeSteps(const scalar& smallDT);

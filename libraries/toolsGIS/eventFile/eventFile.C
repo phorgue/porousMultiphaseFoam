@@ -75,26 +75,21 @@ Foam::eventFile::~eventFile()
 
 Foam::scalar Foam::eventFile::currentEventStartTime() const
 {
-    if (iterator_ == -1)
-    {
-        return 0;
-    }
-    else
-    {
-        return dates_[iterator_];
-    }
+    if (iterator_ == -1) return 0;
+    else return dates_[iterator_];
 }
 
 const Foam::scalar& Foam::eventFile::currentEventEndTime() const
 {
-    if (iterator_ < ndates_-1)
-    {
-        return dates_[iterator_+1];
-    }
-    else
-    {
-        return GREAT;
-    }
+    if (iterator_ < ndates_-1) return dates_[iterator_+1];
+    else return GREAT;
+}
+
+void Foam::eventFile::init(const Foam::TimeState &currentTime)
+{
+    updateIndex(currentTime.value());
+    updateValue(currentTime);
+    storeOldValues();
 }
 
 void Foam::eventFile::updateIndex(const scalar& currentTime)
