@@ -1,21 +1,22 @@
 //- write using event file
-if (outputEventIsPresent)
+if (outputEvent->isPresent())
 {
-    if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
+    Info << outputEvent->currentEventEndTime() << " and " <<  runTime.timeOutputValue() << endl;
+    if (outputEvent->currentEventEndTime() <= runTime.timeOutputValue())
     {
         forAll(composition.Y(), speciesi)
         {
             //- compute and write time interpolated fields
             const auto& C = composition.Y(speciesi);
             const auto& R = composition.R(speciesi);
-            volScalarField C_interpolated = outputEvent.timeInterpolate(C, runTime);
-            volScalarField R_interpolated = outputEvent.timeInterpolate(R, runTime,false);
+            volScalarField C_interpolated = outputEvent->timeInterpolate(C);
+            volScalarField R_interpolated = outputEvent->timeInterpolate(R,false);
 
             //- CSV output at given times only
             if (CSVoutput)
             {
                 auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-                CmassBalanceCSV << outputEvent.currentEventEndTime() << " " << fvc::domainIntegrate(R_interpolated*C_interpolated*Saturation*eps).value();
+                CmassBalanceCSV << outputEvent->currentEventEndTime() << " " << fvc::domainIntegrate(R_interpolated*C_interpolated*Saturation*eps).value();
                 forAll(mesh.boundaryMesh(),patchi)
                 {
                     if (mesh.boundaryMesh()[patchi].type() == "patch")
@@ -28,7 +29,7 @@ if (outputEventIsPresent)
             }
         }
 
-        outputEvent.updateIndex(runTime.timeOutputValue());
+        outputEvent->updateIndex(runTime.timeOutputValue());
     }
 }
 //- write using openfoam usual runTime
