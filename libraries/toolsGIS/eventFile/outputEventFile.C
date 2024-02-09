@@ -275,12 +275,32 @@ void Foam::outputEventFile::checkControlDict() const
     }
 
 }
+void Foam::outputEventFile::addField(
+    const volScalarField& field,
+    const surfaceScalarField& phi,
+    const word& type
+) {
+    const volScalarField coef1 = volScalarField(
+            IOobject
+            (
+                    "coef1",
+                    runTime_.timeName(),
+                    runTime_,
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE,
+                    false  // let MeshObject register it
+            ),
+            field.mesh(),
+            1);
+    addField(field, coef1, phi, type);
+}
 
 void Foam::outputEventFile::addField(
-        const Foam::volScalarField& field,
-        const Foam::volScalarField& coef,
-        const Foam::surfaceScalarField& phi
-        )
+    const volScalarField& field,
+    const volScalarField& coef,
+    const surfaceScalarField& phi,
+    const word& type
+)
 {
     fieldsToWrite_.append(&field);
     coeffFields_.append(&coef);
@@ -289,7 +309,7 @@ void Foam::outputEventFile::addField(
     {
         CSVoutputFiles_.append(new OFstream(field.name() + "massBalance.csv"));
         OFstream& massBalanceCSV = CSVoutputFiles_.last();
-        massBalanceCSV << "#Time TotalMass(kg)";
+        massBalanceCSV << "#Time Total(" << type << ")";
         const fvMesh& mesh = field.mesh();
         forAll(mesh.boundaryMesh(),patchi)
         {
