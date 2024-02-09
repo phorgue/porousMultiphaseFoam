@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
     forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
     forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
+    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], theta, phi);
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -82,9 +83,8 @@ int main(int argc, char *argv[])
         //- Correct pmTransportModel + dispersion for classical porosity
         pmTransportModel->solveTransport(Utheta, phi, theta);
         forAll(composition.Y(), speciesi) MDTM.dtManager(speciesi).updateDerivatives();
-        #include "CmassBalance.H"
 
-        #include "eventWrite.H"
+        outputEvent->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
