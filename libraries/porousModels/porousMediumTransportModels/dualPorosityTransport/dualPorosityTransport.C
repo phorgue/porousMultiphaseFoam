@@ -190,4 +190,11 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
     }
 }
 
+void Foam::porousMediumTransportModels::dualPorosityTransport::info
+(
+    const label& speciei,
+    const volScalarField& theta,
+    const surfaceScalarField& phi
+)
+{}
 // ************************************************************************* //
