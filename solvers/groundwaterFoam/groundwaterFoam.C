@@ -55,17 +55,25 @@ int main(int argc, char *argv[])
 {
     argList::addBoolOption("steady", "to run steady flow simulation");
 
-    #include "setRootCase.H"
+    Foam::argList args(argc, argv);
+    if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
-    #include "createTime.H"
+
+    Info << "Create time\n" << Foam::endl;
+    Time runTime(Time::controlDictName, args);
+
     #include "createMesh.H"
-    #include "readGravitationalAcceleration.H"
+
+    Info<< "\nReading g" << endl;
+    const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
+
     #include "createFields.H"
     #include "readPicardNewtonControls.H"
     #include "readForcing.H"
     #include "readTimeControls.H"
     #include "createthetaFields.H"
-    #include "readEvent.H"
+
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
