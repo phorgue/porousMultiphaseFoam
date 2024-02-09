@@ -113,7 +113,8 @@ public:
     volVectorField timeInterpolate(const volVectorField&, bool = true);
     surfaceScalarField timeInterpolate(const surfaceScalarField&, bool = true);
     void checkControlDict() const;
-    void addField(const volScalarField&, const volScalarField&, const surfaceScalarField&);
+    void addField(const volScalarField&, const surfaceScalarField&, const word&);
+    void addField(const volScalarField&, const volScalarField&, const surfaceScalarField&, const word&);
     void write();
 };
 

@@ -49,16 +49,26 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+    Foam::argList args(argc, argv);
+    if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
-    #include "createTime.H"
+
+    Info << "Create time\n" << Foam::endl;
+    Time runTime(Time::controlDictName, args);
+
     #include "createMesh.H"
+
     #include "createTimeControls.H"
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createSbFields.H"
     #include "readTimeControls.H"
-    #include "readEvent.H"
+
+    forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
+    forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
+    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], theta, phi);
+
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
