@@ -48,6 +48,7 @@ SourceFiles
 
 #include "fvMesh.H"
 #include "eventFile.H"
+#include "volFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -55,8 +56,8 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------* \
-    Class fluidoutputEventFile Declaration
-    \*---------------------------------------------------------------------------*/
+    Class outputEventFile Declaration
+\*---------------------------------------------------------------------------*/
 
 class outputEventFile
 :
@@ -64,8 +65,24 @@ class outputEventFile
 {
 private:
 
+    //- If output event file is present
     bool isPresent_;
+
+    //- If CSV file output is active
+    bool CSVoutput_;
+
+    //- Link to Time
     Time& runTime_;
+
+    //- Field to write
+    PtrList<const volScalarField> fieldsToWrite_;
+    PtrList<const volScalarField> coeffFields_;
+    PtrList<const surfaceScalarField> phiFields_;
+
+    //- OFstream for CSV outputs
+    PtrList<OFstream> CSVoutputFiles_;
+
+    //- Internal function
     scalar computeInterpolationFactor();
 
 public:
@@ -73,17 +90,12 @@ public:
     static autoPtr<outputEventFile> New(Time&);
 
     // Constructors
-    //- Copy constructor
-    outputEventFile
-    (
-        const outputEventFile& fileToCopy
-    );
-
     //- Construct from fileName
     outputEventFile
     (
         const word& fileName,
         const bool& isPresent,
+        const bool& CSVoutput,
         Time&
     );
 
@@ -101,6 +113,8 @@ public:
     volVectorField timeInterpolate(const volVectorField&, bool = true);
     surfaceScalarField timeInterpolate(const surfaceScalarField&, bool = true);
     void checkControlDict() const;
+    void addField(const volScalarField&, const volScalarField&, const surfaceScalarField&);
+    void write();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

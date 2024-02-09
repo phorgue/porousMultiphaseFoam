@@ -29,37 +29,33 @@ License
 
 #include "outputEventFile.H"
 #include "IFstream.H"
+#include "fvc.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::autoPtr<Foam::outputEventFile> Foam::outputEventFile::New(Foam::Time& runTime)
 {
     const bool isPresent = runTime.controlDict().found("outputEventFile");
+    const bool CSVoutput = runTime.controlDict().found("outputEventFile");
     word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
-    return autoPtr<Foam::outputEventFile>(new outputEventFile(outputEventFileName, isPresent, runTime));
-}
-
-Foam::outputEventFile::outputEventFile
-(
-    const outputEventFile& eventFileToCopy
-)
-    :
-    eventFile(eventFileToCopy),
-    isPresent_(eventFileToCopy.isPresent_),
-    runTime_(eventFileToCopy.runTime_)
-{
+    return autoPtr<Foam::outputEventFile>(new outputEventFile(outputEventFileName, isPresent, CSVoutput, runTime));
 }
 
 Foam::outputEventFile::outputEventFile
 (
     const word& fileName,
     const bool& isPresent,
+    const bool& CSVoutput,
     Time& runTime
 )
     :
     eventFile(fileName),
     isPresent_(isPresent),
-    runTime_(runTime)
+    CSVoutput_(CSVoutput),
+    runTime_(runTime),
+    fieldsToWrite_(0),
+    coeffFields_(0),
+    phiFields_(0)
 {
     if (isPresent_)
     {
@@ -280,4 +276,61 @@ void Foam::outputEventFile::checkControlDict() const
 
 }
 
+void Foam::outputEventFile::addField(
+        const Foam::volScalarField& field,
+        const Foam::volScalarField& coef,
+        const Foam::surfaceScalarField& phi
+        )
+{
+    fieldsToWrite_.append(&field);
+    coeffFields_.append(&coef);
+    phiFields_.append(&phi);
+    if (CSVoutput_)
+    {
+        CSVoutputFiles_.append(new OFstream(field.name() + "massBalance.csv"));
+        OFstream& massBalanceCSV = CSVoutputFiles_.last();
+        massBalanceCSV << "#Time TotalMass(kg)";
+        const fvMesh& mesh = field.mesh();
+        forAll(mesh.boundaryMesh(),patchi)
+        {
+            if (mesh.boundaryMesh()[patchi].type() == "patch")
+            {
+                massBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
+            }
+        }
+        massBalanceCSV << endl;
+    }
+}
+
+
+void Foam::outputEventFile::write() {
+    if (isPresent_) {
+        if (currentEventEndTime() <= runTime_.timeOutputValue()) {
+            forAll(fieldsToWrite_, fieldi) {
+                const fvMesh& mesh = fieldsToWrite_[fieldi].mesh();
+                volScalarField fInter = timeInterpolate(fieldsToWrite_[fieldi]);
+                volScalarField cInter = timeInterpolate(coeffFields_[fieldi], false);
+                surfaceScalarField phiInter =  timeInterpolate(phiFields_[fieldi], false);
+                if (CSVoutput_)
+                {
+                    auto& massBalanceCSV = CSVoutputFiles_[fieldi];
+                    massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter*cInter).value();
+                    forAll(mesh.boundaryMesh(),patchi)
+                    {
+                        if (mesh.boundaryMesh()[patchi].type() == "patch")
+                        {
+                            massBalanceCSV << " " << gSum(phiInter.boundaryField()[patchi]*cInter.boundaryField()[patchi]);
+                        }
+                    }
+                    massBalanceCSV << endl;
+                }
+            }
+            updateIndex(runTime_.timeOutputValue());
+
+        }
+    }
+    else {
+        runTime_.write();
+    }
+}
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
