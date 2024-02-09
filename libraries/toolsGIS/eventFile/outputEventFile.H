@@ -78,6 +78,7 @@ private:
     PtrList<const volScalarField> fieldsToWrite_;
     PtrList<const volScalarField> coeffFields_;
     PtrList<const surfaceScalarField> phiFields_;
+    List<bool> massBalance_;
 
     //- OFstream for CSV outputs
     PtrList<OFstream> CSVoutputFiles_;
@@ -113,8 +114,8 @@ public:
     volVectorField timeInterpolate(const volVectorField&, bool = true);
     surfaceScalarField timeInterpolate(const surfaceScalarField&, bool = true);
     void checkControlDict() const;
-    void addField(const volScalarField&, const surfaceScalarField&, const word&);
-    void addField(const volScalarField&, const volScalarField&, const surfaceScalarField&, const word&);
+    void addField(const volScalarField&, const surfaceScalarField&, const word&, bool = true);
+    void addField(const volScalarField&, const volScalarField&, const surfaceScalarField&, const word&, bool = true);
     void write();
 };
 

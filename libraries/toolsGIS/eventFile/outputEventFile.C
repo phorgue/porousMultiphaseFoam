@@ -55,7 +55,8 @@ Foam::outputEventFile::outputEventFile
     runTime_(runTime),
     fieldsToWrite_(0),
     coeffFields_(0),
-    phiFields_(0)
+    phiFields_(0),
+    massBalance_(0)
 {
     if (isPresent_)
     {
@@ -278,7 +279,8 @@ void Foam::outputEventFile::checkControlDict() const
 void Foam::outputEventFile::addField(
     const volScalarField& field,
     const surfaceScalarField& phi,
-    const word& type
+    const word& type,
+    bool massBalance
 ) {
     const volScalarField coef1 = volScalarField(
             IOobject
@@ -292,20 +294,22 @@ void Foam::outputEventFile::addField(
             ),
             field.mesh(),
             1);
-    addField(field, coef1, phi, type);
+    addField(field, coef1, phi, type, massBalance);
 }
 
 void Foam::outputEventFile::addField(
     const volScalarField& field,
     const volScalarField& coef,
     const surfaceScalarField& phi,
-    const word& type
+    const word& type,
+    bool massBalance
 )
 {
     fieldsToWrite_.append(&field);
     coeffFields_.append(&coef);
     phiFields_.append(&phi);
-    if (CSVoutput_)
+    massBalance_.append(massBalance);
+    if (CSVoutput_ && massBalance)
     {
         CSVoutputFiles_.append(new OFstream(field.name() + "massBalance.csv"));
         OFstream& massBalanceCSV = CSVoutputFiles_.last();
@@ -329,10 +333,10 @@ void Foam::outputEventFile::write() {
             forAll(fieldsToWrite_, fieldi) {
                 const fvMesh& mesh = fieldsToWrite_[fieldi].mesh();
                 volScalarField fInter = timeInterpolate(fieldsToWrite_[fieldi]);
+                if (CSVoutput_ && massBalance_[fieldi]) {
                 volScalarField cInter = timeInterpolate(coeffFields_[fieldi], false);
                 surfaceScalarField phiInter =  timeInterpolate(phiFields_[fieldi], false);
-                if (CSVoutput_)
-                {
+
                     auto& massBalanceCSV = CSVoutputFiles_[fieldi];
                     massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter*cInter).value();
                     forAll(mesh.boundaryMesh(),patchi)
