@@ -87,31 +87,3 @@ else
         Info << "===> Saturation/Water content file not found (saturated flow)" << endl;
     }
 }
-
-////////////////////////////////////////////////////
-//////////////////// OUTPUT CSV ////////////////////
-////////////////////////////////////////////////////
-
-bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
-PtrList<OFstream> CmassBalanceCSVs;
-if (CSVoutput)
-{
-    CmassBalanceCSVs.resize(composition.Y().size());
-
-    forAll(composition.Y(), speciesi)
-    {
-        CmassBalanceCSVs.set(speciesi, new OFstream(composition.species()[speciesi] + "massBalance.csv"));
-
-        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-
-        CmassBalanceCSV << "#Time TotalMass(kg)";
-        forAll(mesh.boundaryMesh(),patchi)
-        {
-            if (mesh.boundaryMesh()[patchi].type() == "patch")
-            {
-                CmassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
-            }
-        }
-        CmassBalanceCSV << endl;
-    }
-}
