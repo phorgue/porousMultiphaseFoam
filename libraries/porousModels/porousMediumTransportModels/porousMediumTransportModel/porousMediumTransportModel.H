@@ -151,6 +151,14 @@ public:
         const volScalarField& theta
     ) = 0;
 
+    //- Display mass balance information to the terminal
+    virtual void info
+    (
+        const label& speciei,
+        const volScalarField& theta,
+        const surfaceScalarField& phi
+    ) = 0;
+
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
