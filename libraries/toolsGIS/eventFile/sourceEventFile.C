@@ -198,6 +198,17 @@ void Foam::sourceEventFile::onMeshChanged()
 
 void Foam::sourceEventFile::init
 (
+    const Time& runTime
+)
+{
+    if (isPresent_) {
+        updateIndex(runTime.startTime().value());
+        updateValue(runTime);
+    }
+}
+
+void Foam::sourceEventFile::init
+(
     const Time& runTime,
     const word& fieldName,
     const fvMesh& mesh,
@@ -207,8 +218,7 @@ void Foam::sourceEventFile::init
     if (isPresent_) {
         setTimeScheme(fieldName, mesh);
         setFieldDimensions(sourceTermDim);
-        updateIndex(runTime.startTime().value());
-        updateValue(runTime);
+        init(runTime);
     }
 }
 
