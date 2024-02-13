@@ -110,6 +110,7 @@ public:
     tmp<volScalarField> dtValuesAsField() const;
 
     //- Init functions
+    void init(const Time&);
     void init(const Time&, const word&, const fvMesh&, const dimensionSet&);
     void setFieldDimensions(const dimensionSet& dims);
 
