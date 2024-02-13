@@ -123,7 +123,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
         if(specieDict.found("sourceEventFileTracer"))
         {
             word sourceEventFileName = specieDict.getOrDefault<word>("sourceEventFileTracer","");
-            sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
+            sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName, true));
 
             const word& dtFieldName = 
                 sourceEventDtFieldNameOverride.empty() ? Y(speciesi).name() : sourceEventDtFieldNameOverride;
