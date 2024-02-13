@@ -65,7 +65,7 @@ if(adjustTimeStep)
     if (eventTimeTracking)
     {
         scalar timeOfNextEvent = GREAT;
-        if (sourceEventIsPresent) timeOfNextEvent = min(timeOfNextEvent,sourceEvent.currentEventEndTime());
+        if (sourceEvent->isPresent()) timeOfNextEvent = min(timeOfNextEvent,sourceEvent->currentEventEndTime());
         forAll(patchEventList,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList[patchEventi]->currentEventEndTime());
 
         scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
@@ -80,11 +80,11 @@ if(adjustTimeStep)
         if (nSteps == 0)
         {
             scalar timeToCloseEvent = GREAT;
-            if (sourceEventIsPresent)
+            if (sourceEvent->isPresent())
             {
-                if (sourceEvent.currentEventEndTime() != runTime.timeOutputValue())
+                if (sourceEvent->currentEventEndTime() != runTime.timeOutputValue())
                 {
-                    timeToCloseEvent = min(timeToCloseEvent,sourceEvent.currentEventEndTime()-runTime.timeOutputValue());
+                    timeToCloseEvent = min(timeToCloseEvent,sourceEvent->currentEventEndTime()-runTime.timeOutputValue());
                 }
             }
             forAll(patchEventList,patchEventi)

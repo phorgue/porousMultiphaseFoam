@@ -118,30 +118,9 @@ surfaceScalarField Kf(fvc::interpolate(K,"K"));
 
 // specific storage
 dimensionedScalar Ss(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.)));
-Info << nl << "Reading speficic storage : Ss = " << Ss.value() << endl;
+Info << nl << "Reading specific storage: Ss = " << Ss.value() << endl;
 
 //- For constant or event source injection/extraction
 volScalarField& sourceTerm = porousModel->sourceTerm();
-
-////////////////////////////////////////////////////
-//////////////////// OUTPUT CSV ////////////////////
-////////////////////////////////////////////////////
-
-bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
-bool writeFields=runTime.controlDict().lookupOrDefault<bool>("writeFields", true);
-
-OFstream waterMassBalanceCSV("waterMassBalance.csv");
-if (CSVoutput)
-{
-    waterMassBalanceCSV << "#Time ";
-    forAll(mesh.boundaryMesh(),patchi)
-    {
-        if (mesh.boundaryMesh()[patchi].type() == "patch")
-        {
-            waterMassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
-        }
-    }
-    waterMassBalanceCSV << endl;
-}
 
 bool writeResiduals=runTime.controlDict().lookupOrDefault<bool>("writeResiduals",false);
