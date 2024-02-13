@@ -36,7 +36,7 @@ License
 Foam::autoPtr<Foam::outputEventFile> Foam::outputEventFile::New(Foam::Time& runTime)
 {
     const bool isPresent = runTime.controlDict().found("outputEventFile");
-    const bool CSVoutput = runTime.controlDict().found("outputEventFile");
+    const bool CSVoutput = runTime.controlDict().found("CSVoutput");
     word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
     return autoPtr<Foam::outputEventFile>(new outputEventFile(outputEventFileName, isPresent, CSVoutput, runTime));
 }
@@ -164,9 +164,11 @@ Foam::scalar Foam::outputEventFile::timeInterpolate
     return  interpolateFactor*current+(1.0-interpolateFactor)*prev;
 }
 
-Foam::volScalarField Foam::outputEventFile::timeInterpolate
+
+template<class Type, template<class> class PatchField, class TypeMesh>
+Foam::GeometricField<Type, PatchField, TypeMesh> Foam::outputEventFile::timeInterpolate
 (
-    const volScalarField& vfield,
+    const GeometricField<Type, PatchField, TypeMesh>& vfield,
     bool writeField
 )
 {
@@ -177,7 +179,7 @@ Foam::volScalarField Foam::outputEventFile::timeInterpolate
     scalar timeOutputBackup = runTime_.timeOutputValue();
     runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
 
-    volScalarField ifield
+    GeometricField<Type, PatchField, TypeMesh> ifield
         (
             IOobject
             (
@@ -189,71 +191,6 @@ Foam::volScalarField Foam::outputEventFile::timeInterpolate
             ),
             vfield
         );
-    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
-    if (writeField) ifield.write();
-
-    runTime_.setTime(timeOutputBackup,runTime_.timeIndex());
-    return ifield;
-}
-
-Foam::volVectorField Foam::outputEventFile::timeInterpolate
-(
-    const volVectorField& vfield,
-    bool writeField
-)
-{
-    //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor();
-
-    //- update time
-    scalar timeOutputBackup = runTime_.timeOutputValue();
-    runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
-
-    volVectorField ifield
-        (
-            IOobject
-            (
-                vfield.name(),
-                runTime_.timeName(),
-                vfield.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            vfield
-        );
-    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
-    if (writeField) ifield.write();
-
-    runTime_.setTime(timeOutputBackup,runTime_.timeIndex());
-    return ifield;
-}
-
-Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
-(
-    const surfaceScalarField& vfield,
-    bool writeField
-)
-{
-    //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor();
-
-    //- update time
-    scalar timeOutputBackup = runTime_.timeOutputValue();
-    runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
-
-    surfaceScalarField ifield
-        (
-            IOobject
-            (
-                vfield.name(),
-                runTime_.timeName(),
-                vfield.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            vfield
-        );
-
     ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
     if (writeField) ifield.write();
 
@@ -280,39 +217,17 @@ void Foam::outputEventFile::addField(
     const volScalarField& field,
     const surfaceScalarField& phi,
     const word& type,
-    bool massBalance
+    bool massBalance,
+    bool withCoef
 ) {
-    const volScalarField coef1 = volScalarField(
-            IOobject
-            (
-                    "coef1",
-                    runTime_.timeName(),
-                    runTime_,
-                    IOobject::NO_READ,
-                    IOobject::NO_WRITE,
-                    false  // let MeshObject register it
-            ),
-            field.mesh(),
-            1);
-    addField(field, coef1, phi, type, massBalance);
-}
-
-void Foam::outputEventFile::addField(
-    const volScalarField& field,
-    const volScalarField& coef,
-    const surfaceScalarField& phi,
-    const word& type,
-    bool massBalance
-)
-{
+    if (!withCoef) coeffFields_.append(nullptr);
     fieldsToWrite_.append(&field);
-    coeffFields_.append(&coef);
     phiFields_.append(&phi);
     massBalance_.append(massBalance);
     if (CSVoutput_ && massBalance)
     {
         CSVoutputFiles_.append(new OFstream(field.name() + "massBalance.csv"));
-        OFstream& massBalanceCSV = CSVoutputFiles_.last();
+        OFstream& massBalanceCSV = CSVoutputFiles_[CSVoutputFiles_.size()-1];
         massBalanceCSV << "#Time Total(" << type << ")";
         const fvMesh& mesh = field.mesh();
         forAll(mesh.boundaryMesh(),patchi)
@@ -324,6 +239,21 @@ void Foam::outputEventFile::addField(
         }
         massBalanceCSV << endl;
     }
+    else
+    {
+        CSVoutputFiles_.append(nullptr);
+    }
+}
+
+void Foam::outputEventFile::addField(
+    const volScalarField& field,
+    const volScalarField& coef,
+    const surfaceScalarField& phi,
+    const word& type,
+    bool massBalance
+) {
+    coeffFields_.append(&coef);
+    addField(field, phi, type, massBalance, true);
 }
 
 
@@ -332,18 +262,27 @@ void Foam::outputEventFile::write() {
         if (currentEventEndTime() <= runTime_.timeOutputValue()) {
             forAll(fieldsToWrite_, fieldi) {
                 const fvMesh& mesh = fieldsToWrite_[fieldi].mesh();
-                volScalarField fInter = timeInterpolate(fieldsToWrite_[fieldi]);
-                if (CSVoutput_ && massBalance_[fieldi]) {
-                volScalarField cInter = timeInterpolate(coeffFields_[fieldi], false);
-                surfaceScalarField phiInter =  timeInterpolate(phiFields_[fieldi], false);
+                volScalarField fInter = timeInterpolate(fieldsToWrite_[fieldi], true);
+                surfaceScalarField phiInter =  timeInterpolate(phiFields_[fieldi], true);
 
-                    auto& massBalanceCSV = CSVoutputFiles_[fieldi];
-                    massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter*cInter).value();
-                    forAll(mesh.boundaryMesh(),patchi)
-                    {
-                        if (mesh.boundaryMesh()[patchi].type() == "patch")
-                        {
-                            massBalanceCSV << " " << gSum(phiInter.boundaryField()[patchi]*cInter.boundaryField()[patchi]);
+                if (CSVoutput_ && massBalance_[fieldi]) {
+                    OFstream& massBalanceCSV = CSVoutputFiles_[fieldi];
+
+                    if (coeffFields_.test(fieldi)) {
+                        volScalarField cInter = timeInterpolate(coeffFields_[fieldi], false);
+                        massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter * cInter).value();
+                        forAll(mesh.boundaryMesh(), patchi) {
+                            if (mesh.boundaryMesh()[patchi].type() == "patch") {
+                                massBalanceCSV << " " << gSum(phiInter.boundaryField()[patchi] * fInter.boundaryField()[patchi]);
+                            }
+                        }
+                    }
+                    else{
+                        massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter).value();
+                        forAll(mesh.boundaryMesh(), patchi) {
+                            if (mesh.boundaryMesh()[patchi].type() == "patch") {
+                                massBalanceCSV << " " << gSum(phiInter.boundaryField()[patchi] * fInter.boundaryField()[patchi]);
+                            }
                         }
                     }
                     massBalanceCSV << endl;
