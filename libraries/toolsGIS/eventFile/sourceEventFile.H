@@ -73,6 +73,8 @@ class sourceEventFile
 
 private:
 
+    bool isPresent_;
+
     label ncoordinates_;
     List<point> coordinates_;
 
@@ -84,17 +86,14 @@ protected:
 
 public:
 
-    // Constructors    
-    //- Copy constructor
-    sourceEventFile
-    (
-        const sourceEventFile& fileToCopy
-    );
+    static autoPtr<sourceEventFile> New(const word&, const dictionary&);
 
-    //- Construct from Istream
+    // Constructors
+    //- Construct from file
     sourceEventFile
     (
-        const word& fileName
+        const word& fileName,
+        const bool& isPresent
     );
     
     // Selectors
@@ -105,13 +104,14 @@ public:
     // Member Functions
     
     //- Access function
+    const bool& isPresent() const {return isPresent_;}
     const label& ncoordinates() const {return ncoordinates_;}
     const List<point>& coordinates() const {return coordinates_;}
-
-
-    //- Access as a volScalarField
-    void setFieldDimensions(const dimensionSet& dims);
     tmp<volScalarField> dtValuesAsField() const;
+
+    //- Init functions
+    void init(const Time&, const word&, const fvMesh&, const dimensionSet&);
+    void setFieldDimensions(const dimensionSet& dims);
 
 };
 

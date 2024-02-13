@@ -33,23 +33,25 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::sourceEventFile::sourceEventFile
+Foam::autoPtr<Foam::sourceEventFile> Foam::sourceEventFile::New
 (
-    const sourceEventFile& eventFileToCopy
+    const word& keyword,
+    const dictionary& dict
 )
-    :
-    eventFile(eventFileToCopy),
-    ncoordinates_(eventFileToCopy.ncoordinates()),
-    coordinates_(eventFileToCopy.coordinates())
 {
+    const bool isPresent = dict.found(keyword);
+    const word fileName = dict.lookupOrDefault<word>(keyword,"");
+    return autoPtr<Foam::sourceEventFile>(new sourceEventFile(fileName, isPresent));
 }
 
 Foam::sourceEventFile::sourceEventFile
 (
-    const word& fileName
+    const word& fileName,
+    const bool& isPresent
 )
     :
-    eventFile(fileName)
+    eventFile(fileName),
+    isPresent_(isPresent)
 {
     if (fileName.size() != 0)
     {
@@ -63,7 +65,7 @@ Foam::sourceEventFile::sourceEventFile
         DynamicList<point> coordinatesRead;
         DynamicList<scalar> valueRead;
 
-        Info << nl << "Reading Event file '" << fileName << "' ...";
+        Info << nl << "Reading event file '" << fileName << "' ...";
         // read data
         while (ifs.good())
         {
@@ -193,6 +195,23 @@ void Foam::sourceEventFile::onMeshChanged()
         idCoordinates_.clear();
     }
 }
+
+void Foam::sourceEventFile::init
+(
+    const Time& runTime,
+    const word& fieldName,
+    const fvMesh& mesh,
+    const dimensionSet& sourceTermDim
+)
+{
+    if (isPresent_) {
+        setTimeScheme(fieldName, mesh);
+        setFieldDimensions(sourceTermDim);
+        updateIndex(runTime.startTime().value());
+        updateValue(runTime);
+    }
+}
+
 
 void Foam::sourceEventFile::setFieldDimensions(const dimensionSet& dims)
 {
