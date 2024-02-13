@@ -73,7 +73,11 @@ int main(int argc, char *argv[])
     #include "readTimeControls.H"
     #include "createthetaFields.H"
 
+    autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
+    sourceEvent->init(runTime, h.name(), mesh, sourceTerm.dimensions());
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
+    outputEvent->addField(h, phi, "m3", false);
+    outputEvent->addField(theta, phi, "m3");
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -87,7 +91,7 @@ int main(int argc, char *argv[])
     {
         if (!steady)
         {
-            if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
+            if (sourceEvent->isPresent()) sourceEvent->updateIndex(runTime.timeOutputValue());
             forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
             #include "setDeltaT.H"
         }
@@ -97,7 +101,12 @@ int main(int argc, char *argv[])
 noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        #include "computeSourceTerm.H"
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+        if (sourceEvent->isPresent())
+        {
+            sourceEvent->updateValue(runTime);
+            sourceTerm = sourceEvent->dtValuesAsField();
+        }
         #include "updateForcing.H"
 
         scalar deltahIter = 1;
@@ -182,7 +191,7 @@ noConvergence :
         }
         else
         {
-            #include "eventWrite.H"
+            outputEvent->write();
         }
  
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
