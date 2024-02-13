@@ -110,11 +110,11 @@ public:
 
     // Member Functions
     scalar timeInterpolate(const scalar&, const scalar&);
-    volScalarField timeInterpolate(const volScalarField&, bool = true);
-    volVectorField timeInterpolate(const volVectorField&, bool = true);
-    surfaceScalarField timeInterpolate(const surfaceScalarField&, bool = true);
+    template<class Type, template<class> class PatchField, class TypeMesh> GeometricField<Type, PatchField, TypeMesh>
+            timeInterpolate(const GeometricField<Type, PatchField, TypeMesh>&, bool writeField = true);
+
     void checkControlDict() const;
-    void addField(const volScalarField&, const surfaceScalarField&, const word&, bool = true);
+    void addField(const volScalarField&, const surfaceScalarField&, const word&, bool = true, bool = false);
     void addField(const volScalarField&, const volScalarField&, const surfaceScalarField&, const word&, bool = true);
     void write();
 };
