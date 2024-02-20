@@ -25,6 +25,7 @@ porousMediumTransportModels/dualPorosityTransport/dualPorosityTransport.C
 dispersionModels/dispersionModel/dispersionModel.C
 dispersionModels/dispersionModel/dispersionModelNew.C
 dispersionModels/alphaDispersion/alphaDispersion.C
+dispersionModels/dualAlphaDispersion/dualAlphaDispersion.C
 
 phaseModels/phase/phase.C
 phaseModels/fluidPhase/fluidPhase.C
