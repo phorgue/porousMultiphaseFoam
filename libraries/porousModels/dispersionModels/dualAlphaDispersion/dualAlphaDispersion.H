@@ -26,7 +26,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::dispersionModels::alphaDispersion
+    Foam::dispersionModels::dualAlphaDispersion
 
 Description
     Dispersion model based on alphaL and alphaT coefficients (Bear, 1979)
@@ -37,13 +37,18 @@ Description
 
       theta = Saturation * porosity
 
+    Two sets of parameters are used for saturated (alphaL_sat/alphaT_sat) and
+    unsaturated areas (alphaL_unsat/alphaT_unsat). Transition between values
+    are computed using theta thresholds (thetaThreshold_unsat and
+    thetaThreshold_sat)
+
 SourceFiles
-    alphaDispersion.C
+    dualAlphaDispersion.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef alphaDispersion_H
-#define alphaDispersion_H
+#ifndef dualAlphaDispersion_H
+#define dualAlphaDispersion_H
 
 #include "dispersionModel.H"
 
@@ -55,30 +60,31 @@ namespace dispersionModels
 {
 
 /*---------------------------------------------------------------------------*\
-                  Class alphaDispersion Declaration
+                  Class dualAlphaDispersion Declaration
 \*---------------------------------------------------------------------------*/
 
-class alphaDispersion
+class dualAlphaDispersion
 :
     public dispersionModel
 {
     //- Private data
 
     //- Dictionary for model coefficients
-    dictionary alphaDispersionCoeffs_;
+    dictionary dualAlphaDispersionCoeffs_;
 
     //- model coefficients
-    volScalarField tau_,alphaL_,alphaT_;
+    volScalarField tau_,alphaLsat_,alphaTsat_,alphaLunsat_,alphaTunsat_;
+    volScalarField coef_, thetaThresholdSat_, thetaThresholdUnsat_;
 
 public:
 
     //- Runtime type information
-    TypeName("alphaDispersion");
+    TypeName("dualAlphaDispersion");
 
     // Constructors
 
     //- Construct from components
-    alphaDispersion
+    dualAlphaDispersion
     (
         const word& name,
         const dictionary& transportProperties,
@@ -86,7 +92,7 @@ public:
     );
 
     //- Destructor
-    ~alphaDispersion()
+    ~dualAlphaDispersion()
         {}
 
     // Member Functions
@@ -95,8 +101,10 @@ public:
     void correct(const volScalarField& C, const volVectorField& U, const volScalarField& theta)
         {
             dimensionedScalar USMALL("",dimLength/dimTime,1e-36);
+            coef_ = min(1.0, max(0.0, (theta - thetaThresholdUnsat_) / (thetaThresholdSat_ - thetaThresholdUnsat_)));
+            Deff_ = (Dm_/tau_ +  ((1-coef_) * alphaTunsat_ + coef_*alphaTsat_) * mag(U) / theta )*tensor::I
+                + ( (1-coef_) * alphaLunsat_ + coef_*alphaLsat_ - (1-coef_) * alphaTunsat_ - coef_*alphaTsat_ ) * (U*U)/(theta*mag(U)+USMALL);
 
-            Deff_ = (Dm_/tau_ + alphaT_ * mag(U)/theta)*tensor::I + (alphaL_-alphaT_) * (U*U)/(theta*mag(U)+USMALL);
             forAll(Deff_.boundaryField(),patchi)
             {
                 //- Dispersion equal to zero on patch where flux is fixed
