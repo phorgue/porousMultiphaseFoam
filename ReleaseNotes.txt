@@ -1,4 +1,13 @@
 
+### Libraries
+
+- dualAlphaDispersion
+
+  - new dispersion model with two sets of parameters used for saturated
+  (alphaL_sat/alphaT_sat) and unsaturated areas (alphaL_unsat/alphaT_unsat).
+  Transition between values are computed using theta thresholds
+  (thetaThreshold_unsat and thetaThreshold_sat)
+
 ### Solvers
 
 - groundwaterFoam
