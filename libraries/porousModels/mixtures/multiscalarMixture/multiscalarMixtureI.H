@@ -82,10 +82,10 @@ inline Foam::multiscalarMixture::multiscalarMixture
         {
             Info << nl << "porousTransport parameters" << nl << "{" << endl;
         }
-        Info << "    " << Kd.name() << " : " << Kd.value() << endl;
-        Info << "    " << rs.name() << " : " << rs.value() << endl;
-        Info << "    " << epsTotal.name() << " : " << epsTotal.value() << endl;
-        Info << "    " << lambdas_[speciesi].name() << " : " << lambdas_[speciesi].value() << endl;
+        Info << "    Kd : " << Kd.value() << endl;
+        Info << "    rs : " << rs.value() << endl;
+        Info << "    epsTotal : " << epsTotal.value() << endl;
+        Info << "    lambda : " << lambdas_[speciesi].name() << " : " << lambdas_[speciesi].value() << endl;
         Info << "}" << endl;
 
         Info << nl << "Computing initial retard coefficient (saturated): ";
