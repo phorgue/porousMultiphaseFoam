@@ -27,6 +27,10 @@
   normal) to avoid lateral infiltration for non-planar patch. Negative values in
   infiltration.dat still mean inflow (and positive value exfiltration)
 
+- fix missing updateForcing fo GWTfoam
+
+- fix CmassBalance computation for porousScalarTransportFoam
+
 ************************
 *** PMF v2310
 *** Minor fixes and compatibility
