@@ -60,7 +60,11 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     multiDtManager MDTM(runTime, tracerSourceEventList, patchEventList);
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
-    #include "readEvent.H"
+
+    forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
+    forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, zScale);
+    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), "kg");
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -75,9 +79,8 @@ int main(int argc, char *argv[])
 
         //- Compute transport
         #include "CEqn.H"
-        #include "CmassBalance.H"
 
-        #include "eventWrite.H"
+        outputEvent->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
