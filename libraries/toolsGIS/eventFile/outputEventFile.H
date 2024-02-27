@@ -75,7 +75,7 @@ private:
     Time& runTime_;
 
     //- z-scale (for 2D solvers)
-    const scalar zscale_;
+    scalar zscale_;
 
     //- Field to write
     PtrList<const volScalarField> fieldsToWrite_;
@@ -93,7 +93,7 @@ private:
 
 public:
 
-    static autoPtr<outputEventFile> New(Time&);
+    static autoPtr<outputEventFile> New(Time&, const scalar zscale = 1);
 
     // Constructors
     //- Construct from fileName
@@ -102,7 +102,8 @@ public:
         const word& fileName,
         const bool& isPresent,
         const bool& CSVoutput,
-        Time&
+        Time&,
+        const scalar zscale
     );
 
     // Selectors
