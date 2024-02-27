@@ -59,15 +59,18 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
 
     #include "createTimeControls.H"
-    #include "readGravitationalAcceleration.H"
+
+    Info<< "\nReading g" << endl;
+    const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
+
     #include "createFields.H"
     #include "createSbFields.H"
     #include "readTimeControls.H"
 
-    forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
-    forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
+    autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
+    sourceEvent->init(runTime, Sb.name(), mesh, sourceTerm.dimensions());
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
-    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], theta, phi);
+    outputEvent->addField(Sb, phi, "m3");
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -76,7 +79,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
+        if (sourceEvent->isPresent()) sourceEvent->updateIndex(runTime.timeOutputValue());
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
@@ -84,7 +87,12 @@ int main(int argc, char *argv[])
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
-        #include "computeSourceTerm.H"
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+        if (sourceEvent->isPresent())
+        {
+            sourceEvent->updateValue(runTime);
+            sourceTerm = sourceEvent->dtValuesAsField();
+        }
 
         //- Solve saturation equation (explicit)
         #include "SEqn.H"
@@ -93,7 +101,7 @@ int main(int argc, char *argv[])
         //- Solve pressure equation (implicit)
         #include "pEqn.H"
 
-        #include "eventWrite.H"
+        outputEvent->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
