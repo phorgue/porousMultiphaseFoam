@@ -74,9 +74,14 @@ private:
     //- Link to Time
     Time& runTime_;
 
+    //- z-scale (for 2D solvers)
+    const scalar zscale_;
+
     //- Field to write
     PtrList<const volScalarField> fieldsToWrite_;
-    PtrList<const volScalarField> coeffFields_;
+    PtrList<const volScalarField> coeff1Fields_;
+    PtrList<const volScalarField> coeff2Fields_;
+    PtrList<const volScalarField> coeff3Fields_;
     PtrList<const surfaceScalarField> phiFields_;
     List<bool> massBalance_;
 
@@ -114,8 +119,10 @@ public:
             timeInterpolate(const GeometricField<Type, PatchField, TypeMesh>&, bool writeField = true);
 
     void checkControlDict() const;
-    void addField(const volScalarField&, const surfaceScalarField&, const word&, bool = true, bool = false);
-    void addField(const volScalarField&, const volScalarField&, const surfaceScalarField&, const word&, bool = true);
+    void addField(const volScalarField&, const surfaceScalarField&, const word&, bool = true, label=0);
+    void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const word&, bool = true);
+    void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const volScalarField&, const word&, bool = true);
+    void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const volScalarField&, const volScalarField&, const word&, bool = true);
     void write();
 };
 
