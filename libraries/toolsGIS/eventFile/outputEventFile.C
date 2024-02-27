@@ -53,8 +53,10 @@ Foam::outputEventFile::outputEventFile
     isPresent_(isPresent),
     CSVoutput_(CSVoutput),
     runTime_(runTime),
+    zscale_(1),
     fieldsToWrite_(0),
-    coeffFields_(0),
+    coeff1Fields_(0),
+    coeff2Fields_(0),
     phiFields_(0),
     massBalance_(0)
 {
@@ -218,9 +220,10 @@ void Foam::outputEventFile::addField(
     const surfaceScalarField& phi,
     const word& type,
     bool massBalance,
-    bool withCoef
+    const label nCoef
 ) {
-    if (!withCoef) coeffFields_.append(nullptr);
+    if (nCoef<2) coeff2Fields_.append(nullptr);
+    if (nCoef<1) coeff1Fields_.append(nullptr);
     fieldsToWrite_.append(&field);
     phiFields_.append(&phi);
     massBalance_.append(massBalance);
@@ -247,15 +250,42 @@ void Foam::outputEventFile::addField(
 
 void Foam::outputEventFile::addField(
     const volScalarField& field,
-    const volScalarField& coef,
     const surfaceScalarField& phi,
+    const volScalarField& coef1,
     const word& type,
     bool massBalance
 ) {
-    coeffFields_.append(&coef);
-    addField(field, phi, type, massBalance, true);
+    coeff1Fields_.append(&coef1);
+    addField(field, phi, type, massBalance, 1);
 }
 
+void Foam::outputEventFile::addField(
+    const volScalarField& field,
+    const surfaceScalarField& phi,
+    const volScalarField& coef1,
+    const volScalarField& coef2,
+    const word& type,
+    bool massBalance
+) {
+    coeff1Fields_.append(&coef1);
+    coeff2Fields_.append(&coef2);
+    addField(field, phi, type, massBalance, 2);
+}
+
+void Foam::outputEventFile::addField(
+    const volScalarField& field,
+    const surfaceScalarField& phi,
+    const volScalarField& coef1,
+    const volScalarField& coef2,
+    const volScalarField& coef3,
+    const word& type,
+    bool massBalance
+) {
+    coeff1Fields_.append(&coef1);
+    coeff2Fields_.append(&coef2);
+    coeff3Fields_.append(&coef3);
+    addField(field, phi, type, massBalance, 3);
+}
 
 void Foam::outputEventFile::write() {
     if (isPresent_) {
@@ -267,22 +297,29 @@ void Foam::outputEventFile::write() {
 
                 if (CSVoutput_ && massBalance_[fieldi]) {
                     OFstream& massBalanceCSV = CSVoutputFiles_[fieldi];
-
-                    if (coeffFields_.test(fieldi)) {
-                        volScalarField cInter = timeInterpolate(coeffFields_[fieldi], false);
-                        massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter * cInter).value();
-                        forAll(mesh.boundaryMesh(), patchi) {
-                            if (mesh.boundaryMesh()[patchi].type() == "patch") {
-                                massBalanceCSV << " " << gSum(phiInter.boundaryField()[patchi] * fInter.boundaryField()[patchi]);
+                    if (coeff1Fields_.test(fieldi)) {
+                        volScalarField cInter1 = timeInterpolate(coeff1Fields_[fieldi], false);
+                        if (coeff2Fields_.test(fieldi)) {
+                            volScalarField cInter2 = timeInterpolate(coeff1Fields_[fieldi], false);
+                            if (coeff3Fields_.test(fieldi)) {
+                                volScalarField cInter3 = timeInterpolate(coeff1Fields_[fieldi], false);
+                                massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter * cInter1 *  cInter2 * cInter3).value()/zscale_;
+                            }
+                            else {
+                                massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter * cInter1 *  cInter2).value()/zscale_;
                             }
                         }
+                        else {
+                            massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter * cInter1).value()/zscale_;
+                        }
                     }
-                    else{
-                        massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter).value();
-                        forAll(mesh.boundaryMesh(), patchi) {
-                            if (mesh.boundaryMesh()[patchi].type() == "patch") {
-                                massBalanceCSV << " " << gSum(phiInter.boundaryField()[patchi] * fInter.boundaryField()[patchi]);
-                            }
+                    else {
+                        massBalanceCSV << currentEventEndTime() << " " << fvc::domainIntegrate(fInter).value()/zscale_;
+                    }
+                    forAll(mesh.boundaryMesh(), patchi) {
+                        if (mesh.boundaryMesh()[patchi].type() == "patch") {
+                            massBalanceCSV << " "
+                                           << gSum(phiInter.boundaryField()[patchi] * fInter.boundaryField()[patchi]);
                         }
                     }
                     massBalanceCSV << endl;
