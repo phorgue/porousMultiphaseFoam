@@ -32,22 +32,25 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::infiltrationEventFile::infiltrationEventFile
-(
-    const infiltrationEventFile& eventFileToCopy
-)
-    :
-    eventFile(eventFileToCopy),
-    uniform_(eventFileToCopy.uniform_)
+Foam::autoPtr<Foam::infiltrationEventFile> Foam::infiltrationEventFile::New
+        (
+                const word& keyword,
+                const dictionary& dict
+        )
 {
+    const bool isPresent = dict.found(keyword);
+    const word fileName = dict.lookupOrDefault<word>(keyword,"");
+    return autoPtr<Foam::infiltrationEventFile>(new infiltrationEventFile(fileName, isPresent));
 }
 
 Foam::infiltrationEventFile::infiltrationEventFile
 (
-    const word& fileName
+    const word& fileName,
+    const bool& isPresent
 )
     :
     eventFile(fileName),
+    isPresent_(isPresent),
     uniform_(true)
 {
     if (fileName.size() != 0)
@@ -190,3 +193,46 @@ Foam::infiltrationEventFile::~infiltrationEventFile()
 {}
 
 // * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * * //
+
+void Foam::infiltrationEventFile::init
+(
+    const Time& runTime
+)
+{
+    if (isPresent_) {
+        updateIndex(runTime.startTime().value());
+        updateValue(runTime);
+    }
+}
+
+void Foam::infiltrationEventFile::init
+(
+    const Time& runTime,
+    const word& fieldName,
+    const fvMesh& mesh,
+    scalarField& infiltration
+
+)
+{
+    if (isPresent_) {
+        setTimeScheme(fieldName, mesh);
+        init(runTime);
+        if (currentValues_.size() != mesh.C().size())
+        {
+            Warning() << "Number of infiltration values does not correspond to the mesh size, first value is used as uniform infiltration" << endl;
+            this->setInfiltrationAsUniform();
+        }
+        updateInfiltration(runTime, infiltration);
+    }
+}
+
+void Foam::infiltrationEventFile::updateInfiltration
+(
+    const Time& runTime,
+    scalarField& infiltration
+)
+{
+    this->updateValue(runTime);
+    if (this->isUniform()) infiltration = this->dtValue(0);
+    else infiltration = this->dtValues();
+}
