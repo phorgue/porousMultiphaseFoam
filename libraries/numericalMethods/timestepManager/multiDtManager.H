@@ -29,7 +29,7 @@ Class
     Foam::fv::multiDtManager
 
 Description
-    Class for manage timestep using multiple timestepManager (for each field)
+    Class for manage timestep using multiple timestepManagerTruncation (for each field)
 
 SourceFiles
     multiDtManager.C
@@ -39,7 +39,7 @@ SourceFiles
 #ifndef multiDtManager_H
 #define multiDtManager_H
 
-#include "timestepManager.H"
+#include "timestepManagerTruncation.H"
 #include "sourceEventFile.H"
 #include "patchEventFile.H"
 
@@ -53,11 +53,10 @@ private:
     Time& runTime_;
 
     bool adjustTimeStep_;
-    scalar truncationError_;
     scalar maxDeltaT_;
     bool eventTimeTracking_;
 
-    PtrList<timestepManager> dtManager_;
+    PtrList<timestepManagerTruncation> dtManagerT_;
     const List<sourceEventFile*>& sourceEventList_;
     const List<patchEventFile*>& patchEventList_;
 public:
@@ -70,11 +69,12 @@ public:
     virtual ~multiDtManager();
 
     //- Access
-    timestepManager& dtManager(label index){return dtManager_[index];};
+    timestepManagerTruncation& dtManagerT(label index){return dtManagerT_[index];};
     
     //- Functions
     void addField(const volScalarField&, const labelList* dryCells = nullptr);
     void updateDt();
+    void updateAllDerivatives();
     void adjustDeltaTUsingEvent();
 };
 
