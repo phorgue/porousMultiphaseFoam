@@ -54,12 +54,6 @@ else if (timeStepMode != "truncation")
         << exit(FatalError);
 }
 
-//-truncation parameters
-const scalar truncationError_global =
-    runTime.controlDict().lookupOrDefault<scalar>("truncationError",0);
-const scalar truncationError_h =
-    runTime.controlDict().lookupOrDefault<scalar>("truncationError_h",truncationError_global);
-
 //-nIterPicard parameters
 const label nIterPicard =
     runTime.controlDict().lookupOrDefault<scalar>("nIterPicard",0);
@@ -69,15 +63,7 @@ label nIterIncrease = -1;
 
 if (adjustTimeStep)
 {
-    if (truncation_mode)
-    {
-        if (truncationError_h == 0)
-        {
-            FatalErrorIn("readTimeControls.H") << "truncationError is not defined for timestepping"
-        << exit(FatalError);
-        }
-    }
-    else
+    if (!truncation_mode)
     {
         if (nIterPicard == 0)
         {
@@ -89,21 +75,12 @@ if (adjustTimeStep)
 
 
 labelList*fixedPotentialIDListPtr  = &fixedPotentialIDList;
-timestepManager dtManager(runTime, h, truncationError_h, fixedPotentialIDListPtr);
+timestepManagerTruncation dtManager(runTime, h, fixedPotentialIDListPtr);
 
 //- Derivative initialisation to keep 1st user-defined time step
 if (adjustTimeStep)
 {
-    if (truncation_mode)
-    {
-        Info << nl << "Timestepping is based on time-scheme truncation error with :"
-            << nl << "{"
-            << nl << "    truncationError = " << truncationError_h
-            << nl << "    dTFactDecrease  = " << dTFactDecrease
-            << nl << "}"
-            << endl;
-    }
-    else
+    if (!truncation_mode)
     {
         Info << nl << "Timestepping is based on number of Picard iterations with :"
             << nl << "{"

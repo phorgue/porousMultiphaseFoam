@@ -46,7 +46,7 @@ Description
 #include "outputEventFile.H"
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
-#include "timestepManager.H"
+#include "timestepManagerTruncation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;

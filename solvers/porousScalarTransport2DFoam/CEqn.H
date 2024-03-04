@@ -26,7 +26,7 @@ forAll(composition.Y(), speciesi)
 
     CEqn.solve(mesh.solver("C"));
 
-    timestepManager& dtm = MDTM.dtManager(speciesi);
+    timestepManagerTruncation& dtm = MDTM.dtManagerT(speciesi);
     dtm.updateDerivatives();
 
     Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField())
