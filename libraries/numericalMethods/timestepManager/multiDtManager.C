@@ -44,28 +44,16 @@ Foam::multiDtManager::multiDtManager(
 )
     :
     runTime_(runTime),
-    dtManager_(0),
+    dtManagerT_(),
     sourceEventList_(sourceEventList),
     patchEventList_(patchEventList)
 {
     adjustTimeStep_ =
         runTime_.controlDict().lookupOrDefault("adjustTimeStep", false);
-    truncationError_ =
-        runTime_.controlDict().lookupOrDefault<scalar>("truncationError",0.01);
     maxDeltaT_ =
         runTime_.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
     eventTimeTracking_ =
         runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
-
-    if (adjustTimeStep_)
-    {
-        Info << nl << "Time-stepping is based on time-scheme truncation error with :"
-            << nl << "{"
-            << nl << "    truncationError = " << truncationError_
-            << nl << "}"
-            << endl;
-    }
-
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -81,25 +69,32 @@ void multiDtManager::addField
     const labelList* dryCells
 )
 {
-    dtManager_.append(new timestepManager(runTime_, field, truncationError_, dryCells));
+    dtManagerT_.append(new timestepManagerTruncation(runTime_, field, dryCells));
 }
 
 void multiDtManager::updateDt()
 {
-    scalar dt = GREAT;
-    forAll(dtManager_, fieldi)
-    {
-        dt = min
-            (
-                dt,
-                dtManager_[fieldi].computeTimestep()
-            );
+    if (adjustTimeStep_) {
+        scalar dt = GREAT;
+        forAll(dtManagerT_, fieldi) {
+            dt = min
+                    (
+                            dt,
+                            dtManagerT_[fieldi].computeTimestep()
+                    );
+        }
+        dt = min(dt, 1.25 * runTime_.deltaTValue());
+        runTime_.setDeltaT(min(dt, maxDeltaT_));
+        if (eventTimeTracking_) adjustDeltaTUsingEvent();
+        Info << "deltaT = " << runTime_.deltaTValue() << endl;
     }
-    dt = min(dt, 1.2*runTime_.deltaTValue());
-    runTime_.setDeltaT(min(dt, maxDeltaT_));
-    if (eventTimeTracking_) adjustDeltaTUsingEvent();
-    Info<< "deltaT = " <<  runTime_.deltaTValue() << endl;
 }
+
+void multiDtManager::updateAllDerivatives()
+{
+    forAll(dtManagerT_, fieldi) dtManagerT_[fieldi].updateDerivatives();
+}
+
 
 void multiDtManager::adjustDeltaTUsingEvent()
 {
