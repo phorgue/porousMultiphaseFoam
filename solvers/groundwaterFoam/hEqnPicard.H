@@ -29,9 +29,9 @@
 
     ResiduN.primitiveFieldRef() = hEqn.residual()/mesh.V();
     hEqnResidualP = gMax(mag(ResiduN.internalField())());
-    hEqn.solve();
+    hEqnResidualInit = hEqn.solve().initialResidual();
 
-    if (hEqnResidualP > tolerancePicard) h.relax();
+    if (hEqnResidualP > Picard.tolerance()) h.relax();
 
     deltah = h-h.prevIter();
     forAll(fixedPotentialIDList,celli) deltah[fixedPotentialIDList[celli]] = 0;
