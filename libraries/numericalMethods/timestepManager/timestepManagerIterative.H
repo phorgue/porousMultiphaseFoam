@@ -26,63 +26,78 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::fv::multiDtManager
+    Foam::fv::timestepManagerIterative
 
 Description
-    Class for manage timestep using multiple timestepManagerTruncation (for each field)
+    Timestep manager compute timestep based on number of linear algorithm's
+    iterations.
 
 SourceFiles
-    multiDtManager.C
+    timestepManagerIterative.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef multiDtManager_H
-#define multiDtManager_H
+#ifndef timestepManagerIterative_H
+#define timestepManagerIterative_H
 
-#include "timestepManagerTruncation.H"
-#include "timestepManagerIterative.H"
-#include "sourceEventFile.H"
-#include "patchEventFile.H"
+#include "fvMesh.H"
+#include "EulerD2dt2Scheme.H"
+#include "EulerD3dt3Scheme.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
-class multiDtManager
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+/*---------------------------------------------------------------------------*\
+                       Class timestepManagerIterative Declaration
+\*---------------------------------------------------------------------------*/
+
+class timestepManagerIterative
 {
-
+    
 private:
-    Time& runTime_;
 
-    bool adjustTimeStep_;
-    scalar maxDeltaT_;
-    bool eventTimeTracking_;
-    bool iterativeTimeStepping_;
+    //- Reference to time
+    const Time& runTime_;
 
-    PtrList<timestepManagerTruncation> dtManagerT_;
-    PtrList<timestepManagerIterative> dtManagerI_;
-    const List<sourceEventFile*>& sourceEventList_;
-    const List<patchEventFile*>& patchEventList_;
+    //- Solver iterator
+    label iter_;
+    label iterIncrease_;
+
+    //- Parameters
+    const label maxIter_;
+    const scalar tolerance_;
+    const label nIterIncrease_;
+    const scalar dTFactDecrease_;
+    const scalar dTFactIncrease_;
+
 public:
+
     // Constructors
 
     //- Construct from field
-    multiDtManager(Time&, const List<sourceEventFile*>&, const List<patchEventFile*>&);
+    timestepManagerIterative(
+        const Time&,
+        const dictionary&,
+        const word&
+    );
 
-    //- Destructor
-    virtual ~multiDtManager();
+    virtual ~timestepManagerIterative();
 
-    //- Access
-    timestepManagerTruncation& dtManagerT(label index){return dtManagerT_[index];};
-    timestepManagerIterative& dtManagerI(label index){return dtManagerI_[index];};
-    const bool& adjustTimeStep() {return adjustTimeStep_;};
+    //- Access function
+    void reset(const label value = 0) {iter_ = value;};
+    const label& iter() {return iter_;};
+    const label& maxIter() {return maxIter_;};
+    const scalar& tolerance() {return tolerance_;};
+
+    //- Member function
+    void operator++(int) {iter_++;};
+    scalar computeTimestep();
     
-    //- Functions
-    void addField(const volScalarField&, const labelList* dryCells = nullptr);
-    void addField(const volScalarField&, const labelList& dryCells);
-    void addIterativeAlgorithm(const volScalarField&, const word&);
-    void updateDt();
-    void updateAllDerivatives();
-    void adjustDeltaTUsingEvent();
+
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
