@@ -46,7 +46,7 @@ Description
 #include "outputEventFile.H"
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
-#include "timestepManagerTruncation.H"
+#include "multiDtManager.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -56,6 +56,8 @@ int main(int argc, char *argv[])
     argList::addBoolOption("steady", "to run steady flow simulation");
 
     Foam::argList args(argc, argv);
+    bool steady = args.found("steady");
+
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
 
@@ -68,24 +70,36 @@ int main(int argc, char *argv[])
     const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
 
     #include "createFields.H"
-    #include "readPicardNewtonControls.H"
+    bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
     #include "readForcing.H"
-    #include "readTimeControls.H"
+
     #include "createthetaFields.H"
 
+    //- create source event for water sourcesourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName, true));
     autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
     sourceEvent->init(runTime, h.name(), mesh, sourceTerm.dimensions());
+
+    //- create time managers
+    labelList* fixedPotentialIDListPtr  = &fixedPotentialIDList;
+    List<sourceEventFile*> sourceEventList(1, sourceEvent);
+    multiDtManager MDTM(runTime, sourceEventList, patchEventList);
+    MDTM.addIterativeAlgorithm(theta, "Picard");
+    if (!steady)  MDTM.addIterativeAlgorithm(theta, "Newton");
+    MDTM.addField(h, fixedPotentialIDListPtr);
+
+    //- output event
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
     outputEvent->addField(h, phi, "m3", false);
     outputEvent->addField(theta, phi, "m3");
 
+
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
-    bool steady = args.found("steady");
-    if (steady) maxIterPicard = 1;
-    label iterPicard=0;
-    label iterNewton=0;
+
+    timestepManagerIterative& Picard = MDTM.dtManagerI(0);
+    timestepManagerIterative& Newton = MDTM.dtManagerI(1);
 
     while (runTime.run())
     {
@@ -93,7 +107,7 @@ int main(int argc, char *argv[])
         {
             if (sourceEvent->isPresent()) sourceEvent->updateIndex(runTime.timeOutputValue());
             forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
-            #include "setDeltaT.H"
+            MDTM.updateDt();
         }
 
         runTime++;
@@ -112,66 +126,67 @@ noConvergence :
         scalar deltahIter = 1;
         scalar hEqnResidualN = 1.00001;
         scalar hEqnResidualP = 1.00001;
+        scalar hEqnResidualInit = 1.00001;
 
         //--- 1) Picard loop
-        iterPicard = 0;
-        while ( hEqnResidualP > tolerancePicard && iterPicard != maxIterPicard )
+        Picard.reset();
+        while ( hEqnResidualInit > Picard.tolerance() && Picard.iter() != Picard.maxIter() )
         {
-            iterPicard++;
+            Picard++;
             #include "hEqnPicard.H"
             #include "updateProperties.H"
             #include "computeResidualN.H"
-            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residualP = " << hEqnResidualP << ", residualN = " << hEqnResidualN << endl;
-            if ( hEqnResidualP > 10)
+            Info << "Picard iteration " << Picard.iter() << ": max(deltah) = " << deltahIter << ", residualP = " << hEqnResidualP << ", residualN = " << hEqnResidualN << endl;
+            if ( hEqnResidualInit > 10)
             {
                 Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
-                iterPicard = maxIterPicard;
+                Picard.reset(Picard.maxIter());
                 #include "rewindTime.H"
                 goto noConvergence;
             }
         }
-        if ( !steady &&  hEqnResidualP > tolerancePicard )
+        if ( !steady &&  hEqnResidualInit > Picard.iter() )
         {
             Info << endl;
-            if (adjustTimeStep) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            if (MDTM.adjustTimeStep()) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
             else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step / add field h relaxation / increase number of Picard iterations" << exit(FatalError);
             #include "rewindTime.H"
             goto noConvergence;
         }
 
         //--- 2) Newton loop
-        iterNewton = 0;
-        while ( hEqnResidualN > toleranceNewton && iterNewton != maxIterNewton)
+        Newton.reset();
+        while ( hEqnResidualN > Newton.tolerance() && Newton.iter() != Newton.maxIter())
         {
-            if (iterPicard == 0)
+            if (Picard.iter() == 0)
             {
                 #include "computeResidualN.H"
-                iterPicard++;
+                Picard++;
             }
-            iterNewton++;
+            Newton++;
             #include "hEqnNewton.H"
             #include "updateProperties.H"
             #include "computeResidualN.H"
-            Info << "Newton iteration : " << iterNewton << ": max(deltah) = " << deltahIter << ", residualN = " << hEqnResidualN << endl;
+            Info << "Newton iteration : " << Newton.iter() << ": max(deltah) = " << deltahIter << ", residualN = " << hEqnResidualN << endl;
             if ( hEqnResidualN > 10)
             {
                 Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
-                iterNewton = maxIterNewton;
+                Newton.reset(Newton.maxIter());
                 #include "rewindTime.H"
                 goto noConvergence;
             }
         }
-        if ( !steady && hEqnResidualN > toleranceNewton )
+        if ( !steady && hEqnResidualN > Newton.tolerance() )
         {
             Info << endl;
-            if (adjustTimeStep) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            if (MDTM.adjustTimeStep()) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
             else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Newton algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
             #include "rewindTime.H"
             goto noConvergence;
         }
 
         //--- Compute variations
-        if (!steady) dtManager.updateDerivatives();
+        if (!steady) MDTM.updateAllDerivatives();
         scalarField dtheta_tmp = mag(theta.internalField()-theta.oldTime().internalField());
         scalar dtheta = gMax(dtheta_tmp);
 
@@ -187,7 +202,7 @@ noConvergence :
                 OFstream residualFile("residuals.csv", IOstreamOption(), true);
                 residualFile << runTime.timeName() << " " << mag(hEqnResidualP) << endl;
             }
-            if (hEqnResidualP < tolerancePicard) runTime.writeAndEnd();
+            if (hEqnResidualP < Picard.tolerance()) runTime.writeAndEnd();
         }
         else
         {
