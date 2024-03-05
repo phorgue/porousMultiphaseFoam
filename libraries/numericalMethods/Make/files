@@ -1,6 +1,7 @@
 EulerD3dt3Scheme/EulerD3dt3Scheme.C
 
-timestepManager/timestepManager.C
+timestepManager/timestepManagerIterative.C
+timestepManager/timestepManagerTruncation.C
 timestepManager/multiDtManager.C
 
 JacobianMatrix/JacobianMatrix.C
