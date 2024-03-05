@@ -37,13 +37,14 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * Constructor * * * * * * * * * * * * * * * //
 
-Foam::multiDtManager::multiDtManager(
+multiDtManager::multiDtManager(
     Time& runTime,
     const List<sourceEventFile*>& sourceEventList,
     const List<patchEventFile*>& patchEventList
 )
     :
     runTime_(runTime),
+    iterativeTimeStepping_(false),
     dtManagerT_(),
     sourceEventList_(sourceEventList),
     patchEventList_(patchEventList)
@@ -54,11 +55,24 @@ Foam::multiDtManager::multiDtManager(
         runTime_.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
     eventTimeTracking_ =
         runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
+
+    word timeStepMode =
+        runTime.controlDict().lookupOrDefault<word>("timeStepMode", "truncation");
+    if (timeStepMode == "nIterPicard") iterativeTimeStepping_ = true;
+
+     Info << nl << "General time-stepping "
+     << nl << "{"
+     << nl << "    adjustTimeStep is " << adjustTimeStep_
+     << nl << "    maxDeltaT =  " << maxDeltaT_
+     << nl << "    eventTimeTracking is " << eventTimeTracking_
+     << nl << "    timestep mode is " << timeStepMode
+     << nl << "}" << endl;
+
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::multiDtManager::~multiDtManager()
+multiDtManager::~multiDtManager()
 = default;
 
 // * * * * * * * * * * * * * * * * Public Functions  * * * * * * * * * * * * //
@@ -66,10 +80,29 @@ Foam::multiDtManager::~multiDtManager()
 void multiDtManager::addField
 (
     const volScalarField& field,
-    const labelList* dryCells
+    const labelList* fixedCells
 )
 {
-    dtManagerT_.append(new timestepManagerTruncation(runTime_, field, dryCells));
+    dtManagerT_.append(new timestepManagerTruncation(runTime_, field, fixedCells));
+}
+
+void multiDtManager::addField
+(
+    const volScalarField& field,
+    const labelList& fixedCells
+)
+{
+    const labelList* fixedCellsPtr = &fixedCells;
+    dtManagerT_.append(new timestepManagerTruncation(runTime_, field, fixedCellsPtr));
+}
+
+    void multiDtManager::addIterativeAlgorithm
+(
+    const volScalarField& field,
+    const word& algoName
+)
+{
+    dtManagerI_.append(new timestepManagerIterative(runTime_, field.mesh().solutionDict(), algoName));
 }
 
 void multiDtManager::updateDt()
@@ -83,6 +116,16 @@ void multiDtManager::updateDt()
                             dtManagerT_[fieldi].computeTimestep()
                     );
         }
+        if (iterativeTimeStepping_) {
+            forAll(dtManagerI_, algoi) {
+                dt = min
+                        (
+                                dt,
+                                dtManagerI_[algoi].computeTimestep()
+                        );
+            }
+        }
+
         dt = min(dt, 1.25 * runTime_.deltaTValue());
         runTime_.setDeltaT(min(dt, maxDeltaT_));
         if (eventTimeTracking_) adjustDeltaTUsingEvent();
