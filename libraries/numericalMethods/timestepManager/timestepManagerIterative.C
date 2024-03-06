@@ -45,17 +45,21 @@ Foam::timestepManagerIterative::timestepManagerIterative(
     :
     runTime_(runTime),
     iter_(0),
-    iterIncrease_(0),
+    iterIncrease_(-1),
     maxIter_(solutionDict.subOrEmptyDict(algoName).getOrDefault<label>("maxIter",10)),
-    tolerance_(solutionDict.subOrEmptyDict(algoName).getOrDefault<scalar>("tolerance",GREAT)),
-    nIterIncrease_(runTime_.controlDict().getOrDefault<label>("nIterPicard", 3)),
+    tolerance_(solutionDict.subOrEmptyDict(algoName).getOrDefault<scalar>("tolerance",1e+9)),
+    nIterIncreasePresent_(runTime_.controlDict().found(("nIter"+algoName))),
+    nIterIncrease_(runTime_.controlDict().getOrDefault<label>("nIter"+algoName, 0)),
     dTFactDecrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactDecrease", 0.8)),
-    dTFactIncrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactIncrease", 1.25))
+    dTFactIncrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactIncrease", 1.3))
 {
     Info << nl << algoName << " loop control" << nl << "{"
     << nl << "    tolerance = " << tolerance_
-    << nl << "    maximum number of iteration = " << maxIter_
-    << nl << "}" << endl;
+    << nl << "    maximum number of iteration = " << maxIter_ << endl;
+
+    if (nIterIncreasePresent_) Info << "    Number of iteration expected (for timestep increase) = " << nIterIncrease_ << endl;
+
+    Info << "}" << endl;
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -68,26 +72,28 @@ Foam::timestepManagerIterative::~timestepManagerIterative()
 
 scalar timestepManagerIterative::computeTimestep()
 {
-    scalar dt = GREAT;
-
-    if (iter_ > maxIter_)
-    {
-        dt = dTFactDecrease_*runTime_.deltaTValue();
+    scalar dt = runTime_.deltaTValue();
+    if (iter_ > maxIter_) {
+        dt = dTFactDecrease_ * runTime_.deltaTValue();
     }
-    else
-    {
-        if (iter_ < nIterIncrease_) {
-            iterIncrease_++;
-            if (iterIncrease_ == 5) {
-                dt = dTFactIncrease_ * runTime_.deltaTValue();
+    else {
+        if (nIterIncreasePresent_) {
+            if (iter_ < nIterIncrease_) {
+                iterIncrease_++;
+                if (iterIncrease_ == 5) {
+                    dt = dTFactIncrease_ * runTime_.deltaTValue();
+                    iterIncrease_ = 0;
+                }
+            }
+            else {
                 iterIncrease_ = 0;
             }
         }
         else {
-            iterIncrease_ = 0;
+            dt = GREAT;
         }
-    }
 
+    }
     return dt;
 
 }
