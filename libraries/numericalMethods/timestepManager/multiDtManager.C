@@ -44,7 +44,6 @@ multiDtManager::multiDtManager(
 )
     :
     runTime_(runTime),
-    iterativeTimeStepping_(false),
     dtManagerT_(),
     sourceEventList_(sourceEventList),
     patchEventList_(patchEventList)
@@ -56,16 +55,11 @@ multiDtManager::multiDtManager(
     eventTimeTracking_ =
         runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
 
-    word timeStepMode =
-        runTime.controlDict().lookupOrDefault<word>("timeStepMode", "truncation");
-    if (timeStepMode == "nIterPicard") iterativeTimeStepping_ = true;
-
      Info << nl << "General time-stepping "
      << nl << "{"
      << nl << "    adjustTimeStep is " << adjustTimeStep_
      << nl << "    maxDeltaT =  " << maxDeltaT_
      << nl << "    eventTimeTracking is " << eventTimeTracking_
-     << nl << "    timestep mode is " << timeStepMode
      << nl << "}" << endl;
 
 }
@@ -111,19 +105,17 @@ void multiDtManager::updateDt()
         scalar dt = GREAT;
         forAll(dtManagerT_, fieldi) {
             dt = min
-                    (
-                            dt,
-                            dtManagerT_[fieldi].computeTimestep()
-                    );
+                (
+                    dt,
+                    dtManagerT_[fieldi].computeTimestep()
+                );
         }
-        if (iterativeTimeStepping_) {
-            forAll(dtManagerI_, algoi) {
-                dt = min
-                        (
-                                dt,
-                                dtManagerI_[algoi].computeTimestep()
-                        );
-            }
+        forAll(dtManagerI_, algoi) {
+            dt = min
+                (
+                    dt,
+                    dtManagerI_[algoi].computeTimestep()
+                );
         }
 
         dt = min(dt, 1.25 * runTime_.deltaTValue());

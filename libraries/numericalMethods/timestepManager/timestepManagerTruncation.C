@@ -57,7 +57,7 @@ Foam::timestepManagerTruncation::timestepManagerTruncation(
 {
     //- Read truncation error value in controlDict
     truncationError_ = runTime.controlDict().getOrDefault<scalar>("truncationError_"+vf_.name(),
-                                                                 runTime.controlDict().get<scalar>("truncationError"));
+                                                                 runTime.controlDict().getOrDefault<scalar>("truncationError", 1));
 
     Info << nl << "Timestepping for field " << vf_.name() << + " is based on time-scheme truncation error with :"
     << nl << "{"
