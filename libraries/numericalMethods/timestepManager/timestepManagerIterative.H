@@ -70,6 +70,7 @@ private:
     //- Parameters
     const label maxIter_;
     const scalar tolerance_;
+    const bool nIterIncreasePresent_;
     const label nIterIncrease_;
     const scalar dTFactDecrease_;
     const scalar dTFactIncrease_;

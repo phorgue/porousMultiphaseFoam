@@ -56,7 +56,6 @@ private:
     bool adjustTimeStep_;
     scalar maxDeltaT_;
     bool eventTimeTracking_;
-    bool iterativeTimeStepping_;
 
     PtrList<timestepManagerTruncation> dtManagerT_;
     PtrList<timestepManagerIterative> dtManagerI_;
