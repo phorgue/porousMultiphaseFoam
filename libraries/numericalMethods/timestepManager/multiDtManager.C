@@ -46,7 +46,8 @@ multiDtManager::multiDtManager(
     runTime_(runTime),
     dtManagerT_(),
     sourceEventList_(sourceEventList),
-    patchEventList_(patchEventList)
+    patchEventList_(patchEventList),
+    infiltrationEventList_(0)
 {
     adjustTimeStep_ =
         runTime_.controlDict().lookupOrDefault("adjustTimeStep", false);
@@ -64,6 +65,33 @@ multiDtManager::multiDtManager(
 
 }
 
+multiDtManager::multiDtManager(
+    Time& runTime,
+    const List<sourceEventFile*>& sourceEventList,
+    const List<infiltrationEventFile*>& infiltrationEventList
+)
+    :
+    runTime_(runTime),
+    dtManagerT_(),
+    sourceEventList_(sourceEventList),
+    patchEventList_(0),
+    infiltrationEventList_(infiltrationEventList)
+{
+    adjustTimeStep_ =
+        runTime_.controlDict().lookupOrDefault("adjustTimeStep", false);
+    maxDeltaT_ =
+        runTime_.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
+    eventTimeTracking_ =
+        runTime.controlDict().lookupOrDefault("eventTimeTracking", false);
+
+     Info << nl << "General time-stepping "
+     << nl << "{"
+     << nl << "    adjustTimeStep is " << adjustTimeStep_
+     << nl << "    maxDeltaT =  " << maxDeltaT_
+     << nl << "    eventTimeTracking is " << eventTimeTracking_
+     << nl << "}" << endl;
+
+}
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 multiDtManager::~multiDtManager()
@@ -137,6 +165,7 @@ void multiDtManager::adjustDeltaTUsingEvent()
     scalar timeOfNextEvent = GREAT;
     forAll(sourceEventList_,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList_[sourceEventi]->currentEventEndTime());
     forAll(patchEventList_,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList_[patchEventi]->currentEventEndTime());
+    forAll(infiltrationEventList_,eventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList_[eventi]->currentEventEndTime());
 
     scalar timeToNextEvent = timeOfNextEvent-runTime_.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime_.deltaTValue();
