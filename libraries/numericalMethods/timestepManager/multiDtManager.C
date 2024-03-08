@@ -47,7 +47,7 @@ multiDtManager::multiDtManager(
     dtManagerT_(),
     sourceEventList_(sourceEventList),
     patchEventList_(patchEventList),
-    infiltrationEventList_(0)
+    infiltrationEventList_()
 {
     adjustTimeStep_ =
         runTime_.controlDict().lookupOrDefault("adjustTimeStep", false);
@@ -163,9 +163,19 @@ void multiDtManager::adjustDeltaTUsingEvent()
 {
     //-Adjust time step to explicitly compute (source/tracer) event time
     scalar timeOfNextEvent = GREAT;
-    forAll(sourceEventList_,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList_[sourceEventi]->currentEventEndTime());
-    forAll(patchEventList_,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList_[patchEventi]->currentEventEndTime());
-    forAll(infiltrationEventList_,eventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList_[eventi]->currentEventEndTime());
+
+    if (!sourceEventList_.empty()) {
+        Info << "source " << endl;
+        forAll(sourceEventList_,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList_[sourceEventi]->currentEventEndTime());
+    }
+    if (!patchEventList_.empty()) {
+        Info << "patch " << endl;
+        forAll(patchEventList_,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList_[patchEventi]->currentEventEndTime());
+    }
+    if (!infiltrationEventList_.empty()) {
+        Info << "infiltration " << endl;
+        forAll(infiltrationEventList_,eventi) timeOfNextEvent = min(timeOfNextEvent,infiltrationEventList_[eventi]->currentEventEndTime());
+    }
 
     scalar timeToNextEvent = timeOfNextEvent-runTime_.timeOutputValue();
     scalar nSteps =  timeToNextEvent/runTime_.deltaTValue();
@@ -179,18 +189,28 @@ void multiDtManager::adjustDeltaTUsingEvent()
     if (nSteps == 0)
     {
         scalar timeToCloseEvent = GREAT;
-        forAll(sourceEventList_,sourceEventi)
-        {
-            if (sourceEventList_[sourceEventi]->currentEventEndTime() != runTime_.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,sourceEventList_[sourceEventi]->currentEventEndTime()-runTime_.timeOutputValue());
+        if (!sourceEventList_.empty()) {
+            forAll(sourceEventList_, sourceEventi) {
+                if (sourceEventList_[sourceEventi]->currentEventEndTime() != runTime_.timeOutputValue()) {
+                    timeToCloseEvent = min(timeToCloseEvent, sourceEventList_[sourceEventi]->currentEventEndTime() -
+                                                             runTime_.timeOutputValue());
+                }
             }
         }
-        forAll(patchEventList_,patchEventi)
-        {
-            if (patchEventList_[patchEventi]->currentEventEndTime() != runTime_.timeOutputValue())
-            {
-                timeToCloseEvent = min(timeToCloseEvent,patchEventList_[patchEventi]->currentEventEndTime()-runTime_.timeOutputValue());
+        if (!patchEventList_.empty()) {
+            forAll(patchEventList_, patchEventi) {
+                if (patchEventList_[patchEventi]->currentEventEndTime() != runTime_.timeOutputValue()) {
+                    timeToCloseEvent = min(timeToCloseEvent, patchEventList_[patchEventi]->currentEventEndTime() -
+                                                             runTime_.timeOutputValue());
+                }
+            }
+        }
+        if (!infiltrationEventList_.empty()) {
+            forAll(infiltrationEventList_, patchEventi) {
+                if (infiltrationEventList_[patchEventi]->currentEventEndTime() != runTime_.timeOutputValue()) {
+                    timeToCloseEvent = min(timeToCloseEvent, infiltrationEventList_[patchEventi]->currentEventEndTime() -
+                                                             runTime_.timeOutputValue());
+                }
             }
         }
         runTime_.setDeltaT(min(runTime_.deltaTValue(),timeToCloseEvent),false);
