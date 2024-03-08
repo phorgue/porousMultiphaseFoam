@@ -121,10 +121,11 @@ void multiDtManager::addField
     void multiDtManager::addIterativeAlgorithm
 (
     const volScalarField& field,
-    const word& algoName
+    const word& algoName,
+    const bool& steady
 )
 {
-    dtManagerI_.append(new timestepManagerIterative(runTime_, field.mesh().solutionDict(), algoName));
+    dtManagerI_.append(new timestepManagerIterative(runTime_, field.mesh().solutionDict(), algoName, steady));
 }
 
 void multiDtManager::updateDt()
@@ -146,7 +147,7 @@ void multiDtManager::updateDt()
                 );
         }
 
-        dt = min(dt, 1.25 * runTime_.deltaTValue());
+        dt = min(dt, 1.2 * runTime_.deltaTValue());
         runTime_.setDeltaT(min(dt, maxDeltaT_));
         if (eventTimeTracking_) adjustDeltaTUsingEvent();
         Info << "deltaT = " << runTime_.deltaTValue() << endl;
