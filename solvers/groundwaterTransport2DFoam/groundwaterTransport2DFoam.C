@@ -43,55 +43,80 @@ Description
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
 #include "eventFlux.H"
-#include "timestepManager.H"
+#include "multiDtManager.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+    Foam::argList args(argc, argv);
+    if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
-    #include "createTime.H"
+    bool steady = false;
+
+    Info << "Create time\n" << Foam::endl;
+    Time runTime(Time::controlDictName, args);
+
     #include "createMesh.H"
     #include "createFields.H"
     #include "readFixedPoints.H"
-    #include "readTimeControls.H"  
-    #include "readEvent.H"
-    bool steady = false;
+    const dictionary& residualControl = mesh.solutionDict().subOrEmptyDict("residualControl");
+    const scalar residualPotential = residualControl.lookupOrDefault<scalar>("potential", 0);
+    scalar maxResidual = GREAT;
+    if (steady && residualPotential ==0)
+    {
+        FatalErrorIn("readTimeControls.h") << "residualControl.potential should be specified in system/fvSolution" << abort(FatalError);
+    }
+
+    //- create source/infiltration events
+    autoPtr<infiltrationEventFile> infiltrationEvent = infiltrationEventFile::New("infiltrationEventFile", transportProperties);
+    infiltrationEvent->init(runTime, potential.name(), mesh, infiltration);
+    autoPtr<sourceEventFile> waterSourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
+    waterSourceEvent->init(runTime, potential.name(), mesh, waterSourceTerm.dimensions());
+
+    //- create time manager
+    List<sourceEventFile*> waterSourceEventList(1, waterSourceEvent);
+    List<infiltrationEventFile*> infiltrationEventList(1, infiltrationEvent);
+    multiDtManager MDTM(runTime, sourceEventList, infiltrationEventList);
+    MDTM.addField(potential, &dryCellIDList);
+    forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
+
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, zScale);
+    outputEvent->addField(hwater, phi, eps, "m3", true);
+    outputEvent->addField(potential, phi, "m", false);
+    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), "kg");
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info << "\nStarting time loop\n" << endl;
 
     while (runTime.run())
     {
-        if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.timeOutputValue());
-        if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.timeOutputValue());
-        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateIndex(runTime.timeOutputValue());
-        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
-        #include "setDeltaT.H"
+        if (infiltrationEvent->isPresent()) infiltrationEvent->updateIndex(runTime.timeOutputValue());
+        if (waterSourceEvent->isPresent()) waterSourceEvent->updateIndex(runTime.timeOutputValue());
+        MDTM.updateDt();
 
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         //- Update water infiltration
-        #include "computeInfiltration.H"
+        if (infiltrationEvent->isPresent()) infiltrationEvent->updateInfiltration(runTime, infiltration.primitiveFieldRef());
+        if (waterSourceEvent->isPresent()) {
+            waterSourceEvent->updateValue(runTime);
+            waterSourceTerm = waterSourceEvent->dtValuesAsField();
+        }
 
         //- Solve potential equation
         #include "potentialEqn.H"
-
-        //- Water mass balance computation
-        #include "waterMassBalance.H"
 
         //- Solve transport equation
         phihwater = phi * fvc::interpolate(hwater);
         #include "CEqn.H"
 
-        //- C mass balance computation
-        #include "CmassBalance.H"
-
-        #include "eventWrite.H"
+        //- Write
+        outputEvent->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
