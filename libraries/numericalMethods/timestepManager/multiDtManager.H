@@ -43,6 +43,7 @@ SourceFiles
 #include "timestepManagerIterative.H"
 #include "sourceEventFile.H"
 #include "patchEventFile.H"
+#include "infiltrationEventFile.H"
 
 namespace Foam
 {
@@ -59,13 +60,16 @@ private:
 
     PtrList<timestepManagerTruncation> dtManagerT_;
     PtrList<timestepManagerIterative> dtManagerI_;
-    const List<sourceEventFile*>& sourceEventList_;
-    const List<patchEventFile*>& patchEventList_;
+    const List<sourceEventFile*> sourceEventList_;
+    const List<patchEventFile*> patchEventList_;
+    const List<infiltrationEventFile*> infiltrationEventList_;
+
 public:
     // Constructors
 
     //- Construct from field
     multiDtManager(Time&, const List<sourceEventFile*>&, const List<patchEventFile*>&);
+    multiDtManager(Time&, const List<sourceEventFile*>&, const List<infiltrationEventFile*>&);
 
     //- Destructor
     virtual ~multiDtManager();
