@@ -143,7 +143,7 @@ noConvergence :
                 goto noConvergence;
             }
         }
-        if ( hEqnResidualInit > Picard.iter() )
+        if ( hEqnResidualInit > Picard.tolerance() )
         {
             Info << endl;
             if (MDTM.adjustTimeStep()) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
