@@ -30,11 +30,12 @@ forAll(composition.Y(), speciesi)
 
     CEqn.solve(mesh.solver("C"));
 
-    dtManagerC[speciesi].updateDerivatives();
+    timestepManagerTruncation& dtm = MDTM.dtManagerT(speciesi);
+    dtm.updateDerivatives();
 
     Info<< "Concentration Min(" << speciesName << ") = " << gMin(C)
         << " Max(" << speciesName << ") = " << gMax(C)
         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*hwater*eps).value()/zScale
-        << " dCmax = " << dtManagerC[speciesi].dVmax()*runTime.deltaTValue() << endl;
+        << " dCmax = " << dtm.dVmax()*runTime.deltaTValue() << endl;
 
 }
