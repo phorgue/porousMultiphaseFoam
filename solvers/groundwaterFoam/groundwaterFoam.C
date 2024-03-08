@@ -145,9 +145,8 @@ noConvergence :
                 goto noConvergence;
             }
         }
-        if ( !steady &&  hEqnResidualInit > Picard.iter() )
+        if ( !steady &&  hEqnResidualInit > Picard.tolerance() )
         {
-            Info << endl;
             if (MDTM.adjustTimeStep()) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
             else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step / add field h relaxation / increase number of Picard iterations" << exit(FatalError);
             #include "rewindTime.H"
