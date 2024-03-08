@@ -40,7 +40,8 @@ namespace Foam
 Foam::timestepManagerIterative::timestepManagerIterative(
     const Time& runTime,
     const dictionary& solutionDict,
-    const word& algoName
+    const word& algoName,
+    const bool& steady
 )
     :
     runTime_(runTime),
@@ -53,6 +54,11 @@ Foam::timestepManagerIterative::timestepManagerIterative(
     dTFactDecrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactDecrease", 0.8)),
     dTFactIncrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactIncrease", 1.3))
 {
+    if (steady)
+    {
+        maxIter_ = 1;
+        if (algoName == "Newton") tolerance_ = 1e+9;
+    }
     Info << nl << algoName << " loop control" << nl << "{"
     << nl << "    tolerance = " << tolerance_
     << nl << "    maximum number of iteration = " << maxIter_ << endl;
@@ -68,7 +74,6 @@ Foam::timestepManagerIterative::~timestepManagerIterative()
 {}
 
 // * * * * * * * * * * * * * * * * Public Functions  * * * * * * * * * * * * //
-
 
 scalar timestepManagerIterative::computeTimestep()
 {
