@@ -44,7 +44,7 @@
     }
 
     //- compute derivatives
-    if (!steady) dtManager.updateDerivatives();
+    if (!steady) MDTM.updateAllDerivatives();
 
     //- updating flow properties
     transmissivity = Mf*fvc::interpolate(hwater);
