@@ -82,7 +82,7 @@ public:
     //- Functions
     void addField(const volScalarField&, const labelList* dryCells = nullptr);
     void addField(const volScalarField&, const labelList& dryCells);
-    void addIterativeAlgorithm(const volScalarField&, const word&);
+    void addIterativeAlgorithm(const volScalarField&, const word&, const bool& steady = false);
     void updateDt();
     void updateAllDerivatives();
     void adjustDeltaTUsingEvent();

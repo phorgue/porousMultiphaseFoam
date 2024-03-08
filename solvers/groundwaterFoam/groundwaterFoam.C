@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
     labelList* fixedPotentialIDListPtr  = &fixedPotentialIDList;
     List<sourceEventFile*> sourceEventList(1, sourceEvent);
     multiDtManager MDTM(runTime, sourceEventList, patchEventList);
-    MDTM.addIterativeAlgorithm(theta, "Picard");
-    if (!steady)  MDTM.addIterativeAlgorithm(theta, "Newton");
+    MDTM.addIterativeAlgorithm(theta, "Picard", steady);
+    MDTM.addIterativeAlgorithm(theta, "Newton", steady);
     MDTM.addField(h, fixedPotentialIDListPtr);
 
     //- output event

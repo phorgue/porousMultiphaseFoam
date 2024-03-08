@@ -68,8 +68,8 @@ private:
     label iterIncrease_;
 
     //- Parameters
-    const label maxIter_;
-    const scalar tolerance_;
+    label maxIter_;
+    scalar tolerance_;
     const bool nIterIncreasePresent_;
     const label nIterIncrease_;
     const scalar dTFactDecrease_;
@@ -83,7 +83,8 @@ public:
     timestepManagerIterative(
         const Time&,
         const dictionary&,
-        const word&
+        const word&,
+        const bool&
     );
 
     virtual ~timestepManagerIterative();
