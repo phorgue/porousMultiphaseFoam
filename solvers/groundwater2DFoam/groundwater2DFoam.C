@@ -40,8 +40,7 @@ Description
 #include "infiltrationEventFile.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
-#include "timestepManagerTruncation.H"
-#include "simpleControl.H"
+#include "multiDtManager.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -49,8 +48,8 @@ using namespace Foam;
 int main(int argc, char *argv[])
 {
     argList::addBoolOption("steady", "to run steady flow simulation");
-
     Foam::argList args(argc, argv);
+
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
     bool steady = args.found("steady");
@@ -61,12 +60,26 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "createFields.H"
     #include "readFixedPoints.H"
-    #include "readTimeControls.H"
+    const dictionary& residualControl = mesh.solutionDict().subOrEmptyDict("residualControl");
+    const scalar residualPotential = residualControl.lookupOrDefault<scalar>("potential", 0);
+    scalar maxResidual = GREAT;
+    if (steady && residualPotential ==0)
+    {
+        FatalErrorIn("readTimeControls.h") << "residualControl.potential should be specified in system/fvSolution" << abort(FatalError);
+    }
 
+    //- create source/infiltration events
     autoPtr<infiltrationEventFile> infiltrationEvent = infiltrationEventFile::New("infiltrationEventFile", transportProperties);
     infiltrationEvent->init(runTime, potential.name(), mesh, infiltration);
     autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
     sourceEvent->init(runTime, potential.name(), mesh, waterSourceTerm.dimensions());
+
+    //- create time manager
+    List<sourceEventFile*> sourceEventList(1, sourceEvent);
+    List<infiltrationEventFile*> infiltrationEventList(1, infiltrationEvent);
+    multiDtManager MDTM(runTime, sourceEventList, infiltrationEventList);
+    MDTM.addField(potential, &dryCellIDList);
+
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, zScale);
     outputEvent->addField(hwater, phi, eps, "m3", true);
     outputEvent->addField(potential, phi, "m", false);
@@ -81,7 +94,7 @@ int main(int argc, char *argv[])
         {
             if (infiltrationEvent->isPresent()) infiltrationEvent->updateIndex(runTime.timeOutputValue());
             if (sourceEvent->isPresent()) sourceEvent->updateIndex(runTime.timeOutputValue());
-            #include "setDeltaT.H"
+            MDTM.updateDt();
         }
 
         runTime++;
