@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
     #include "createthetaFields.H"
 
-    //- create source event for water sourcesourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName, true));
+    //- create source event for water 
     autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
     sourceEvent->init(runTime, h.name(), mesh, sourceTerm.dimensions());
 
