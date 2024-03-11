@@ -52,7 +52,7 @@ Foam::timestepManagerIterative::timestepManagerIterative(
     nIterIncreasePresent_(runTime_.controlDict().found(("nIter"+algoName))),
     nIterIncrease_(runTime_.controlDict().getOrDefault<label>("nIter"+algoName, 0)),
     dTFactDecrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactDecrease", 0.8)),
-    dTFactIncrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactIncrease", 1.3))
+    dTFactIncrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactIncrease", 1.25))
 {
     if (steady)
     {
