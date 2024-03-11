@@ -86,6 +86,7 @@ private:
     PtrList<const volScalarField> coeff2Fields_;
     PtrList<const volScalarField> coeff3Fields_;
     PtrList<const surfaceScalarField> phiFields_;
+    List<bool> saturation_;
     List<bool> massBalance_;
 
     //- OFstream for CSV outputs
@@ -125,7 +126,7 @@ public:
             timeInterpolate(const GeometricField<Type, PatchField, TypeMesh>&, bool writeField = true);
 
     void checkControlDict() const;
-    void addField(const volScalarField&, const surfaceScalarField&, const word&, bool = true, label=0);
+    void addField(const volScalarField&, const surfaceScalarField&, const word&, bool = true, bool = false, label=0);
     void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const word&, bool = true);
     void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const volScalarField&, const word&, bool = true);
     void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const volScalarField&, const volScalarField&, const word&, bool = true);
