@@ -74,6 +74,9 @@ private:
     //- Link to Time
     Time& runTime_;
 
+    //- Time interpolation factor
+    scalar ifactor_;
+
     //- z-scale (for 2D solvers)
     scalar zscale_;
 
@@ -89,7 +92,7 @@ private:
     PtrList<OFstream> CSVoutputFiles_;
 
     //- Internal function
-    scalar computeInterpolationFactor();
+    void updateInterpolationFactor();
 
 public:
 
@@ -113,6 +116,8 @@ public:
 
     // Access function
     bool isPresent() const{ return isPresent_;};
+    bool CSVoutput() const{ return CSVoutput_;};
+    scalar ifactor() const{ return ifactor_;};
 
     // Member Functions
     scalar timeInterpolate(const scalar&, const scalar&);
