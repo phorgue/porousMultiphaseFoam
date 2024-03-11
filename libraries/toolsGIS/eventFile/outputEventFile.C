@@ -141,17 +141,16 @@ Foam::outputEventFile::~outputEventFile()
 {}
 // * * * * * * * * * * * * Private Members * * * * * * * * * * * * * * * * * //
 
-Foam::scalar Foam::outputEventFile::computeInterpolationFactor()
+void Foam::outputEventFile::updateInterpolationFactor()
 {
-    scalar ifactor = (runTime_.timeOutputValue()-currentEventEndTime())/runTime_.deltaTValue();
-    if (ifactor < 0 || ifactor > 1)
+    ifactor_ = (runTime_.timeOutputValue()-currentEventEndTime())/runTime_.deltaTValue();
+    if (ifactor_ < 0 || ifactor_ > 1)
     {
         FatalErrorIn("outputEventFile.C")
-            << " Unconsistent value for time interpolation = " << ifactor
+            << " Unconsistent value for time interpolation = " << ifactor_
             << " current time is " << runTime_.timeOutputValue()
             << " and event end time is " << currentEventEndTime() << abort(FatalError);
     }
-    return ifactor;
 }
 
 // * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * * //
@@ -162,9 +161,8 @@ Foam::scalar Foam::outputEventFile::timeInterpolate
     const scalar& current
 )
 {
-    //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor();
-    return  interpolateFactor*current+(1.0-interpolateFactor)*prev;
+    //- update interpolation factor
+    return  ifactor_*current+(1.0-ifactor_)*prev;
 }
 
 
@@ -175,9 +173,6 @@ Foam::GeometricField<Type, PatchField, TypeMesh> Foam::outputEventFile::timeInte
     bool writeField
 )
 {
-    //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor();
-
     //- update time
     scalar timeOutputBackup = runTime_.timeOutputValue();
     runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
@@ -194,7 +189,7 @@ Foam::GeometricField<Type, PatchField, TypeMesh> Foam::outputEventFile::timeInte
             ),
             vfield
         );
-    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
+    ifield = ifactor_*vfield+(1.0-ifactor_)*vfield.oldTime();
     if (writeField) ifield.write();
 
     runTime_.setTime(timeOutputBackup,runTime_.timeIndex());
@@ -216,6 +211,7 @@ void Foam::outputEventFile::checkControlDict() const
     }
 
 }
+
 void Foam::outputEventFile::addField(
     const volScalarField& field,
     const surfaceScalarField& phi,
@@ -289,8 +285,10 @@ void Foam::outputEventFile::addField(
 }
 
 void Foam::outputEventFile::write() {
+    ifactor_ = 1;
     if (isPresent_) {
         if (currentEventEndTime() <= runTime_.timeOutputValue()) {
+            updateInterpolationFactor();
             forAll(fieldsToWrite_, fieldi) {
                 const fvMesh& mesh = fieldsToWrite_[fieldi].mesh();
                 volScalarField fInter = timeInterpolate(fieldsToWrite_[fieldi], true);
