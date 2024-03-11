@@ -166,15 +166,12 @@ void multiDtManager::adjustDeltaTUsingEvent()
     scalar timeOfNextEvent = GREAT;
 
     if (!sourceEventList_.empty()) {
-        Info << "source " << endl;
         forAll(sourceEventList_,sourceEventi) timeOfNextEvent = min(timeOfNextEvent,sourceEventList_[sourceEventi]->currentEventEndTime());
     }
     if (!patchEventList_.empty()) {
-        Info << "patch " << endl;
         forAll(patchEventList_,patchEventi) timeOfNextEvent = min(timeOfNextEvent,patchEventList_[patchEventi]->currentEventEndTime());
     }
     if (!infiltrationEventList_.empty()) {
-        Info << "infiltration " << endl;
         forAll(infiltrationEventList_,eventi) timeOfNextEvent = min(timeOfNextEvent,infiltrationEventList_[eventi]->currentEventEndTime());
     }
 
