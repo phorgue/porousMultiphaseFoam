@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
     //-Output event
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
     outputEvent->addField(h, phi, "m3", false);
-    outputEvent->addField(theta, phi, "m3");
+    outputEvent->addField(theta, phi, "m3", true, true);
     forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei),"kg");
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -187,9 +187,18 @@ noConvergence :
         scalarField dtheta_tmp = mag(theta.internalField()-theta.oldTime().internalField());
         scalar dtheta = gMax(dtheta_tmp);
 
+        //- water mass balance terminal display
         Info << "Saturation theta: " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) << " dthetamax = " << dtheta << endl;
-        Info << "Head pressure h: " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << endl
-;
+        Info << "Head pressure h: " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << endl;
+        Info << "Water mass balance (m3/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
+        forAll(phi.boundaryField(),patchi)
+        {
+            if (mesh.boundaryMesh()[patchi].type() == "patch")
+            {
+                Info << phi.boundaryField()[patchi].patch().name() << " = " <<  gSum(phi.boundaryField()[patchi]) << " ; ";
+            }
+        }
+        Info << endl;
 
         //- 3) scalar transport
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
