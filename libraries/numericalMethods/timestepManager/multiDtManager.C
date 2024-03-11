@@ -147,7 +147,7 @@ void multiDtManager::updateDt()
                 );
         }
 
-        dt = min(dt, 1.2 * runTime_.deltaTValue());
+        dt = min(dt, 1.25 * runTime_.deltaTValue());
         runTime_.setDeltaT(min(dt, maxDeltaT_));
         if (eventTimeTracking_) adjustDeltaTUsingEvent();
         Info << "deltaT = " << runTime_.deltaTValue() << endl;
