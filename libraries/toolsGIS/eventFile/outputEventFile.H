@@ -46,10 +46,8 @@ SourceFiles
 #ifndef outputEventFile_H
 #define outputEventFile_H
 
-#include "fvMesh.H"
 #include "eventFile.H"
-#include "volFields.H"
-
+#include "outputField.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -81,16 +79,7 @@ private:
     scalar zscale_;
 
     //- Field to write
-    PtrList<const volScalarField> fieldsToWrite_;
-    PtrList<const volScalarField> coeff1Fields_;
-    PtrList<const volScalarField> coeff2Fields_;
-    PtrList<const volScalarField> coeff3Fields_;
-    PtrList<const surfaceScalarField> phiFields_;
-    List<bool> saturation_;
-    List<bool> massBalance_;
-
-    //- OFstream for CSV outputs
-    PtrList<OFstream> CSVoutputFiles_;
+    PtrList<outputField> outputFields_;
 
     //- Internal function
     void updateInterpolationFactor();
@@ -120,16 +109,18 @@ public:
     bool CSVoutput() const{ return CSVoutput_;};
     scalar ifactor() const{ return ifactor_;};
 
-    // Member Functions
-    scalar timeInterpolate(const scalar&, const scalar&);
-    template<class Type, template<class> class PatchField, class TypeMesh> GeometricField<Type, PatchField, TypeMesh>
-            timeInterpolate(const GeometricField<Type, PatchField, TypeMesh>&, bool writeField = true);
-
+    // Member functions
     void checkControlDict() const;
-    void addField(const volScalarField&, const surfaceScalarField&, const word&, bool = true, bool = false, label=0);
-    void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const word&, bool = true);
-    void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const volScalarField&, const word&, bool = true);
-    void addField(const volScalarField&, const surfaceScalarField&, const volScalarField&, const volScalarField&, const volScalarField&, const word&, bool = true);
+    void addField(
+            const volScalarField& field,
+            const surfaceScalarField& phi,
+            const volScalarField& coef1,
+            const volScalarField& coef2,
+            const volScalarField& coef3,
+            word dimensions,
+            bool massBalance = true,
+            bool saturation = false
+    );
     void write();
 };
 
