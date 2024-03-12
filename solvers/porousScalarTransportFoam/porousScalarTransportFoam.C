@@ -64,7 +64,9 @@ int main(int argc, char *argv[])
     forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
     forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
-    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei),"kg");
+    forAll(composition.Y(), speciei) {
+        outputEvent->addField(composition.Y()[speciei], phi, theta, theta, composition.R(speciei), "kg");
+    }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
