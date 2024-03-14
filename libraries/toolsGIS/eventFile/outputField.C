@@ -39,12 +39,10 @@ Foam::outputField::outputField
     const volScalarField& coef1,
     const volScalarField& coef2,
     const volScalarField& coef3,
-    bool massBalance,
     bool saturation,
     bool CSVoutput,
     scalar zscale,
-    word fileName,
-    word dimensions
+    word fileName
 )
 :
     field_(field),
@@ -54,7 +52,6 @@ Foam::outputField::outputField
     coef2_(coef2),
     coef3_(coef3),
     saturation_(saturation),
-    massBalance_(massBalance),
     CSVoutput_(CSVoutput),
     zscale_(zscale),
     fileOutput_(fileName)
@@ -65,7 +62,7 @@ Foam::outputField::outputField
             fileOutput_ << "#Time";
         }
         else {
-            fileOutput_ << "#Time Total(" << dimensions << ")";
+            fileOutput_ << "#Time Total";
         }
         const fvMesh& mesh = field.mesh();
         forAll(mesh.boundaryMesh(),patchi)
