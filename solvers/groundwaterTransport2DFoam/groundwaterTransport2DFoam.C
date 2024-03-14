@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
     outputEvent->addField(hwater, phi, eps, "waterMassBalance.csv");
     outputEvent->addField(potential, phi);
-    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), composition.Y()[speciei].name()+"MassBalance.csv");
+    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

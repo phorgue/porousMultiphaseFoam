@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     outputEvent->addField(h, phi);
     outputEvent->addField(theta, phi, "waterMassBalance.csv", true);
     forAll(composition.Y(), speciei) {
-        outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"MassBalance.csv");
+        outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
