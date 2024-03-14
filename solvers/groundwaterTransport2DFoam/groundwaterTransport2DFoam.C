@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
     {
         if (infiltrationEvent->isPresent()) infiltrationEvent->updateIndex(runTime.timeOutputValue());
         if (waterSourceEvent->isPresent()) waterSourceEvent->updateIndex(runTime.timeOutputValue());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
+        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateIndex(runTime.timeOutputValue());
         MDTM.updateDt();
 
         runTime++;
