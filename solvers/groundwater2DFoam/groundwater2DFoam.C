@@ -80,9 +80,9 @@ int main(int argc, char *argv[])
     multiDtManager MDTM(runTime, sourceEventList, infiltrationEventList);
     MDTM.addField(potential, &dryCellIDList);
 
-    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, zScale);
-    outputEvent->addField(hwater, phi, eps, "m3", true);
-    outputEvent->addField(potential, phi, "m", false);
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
+    outputEvent->addField(hwater, phi, eps, "waterMassBalance.csv");
+    outputEvent->addField(potential, phi);
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

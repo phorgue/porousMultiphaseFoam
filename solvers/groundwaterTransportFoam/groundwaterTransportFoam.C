@@ -88,10 +88,12 @@ int main(int argc, char *argv[])
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
 
     //-Output event
-    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
-    outputEvent->addField(h, phi, "m3", false);
-    outputEvent->addField(theta, phi, "m3", true, true);
-    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei),"kg");
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
+    outputEvent->addField(h, phi);
+    outputEvent->addField(theta, phi, "waterMassBalance.csv", true);
+    forAll(composition.Y(), speciei) {
+        outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"MassBalance.csv");
+    }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
