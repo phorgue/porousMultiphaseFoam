@@ -103,13 +103,14 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::info
 )
 {
     const auto& C = composition_.Y(speciei);
+    const auto& R = composition_.R(speciei);
     const auto& mesh = C.mesh();
     const auto& sourceTerm = composition_.sourceTerm(speciei);
 
     //- terminal display
     Info << "Concentration: Min(" << speciesNames_[speciei] << ") = " << gMin(C.internalField())
              << " Max(" << speciesNames_[speciei] << ") = " << gMax(C.internalField())
-             << " mass(" << speciesNames_[speciei] << ") = " << fvc::domainIntegrate(C * theta).value()
+             << " mass(" << speciesNames_[speciei] << ") = " << fvc::domainIntegrate(R * C * theta).value()
              << endl;
     Info << speciesNames_[speciei] << " mass balance (kg/s): sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
 
