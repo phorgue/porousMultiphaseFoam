@@ -8,6 +8,22 @@
   Transition between values are computed using theta thresholds
   (thetaThreshold_unsat and thetaThreshold_sat)
 
+- numericalMethods/timestepManager
+
+  - new classes have been designed to handle multi-time stepping techniques
+  using c++Objects instead of #include. All the solvers use this new feature.
+  As a result, multiple files have been removed, such as all the setDeltaT.H.
+
+- toolGis
+
+  - Similary to timestepManager, outputEventFile class coupled with new class
+  outputFields allows to use c++ object to handle eventWrite + mass balance
+  computation. As a result, multiple files have been removed such as eventWrite.H
+  and readEvent.H.
+
+  - Minor change for eventInfiltration keyword :
+    eventFileInfiltration => infiltrationEventFile
+
 ### Solvers
 
 - groundwaterFoam
