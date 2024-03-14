@@ -105,7 +105,6 @@ Foam::GeometricField<Type, PatchField, TypeMesh> Foam::outputField::timeInterpol
 
 void Foam::outputField::write(const word& timeName) {
     if (CSVoutput_) {
-        fileOutput_ << timeName << " " << fvc::domainIntegrate(field_ * coef1_ *  coef2_ * coef3_).value()/zscale_;
         if (saturation_) {
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
@@ -116,6 +115,7 @@ void Foam::outputField::write(const word& timeName) {
         else {
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
+                    fileOutput_ << timeName << " " << fvc::domainIntegrate(field_ * coef1_ *  coef2_ * coef3_).value()/zscale_;
                     fileOutput_ << " " << gSum(field_.boundaryField()[patchi] * phi_.boundaryField()[patchi]);
                 }
             }
@@ -130,10 +130,7 @@ void Foam::outputField::write(const word& timeName, scalar ifactor) {
     surfaceScalarField phiInter =  timeInterpolate(phi_, timeName, ifactor, true);
 
     if (CSVoutput_) {
-        volScalarField cInter1 = timeInterpolate(coef1_, timeName, ifactor, false);
-        volScalarField cInter2 = timeInterpolate(coef2_, timeName, ifactor, false);
-        volScalarField cInter3 = timeInterpolate(coef3_, timeName, ifactor, false);
-        fileOutput_ << timeName << " " << fvc::domainIntegrate(fInter * cInter1 *  cInter2 * cInter3).value()/zscale_;
+        fileOutput_ << timeName;
         if (saturation_) {
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
@@ -142,6 +139,10 @@ void Foam::outputField::write(const word& timeName, scalar ifactor) {
             }
         }
         else {
+            volScalarField cInter1 = timeInterpolate(coef1_, timeName, ifactor, false);
+            volScalarField cInter2 = timeInterpolate(coef2_, timeName, ifactor, false);
+            volScalarField cInter3 = timeInterpolate(coef3_, timeName, ifactor, false);
+            fileOutput_ << " " << fvc::domainIntegrate(fInter * cInter1 *  cInter2 * cInter3).value()/zscale_;
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
                     fileOutput_ << " " << gSum(fInter.boundaryField()[patchi] * phiInter.boundaryField()[patchi]);
