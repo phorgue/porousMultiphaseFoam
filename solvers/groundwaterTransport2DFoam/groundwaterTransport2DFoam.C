@@ -82,10 +82,10 @@ int main(int argc, char *argv[])
     MDTM.addField(potential, &dryCellIDList);
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
 
-    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, zScale);
-    outputEvent->addField(hwater, phi, eps, "m3", true);
-    outputEvent->addField(potential, phi, "m", false);
-    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), "kg");
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
+    outputEvent->addField(hwater, phi, eps, "waterMassBalance.csv");
+    outputEvent->addField(potential, phi);
+    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), composition.Y()[speciei].name()+"MassBalance.csv");
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

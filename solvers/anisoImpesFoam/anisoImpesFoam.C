@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
 
     autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
     sourceEvent->init(runTime, Sb.name(), mesh, sourceTerm.dimensions());
-    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
-    outputEvent->addField(Sb, phi, "m3");
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
+    outputEvent->addField(Sb, phi, eps, "waterMassBalance.csv", true);
 
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

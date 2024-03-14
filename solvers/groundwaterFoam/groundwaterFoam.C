@@ -88,9 +88,9 @@ int main(int argc, char *argv[])
     MDTM.addField(h, fixedPotentialIDListPtr);
 
     //- output event
-    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime);
-    outputEvent->addField(h, phi, "m3", false);
-    outputEvent->addField(theta, phi, "m3", true, true);
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
+    outputEvent->addField(h, phi);
+    outputEvent->addField(theta, phi, "waterMassBalance.csv", true);
 
 
 
