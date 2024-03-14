@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
     forAll(composition.Y(), speciei) {
-        outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"MassBalance.csv");
+        outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
