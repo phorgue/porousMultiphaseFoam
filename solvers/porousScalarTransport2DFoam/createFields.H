@@ -162,31 +162,3 @@ else
 {
     Info << " no seepageTerm file" << endl;
 }
-
-/////////////////////////////////////////////////////////
-//////////////////// OUTLET CSV FILE ////////////////////
-/////////////////////////////////////////////////////////
-
-bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
-PtrList<OFstream> CmassBalanceCSVs;
-if (CSVoutput)
-{
-    CmassBalanceCSVs.resize(composition.Y().size());
-
-    forAll(composition.Y(), speciesi)
-    {
-        CmassBalanceCSVs.set(speciesi, new OFstream(composition.species()[speciesi] + "massBalance.csv"));
-
-        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-
-        CmassBalanceCSV << "#Time TotalMass(kg)";
-        forAll(mesh.boundaryMesh(),patchi)
-        {
-            if (mesh.boundaryMesh()[patchi].type() == "patch")
-            {
-                CmassBalanceCSV << " flux(" << phihwater.boundaryField()[patchi].patch().name() << ")";
-            }
-        }
-        CmassBalanceCSV << " flux(fixedPoint)" << endl;
-    }
-}
