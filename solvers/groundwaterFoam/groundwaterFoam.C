@@ -210,7 +210,7 @@ noConvergence :
                 OFstream residualFile("residuals.csv", IOstreamOption(), true);
                 residualFile << runTime.timeName() << " " << mag(hEqnResidualP) << endl;
             }
-            if (hEqnResidualP < Picard.tolerance()) runTime.writeAndEnd();
+            if (hEqnResidualInit < Picard.tolerance()) runTime.writeAndEnd();
         }
         else
         {

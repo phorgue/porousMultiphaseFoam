@@ -79,8 +79,8 @@ int main(int argc, char *argv[])
     List<sourceEventFile*> waterSourceEventList(1, waterSourceEvent);
     List<infiltrationEventFile*> infiltrationEventList(1, infiltrationEvent);
     multiDtManager MDTM(runTime, sourceEventList, infiltrationEventList);
-    MDTM.addField(potential, &dryCellIDList);
-    forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
+    MDTM.addField(hwater, &dryCellIDList);
+    forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi], &dryCellIDList);
 
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
     outputEvent->addField(hwater, phi, eps, "waterMassBalance.csv");
