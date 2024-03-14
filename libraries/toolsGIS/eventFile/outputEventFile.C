@@ -32,12 +32,12 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::autoPtr<Foam::outputEventFile> Foam::outputEventFile::New(Foam::Time& runTime, const scalar zscale)
+Foam::autoPtr<Foam::outputEventFile> Foam::outputEventFile::New(Foam::Time& runTime, const fvMesh& mesh, const scalar zscale)
 {
     const bool isPresent = runTime.controlDict().found("outputEventFile");
     const bool CSVoutput = runTime.controlDict().lookupOrDefault("CSVoutput", false);
     word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
-    return autoPtr<Foam::outputEventFile>(new outputEventFile(outputEventFileName, isPresent, CSVoutput, runTime, zscale));
+    return autoPtr<Foam::outputEventFile>(new outputEventFile(outputEventFileName, isPresent, CSVoutput, runTime, mesh, zscale));
 }
 
 Foam::outputEventFile::outputEventFile
@@ -46,6 +46,7 @@ Foam::outputEventFile::outputEventFile
     const bool& isPresent,
     const bool& CSVoutput,
     Time& runTime,
+    const fvMesh& mesh,
     const scalar zscale
 )
     :
@@ -54,6 +55,18 @@ Foam::outputEventFile::outputEventFile
     CSVoutput_(CSVoutput),
     runTime_(runTime),
     zscale_(zscale),
+    one_(
+        IOobject
+        (
+            "one",
+            runTime_.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar(dimless, 1)
+    ),
     outputFields_()
 {
     if (isPresent_)
@@ -172,8 +185,7 @@ void Foam::outputEventFile::addField(
     const volScalarField& coef1,
     const volScalarField& coef2,
     const volScalarField& coef3,
-    word dimensions,
-    bool massBalance,
+    word fileName,
     bool saturation
 ) {
 
@@ -183,14 +195,42 @@ void Foam::outputEventFile::addField(
         coef1,
         coef2,
         coef3,
-        massBalance,
         saturation,
         CSVoutput_,
         zscale_,
-        "waterMassBalance",
-        dimensions
+        fileName
         )
     );
+}
+
+void Foam::outputEventFile::addField(
+    const volScalarField& field,
+    const surfaceScalarField& phi,
+    const volScalarField& coef1,
+    const volScalarField& coef2,
+    word fileName,
+    bool saturation
+) {
+    addField(field, phi, coef1, coef2, one_, fileName, saturation);
+}
+
+void Foam::outputEventFile::addField(
+        const volScalarField& field,
+        const surfaceScalarField& phi,
+        const volScalarField& coef1,
+        word fileName,
+        bool saturation
+) {
+    addField(field, phi, coef1, one_, one_, fileName, saturation);
+}
+
+void Foam::outputEventFile::addField(
+        const volScalarField& field,
+        const surfaceScalarField& phi,
+        word fileName,
+        bool saturation
+) {
+    addField(field, phi, one_, one_, one_, fileName, saturation);
 }
 
 void Foam::outputEventFile::write() {
@@ -198,10 +238,13 @@ void Foam::outputEventFile::write() {
     if (isPresent_) {
         if (currentEventEndTime() <= runTime_.timeOutputValue()) {
             updateInterpolationFactor();
-            word timeName = Foam::name(currentEventEndTime());
+            word timeEvent = Foam::name(currentEventEndTime());
+            scalar timeBackup = runTime_.timeOutputValue();
+            runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
             forAll(outputFields_, fieldi) {
-                outputFields_[fieldi].write(timeName, ifactor_);
+                outputFields_[fieldi].write(timeEvent, ifactor_);
             }
+            runTime_.setTime(timeBackup, runTime_.timeIndex());
             updateIndex(runTime_.timeOutputValue());
         }
     }

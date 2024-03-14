@@ -51,6 +51,7 @@ namespace Foam {
 \*---------------------------------------------------------------------------*/
 
 class outputField {
+
 private:
     const volScalarField& field_;
     const fvMesh& mesh_;
@@ -59,7 +60,6 @@ private:
     const volScalarField& coef2_;
     const volScalarField& coef3_;
     const bool saturation_;
-    const bool massBalance_;
     const bool CSVoutput_;
     const scalar zscale_;
     OFstream fileOutput_;
@@ -79,12 +79,10 @@ public:
         const volScalarField& coef1,
         const volScalarField& coef2,
         const volScalarField& coef3,
-        bool massBalance,
         bool saturation,
         bool CSVoutput,
         scalar zscale,
-        word fileName,
-        word dimensions
+        word fileName
     );
 
     //- access functions

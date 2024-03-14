@@ -78,6 +78,9 @@ private:
     //- z-scale (for 2D solvers)
     scalar zscale_;
 
+    //- One field for
+    volScalarField one_;
+
     //- Field to write
     PtrList<outputField> outputFields_;
 
@@ -86,7 +89,7 @@ private:
 
 public:
 
-    static autoPtr<outputEventFile> New(Time&, const scalar zscale = 1);
+    static autoPtr<outputEventFile> New(Time&, const fvMesh&, const scalar zscale = 1);
 
     // Constructors
     //- Construct from fileName
@@ -96,6 +99,7 @@ public:
         const bool& isPresent,
         const bool& CSVoutput,
         Time&,
+        const fvMesh&,
         const scalar zscale
     );
 
@@ -117,8 +121,31 @@ public:
             const volScalarField& coef1,
             const volScalarField& coef2,
             const volScalarField& coef3,
-            word dimensions,
-            bool massBalance = true,
+            word fileName = "/dev/null",
+            bool saturation = false
+    );
+
+    void addField(
+            const volScalarField& field,
+            const surfaceScalarField& phi,
+            const volScalarField& coef1,
+            const volScalarField& coef2,
+            word fileName = "/dev/null",
+            bool saturation = false
+    );
+
+    void addField(
+            const volScalarField& field,
+            const surfaceScalarField& phi,
+            const volScalarField& coef1,
+            word fileName = "/dev/null",
+            bool saturation = false
+    );
+
+    void addField(
+            const volScalarField& field,
+            const surfaceScalarField& phi,
+            word fileName = "/dev/null",
             bool saturation = false
     );
     void write();
