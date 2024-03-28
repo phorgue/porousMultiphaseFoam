@@ -103,8 +103,9 @@ Foam::GeometricField<Type, PatchField, TypeMesh> Foam::outputField::timeInterpol
     return ifield;
 }
 
-void Foam::outputField::write(const word& timeName) {
+void Foam::outputField::write(const scalar& timeValue) {
     if (CSVoutput_) {
+        fileOutput_ << timeValue;
         if (saturation_) {
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
@@ -113,9 +114,9 @@ void Foam::outputField::write(const word& timeName) {
             }
         }
         else {
+            fileOutput_ << " " << fvc::domainIntegrate(field_ * coef1_ *  coef2_ * coef3_).value()/zscale_;
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
-                    fileOutput_ << timeName << " " << fvc::domainIntegrate(field_ * coef1_ *  coef2_ * coef3_).value()/zscale_;
                     fileOutput_ << " " << gSum(field_.boundaryField()[patchi] * phi_.boundaryField()[patchi]);
                 }
             }
@@ -124,13 +125,13 @@ void Foam::outputField::write(const word& timeName) {
     }
 }
 
-void Foam::outputField::write(const word& timeName, scalar ifactor) {
+void Foam::outputField::write(const word& timeName, const scalar& timeValue, scalar ifactor) {
 
     volScalarField fInter = timeInterpolate(field_, timeName, ifactor, true);
     surfaceScalarField phiInter =  timeInterpolate(phi_, timeName, ifactor, true);
 
     if (CSVoutput_) {
-        fileOutput_ << timeName;
+        fileOutput_ << timeValue;
         if (saturation_) {
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {

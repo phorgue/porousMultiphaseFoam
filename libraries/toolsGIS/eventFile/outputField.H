@@ -90,8 +90,8 @@ public:
     const volScalarField &field() { return field_; };
 
     //- output function
-    void write(const word& timeName);
-    void write(const word& timeName, scalar ifactor);
+    void write(const scalar& timeValue);
+    void write(const word& timeName, const scalar& timeValue, scalar ifactor);
 
 };
 
