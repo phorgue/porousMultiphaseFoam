@@ -242,7 +242,7 @@ void Foam::outputEventFile::write() {
             scalar timeBackup = runTime_.timeOutputValue();
             runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
             forAll(outputFields_, fieldi) {
-                outputFields_[fieldi].write(timeEvent, ifactor_);
+                outputFields_[fieldi].write(runTime_.timeName(), runTime_.value(), ifactor_);
             }
             runTime_.setTime(timeBackup, runTime_.timeIndex());
             updateIndex(runTime_.timeOutputValue());
@@ -251,7 +251,7 @@ void Foam::outputEventFile::write() {
     else {
         runTime_.write();
         forAll(outputFields_, fieldi) {
-            outputFields_[fieldi].write(runTime_.timeName());
+            outputFields_[fieldi].write(runTime_.value());
         }
     }
 }
