@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
     sourceEvent->init(runTime, Sb.name(), mesh, sourceTerm.dimensions());
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
     outputEvent->addField(Sb, phi, eps, "waterMassBalance.csv", true);
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

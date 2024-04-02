@@ -185,7 +185,7 @@ void Foam::outputEventFile::addField(
     const volScalarField& coef1,
     const volScalarField& coef2,
     const volScalarField& coef3,
-    word fileName,
+    const word& fileName,
     bool saturation
 ) {
 
@@ -231,6 +231,21 @@ void Foam::outputEventFile::addField(
         bool saturation
 ) {
     addField(field, phi, one_, one_, one_, fileName, saturation);
+}
+
+void Foam::outputEventFile::addSourceTerm(
+        const word& name,
+        scalar& value,
+        label index_field
+) {
+    if (index_field > -1) outputFields_[index_field].addSourceTerm(name, value);
+    else outputFields_[outputFields_.size()-1].addSourceTerm(name, value);
+}
+
+void Foam::outputEventFile::init() {
+    forAll(outputFields_, fieldi) {
+        outputFields_[fieldi].writeHeader();
+    }
 }
 
 void Foam::outputEventFile::write() {
