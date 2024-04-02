@@ -162,3 +162,8 @@ else
 {
     Info << " no seepageTerm file" << endl;
 }
+
+scalarList outflowSeepageTracer(composition.Y().size(), 0.);
+forAll(outflowSeepageTracer, speciei) {
+    outflowSeepageTracer[speciei]= fvc::domainIntegrate(seepageTerm*composition.Y()[speciei]).value()/zScale;
+}

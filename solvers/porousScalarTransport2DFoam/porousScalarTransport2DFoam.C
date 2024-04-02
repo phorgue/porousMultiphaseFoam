@@ -64,7 +64,11 @@ int main(int argc, char *argv[])
     forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
     forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
-    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+    forAll(composition.Y(), speciei) {
+        outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+        outputEvent->addSourceTerm("seepage", outflowSeepageTracer[speciei]);
+    }
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -42,7 +42,7 @@ Foam::outputField::outputField
     bool saturation,
     bool CSVoutput,
     scalar zscale,
-    word fileName
+    const word& fileName
 )
 :
     field_(field),
@@ -54,23 +54,29 @@ Foam::outputField::outputField
     saturation_(saturation),
     CSVoutput_(CSVoutput),
     zscale_(zscale),
-    fileOutput_(fileName)
-{
+    fileOutput_(fileName),
+    hasSourceTerm_(false),
+    sourceNames_(),
+    sourceValues_(),
+    sourceOldValues_()
+{}
+
+void Foam::outputField::writeHeader() {
     //- Writing header if CSVoutput is active
-    if (CSVoutput) {
-        if (saturation) {
+    if (CSVoutput_) {
+        if (saturation_) {
             fileOutput_ << "#Time";
-        }
-        else {
+        } else {
             fileOutput_ << "#Time Total";
         }
-        const fvMesh& mesh = field.mesh();
-        forAll(mesh.boundaryMesh(),patchi)
-        {
-            if (mesh.boundaryMesh()[patchi].type() == "patch")
-            {
+        const fvMesh &mesh = field_.mesh();
+        forAll(mesh.boundaryMesh(), patchi) {
+            if (mesh.boundaryMesh()[patchi].type() == "patch") {
                 fileOutput_ << " flux(" << phi_.boundaryField()[patchi].patch().name() << ")";
             }
+        }
+        if (hasSourceTerm_) {
+            forAll(sourceNames_, sourcei) fileOutput_ << " flux(" << sourceNames_[sourcei] << ")";
         }
         fileOutput_ << endl;
     }
@@ -103,6 +109,13 @@ Foam::GeometricField<Type, PatchField, TypeMesh> Foam::outputField::timeInterpol
     return ifield;
 }
 
+void Foam::outputField::addSourceTerm(const word& name, const scalar& value) {
+    hasSourceTerm_ = true;
+    sourceNames_.resize(sourceNames_.size()+1, name);
+    sourceValues_.resize(sourceValues_.size()+1, &value);
+    sourceOldValues_.resize(sourceValues_.size()+1, value);
+}
+
 void Foam::outputField::write(const scalar& timeValue) {
     if (CSVoutput_) {
         fileOutput_ << timeValue;
@@ -121,6 +134,9 @@ void Foam::outputField::write(const scalar& timeValue) {
                 }
             }
         }
+        if (hasSourceTerm_) {
+            forAll(sourceValues_, sourcei) fileOutput_ << " " << sourceValues_[sourcei];
+        }
         fileOutput_ << endl;
     }
 }
@@ -129,7 +145,6 @@ void Foam::outputField::write(const word& timeName, const scalar& timeValue, sca
 
     volScalarField fInter = timeInterpolate(field_, timeName, ifactor, true);
     surfaceScalarField phiInter =  timeInterpolate(phi_, timeName, ifactor, true);
-
     if (CSVoutput_) {
         fileOutput_ << timeValue;
         if (saturation_) {
@@ -150,6 +165,14 @@ void Foam::outputField::write(const word& timeName, const scalar& timeValue, sca
                 }
             }
         }
+        if (hasSourceTerm_) {
+            forAll(sourceValues_, sourcei) {
+                scalar interpolatedSource = ifactor * *sourceValues_[sourcei] + (1.0-ifactor) * sourceOldValues_[sourcei];
+                fileOutput_ << " " << interpolatedSource;
+                sourceOldValues_[sourcei] = *sourceValues_[sourcei];
+            }
+        }
         fileOutput_ << endl;
     }
+
 }
