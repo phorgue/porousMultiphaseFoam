@@ -229,3 +229,10 @@ multiscalarMixture composition
     "C",
     dimLength
 );
+
+scalar flowOutFixedPoints = 0;
+scalar flowOutSeepage = 0;
+scalarList outflowSeepageTracer(composition.Y().size(), 0.);
+forAll(outflowSeepageTracer, speciei) {
+outflowSeepageTracer[speciei]= fvc::domainIntegrate(seepageTerm*composition.Y()[speciei]).value()/zScale;
+}

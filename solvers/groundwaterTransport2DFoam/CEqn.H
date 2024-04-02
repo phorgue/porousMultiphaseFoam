@@ -33,6 +33,8 @@ forAll(composition.Y(), speciesi)
     timestepManagerTruncation& dtm = MDTM.dtManagerT(speciesi);
     dtm.updateDerivatives();
 
+    outflowSeepageTracer[speciesi]= fvc::domainIntegrate(seepageTerm*C).value()/zScale;
+
     Info<< "Concentration Min(" << speciesName << ") = " << gMin(C)
         << " Max(" << speciesName << ") = " << gMax(C)
         << " mass(" << speciesName << ") = " << fvc::domainIntegrate(R*C*hwater*eps).value()/zScale

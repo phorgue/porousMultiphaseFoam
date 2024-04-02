@@ -89,7 +89,7 @@ private:
 
 public:
 
-    static autoPtr<outputEventFile> New(Time&, const fvMesh&, const scalar zscale = 1);
+    static autoPtr<outputEventFile> New(Time&, const fvMesh&, scalar zscale = 1);
 
     // Constructors
     //- Construct from fileName
@@ -121,7 +121,7 @@ public:
             const volScalarField& coef1,
             const volScalarField& coef2,
             const volScalarField& coef3,
-            word fileName = "/dev/null",
+            const word& fileName = "/dev/null",
             bool saturation = false
     );
 
@@ -148,6 +148,14 @@ public:
             word fileName = "/dev/null",
             bool saturation = false
     );
+
+    void addSourceTerm(
+            const word& name,
+            scalar& value,
+            label index_field = -1
+    );
+
+    void init();
     void write();
 };
 

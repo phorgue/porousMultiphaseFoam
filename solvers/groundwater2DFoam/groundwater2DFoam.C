@@ -82,7 +82,10 @@ int main(int argc, char *argv[])
 
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
     outputEvent->addField(hwater, phi, eps, "waterMassBalance.csv");
+    outputEvent->addSourceTerm("fixedPoints", flowOutFixedPoints);
+    outputEvent->addSourceTerm("seepage", flowOutSeepage);
     outputEvent->addField(potential, phi);
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

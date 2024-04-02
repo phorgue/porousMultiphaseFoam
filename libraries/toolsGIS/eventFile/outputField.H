@@ -63,6 +63,10 @@ private:
     const bool CSVoutput_;
     const scalar zscale_;
     OFstream fileOutput_;
+    bool hasSourceTerm_;
+    List<word> sourceNames_;
+    List<const scalar*> sourceValues_;
+    List<scalar> sourceOldValues_;
 
     template<class Type, template<class> class PatchField, class TypeMesh> GeometricField<Type, PatchField, TypeMesh>
             timeInterpolate(
@@ -73,6 +77,7 @@ private:
                     );
 
 public:
+    //- constructor
     outputField(
         const volScalarField& field,
         const surfaceScalarField& phi,
@@ -82,8 +87,12 @@ public:
         bool saturation,
         bool CSVoutput,
         scalar zscale,
-        word fileName
+        const word& fileName
     );
+
+    //- initialization functions
+    void writeHeader();
+    void addSourceTerm(const word& name, const scalar& value);
 
     //- access functions
     const fvMesh &mesh() { return field_.mesh(); };

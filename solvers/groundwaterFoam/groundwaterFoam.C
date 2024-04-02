@@ -91,8 +91,7 @@ int main(int argc, char *argv[])
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
     outputEvent->addField(h, phi);
     outputEvent->addField(theta, phi, "waterMassBalance.csv", true);
-
-
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

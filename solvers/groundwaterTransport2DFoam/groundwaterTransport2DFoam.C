@@ -84,8 +84,14 @@ int main(int argc, char *argv[])
 
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
     outputEvent->addField(hwater, phi, eps, "waterMassBalance.csv");
+    outputEvent->addSourceTerm("fixedPoints", flowOutFixedPoints);
+    outputEvent->addSourceTerm("seepage", flowOutSeepage);
     outputEvent->addField(potential, phi);
-    forAll(composition.Y(), speciei) outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+    forAll(composition.Y(), speciei) {
+        outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+        outputEvent->addSourceTerm("seepage", outflowSeepageTracer[speciei]);
+    }
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

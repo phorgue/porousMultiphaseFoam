@@ -208,3 +208,5 @@ volScalarField waterSourceTerm
 );
 
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
+scalar flowOutFixedPoints = 0;
+scalar flowOutSeepage = 0;

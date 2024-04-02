@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
     forAll(composition.Y(), speciei) {
         outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
     }
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
