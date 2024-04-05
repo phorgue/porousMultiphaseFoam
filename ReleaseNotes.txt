@@ -47,6 +47,8 @@
 
 - fix CmassBalance computation for porousScalarTransportFoam
 
+- fix parallel efficiency with CSV file outputs
+
 ************************
 *** PMF v2310
 *** Minor fixes and compatibility

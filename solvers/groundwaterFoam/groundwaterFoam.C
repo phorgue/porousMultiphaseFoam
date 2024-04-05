@@ -93,6 +93,8 @@ int main(int argc, char *argv[])
     outputEvent->addField(theta, phi, "waterMassBalance.csv", true);
     outputEvent->init();
 
+    OFstream residualFile("residuals.csv");
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
@@ -206,8 +208,7 @@ noConvergence :
             runTime.write();
             if (writeResiduals)
             {
-                OFstream residualFile("residuals.csv", IOstreamOption(), true);
-                residualFile << runTime.timeName() << " " << mag(hEqnResidualP) << endl;
+                if (Pstream::master()) residualFile << runTime.timeName() << " " << mag(hEqnResidualP) << endl;
             }
             if (hEqnResidualInit < Picard.tolerance()) runTime.writeAndEnd();
         }
