@@ -135,7 +135,7 @@ void Foam::outputField::write(const scalar& timeValue) {
             }
         }
         if (hasSourceTerm_) {
-            forAll(sourceValues_, sourcei) fileOutput_ << " " << sourceValues_[sourcei];
+            forAll(sourceValues_, sourcei) fileOutput_ << " " << *sourceValues_[sourcei];
         }
         fileOutput_ << endl;
     }
