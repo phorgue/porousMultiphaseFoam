@@ -63,7 +63,7 @@ Foam::outputField::outputField
 
 void Foam::outputField::writeHeader() {
     //- Writing header if CSVoutput is active
-    if (CSVoutput_) {
+    if (CSVoutput_ && Pstream::master()) {
         if (saturation_) {
             fileOutput_ << "#Time";
         } else {
@@ -117,7 +117,7 @@ void Foam::outputField::addSourceTerm(const word& name, const scalar& value) {
 }
 
 void Foam::outputField::write(const scalar& timeValue) {
-    if (CSVoutput_) {
+    if (CSVoutput_ && Pstream::master())  {
         fileOutput_ << timeValue;
         if (saturation_) {
             forAll(mesh_.boundaryMesh(), patchi) {
@@ -145,7 +145,7 @@ void Foam::outputField::write(const word& timeName, const scalar& timeValue, sca
 
     volScalarField fInter = timeInterpolate(field_, timeName, ifactor, true);
     surfaceScalarField phiInter =  timeInterpolate(phi_, timeName, ifactor, true);
-    if (CSVoutput_) {
+    if (CSVoutput_ && Pstream::master()) {
         fileOutput_ << timeValue;
         if (saturation_) {
             forAll(mesh_.boundaryMesh(), patchi) {
