@@ -76,7 +76,7 @@ private:
     scalar ifactor_;
 
     //- z-scale (for 2D solvers)
-    scalar zscale_;
+    const scalar zscale_;
 
     //- One field for
     volScalarField one_;
