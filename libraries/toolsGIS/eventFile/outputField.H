@@ -86,7 +86,7 @@ public:
         const volScalarField& coef3,
         bool saturation,
         bool CSVoutput,
-        scalar zscale,
+        const scalar zscale,
         const word& fileName
     );
 

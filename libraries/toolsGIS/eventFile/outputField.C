@@ -41,7 +41,7 @@ Foam::outputField::outputField
     const volScalarField& coef3,
     bool saturation,
     bool CSVoutput,
-    scalar zscale,
+    const scalar zscale,
     const word& fileName
 )
 :
@@ -130,7 +130,7 @@ void Foam::outputField::write(const scalar& timeValue) {
             fileOutput_ << " " << fvc::domainIntegrate(field_ * coef1_ *  coef2_ * coef3_).value()/zscale_;
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
-                    fileOutput_ << " " << gSum(field_.boundaryField()[patchi] * phi_.boundaryField()[patchi]);
+                    fileOutput_ << " " << gSum(field_.boundaryField()[patchi] * phi_.boundaryField()[patchi])/zscale_;
                 }
             }
         }
@@ -161,7 +161,7 @@ void Foam::outputField::write(const word& timeName, const scalar& timeValue, sca
             fileOutput_ << " " << fvc::domainIntegrate(fInter * cInter1 *  cInter2 * cInter3).value()/zscale_;
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
-                    fileOutput_ << " " << gSum(fInter.boundaryField()[patchi] * phiInter.boundaryField()[patchi]);
+                    fileOutput_ << " " << gSum(fInter.boundaryField()[patchi] * phiInter.boundaryField()[patchi])/zscale_;
                 }
             }
         }
