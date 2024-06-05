@@ -40,6 +40,7 @@ SourceFiles
 #define keywords_H
 
 #include <map>
+#include <string>
 namespace Foam
 {
 

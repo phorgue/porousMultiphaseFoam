@@ -34,8 +34,8 @@
 	}
 
         //- computing local potential
-        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
-        forAll(hPatch,facei)
+        const vectorField faces = mesh.boundary()[patchID].patch().faceCentres();
+        forAll(hPatch, facei)
         {
             hPatch[facei] = fixedPotentialDEM.interpolate(faces[facei]) - faces[facei].z() + offseth;
         }
@@ -51,7 +51,7 @@
 	Info << nl << "Potential fixed using points over " << thresholdh <<  " in STL = " << STLfile << " offseted by " << offseth << endl;
 	
         //- computing local potential
-        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
+        const vectorField faces = mesh.boundary()[patchID].patch().faceCentres();
         forAll(hPatch,facei)
         {
             scalar xy_distance = GREAT;
