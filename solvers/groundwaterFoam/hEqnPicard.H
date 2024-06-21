@@ -28,7 +28,6 @@
     if (fixedPotentialIDList.size() > 0) hEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
 
     ResiduN.primitiveFieldRef() = hEqn.residual()/mesh.V();
-    hEqnResidualP = gMax(mag(ResiduN.internalField())());
     hEqnResidualInit = hEqn.solve().initialResidual();
 
     if (hEqnResidualInit > Picard.tolerance()) h.relax();
