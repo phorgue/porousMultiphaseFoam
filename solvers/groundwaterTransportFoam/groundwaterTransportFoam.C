@@ -125,8 +125,7 @@ noConvergence :
         #include "updateForcing.H"
 
         scalar deltahIter = 1;
-        scalar hEqnResidualN = 1.00001;
-        scalar hEqnResidualP = 1.00001;
+        scalar hEqnResidualMax = 1.00001;
         scalar hEqnResidualInit = 1.00001;
 
         //- 1) Richard's equation (Picard loop)
@@ -137,7 +136,7 @@ noConvergence :
             #include "hEqnPicard.H"
             #include "updateProperties.H"
             #include "computeResidualN.H"
-            Info << "Picard iteration " << Picard.iter() << ": max(deltah) = " << deltahIter << ", residualP = " << hEqnResidualP << ", residualN = " << hEqnResidualN << endl;
+            Info << "Picard iteration " << Picard.iter() << ": max(deltah) = " << deltahIter << ", max(residual) = " << hEqnResidualMax << endl;
             if ( hEqnResidualInit > 10)
             {
                 Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
@@ -157,7 +156,7 @@ noConvergence :
 
         //--- 2) Newton loop
         Newton.reset();
-        while ( hEqnResidualN > Newton.tolerance() && Newton.iter() != Newton.maxIter())
+        while ( hEqnResidualMax > Newton.tolerance() && Newton.iter() != Newton.maxIter())
         {
             if (Picard.iter() == 0)
             {
@@ -168,8 +167,8 @@ noConvergence :
             #include "hEqnNewton.H"
             #include "updateProperties.H"
             #include "computeResidualN.H"
-            Info << "Newton iteration : " << Newton.iter() << ": max(deltah) = " << deltahIter << ", residualN = " << hEqnResidualN << endl;
-            if ( hEqnResidualN > 10)
+            Info << "Newton iteration : " << Newton.iter() << ": max(deltah) = " << deltahIter << ", max(residual) = " << hEqnResidualMax << endl;
+            if ( hEqnResidualMax > 10)
             {
                 Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
                 Newton.reset(Newton.maxIter());
@@ -177,7 +176,7 @@ noConvergence :
                 goto noConvergence;
             }
         }
-        if ( !steady && hEqnResidualN > Newton.tolerance() )
+        if ( !steady && hEqnResidualMax > Newton.tolerance() )
         {
             Info << endl;
             if (MDTM.adjustTimeStep()) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
