@@ -31,7 +31,7 @@
     hEqnResidualP = gMax(mag(ResiduN.internalField())());
     hEqnResidualInit = hEqn.solve().initialResidual();
 
-    if (hEqnResidualP > Picard.tolerance()) h.relax();
+    if (hEqnResidualInit > Picard.tolerance()) h.relax();
 
     deltah = h-h.prevIter();
     forAll(fixedPotentialIDList,celli) deltah[fixedPotentialIDList[celli]] = 0;

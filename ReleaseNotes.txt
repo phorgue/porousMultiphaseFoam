@@ -49,6 +49,8 @@
 
 - fix parallel efficiency with CSV file outputs
 
+- fix h relaxation based on openfoam residual
+
 ************************
 *** PMF v2310
 *** Minor fixes and compatibility
