@@ -3,5 +3,5 @@
 # Source tutorial run functions
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
-rm -f log.*
+rm -f log.* *.csv
 rm -rf 0/Sa 0/Sb constant/K constant/eps  1* 2* 3* 4* 5* 6* 7* 8* 9* constant/polyMesh

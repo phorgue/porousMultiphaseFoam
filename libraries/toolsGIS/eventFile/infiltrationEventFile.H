@@ -74,22 +74,20 @@ class infiltrationEventFile
 :
     public eventFile
 {
+    bool isPresent_;
     //- True if infiltration is uniform
     bool uniform_;
 
 public:
 
-    // Constructors    
-    //- Copy constructor
-    infiltrationEventFile
-    (
-        const infiltrationEventFile& fileToCopy
-    );
+    static autoPtr<infiltrationEventFile> New(const word&, const dictionary&);
 
+    // Constructors
     //- Construct from Istream
     infiltrationEventFile
     (
-        const word& fileName
+        const word& fileName,
+        const bool& isPresent
     );
     
     // Selectors
@@ -100,7 +98,15 @@ public:
     // Member Functions
     
     //- Access function
+    const bool& isPresent() const {return isPresent_;}
     const bool& isUniform() {return uniform_;}
+
+
+    //- Init functions
+    void init(const Time&);
+    void init(const Time&, const word&, const fvMesh&, scalarField&);
+
+    void updateInfiltration(const Time&, scalarField&);
 
     //- reset infiltration as uniform if size does not correspond to mesh size
     void setInfiltrationAsUniform() {uniform_ = true;}

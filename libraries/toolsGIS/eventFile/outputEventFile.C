@@ -9,7 +9,7 @@
 
 License
     This file is part of porousMultiphaseFoam, an extension of OpenFOAM
-    developed by Pierre Horgue (phorgue@imft.fr) and dedicated to multiphase 
+    developed by Pierre Horgue (phorgue@imft.fr) and dedicated to multiphase
     flows through porous media.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -32,233 +32,140 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::outputEventFile::outputEventFile
-(
-    const outputEventFile& eventFileToCopy
-)
-    :
-    eventFile(eventFileToCopy)
+Foam::autoPtr<Foam::outputEventFile> Foam::outputEventFile::New(Foam::Time& runTime, const fvMesh& mesh, const scalar zscale)
 {
+    const bool isPresent = runTime.controlDict().found("outputEventFile");
+    const bool CSVoutput = runTime.controlDict().lookupOrDefault("CSVoutput", false);
+    word outputEventFileName = runTime.controlDict().lookupOrDefault<word>("outputEventFile","");
+    return autoPtr<Foam::outputEventFile>(new outputEventFile(outputEventFileName, isPresent, CSVoutput, runTime, mesh, zscale));
 }
 
 Foam::outputEventFile::outputEventFile
 (
-    const word& fileName
+    const word& fileName,
+    const bool& isPresent,
+    const bool& CSVoutput,
+    Time& runTime,
+    const fvMesh& mesh,
+    const scalar zscale
 )
     :
-    eventFile(fileName)
+    eventFile(fileName),
+    isPresent_(isPresent),
+    CSVoutput_(CSVoutput),
+    runTime_(runTime),
+    zscale_(zscale),
+    one_(
+        IOobject
+        (
+            "one",
+            runTime_.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar(dimless, 1)
+    ),
+    outputFields_()
 {
-    if (fileName.size() != 0)
+    if (isPresent_)
     {
-        //- properties of a DEM file
-        string separator_ = " ";
-
-        //- file name
-        IFstream ifs(fileName);
-        DynamicList<scalar> datesRead;
-
-        Info << nl << "Reading output event file '" << fileName << "' ...";
-        // read data
-        while (ifs.good())
+        checkControlDict();
+        if (fileName.size() != 0)
         {
-            string line;
-            ifs.getLine(line);
+            //- properties of a DEM file
+            string separator_ = " ";
 
-            if (line != "")
-            {
+            //- file name
+            IFstream ifs(fileName);
+            DynamicList<scalar> datesRead;
 
-                label n = 0;
-                std::size_t pos = 0;
-                DynamicList<string> split;
-        
-                while (pos != std::string::npos)
-                {
-                    std::size_t nPos = line.find(separator_, pos);
-                    if (nPos == std::string::npos)
-                    {
-                        if (line.substr(pos).size() != 0)
-                        {
-                            split.append(line.substr(pos));
-                            n++;
+            Info << nl << "Reading output event file '" << fileName << "' ...";
+            // read data
+            while (ifs.good()) {
+                string line;
+                ifs.getLine(line);
+
+                if (line != "") {
+
+                    label n = 0;
+                    std::size_t pos = 0;
+                    DynamicList<string> split;
+
+                    while (pos != std::string::npos) {
+                        std::size_t nPos = line.find(separator_, pos);
+                        if (nPos == std::string::npos) {
+                            if (line.substr(pos).size() != 0) {
+                                split.append(line.substr(pos));
+                                n++;
+                            }
+                            pos = nPos;
+                        } else {
+                            if (nPos - pos != 0) {
+                                split.append(line.substr(pos, nPos - pos));
+                                n++;
+                            }
+                            pos = nPos + 1;
                         }
-                        pos = nPos;
                     }
-                    else
-                    {
-                        if (nPos - pos != 0)
-                        {
-                            split.append(line.substr(pos, nPos - pos));
-                            n++;
-                        }
-                        pos = nPos + 1;
+                    if (n == 1) {
+                        scalar newDate = readScalar(IStringStream(split[0])());
+                        datesRead.append(newDate);
+                    } else {
+                        FatalErrorIn("outputEventFile.C")
+                                << "wrong number of elements in event file :" << fileName
+                                << nl << " found " << split.size() << " elements instead of 1 "
+                                << nl << "List of read elements : " << split
+                                << abort(FatalError);
                     }
-                }    
-                if (n == 1)
-                {
-                    scalar newDate = readScalar(IStringStream(split[0])());
-                    datesRead.append(newDate);
-                }
-                else
-                {
-                    FatalErrorIn("outputEventFile.C")
-                        << "wrong number of elements in event file :" << fileName
-                            << nl << " found " << split.size() << " elements instead of 1 "
-                            << nl << "List of read elements : " << split
-                            << abort(FatalError);
                 }
             }
-        }
 
-        Info << "OK" << endl;
-        ndates_ = datesRead.size();
-    
-        //- Storing dates
-        dates_.resize(ndates_);
-        forAll(datesRead,datei)
-        {
-            dates_[datei] = datesRead[datei];
+            Info << "OK" << endl;
+            ndates_ = datesRead.size();
+
+            if (ndates_ == 0) {
+                FatalErrorIn("outputEventFile.C")
+                        << "Zero date in file : " << fileName
+                        << nl << "File is empty or not present"
+                        << abort(FatalError);
+            }
+
+            //- Storing dates
+            dates_.resize(ndates_);
+            forAll(datesRead, datei) {
+                dates_[datei] = datesRead[datei];
+            }
+
         }
-    
+        updateIndex(runTime_.startTime().value());
     }
-
 }
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::outputEventFile::~outputEventFile()
-{}
+Foam::outputEventFile::~outputEventFile() = default;
+
 // * * * * * * * * * * * * Private Members * * * * * * * * * * * * * * * * * //
 
-Foam::scalar Foam::outputEventFile::computeInterpolationFactor(const Time& runTime)
+void Foam::outputEventFile::updateInterpolationFactor()
 {
-    scalar ifactor = (runTime.timeOutputValue()-currentEventEndTime())/runTime.deltaTValue();
-    if (ifactor < 0 || ifactor > 1)
+    ifactor_ = (runTime_.timeOutputValue()-currentEventEndTime())/runTime_.deltaTValue();
+    if (ifactor_ < 0 || ifactor_ > 1)
     {
         FatalErrorIn("outputEventFile.C")
-            << " Unconsistent value for time interpolation = " << ifactor
-            << " current time is " << runTime.timeOutputValue()
+            << " Unconsistent value for time interpolation = " << ifactor_
+            << " current time is " << runTime_.timeOutputValue()
             << " and event end time is " << currentEventEndTime() << abort(FatalError);
     }
-    return ifactor;
 }
 
 // * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * * //
 
-Foam::scalar Foam::outputEventFile::timeInterpolate
-(
-    const scalar& prev,
-    const scalar& current,
-    const Time& runTime
-)
+void Foam::outputEventFile::checkControlDict() const
 {
-    //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor(runTime);
-    return  interpolateFactor*current+(1.0-interpolateFactor)*prev;
-}
-
-Foam::volScalarField Foam::outputEventFile::timeInterpolate
-(
-    const volScalarField& vfield,
-    Time& runTime,
-    bool writeField
-)
-{
-    //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor(runTime);
-
-    //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
-    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
-
-    volScalarField ifield
-        (
-            IOobject
-            (
-                vfield.name(),
-                runTime.timeName(),
-                vfield.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            vfield
-        );
-    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
-    if (writeField) ifield.write();
-
-    runTime.setTime(timeOutputBackup,runTime.timeIndex());
-    return ifield;
-}
-
-Foam::volVectorField Foam::outputEventFile::timeInterpolate
-(
-    const volVectorField& vfield,
-    Time& runTime,
-    bool writeField
-)
-{
-    //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor(runTime);
-
-    //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
-    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
-
-    volVectorField ifield
-        (
-            IOobject
-            (
-                vfield.name(),
-                runTime.timeName(),
-                vfield.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            vfield
-        );
-    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
-    if (writeField) ifield.write();
-
-    runTime.setTime(timeOutputBackup,runTime.timeIndex());
-    return ifield;
-}
-
-Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
-(
-    const surfaceScalarField& vfield,
-    Time& runTime,
-    bool writeField
-)
-{
-    //- compute interpolation factor
-    scalar interpolateFactor = computeInterpolationFactor(runTime);
-
-    //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
-    runTime.setTime(currentEventEndTime(), runTime.timeIndex());
-
-    surfaceScalarField ifield
-        (
-            IOobject
-            (
-                vfield.name(),
-                runTime.timeName(),
-                vfield.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            vfield
-        );
-
-    ifield = interpolateFactor*vfield+(1.0-interpolateFactor)*vfield.oldTime();
-    if (writeField) ifield.write();
-
-    runTime.setTime(timeOutputBackup,runTime.timeIndex());
-    return ifield;
-}
-
-void Foam::outputEventFile::checkControlDict(const Time& runTime) const
-{
-    const dictionary& cDict = runTime.controlDict();
+    const dictionary& cDict = runTime_.controlDict();
     scalar endTimeValue(cDict.get<scalar>("endTime"));
     scalar writeIntervalValue(cDict.getOrDefault<scalar>("writeInterval",GREAT));
     if (cDict.found("writeFrequency"))
@@ -272,4 +179,95 @@ void Foam::outputEventFile::checkControlDict(const Time& runTime) const
 
 }
 
+void Foam::outputEventFile::addField(
+    const volScalarField& field,
+    const surfaceScalarField& phi,
+    const volScalarField& coef1,
+    const volScalarField& coef2,
+    const volScalarField& coef3,
+    const word& fileName,
+    bool saturation
+) {
+
+    outputFields_.append(new outputField(
+        field,
+        phi,
+        coef1,
+        coef2,
+        coef3,
+        saturation,
+        CSVoutput_,
+        zscale_,
+        fileName
+        )
+    );
+}
+
+void Foam::outputEventFile::addField(
+    const volScalarField& field,
+    const surfaceScalarField& phi,
+    const volScalarField& coef1,
+    const volScalarField& coef2,
+    word fileName,
+    bool saturation
+) {
+    addField(field, phi, coef1, coef2, one_, fileName, saturation);
+}
+
+void Foam::outputEventFile::addField(
+        const volScalarField& field,
+        const surfaceScalarField& phi,
+        const volScalarField& coef1,
+        word fileName,
+        bool saturation
+) {
+    addField(field, phi, coef1, one_, one_, fileName, saturation);
+}
+
+void Foam::outputEventFile::addField(
+        const volScalarField& field,
+        const surfaceScalarField& phi,
+        word fileName,
+        bool saturation
+) {
+    addField(field, phi, one_, one_, one_, fileName, saturation);
+}
+
+void Foam::outputEventFile::addSourceTerm(
+        const word& name,
+        scalar& value,
+        label index_field
+) {
+    if (index_field > -1) outputFields_[index_field].addSourceTerm(name, value);
+    else outputFields_[outputFields_.size()-1].addSourceTerm(name, value);
+}
+
+void Foam::outputEventFile::init() {
+    forAll(outputFields_, fieldi) {
+        outputFields_[fieldi].writeHeader();
+    }
+}
+
+void Foam::outputEventFile::write() {
+    ifactor_ = 1;
+    if (isPresent_) {
+        if (currentEventEndTime() <= runTime_.timeOutputValue()) {
+            updateInterpolationFactor();
+            word timeEvent = Foam::name(currentEventEndTime());
+            scalar timeBackup = runTime_.timeOutputValue();
+            runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
+            forAll(outputFields_, fieldi) {
+                outputFields_[fieldi].write(runTime_.timeName(), runTime_.value(), ifactor_);
+            }
+            runTime_.setTime(timeBackup, runTime_.timeIndex());
+            updateIndex(runTime_.timeOutputValue());
+        }
+    }
+    else {
+        runTime_.write();
+        forAll(outputFields_, fieldi) {
+            outputFields_[fieldi].write(runTime_.value());
+        }
+    }
+}
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

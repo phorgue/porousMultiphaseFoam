@@ -39,23 +39,11 @@ bool adjustTimeStep =
 scalar truncationError_global =
     runTime.controlDict().lookupOrDefault<scalar>("truncationError",0.01);
 
-scalar truncationError_potential =
-    runTime.controlDict().lookupOrDefault<scalar>("truncationError_potential",truncationError_global);
-
 scalar maxDeltaT =
     runTime.controlDict().lookupOrDefault<scalar>("maxDeltaT", GREAT);
 
 labelList* dryCellIDListPtr = &dryCellIDList;
-timestepManager dtManager(runTime, hwater, truncationError_potential, dryCellIDListPtr);
-
-if (adjustTimeStep)
-{
-    Info << "Timestepping is based on time-scheme truncation error with :"
-        << nl << "{"
-        << nl << "    truncationError = " << truncationError_potential
-        << nl << "}"
-        << endl;
-}
+timestepManagerTruncation dtManager(runTime, hwater, dryCellIDListPtr);
 
 const bool eventTimeTracking =
    runTime.controlDict().lookupOrDefault("eventTimeTracking", false);

@@ -117,6 +117,14 @@ public:
         const surfaceScalarField& phi,
         const volScalarField& theta
     );
+
+    //- Display mass balance information to the terminal
+    void info
+    (
+        const label& speciei,
+        const volScalarField& theta,
+        const surfaceScalarField& phi
+    ) ;
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

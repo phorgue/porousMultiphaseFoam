@@ -69,10 +69,6 @@ hwater = potential - z0;
 
 dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01)));
 scalar cumulativeWaterAdded = 0;
-scalar flowOutFixedPoints = 0;
-scalar flowOutFixedPointsPrev = 0;
-scalar flowOutSeepage = 0;
-scalar flowOutSeepagePrev = 0;
 
 #include "correctInitialPotential.H"
 
@@ -212,3 +208,5 @@ volScalarField waterSourceTerm
 );
 
 scalar zScale(mesh.bounds().max().z()-mesh.bounds().min().z());
+scalar flowOutFixedPoints = 0;
+scalar flowOutSeepage = 0;

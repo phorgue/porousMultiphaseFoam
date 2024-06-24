@@ -97,6 +97,14 @@ public:
         const volScalarField& theta
     );
 
+    //- Display informations to the terminal
+    void info
+    (
+        const label& speciei,
+        const volScalarField& theta,
+        const surfaceScalarField& phi
+    ) ;
+
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

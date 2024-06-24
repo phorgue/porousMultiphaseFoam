@@ -108,23 +108,6 @@ public:
                 }
             }
         }
-
-    //- Correct the dispersion giving scalar porosity
-    void correct(const volScalarField& C, const volVectorField& U, const dimensionedScalar& eps)
-        {
-            dimensionedScalar USMALL("",dimLength/dimTime,1e-36);
-
-            Deff_ = (Dm_/tau_ + alphaT_ * mag(U)/eps)*tensor::I + (alphaL_-alphaT_) * (U*U)/(eps*mag(U)+USMALL);
-            forAll(Deff_.boundaryField(),patchi)
-            {
-                //- Dispersion equal to zero on patches
-                if (C.boundaryField().types()[patchi] == "eventFlux" ||
-                C.boundaryField().types()[patchi] == "inletOutlet")
-                {
-                    Deff_.boundaryFieldRef()[patchi] = tensor(zero());
-                }
-            }
-        }
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

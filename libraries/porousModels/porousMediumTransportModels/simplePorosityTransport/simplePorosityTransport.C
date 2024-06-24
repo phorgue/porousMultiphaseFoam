@@ -91,7 +91,38 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
             );
 
         CEqn.solve(solverDict);
+        info(speciesi, theta, phi);
     }
+}
+
+void Foam::porousMediumTransportModels::simplePorosityTransport::info
+(
+    const label& speciei,
+    const volScalarField& theta,
+    const surfaceScalarField& phi
+)
+{
+    const auto& C = composition_.Y(speciei);
+    const auto& R = composition_.R(speciei);
+    const auto& mesh = C.mesh();
+    const auto& sourceTerm = composition_.sourceTerm(speciei);
+
+    //- terminal display
+    Info << "Concentration: Min(" << speciesNames_[speciei] << ") = " << gMin(C.internalField())
+             << " Max(" << speciesNames_[speciei] << ") = " << gMax(C.internalField())
+             << " mass(" << speciesNames_[speciei] << ") = " << fvc::domainIntegrate(R * C * theta).value()
+             << endl;
+    Info << speciesNames_[speciei] << " mass balance (kg/s): sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
+
+    forAll(phi.boundaryField(),patchi)
+    {
+        if (mesh.boundaryMesh()[patchi].type() == "patch")
+        {
+            Info << phi.boundaryField()[patchi].patch().name() << " = " <<  gSum(phi.boundaryField()[patchi]*C.boundaryField()[patchi]) << " ; ";
+        }
+    }
+    Info << endl;
+
 }
 
 // ************************************************************************* //

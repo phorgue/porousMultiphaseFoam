@@ -44,7 +44,7 @@
     }
 
     //- compute derivatives
-    if (!steady) dtManager.updateDerivatives();
+    if (!steady) MDTM.updateAllDerivatives();
 
     //- updating flow properties
     transmissivity = Mf*fvc::interpolate(hwater);
@@ -61,4 +61,28 @@
     cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration + zScale * waterSourceTerm;
 
     Info << "Potential min: " << gMin(potential.internalField()) << ", max = " << gMax(potential.internalField()) << ", delta(potential) = " << gMax(mag(potential.internalField()-potential.oldTime().internalField())()) << endl;
+
+    flowOutFixedPoints = 0;
+    if (fixedPotentialIDList.size() > 0)
+    {
+        forAll(fixedPotentialIDList,pointi)
+        {
+            label currentCell = fixedPotentialIDList[pointi];
+            scalar area = mesh.V()[currentCell]/zScale;
+            flowOutFixedPoints -= cellFlux.internalField()[currentCell]*area;
+        }
+    }
+
+    flowOutSeepage = 0;
+    if (seepageActive)
+    {
+        forAll(seepageIDList,pointi)
+        {
+            label currentCell = seepageIDList[pointi];
+            scalar area = mesh.V()[currentCell]/zScale;
+            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
+            flowOutSeepage -= cellFlux.internalField()[currentCell]*area;
+        }
+    }
+
 }

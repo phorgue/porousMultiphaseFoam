@@ -48,7 +48,7 @@
 	scalar thresholdPotential = args.getOrDefault<scalar>("threshold",0.);
 	scalar offsetPotential = args.getOrDefault<scalar>("offset",0.);
         Info << nl << "Potential fixed using points over " << thresholdPotential <<  " in STL = " << STLfile << " offseted by " << offsetPotential << endl;
-        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
+        const vectorField faces = mesh.boundary()[patchID].patch().faceCentres();
 	
         //- computing local potential
         forAll(potentialPatch,facei)

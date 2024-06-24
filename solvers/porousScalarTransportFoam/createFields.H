@@ -73,45 +73,17 @@ volScalarField Saturation
 word Uname="U"+phaseName;
 if (theta.headerOk())
 {
-    Info << "===> field S" << phaseName << " computed from theta/eps, min = " << gMin(Saturation.internalField()) << " ; max = " << gMax(Saturation.internalField()) << endl;
+    Info << "===> field theta read , min = " << gMin(theta.internalField()) << " ; max = " << gMax(theta.internalField()) <<  endl;
 }
 else
 {
     if (Saturation.headerOk())
     {
-        theta = Saturation * eps;
-        Info << "===> field S" << phaseName << " read, min = " << gMin(Saturation.internalField()) << " ; max = " << gMax(Saturation.internalField()) <<  endl;
+theta = Saturation * eps;
+Info << "===> field theta" << phaseName << " computed, min = " << gMin(theta.internalField()) << " ; max = " << gMax(theta.internalField()) <<  endl;
     }
     else
     {
         Info << "===> Saturation/Water content file not found (saturated flow)" << endl;
-    }
-}
-
-////////////////////////////////////////////////////
-//////////////////// OUTPUT CSV ////////////////////
-////////////////////////////////////////////////////
-
-bool CSVoutput=runTime.controlDict().lookupOrDefault<bool>("CSVoutput",true);
-PtrList<OFstream> CmassBalanceCSVs;
-if (CSVoutput)
-{
-    CmassBalanceCSVs.resize(composition.Y().size());
-
-    forAll(composition.Y(), speciesi)
-    {
-        CmassBalanceCSVs.set(speciesi, new OFstream(composition.species()[speciesi] + "massBalance.csv"));
-
-        auto& CmassBalanceCSV = CmassBalanceCSVs[speciesi];
-
-        CmassBalanceCSV << "#Time TotalMass(kg)";
-        forAll(mesh.boundaryMesh(),patchi)
-        {
-            if (mesh.boundaryMesh()[patchi].type() == "patch")
-            {
-                CmassBalanceCSV << " flux(" << phi.boundaryField()[patchi].patch().name() << ")";
-            }
-        }
-        CmassBalanceCSV << endl;
     }
 }

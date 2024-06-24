@@ -1,4 +1,67 @@
 ************************
+*** PMF v2406
+*** Starting class-based dev for solvers/libraries + new dispersion model
+************************
+
+
+### Libraries
+
+- dualAlphaDispersion
+
+  - new dispersion model with two sets of parameters used for saturated
+  (alphaL_sat/alphaT_sat) and unsaturated areas (alphaL_unsat/alphaT_unsat).
+  Transition between values are computed using theta thresholds
+  (thetaThreshold_unsat and thetaThreshold_sat)
+
+- numericalMethods/timestepManager
+
+  - new classes have been designed to handle multi-time stepping techniques
+  using c++Objects instead of #include. All the solvers use this new feature.
+  As a result, multiple files have been removed, such as all the setDeltaT.H.
+
+- toolGis
+
+  - Similary to timestepManager, outputEventFile class coupled with new class
+  outputFields allows to use c++ object to handle eventWrite + mass balance
+  computation. As a result, multiple files have been removed such as eventWrite.H
+  and readEvent.H.
+
+  - Minor change for eventInfiltration keyword :
+    eventFileInfiltration => infiltrationEventFile
+
+- keywords
+
+  - new library/class has been created to ensure compatibility with API. PMF
+  keywords are liste in etc/keywords.yaml file
+
+### Solvers
+
+- groundwaterFoam
+
+  - Transient simulations use directly the OpenFOAM fvMatrix residuals to
+  evaluate Picard convergence. Relaxation factor can be used for transient.
+
+  - Two modes are available for time-stepping :
+
+    - truncation: based on truncation error (using truncationError value)
+    - nIterPicard: based on the number of Picard iteration requires at each
+    timestep (using nIterPicard)
+
+### Bug fix
+
+- eventInfiltration compute velocity along gravity-axis (instead of patch
+  normal) to avoid lateral infiltration for non-planar patch. Negative values in
+  infiltration.dat still mean inflow (and positive value exfiltration)
+
+- fix missing updateForcing fo GWTfoam
+
+- fix CmassBalance computation for porousScalarTransportFoam
+
+- fix parallel efficiency with CSV file outputs
+
+- fix h relaxation based on openfoam residual
+
+************************
 *** PMF v2310
 *** Minor fixes and compatibility
 ************************

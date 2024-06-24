@@ -86,12 +86,6 @@ protected:
     //- Composition
     multiscalarMixture composition_;
 
-    //- Disallow copy construct
-    porousMediumTransportModel(const porousMediumTransportModel&);
-
-    //- Disallow default bitwise assignment
-    void operator=(const porousMediumTransportModel&);
-
 public:
 
     //- Runtime type information
@@ -130,7 +124,7 @@ public:
 
     //- Destructor
     virtual ~porousMediumTransportModel()
-        {}
+        = default;
 
     // Member Functions
 
@@ -138,7 +132,7 @@ public:
     const dictionary& transportProperties() const {return transportProperties_;}
 
     //- Return species names (adding option porous region name)
-    wordList speciesNames(word porousRegion="");
+    wordList speciesNames(const word& porousRegion="");
 
     //- Return porousMediumModel
     const porousMediumModel& pmModel() const {return pmModel_;}
@@ -149,7 +143,7 @@ public:
     //- Access to composition
     multiscalarMixture& composition() {return composition_;}
 
-    //- Solve tracer tranport equation
+    //- Solve tracer transport equation
     virtual void solveTransport
     (
         const volVectorField& U,
@@ -157,8 +151,15 @@ public:
         const volScalarField& theta
     ) = 0;
 
-};
+    //- Display mass balance information to the terminal
+    virtual void info
+    (
+        const label& speciei,
+        const volScalarField& theta,
+        const surfaceScalarField& phi
+    ) = 0;
 
+};
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
