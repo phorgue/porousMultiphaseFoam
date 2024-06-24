@@ -3,7 +3,7 @@
 porousMultiphaseFoam Documentation
 ==================================
 
-Welcome to the porousMultiphaseFoam **PMFv2303** documentation.
+Welcome to the porousMultiphaseFoam **PMFv2406** documentation.
 
 **PMF** is an open-source toolbox dedicated to simulation of flow and transport
 processes in porous media. It is based on the OpenFOAM environment and therefore

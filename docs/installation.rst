@@ -46,7 +46,7 @@ Compatibility
 
 Depending on your installation, you should switch to the github branch corresponding to your OpenFOAM version. If you use OpenFOAM-v2106 for example::
 
-  git checkout openfoam-v2106
+  git checkout openfoam-v2206
 
 Note that if you want to use the latest version of PMF, it is necessary to have a sufficiently recent installation of openfoam.
 
@@ -58,9 +58,10 @@ Development branches
 - branch **dev** works with OpenFOAM-v2206 `openfoam.com <https://www.openfoam.com/>`_
 - branch **dev_org** works with OpenFOAM-v10 `openfoam.org <https://www.openfoam.org/>`_
 
-Updated branches: PMFv2103.0
+Updated branches: PMFv2406.0
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+- branch **openfoam-v2306**
 - branch **openfoam-v2206**
 - branch **openfoam-v2106**
 
