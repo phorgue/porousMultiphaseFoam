@@ -25,12 +25,14 @@
         }
     }
 
-    #include "updateForcing.H"
+    if (fixedPotentialIDList.size() > 0) hEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
 
-    hEqn.solve();
+    ResiduN.primitiveFieldRef() = hEqn.residual()/mesh.V();
+    hEqnResidualInit = hEqn.solve().initialResidual();
+
+    if (hEqnResidualInit > Picard.tolerance()) h.relax();
 
     deltah = h-h.prevIter();
     forAll(fixedPotentialIDList,celli) deltah[fixedPotentialIDList[celli]] = 0;
     deltahIter = gMax(mag(deltah.internalField())());
-
 }

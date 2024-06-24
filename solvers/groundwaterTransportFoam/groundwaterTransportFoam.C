@@ -47,101 +47,169 @@ Description
 #include "patchEventFile.H"
 #include "eventInfiltration.H"
 #include "eventFlux.H"
-#include "timestepManager.H"
+#include "multiDtManager.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+    Foam::argList args(argc, argv);
+    bool steady = false;
+
+    if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
+
     #include "../headerPMF.H"
-    #include "createTime.H"
+    Info << "Create time\n" << Foam::endl;
+    Time runTime(Time::controlDictName, args);
+
     #include "createMesh.H"
-    #include "readGravitationalAcceleration.H"
+
+    Info<< "\nReading g" << endl;
+    const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
+
     #include "createFields.H"
-    #include "readPicardNewtonControls.H"
-    #include "readTimeControls.H"
-    #include "createthetaFields.H"
-    #include "readEvent.H"
+    bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
     #include "readForcing.H"
+
+    #include "createthetaFields.H"
+
+    autoPtr<sourceEventFile> waterSourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
+    waterSourceEvent->init(runTime, h.name(), mesh, sourceTerm.dimensions());
+    forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
+    forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
+
+    //- create time managers
+    multiDtManager MDTM(runTime, tracerSourceEventList, patchEventList);
+    MDTM.addIterativeAlgorithm(theta, "Picard");
+    MDTM.addIterativeAlgorithm(theta, "Newton");
+    labelList* fixedPotentialIDListPtr  = &fixedPotentialIDList;
+    MDTM.addField(h, fixedPotentialIDListPtr);
+    forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
+
+    //-Output event
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
+    outputEvent->addField(h, phi);
+    outputEvent->addField(theta, phi, "waterMassBalance.csv", true);
+    forAll(composition.Y(), speciei) {
+        outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+    }
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
-    bool steady = false;
-    label iterPicard=0;
-    label iterNewton=0;
+
+    timestepManagerIterative& Picard = MDTM.dtManagerI(0);
+    timestepManagerIterative& Newton = MDTM.dtManagerI(1);
 
     while (runTime.run())
     {
-        if (eventIsPresent_water)  event_water.updateIndex(runTime.timeOutputValue());
+        if (waterSourceEvent->isPresent())  waterSourceEvent->updateIndex(runTime.timeOutputValue());
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateIndex(runTime.timeOutputValue());
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
-        #include "setDeltaT.H"
+
+        MDTM.updateDt();
 
         runTime++;
 
 noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Compute source term
-        #include "computeSourceTerm.H"
+        //- Update source term
+        if (waterSourceEvent->isPresent())
+        {
+            waterSourceEvent->updateValue(runTime);
+            sourceTerm = waterSourceEvent->dtValuesAsField();
+        }
+        #include "updateForcing.H"
+
         scalar deltahIter = 1;
-        scalar hEqnResidual = 1.00001;
+        scalar hEqnResidualMax = 1.00001;
+        scalar hEqnResidualInit = 1.00001;
 
         //- 1) Richard's equation (Picard loop)
-        iterPicard = 0;
-        while (hEqnResidual > tolerancePicard && iterPicard != maxIterPicard )
+        Picard.reset();
+        while ( hEqnResidualInit > Picard.tolerance() && Picard.iter() != Picard.maxIter() )
         {
-            iterPicard++;
+            Picard++;
             #include "hEqnPicard.H"
             #include "updateProperties.H"
-            Info << "Picard iteration " << iterPicard << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
+            #include "computeResidualN.H"
+            Info << "Picard iteration " << Picard.iter() << ": max(deltah) = " << deltahIter << ", max(residual) = " << hEqnResidualMax << endl;
+            if ( hEqnResidualInit > 10)
+            {
+                Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
+                Picard.reset(Picard.maxIter());
+                #include "rewindTime.H"
+                goto noConvergence;
+            }
         }
-        if ( hEqnResidual > tolerancePicard )
+        if ( hEqnResidualInit > Picard.tolerance() )
         {
             Info << endl;
-            if (adjustTimeStep) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-            else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
+            if (MDTM.adjustTimeStep()) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            else FatalErrorIn("groundwaterTransportFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
             #include "rewindTime.H"
             goto noConvergence;
         }
 
         //--- 2) Newton loop
-        iterNewton = 0;
-        while ( hEqnResidual > toleranceNewton && iterNewton != maxIterNewton)
+        Newton.reset();
+        while ( hEqnResidualMax > Newton.tolerance() && Newton.iter() != Newton.maxIter())
         {
-            iterNewton++;
+            if (Picard.iter() == 0)
+            {
+                #include "computeResidualN.H"
+                Picard++;
+            }
+            Newton++;
             #include "hEqnNewton.H"
-            #include "checkResidual.H"
-            Info << "Newton iteration " << iterNewton << ": max(deltah) = " << deltahIter << ", residual = " << hEqnResidual << endl;
+            #include "updateProperties.H"
+            #include "computeResidualN.H"
+            Info << "Newton iteration : " << Newton.iter() << ": max(deltah) = " << deltahIter << ", max(residual) = " << hEqnResidualMax << endl;
+            if ( hEqnResidualMax > 10)
+            {
+                Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
+                Newton.reset(Newton.maxIter());
+                #include "rewindTime.H"
+                goto noConvergence;
+            }
         }
-        if ( hEqnResidual > toleranceNewton )
+        if ( !steady && hEqnResidualMax > Newton.tolerance() )
         {
             Info << endl;
-            if (adjustTimeStep) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
+            if (MDTM.adjustTimeStep()) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
             else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Newton algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
             #include "rewindTime.H"
             goto noConvergence;
         }
 
         //--- Compute variations
-        dtManager.updateDerivatives();
         scalarField dtheta_tmp = mag(theta.internalField()-theta.oldTime().internalField());
         scalar dtheta = gMax(dtheta_tmp);
 
+        //- water mass balance terminal display
         Info << "Saturation theta: " << " Min(theta) = " << gMin(theta.internalField()) << " Max(theta) = " << gMax(theta.internalField()) << " dthetamax = " << dtheta << endl;
-        Info << "Head pressure h: " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << endl
-;
+        Info << "Head pressure h: " << " Min(h) = " << gMin(h.internalField()) << " Max(h) = " << gMax(h.internalField()) << endl;
+        Info << "Water mass balance (m3/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm).value() << " ; ";
+        forAll(phi.boundaryField(),patchi)
+        {
+            if (mesh.boundaryMesh()[patchi].type() == "patch")
+            {
+                Info << phi.boundaryField()[patchi].patch().name() << " = " <<  gSum(phi.boundaryField()[patchi]) << " ; ";
+            }
+        }
+        Info << endl;
 
         //- 3) scalar transport
-        #include "CEqn.H"
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+        forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
+        pmTransportModel->solveTransport(Utheta, phi, theta);
 
         //- C and water mass balance computation
-        #include "computeMassBalance.H"
-       
-        #include "eventWrite.H"
+        MDTM.updateAllDerivatives();
+        outputEvent->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"

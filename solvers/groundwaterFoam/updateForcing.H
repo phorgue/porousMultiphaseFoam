@@ -21,6 +21,4 @@ if (patchDEMID > -1)
     label nSeepageCells = fixedPotentialIDList.size();
     reduce(nSeepageCells, sumOp<label>());
     Info << "Number of seepage cells = " << nSeepageCells << endl;
-
-    if (fixedPotentialIDList.size() > 0) hEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
 }

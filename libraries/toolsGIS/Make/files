@@ -2,6 +2,7 @@ DEMfile/DEMfile.C
 XYfile/XYfile.C
 
 eventFile/eventFile.C
+eventFile/outputField.C
 eventFile/outputEventFile.C
 eventFile/sourceEventFile.C
 eventFile/patchEventFile.C

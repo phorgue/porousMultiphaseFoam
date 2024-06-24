@@ -40,8 +40,7 @@ Description
 #include "infiltrationEventFile.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
-#include "timestepManager.H"
-#include "simpleControl.H"
+#include "multiDtManager.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -49,16 +48,44 @@ using namespace Foam;
 int main(int argc, char *argv[])
 {
     argList::addBoolOption("steady", "to run steady flow simulation");
-;
-    #include "setRootCase.H"
+    Foam::argList args(argc, argv);
+
+    if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
     bool steady = args.found("steady");
-    #include "createTime.H"
+
+    Info << "Create time\n" << Foam::endl;
+    Time runTime(Time::controlDictName, args);
+
     #include "createMesh.H"
     #include "createFields.H"
     #include "readFixedPoints.H"
-    #include "readTimeControls.H"
-    #include "readEvent.H"
+    const dictionary& residualControl = mesh.solutionDict().subOrEmptyDict("residualControl");
+    const scalar residualPotential = residualControl.lookupOrDefault<scalar>("potential", 0);
+    scalar maxResidual = GREAT;
+    if (steady && residualPotential ==0)
+    {
+        FatalErrorIn("readTimeControls.h") << "residualControl.potential should be specified in system/fvSolution" << abort(FatalError);
+    }
+
+    //- create source/infiltration events
+    autoPtr<infiltrationEventFile> infiltrationEvent = infiltrationEventFile::New("infiltrationEventFile", transportProperties);
+    infiltrationEvent->init(runTime, potential.name(), mesh, infiltration);
+    autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
+    sourceEvent->init(runTime, potential.name(), mesh, waterSourceTerm.dimensions());
+
+    //- create time manager
+    List<sourceEventFile*> sourceEventList(1, sourceEvent);
+    List<infiltrationEventFile*> infiltrationEventList(1, infiltrationEvent);
+    multiDtManager MDTM(runTime, sourceEventList, infiltrationEventList);
+    MDTM.addField(potential, &dryCellIDList);
+
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
+    outputEvent->addField(hwater, phi, eps, "waterMassBalance.csv");
+    outputEvent->addSourceTerm("fixedPoints", flowOutFixedPoints);
+    outputEvent->addSourceTerm("seepage", flowOutSeepage);
+    outputEvent->addField(potential, phi);
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,9 +95,9 @@ int main(int argc, char *argv[])
     {
         if (!steady)
         {
-            if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.timeOutputValue());
-            if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.timeOutputValue());
-            #include "setDeltaT.H"
+            if (infiltrationEvent->isPresent()) infiltrationEvent->updateIndex(runTime.timeOutputValue());
+            if (sourceEvent->isPresent()) sourceEvent->updateIndex(runTime.timeOutputValue());
+            MDTM.updateDt();
         }
 
         runTime++;
@@ -80,14 +107,16 @@ int main(int argc, char *argv[])
         //- Update infiltration term
         if (!steady)
         {
-            #include "computeInfiltration.H"
+            if (infiltrationEvent->isPresent()) infiltrationEvent->updateInfiltration(runTime, infiltration.primitiveFieldRef());
+
+           if (sourceEvent->isPresent()) {
+                sourceEvent->updateValue(runTime);
+                waterSourceTerm = sourceEvent->dtValuesAsField();
+            }
         }
 
         //- Solve potential equation
         #include "potentialEqn.H"
-
-        //- Water mass balance computation
-        #include "waterMassBalance.H"
 
         //- Residual computation
         if (steady)
@@ -103,7 +132,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-        #include "eventWrite.H"
+            outputEvent->write();
         }
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

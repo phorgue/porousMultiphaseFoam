@@ -51,16 +51,28 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+    Foam::argList args(argc, argv);
+    if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
-    #include "createTime.H"
+
+    Info << "Create time\n" << Foam::endl;
+    Time runTime(Time::controlDictName, args);
+
     #include "createMesh.H"
     #include "createTimeControls.H"
-    #include "readGravitationalAcceleration.H"
+
+    Info<< "\nReading g" << endl;
+    const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
+
     #include "createFields.H"
     #include "createSbFields.H"
     #include "readTimeControls.H"
-    #include "readEvent.H"
+
+    autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
+    sourceEvent->init(runTime, Sb.name(), mesh, sourceTerm.dimensions());
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
+    outputEvent->addField(Sb, phi, eps, "waterMassBalance.csv", true);
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -68,7 +80,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
+        if (sourceEvent->isPresent()) sourceEvent->updateIndex(runTime.timeOutputValue());
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         #include "setDeltaT.H"
 
@@ -76,7 +88,12 @@ int main(int argc, char *argv[])
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
-        #include "computeSourceTerm.H"
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+        if (sourceEvent->isPresent())
+        {
+            sourceEvent->updateValue(runTime);
+            sourceTerm = sourceEvent->dtValuesAsField();
+        }
 
         //- Solve saturation equation (explicit)
         #include "SEqn.H"
@@ -85,7 +102,7 @@ int main(int argc, char *argv[])
         //- Solve pressure equation (implicit)
         #include "pEqn.H"
 
-        #include "eventWrite.H"
+        outputEvent->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
