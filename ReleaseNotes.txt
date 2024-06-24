@@ -1,3 +1,8 @@
+************************
+*** PMF v2406
+*** Starting class-based dev for solvers/libraries + new dispersion model
+************************
+
 
 ### Libraries
 
@@ -23,6 +28,11 @@
 
   - Minor change for eventInfiltration keyword :
     eventFileInfiltration => infiltrationEventFile
+
+- keywords
+
+  - new library/class has been created to ensure compatibility with API. PMF
+  keywords are liste in etc/keywords.yaml file
 
 ### Solvers
 

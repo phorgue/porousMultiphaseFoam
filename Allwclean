@@ -33,4 +33,5 @@ then
     rm -f $FOAM_USER_LIBBIN/libPMFporousBoundaryConditions.so
     rm -f $FOAM_USER_LIBBIN/libPMFporousModels.so
     rm -f $FOAM_USER_LIBBIN/libPMFtoolsGIS.so
+    rm -f $FOAM_USER_LIBBIN/libPMFkeywords.so
 fi
