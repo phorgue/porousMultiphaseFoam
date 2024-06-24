@@ -73,10 +73,6 @@ hwater = potential - z0;
 
 dimensionedScalar hwaterMin(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01)));
 scalar cumulativeWaterAdded = 0;
-scalar flowOutFixedPoints = 0;
-scalar flowOutFixedPointsPrev = 0;
-scalar flowOutSeepage = 0;
-scalar flowOutSeepagePrev = 0;
 
 #include "correctInitialPotential.H"
 
@@ -233,3 +229,10 @@ multiscalarMixture composition
     "C",
     dimLength
 );
+
+scalar flowOutFixedPoints = 0;
+scalar flowOutSeepage = 0;
+scalarList outflowSeepageTracer(composition.Y().size(), 0.);
+forAll(outflowSeepageTracer, speciei) {
+outflowSeepageTracer[speciei]= fvc::domainIntegrate(seepageTerm*composition.Y()[speciei]).value()/zScale;
+}

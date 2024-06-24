@@ -1,0 +1,61 @@
+control_dict:
+  CFL_condition: CFL
+  S_maximal_variation: dSmax
+  active_output_CSV: CSVoutput
+  event_time_tracking: eventTimeTracking
+  maximum_timestep: maxDeltaT
+  maximum_timestep_decreasse: dTFactDecrease
+  maximum_timestep_increment: dTFactIncrease
+  number_of_Newton_iterations: nIterNewton
+  number_of_Picard_iterations: nIterPicard
+  output_event_file: outputEventFile
+  timestep_adjustable: adjustTimeStep
+  timestep_close_to_event: eventTimeStep
+  truncation_error: truncationError
+  write_residual: writeResiduals
+field_boundary_conditions:
+  constant_value: constantValue
+  event_file: eventFile
+solution_dict:
+  linear_tolerance: tolerance
+  maximum_linear_iterations: maxIter
+transport_dict:
+  activate_capillarity: activateCapillarity
+  dual_porosity:
+    coeff_a: a
+    coeff_beta: beta
+    coeff_gamma_w: gammaW
+    matrix_permeability: Kmatrix
+  event_file:
+    flow_source: sourceEventFileWater
+    infiltration: infiltrationEventFile
+    tracer_source: sourceEventFileTracer
+  global_permeability_factor: Kfactor
+  matrix_permeability: Kmatrix
+  model:
+    Brooks_and_Corey:
+      n: n
+      alpha: alpha
+      hd: hd
+      max_relative_perm: krmax
+      min_relative_perm: krmin
+      pc0: pc0
+    Ippisch:
+      alpha: alpha
+      entry_pressure: he
+      m: m
+      tortuosity: tau
+    Van_Genuchten:
+      alpha: alpha
+      m: m
+      max_relative_perm: krmax
+      min_relative_perm: krmin
+      pc0: pc0
+    linear:
+      linear_pc0: pc0
+      linear_pc_max: pcMax
+  transport:
+    Kd: Kd
+    decay_coeffient: lambda
+    rs: rs
+    total_porosity: epsTotal

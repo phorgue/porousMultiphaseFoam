@@ -46,17 +46,16 @@ SourceFiles
 #ifndef outputEventFile_H
 #define outputEventFile_H
 
-#include "fvMesh.H"
 #include "eventFile.H"
-
+#include "outputField.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 
 /*---------------------------------------------------------------------------* \
-    Class fluidoutputEventFile Declaration
-    \*---------------------------------------------------------------------------*/
+    Class outputEventFile Declaration
+\*---------------------------------------------------------------------------*/
 
 class outputEventFile
 :
@@ -64,35 +63,100 @@ class outputEventFile
 {
 private:
 
-    scalar computeInterpolationFactor(const Time&);
+    //- If output event file is present
+    bool isPresent_;
+
+    //- If CSV file output is active
+    bool CSVoutput_;
+
+    //- Link to Time
+    Time& runTime_;
+
+    //- Time interpolation factor
+    scalar ifactor_;
+
+    //- z-scale (for 2D solvers)
+    const scalar zscale_;
+
+    //- One field for
+    volScalarField one_;
+
+    //- Field to write
+    PtrList<outputField> outputFields_;
+
+    //- Internal function
+    void updateInterpolationFactor();
 
 public:
 
-    // Constructors    
-    //- Copy constructor
+    static autoPtr<outputEventFile> New(Time&, const fvMesh&, scalar zscale = 1);
+
+    // Constructors
+    //- Construct from fileName
     outputEventFile
     (
-        const outputEventFile& fileToCopy
+        const word& fileName,
+        const bool& isPresent,
+        const bool& CSVoutput,
+        Time&,
+        const fvMesh&,
+        const scalar zscale
     );
 
-    //- Construct from Istream
-    outputEventFile
-    (
-        const word& fileName
-    );
-    
     // Selectors
 
     //- Destructor
     ~outputEventFile();
 
-    // Member Functions
-    scalar timeInterpolate(const scalar&, const scalar&, const Time&);
-    volScalarField timeInterpolate(const volScalarField&, Time&, bool = true);
-    volVectorField timeInterpolate(const volVectorField&, Time&, bool = true);
-    surfaceScalarField timeInterpolate(const surfaceScalarField&, Time&, bool = true);
-    void checkControlDict(const Time&) const;
-    //- Access function
+    // Access function
+    bool isPresent() const{ return isPresent_;};
+    bool CSVoutput() const{ return CSVoutput_;};
+    scalar ifactor() const{ return ifactor_;};
+
+    // Member functions
+    void checkControlDict() const;
+    void addField(
+            const volScalarField& field,
+            const surfaceScalarField& phi,
+            const volScalarField& coef1,
+            const volScalarField& coef2,
+            const volScalarField& coef3,
+            const word& fileName = "/dev/null",
+            bool saturation = false
+    );
+
+    void addField(
+            const volScalarField& field,
+            const surfaceScalarField& phi,
+            const volScalarField& coef1,
+            const volScalarField& coef2,
+            word fileName = "/dev/null",
+            bool saturation = false
+    );
+
+    void addField(
+            const volScalarField& field,
+            const surfaceScalarField& phi,
+            const volScalarField& coef1,
+            word fileName = "/dev/null",
+            bool saturation = false
+    );
+
+    void addField(
+            const volScalarField& field,
+            const surfaceScalarField& phi,
+            word fileName = "/dev/null",
+            bool saturation = false
+    );
+
+    void addSourceTerm(
+            const word& name,
+            scalar& value,
+            label index_field = -1
+    );
+
+    void init();
+    void write();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -26,7 +26,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    porouScalarTransportFoam
+    porousScalarTransportFoam
 
 Description
     Solves the transport equation for a passive scalar
@@ -42,20 +42,32 @@ Description
 #include "patchEventFile.H"
 #include "outputEventFile.H"
 #include "eventFlux.H"
-#include "timestepManager.H"
+#include "multiDtManager.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+    Foam::argList args(argc, argv);
+    if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
     #include "../headerPMF.H"
-    #include "createTime.H"
+
+    Info << "Create time\n" << Foam::endl;
+    Time runTime(Time::controlDictName, args);
+
     #include "createMesh.H"
     #include "createFields.H"
-    #include "readTimeControls.H"
-    #include "readEvent.H"
-    #include "CourantNo.H"
+
+    multiDtManager MDTM(runTime, tracerSourceEventList, patchEventList);
+    forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
+
+    forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
+    forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
+    forAll(composition.Y(), speciei) {
+        outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+    }
+    outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,15 +75,19 @@ int main(int argc, char *argv[])
     {
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->updateIndex(runTime.timeOutputValue());
-        #include "setDeltaT.H"
-        runTime++;
+        MDTM.updateDt();
 
+        runTime++;
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        #include "CEqn.H"
-        #include "CmassBalance.H"
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+        forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
 
-        #include "eventWrite.H"
+        //- Correct pmTransportModel + dispersion for classical porosity
+        pmTransportModel->solveTransport(Utheta, phi, theta);
+        MDTM.updateAllDerivatives();
+
+        outputEvent->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
@@ -82,6 +98,5 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
 
 // ************************************************************************* //

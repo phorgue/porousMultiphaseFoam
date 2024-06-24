@@ -49,7 +49,10 @@ int main(int argc, char *argv[])
     #include "createMesh.H"
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
-    #include "readEvent.H"
+
+    //- create source event for water
+    autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
+    sourceEvent->init(runTime, p.name(), mesh, sourceTerm.dimensions());
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
