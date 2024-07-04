@@ -110,7 +110,7 @@ public:
     const scalar& currentValue(const label& id) const {return currentValues_[id];}
     const scalarList& currentValues() const {return currentValues_;}
     scalar currentEventStartTime() const;
-    const scalar& currentEventEndTime() const;
+    scalar currentEventEndTime() const;
     void storeOldValues() {
         oldOldValues_ = oldValues_;
         oldValues_ = currentValues_;
