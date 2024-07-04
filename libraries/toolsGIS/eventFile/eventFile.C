@@ -79,7 +79,7 @@ Foam::scalar Foam::eventFile::currentEventStartTime() const
     else return dates_[iterator_];
 }
 
-const Foam::scalar& Foam::eventFile::currentEventEndTime() const
+Foam::scalar Foam::eventFile::currentEventEndTime() const
 {
     if (iterator_ < ndates_-1) return dates_[iterator_+1];
     else return GREAT;

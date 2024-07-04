@@ -5,4 +5,7 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lfiniteVolume \
-    -lmeshTools
+    -lmeshTools \
+    -L$(FOAM_USER_LIBBIN) \
+    -lPMFtoolsGIS
+
