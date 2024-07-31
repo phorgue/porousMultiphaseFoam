@@ -81,7 +81,8 @@ int main(int argc, char *argv[])
 
     //- create time managers
     labelList* fixedPotentialIDListPtr  = &fixedPotentialIDList;
-    List<sourceEventFile*> sourceEventList(1, sourceEvent);
+    List<sourceEventFile*> sourceEventList;
+    sourceEventList.append(sourceEvent.get());
     multiDtManager MDTM(runTime, sourceEventList, patchEventList);
     MDTM.addIterativeAlgorithm(theta, "Picard", steady);
     MDTM.addIterativeAlgorithm(theta, "Newton", steady);
