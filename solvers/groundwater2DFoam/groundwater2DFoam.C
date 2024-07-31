@@ -75,8 +75,10 @@ int main(int argc, char *argv[])
     sourceEvent->init(runTime, potential.name(), mesh, waterSourceTerm.dimensions());
 
     //- create time manager
-    List<sourceEventFile*> sourceEventList(1, sourceEvent);
-    List<infiltrationEventFile*> infiltrationEventList(1, infiltrationEvent);
+    List<sourceEventFile*> sourceEventList;
+    sourceEventList.append(sourceEvent.get());
+    List<infiltrationEventFile*> infiltrationEventList;
+    infiltrationEventList.append(infiltrationEvent.get());
     multiDtManager MDTM(runTime, sourceEventList, infiltrationEventList);
     MDTM.addField(potential, &dryCellIDList);
 
