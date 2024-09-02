@@ -35,6 +35,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "dynamicRefineFvMesh.H"
 #include "fluidPhase.H"
 #include "porousMediumTransportModel.H"
 #include "multiscalarMixture.H"
@@ -55,8 +56,10 @@ int main(int argc, char *argv[])
     Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);
 
-    #include "createMesh.H"
+    #include "createDynamicFvMesh.H"
     #include "createFields.H"
+    //- CourantNo.H required for mesh V0 initialisation
+    #include "CourantNo.H"
 
     multiDtManager MDTM(runTime, tracerSourceEventList, patchEventList);
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
@@ -82,6 +85,12 @@ int main(int argc, char *argv[])
 
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
+
+        mesh.update();
+        if (mesh.changing())
+        {
+            forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->onMeshChanged();
+        }
 
         //- Correct pmTransportModel + dispersion for classical porosity
         pmTransportModel->solveTransport(Utheta, phi, theta);
