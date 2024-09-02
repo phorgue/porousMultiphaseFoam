@@ -81,9 +81,6 @@ private:
     labelList idCoordinates_;
     dimensionSet fieldDims_ = dimless;
 
-protected:
-    void onMeshChanged() override;
-
 public:
 
     static autoPtr<sourceEventFile> New(const word&, const dictionary&);
@@ -114,6 +111,8 @@ public:
     void init(const Time&, const word&, const fvMesh&, const dimensionSet&);
     void setFieldDimensions(const dimensionSet& dims);
 
+    //- Dynamic mesh functions
+    void onMeshChanged() override;
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
