@@ -44,6 +44,7 @@ Description
 #include "outputEventFile.H"
 #include "eventFlux.H"
 #include "multiDtManager.H"
+#include "processorFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
