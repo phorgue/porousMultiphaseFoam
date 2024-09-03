@@ -87,3 +87,16 @@ Info << "===> field theta" << phaseName << " computed, min = " << gMin(theta.int
         Info << "===> Saturation/Water content file not found (saturated flow)" << endl;
     }
 }
+
+//- To protect boundary cell from refining
+DynamicList<label> boundary_protected_cells(0);
+const polyBoundaryMesh& patches = mesh.boundaryMesh();
+forAll(patches, patchi)
+{
+    if (not(isA<processorPolyPatch>(patches[patchi])) &&
+    not(isA<emptyPolyPatch>(patches[patchi])) )
+    {
+        boundary_protected_cells.append(mesh.boundary()[patchi].faceCells());
+    }
+}
+refCast<dynamicRefineFvMesh>(mesh).protectedCell() = bitSet(boundary_protected_cells);
