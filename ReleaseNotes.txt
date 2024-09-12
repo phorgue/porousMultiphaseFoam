@@ -1,4 +1,10 @@
 
+### Solvers
+
+- porousScalarTransportFoam
+
+  - dynamicRefineFvMesh can be now used by specifying options in constant/dynamicMeshDict
+
 ### Libraries
 
 - toolsGIS/outputEventFile
