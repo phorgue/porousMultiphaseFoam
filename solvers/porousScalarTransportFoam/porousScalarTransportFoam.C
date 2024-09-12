@@ -35,6 +35,7 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "dynamicFvMesh.H"
 #include "dynamicRefineFvMesh.H"
 #include "fluidPhase.H"
 #include "porousMediumTransportModel.H"
@@ -45,6 +46,7 @@ Description
 #include "eventFlux.H"
 #include "multiDtManager.H"
 #include "processorFvPatchField.H"
+#include "symmetryPlanePolyPatch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -57,7 +59,18 @@ int main(int argc, char *argv[])
     Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);
 
-    #include "createDynamicFvMesh.H"
+    Info<< "Create mesh for time = " << runTime.timeName() << nl << endl;
+    autoPtr<dynamicFvMesh> meshPtr(dynamicFvMesh::New(args, runTime));
+    dynamicFvMesh& mesh = meshPtr();
+    if (mesh.dynamic()) {
+        forAll(mesh.boundaryMesh(), patchi){
+             if (isA<emptyPolyPatch>(mesh.boundaryMesh()[patchi])) {
+                FatalErrorIn("porousScalarTransportFoam.C") << " AMR cannot be used with empty patches "
+                << abort(FatalError);
+             }
+        }
+    }
+
     #include "createFields.H"
     //- CourantNo.H required for mesh V0 initialisation
     #include "CourantNo.H"
@@ -71,6 +84,7 @@ int main(int argc, char *argv[])
     forAll(composition.Y(), speciei) {
         outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
     }
+    if (mesh.dynamic()) outputEvent->addDynamicMesh(mesh);
     outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

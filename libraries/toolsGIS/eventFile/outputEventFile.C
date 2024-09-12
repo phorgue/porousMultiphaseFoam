@@ -262,7 +262,6 @@ void Foam::outputEventFile::write() {
                     return;
                 }
             }
-            Info << nl << "ECRITURE " << currentEventEndTime() << " et " << runTime_.timeOutputValue() << endl;
 
             updateInterpolationFactor();
             word timeEvent = Foam::name(currentEventEndTime());
