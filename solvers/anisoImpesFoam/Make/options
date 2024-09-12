@@ -1,12 +1,14 @@
 EXE_INC = \
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
     -I../../libraries/porousBoundaryConditions/lnInclude \
     -I../../libraries/porousModels/lnInclude \
     -I../../libraries/toolsGIS/lnInclude
 
 EXE_LIBS = \
     -lfiniteVolume \
+    -ldynamicFvMesh \
     -L$(FOAM_USER_LIBBIN) \
     -lPMFporousBoundaryConditions \
     -lPMFporousModels \
