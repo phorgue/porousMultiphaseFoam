@@ -1,3 +1,11 @@
+
+### Libraries
+
+- toolsGIS/outputEventFile
+
+  - now handles dynamicMesh when output-times are specified
+
+
 ************************
 *** PMF v2406
 *** Starting class-based dev for solvers/libraries + new dispersion model

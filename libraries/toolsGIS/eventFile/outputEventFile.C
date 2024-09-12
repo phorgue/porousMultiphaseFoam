@@ -67,7 +67,8 @@ Foam::outputEventFile::outputEventFile
         mesh,
         dimensionedScalar(dimless, 1)
     ),
-    outputFields_()
+    outputFields_(),
+    dyMesh_(nullptr)
 {
     if (isPresent_)
     {
@@ -215,28 +216,28 @@ void Foam::outputEventFile::addField(
 }
 
 void Foam::outputEventFile::addField(
-        const volScalarField& field,
-        const surfaceScalarField& phi,
-        const volScalarField& coef1,
-        word fileName,
-        bool saturation
+    const volScalarField& field,
+    const surfaceScalarField& phi,
+    const volScalarField& coef1,
+    word fileName,
+    bool saturation
 ) {
     addField(field, phi, coef1, one_, one_, fileName, saturation);
 }
 
 void Foam::outputEventFile::addField(
-        const volScalarField& field,
-        const surfaceScalarField& phi,
-        word fileName,
-        bool saturation
+    const volScalarField& field,
+    const surfaceScalarField& phi,
+    word fileName,
+    bool saturation
 ) {
     addField(field, phi, one_, one_, one_, fileName, saturation);
 }
 
 void Foam::outputEventFile::addSourceTerm(
-        const word& name,
-        scalar& value,
-        label index_field
+    const word& name,
+    scalar& value,
+    label index_field
 ) {
     if (index_field > -1) outputFields_[index_field].addSourceTerm(name, value);
     else outputFields_[outputFields_.size()-1].addSourceTerm(name, value);
@@ -252,12 +253,27 @@ void Foam::outputEventFile::write() {
     ifactor_ = 1;
     if (isPresent_) {
         if (currentEventEndTime() <= runTime_.timeOutputValue()) {
+            //- Check that mesh did not change during this time step
+            if (dyMesh_) {
+                if (dyMesh_->changing()) {
+                    Info << "*** WARNING ***" << nl << "Skip time interpolation at t = " << currentEventEndTime()
+                         << " because mesh has changed " << endl << endl;
+                    updateIndex(runTime_.timeOutputValue());
+                    return;
+                }
+            }
+            Info << nl << "ECRITURE " << currentEventEndTime() << " et " << runTime_.timeOutputValue() << endl;
+
             updateInterpolationFactor();
             word timeEvent = Foam::name(currentEventEndTime());
+
             scalar timeBackup = runTime_.timeOutputValue();
             runTime_.setTime(currentEventEndTime(), runTime_.timeIndex());
             forAll(outputFields_, fieldi) {
                 outputFields_[fieldi].write(runTime_.timeName(), runTime_.value(), ifactor_);
+            }
+            if (dyMesh_) {
+                dyMesh_->write();
             }
             runTime_.setTime(timeBackup, runTime_.timeIndex());
             updateIndex(runTime_.timeOutputValue());
