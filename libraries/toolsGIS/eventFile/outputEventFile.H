@@ -48,6 +48,8 @@ SourceFiles
 
 #include "eventFile.H"
 #include "outputField.H"
+#include "dynamicFvMesh.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -84,6 +86,9 @@ private:
     //- Field to write
     PtrList<outputField> outputFields_;
 
+    //- Dynamic mesh
+    autoPtr<dynamicFvMesh> dyMesh_;
+
     //- Internal function
     void updateInterpolationFactor();
 
@@ -116,44 +121,46 @@ public:
     // Member functions
     void checkControlDict() const;
     void addField(
-            const volScalarField& field,
-            const surfaceScalarField& phi,
-            const volScalarField& coef1,
-            const volScalarField& coef2,
-            const volScalarField& coef3,
-            const word& fileName = "/dev/null",
-            bool saturation = false
+        const volScalarField& field,
+        const surfaceScalarField& phi,
+        const volScalarField& coef1,
+        const volScalarField& coef2,
+        const volScalarField& coef3,
+        const word& fileName = "/dev/null",
+        bool saturation = false
     );
 
     void addField(
-            const volScalarField& field,
-            const surfaceScalarField& phi,
-            const volScalarField& coef1,
-            const volScalarField& coef2,
-            word fileName = "/dev/null",
-            bool saturation = false
+        const volScalarField& field,
+        const surfaceScalarField& phi,
+        const volScalarField& coef1,
+        const volScalarField& coef2,
+        word fileName = "/dev/null",
+        bool saturation = false
     );
 
     void addField(
-            const volScalarField& field,
-            const surfaceScalarField& phi,
-            const volScalarField& coef1,
-            word fileName = "/dev/null",
-            bool saturation = false
+        const volScalarField& field,
+        const surfaceScalarField& phi,
+        const volScalarField& coef1,
+        word fileName = "/dev/null",
+        bool saturation = false
     );
 
     void addField(
-            const volScalarField& field,
-            const surfaceScalarField& phi,
-            word fileName = "/dev/null",
-            bool saturation = false
+        const volScalarField& field,
+        const surfaceScalarField& phi,
+        word fileName = "/dev/null",
+        bool saturation = false
     );
 
     void addSourceTerm(
-            const word& name,
-            scalar& value,
-            label index_field = -1
+        const word& name,
+        scalar& value,
+        label index_field = -1
     );
+
+    void addDynamicMesh(dynamicFvMesh& mesh) { dyMesh_.reset(&mesh);}
 
     void init();
     void write();
