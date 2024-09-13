@@ -146,5 +146,3 @@ Info<< "Reading composition" << endl;
 autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New("theta", porousModel);
 multiscalarMixture& composition = pmTransportModel->composition();
 List<sourceEventFile*>& tracerSourceEventList = pmTransportModel->sourceEventList();
-
-bool writeResiduals=false;
