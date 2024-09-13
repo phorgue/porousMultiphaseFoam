@@ -36,6 +36,11 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
+#include "dynamicFvMesh.H"
+#include "dynamicRefineFvMesh.H"
+#include "processorPolyPatch.H"
+#include "symmetryPlanePolyPatch.H"
+#include "dynamicRefineFvMesh.H"
 #include "incompressiblePhase.H"
 #include "twophasePorousMediumModel.H"
 #include "porousMediumTransportModel.H"
@@ -48,22 +53,25 @@ Description
 #include "eventInfiltration.H"
 #include "eventFlux.H"
 #include "multiDtManager.H"
-
+#include "processorFvPatchField.H"
+#include "symmetryPlanePolyPatch.H"
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
 
 int main(int argc, char *argv[])
 {
+    argList::addBoolOption("dualMesh", "to run steady flow simulation");
+
     Foam::argList args(argc, argv);
     bool steady = false;
-
+    bool dualMesh = args.found("dualMesh");
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
 
     #include "../headerPMF.H"
     Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);
 
-    #include "createMesh.H"
+    #include "createDualMesh.H"
 
     Info<< "\nReading g" << endl;
     const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
