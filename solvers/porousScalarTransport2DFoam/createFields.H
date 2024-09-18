@@ -45,11 +45,11 @@ multiscalarMixture composition
     speciesNames,
     mesh,
     word::null,
-    eps,
     &tracerSourceEventList,
     "C",
     dimLength
 );
+composition.initRetardCoef(eps);
 
 /////////////////////////////////////////////////////////////////
 ////////////////////// HEIGHT - POTENTIAL ///////////////////////

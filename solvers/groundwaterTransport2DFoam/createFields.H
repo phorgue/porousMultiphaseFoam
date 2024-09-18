@@ -224,11 +224,11 @@ multiscalarMixture composition
     speciesNames,
     mesh,
     word::null,
-    eps,
     &sourceEventList,
     "C",
     dimLength
 );
+composition.initRetardCoef(eps);
 
 scalar flowOutFixedPoints = 0;
 scalar flowOutSeepage = 0;
