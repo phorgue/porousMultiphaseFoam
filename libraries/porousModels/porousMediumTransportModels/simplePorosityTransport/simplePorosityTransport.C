@@ -54,10 +54,11 @@ addToRunTimeSelectionTable
 Foam::porousMediumTransportModels::simplePorosityTransport::simplePorosityTransport
 (
     const word& phaseName,
-    const porousMediumModel& pmModel
+    const fvMesh& mesh,
+    const IOdictionary& transportProperties
 )
     :
-    porousMediumTransportModel(phaseName, pmModel)
+    porousMediumTransportModel(phaseName, mesh, transportProperties)
 {}
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
@@ -66,12 +67,13 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
 (
     const volVectorField& U,
     const surfaceScalarField& phi,
-    const volScalarField& theta
+    const volScalarField& theta,
+    const volScalarField& exchangeTerm
 )
 {
     composition_.correct(U, theta);
 
-    dictionary solverDict = pmModel_.mesh().solver("C");
+    dictionary solverDict = composition_.Y(0).mesh().solver("C");
     forAll(composition_.Y(), speciesi)
     {
         auto& C = composition_.Y(speciesi);
