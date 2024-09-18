@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         }
 
         //- Correct pmTransportModel + dispersion for classical porosity
-        pmTransportModel->solveTransport(Utheta, phi, theta);
+        pmTransportModel->solveTransport(Utheta, phi, theta, pmModel.exchangeTerm());
         MDTM.updateAllDerivatives();
 
         outputEvent->write();
