@@ -34,10 +34,11 @@ License
 Foam::autoPtr<Foam::porousMediumTransportModel> Foam::porousMediumTransportModel::New
 (
     const word& phaseName,
-    const porousMediumModel& pmModel
+    const fvMesh& mesh,
+    const IOdictionary& transportProperties
 )
 {
-    word modelType(pmModel.transportProperties().lookupOrDefault<word>("porousMediumModel", "simplePorosity"));
+    word modelType(transportProperties.lookupOrDefault<word>("porousMediumModel", "simplePorosity"));
     modelType += "Transport";
     Info << nl << "Selecting porousTransportMedium model => " << modelType << endl;
 
@@ -56,7 +57,7 @@ Foam::autoPtr<Foam::porousMediumTransportModel> Foam::porousMediumTransportModel
     }
 
     return autoPtr<porousMediumTransportModel>
-        (cstrIter()(phaseName, pmModel));
+        (cstrIter()(phaseName, mesh, transportProperties));
 }
 
 
