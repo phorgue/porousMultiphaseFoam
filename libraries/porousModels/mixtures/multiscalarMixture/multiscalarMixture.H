@@ -74,13 +74,12 @@ public:
     // Constructors
 
     //- Construct from dictionary, species names, mesh and phase name
-    inline multiscalarMixture
+    multiscalarMixture
     (
         const dictionary& dict,
         const wordList& speciesNames,
         const fvMesh& mesh,
         const word& phaseName,
-        const volScalarField& eps,
         List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
         const word& sourceEventDtFieldNameOverride = "",
         const dimensionSet& sourceTermDimFactor = dimless,
@@ -89,25 +88,25 @@ public:
 
     // Member Functions
 
-    //- Retard coefficient [-]
-    inline const volScalarField& R(const label speciesi) const;
-
-    //- Decay coefficient [1/s]
-    inline const dimensionedScalar& lambda(const label speciesi) const;
-
     //- Update effective diffusivities and source terms
-    inline void correct
+    void correct
     (
         const volVectorField& U,
         const volScalarField& theta
     );
 
-    inline void correct
+    void correct
     (
         const volVectorField& U,
         const volScalarField& saturation,
         const volScalarField& eps
     );
+
+    //- Retard coefficient [-]
+    inline const volScalarField& R(const label speciesi) const;
+
+    //- Decay coefficient [1/s]
+    inline const dimensionedScalar& lambda(const label speciesi) const;
 
     //-  Molar diffusivity [m^2/s]
     inline const dimensionedScalar& Dm(const label speciesi) const;
@@ -118,10 +117,10 @@ public:
     //- Source term [Y(speciesi).dimensions()*sourceTermDimFactor/s]
     inline const volScalarField& sourceTerm(const label speciesi) const;
 
-    const PtrList<sourceEventFile>& sourceEvents() const {return sourceEvents_;}
+    const PtrList<sourceEventFile>& sourceEvents() const;
 
-    //- Check if eps is defined (for retard coefficient)
-    bool check_eps();
+    //- Compute retard coefficient and check eps
+    bool initRetardCoef(const volScalarField& eps);
 
 private:
     PtrList<volScalarField> R_;
@@ -132,7 +131,6 @@ private:
     List<dimensionedScalar> Kd_;
     List<dimensionedScalar> rs_;
     List<dimensionedScalar> epsTotal_;
-    const volScalarField& eps_;
 
 };
 
