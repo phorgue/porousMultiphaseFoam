@@ -104,11 +104,10 @@ Foam::multiscalarMixture::multiscalarMixture
                                                         mesh.time().timeName(),
                                                         mesh,
                                                         IOobject::NO_READ,
-                                                        IOobject::NO_WRITE
+                                                        IOobject::AUTO_WRITE
                                                 ),
                                         mesh,
-                                        dimless,
-                                        // calculatedFvPatchField<scalar>::typeName
+                                        1,
                                         zeroGradientFvPatchField<scalar>::typeName
                                 )
                 );
@@ -222,8 +221,9 @@ bool Foam::multiscalarMixture::initRetardCoef(const volScalarField& eps)
                         "Field " << eps.name() << " seems to be uninitialized. You should specify value in transportProperties or field in constant/" << abort(FatalError);
                 }
                 R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / eps;
-                Info << "Min(R) = " << gMin(R_[speciesi]) << " Max(R) = " << gMax(R_[speciesi]) << endl;
+
             }
+            Info << "Min(R) = " << gMin(R_[speciesi]) << " Max(R) = " << gMax(R_[speciesi]) << endl;
         }
     return false;
 
