@@ -17,6 +17,12 @@ porousMediumModels/twophasePorousMediumModel/twophasePorousMediumModelNew.C
 porousMediumModels/simplePorosity/simplePorosity.C
 porousMediumModels/dualPorosity/dualPorosity.C
 
+phaseModels/phase/phase.C
+phaseModels/fluidPhase/fluidPhase.C
+phaseModels/incompressiblePhase/incompressiblePhase.C
+
+mixtures/multiscalarMixture/multiscalarMixture.C
+
 porousMediumTransportModels/porousMediumTransportModel/porousMediumTransportModel.C
 porousMediumTransportModels/porousMediumTransportModel/porousMediumTransportModelNew.C
 porousMediumTransportModels/simplePorosityTransport/simplePorosityTransport.C
@@ -27,11 +33,6 @@ dispersionModels/dispersionModel/dispersionModelNew.C
 dispersionModels/alphaDispersion/alphaDispersion.C
 dispersionModels/dualAlphaDispersion/dualAlphaDispersion.C
 
-phaseModels/phase/phase.C
-phaseModels/fluidPhase/fluidPhase.C
-phaseModels/incompressiblePhase/incompressiblePhase.C
-
-mixtures/multiscalarMixture/multiscalarMixture.C
 
 LIB = $(FOAM_USER_LIBBIN)/libPMFporousModels
 
