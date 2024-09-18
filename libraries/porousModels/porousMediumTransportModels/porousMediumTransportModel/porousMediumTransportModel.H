@@ -77,9 +77,6 @@ protected:
     //- List of the transported species
     wordList speciesNames_;
 
-    //- Reference to the 
-    const porousMediumModel& pmModel_;
-
     //- List of sourceEvent for each component
     List<sourceEventFile*> sourceEventList_;
 
@@ -99,9 +96,10 @@ public:
         dictionary,
         (
             const word& phaseName,
-            const porousMediumModel& pmModel
+            const fvMesh& mesh,
+            const IOdictionary& transportProperties
         ),
-        (phaseName, pmModel)
+        (phaseName, mesh, transportProperties)
     );
 
     // Selectors
@@ -110,7 +108,8 @@ public:
     static autoPtr<porousMediumTransportModel> New
     (
         const word& phaseName,
-        const porousMediumModel& pmModel
+        const fvMesh& mesh,
+        const IOdictionary& transportProperties
     );
 
     // Constructors
@@ -119,7 +118,8 @@ public:
     porousMediumTransportModel
     (
         const word& phaseName,
-        const porousMediumModel& pmModel
+        const fvMesh& mesh,
+        const IOdictionary& transportProperties
     );
 
     //- Destructor
@@ -129,13 +129,10 @@ public:
     // Member Functions
 
     //- Return transport properties
-    const dictionary& transportProperties() const {return transportProperties_;}
+    const IOdictionary& transportProperties() const {return transportProperties_;}
 
     //- Return species names (adding option porous region name)
     wordList speciesNames(const word& porousRegion="");
-
-    //- Return porousMediumModel
-    const porousMediumModel& pmModel() const {return pmModel_;}
 
     //- Access to the list of sourceEvent
     List<sourceEventFile*>& sourceEventList() {return sourceEventList_;}
@@ -148,7 +145,8 @@ public:
     (
         const volVectorField& U,
         const surfaceScalarField& phi,
-        const volScalarField& theta
+        const volScalarField& theta,
+        const volScalarField& exchangeTerm
     ) = 0;
 
     //- Display mass balance information to the terminal

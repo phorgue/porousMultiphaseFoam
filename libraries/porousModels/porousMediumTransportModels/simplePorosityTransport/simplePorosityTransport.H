@@ -82,7 +82,8 @@ public:
     simplePorosityTransport
     (
         const word& phaseName,
-        const porousMediumModel& pmModel
+        const fvMesh& mesh,
+        const IOdictionary& transportProperties
     );
 
     //- Destructor
@@ -94,7 +95,8 @@ public:
     (
         const volVectorField& U,
         const surfaceScalarField& phi,
-        const volScalarField& theta
+        const volScalarField& theta,
+        const volScalarField& exchangeTerm
     );
 
     //- Display informations to the terminal

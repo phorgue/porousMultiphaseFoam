@@ -54,30 +54,30 @@ addToRunTimeSelectionTable
 Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
 (
     const word& phaseName,
-    const porousMediumModel& pmModel
+    const fvMesh& mesh,
+    const IOdictionary& transportProperties
 )
     :
-    porousMediumTransportModel(phaseName, pmModel),
+    porousMediumTransportModel(phaseName, mesh, transportProperties),
     dualPorosityTransportCoeffs_(transportProperties_.subDict("dualPorosityCoeffs")),
     epsMatrix_
     (
         IOobject
         (
             "epsMatrix",
-            pmModel.mesh().time().constant(),
-            pmModel.mesh(),
+            mesh.time().constant(),
+            mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
-        pmModel.mesh(),
+        mesh,
         transportProperties_.getOrDefault<dimensionedScalar>("epsMatrix", dimensionedScalar(dimless, 2))
     ),
     matrixComposition_(
         transportProperties_,
         speciesNames("Matrix"),
-        pmModel.mesh(),
+        mesh,
         word::null,
-        epsMatrix_,
         &sourceEventList_,
         "C",
         dimless,
@@ -87,13 +87,25 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
     beta_(dualPorosityTransportCoeffs_.get<dimensionedScalar>("beta")),
     gammaW_(dualPorosityTransportCoeffs_.get<dimensionedScalar>("gammaW")),
     alphaS_(gammaW_*matrixComposition_.Dm(0)*beta_/(a_*a_)),
-    exchangeTermFromFracture_("exchangeTermFromFracture", pmModel_.exchangeTerm()),
-    exchangeTermFromMatrix_("exchangeTermFromMatrix", pmModel_.exchangeTerm()),
+    exchangeTermFromFracture_
+    (
+        IOobject
+        (
+            "exchangeTerm",
+            mesh.time().timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("",dimless/dimTime,0)
+    ),
+    exchangeTermFromMatrix_("exchangeTermFromMatrix", exchangeTermFromFracture_),
     UMatrix_(transportProperties_.db().lookupObject<volVectorField>("U"+phaseName_+"Matrix")),
     phiMatrix_(transportProperties_.db().lookupObject<surfaceScalarField>("phiMatrix")),
     thetaMatrix_(transportProperties_.db().lookupObject<volScalarField>(phaseName_+"Matrix"))
 {
-    matrixComposition_.check_eps();
+    matrixComposition_.initRetardCoef(epsMatrix_);
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
@@ -102,11 +114,11 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
 (
     const volVectorField& U,
     const surfaceScalarField& phi,
-    const volScalarField& theta
+    const volScalarField& theta,
+    const volScalarField& exchangeTerm
 )
 {
     //- compute tracer exchange term from water transfer
-    const volScalarField& exchangeTerm = pmModel_.exchangeTerm();
     forAll(exchangeTerm, celli)
     {
         if (exchangeTerm[celli] > 0)
@@ -124,7 +136,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
     //- fracture part
     composition_.correct(U, theta);
 
-    dictionary solverDict = pmModel_.mesh().solver("C");
+    dictionary solverDict = composition_.Y(0).mesh().solver("C");
     forAll(composition_.Y(), speciesi)
     {
         auto& C = composition_.Y(speciesi);
@@ -181,7 +193,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
                 + alphaS_ * thetaMatrix_ * (Cfracture - C)
             );
 
-        CMatrixEqn.solve(pmModel_.mesh().solver("C"));
+        CMatrixEqn.solve(C.mesh().solver("C"));
 
         Info<< "Concentration: Min(" << speciesNames_[speciesi] << ") = " << gMin(C.internalField())
             << " Max(" << speciesNames_[speciesi] << ") = " << gMax(C.internalField())
