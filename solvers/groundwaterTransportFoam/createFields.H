@@ -57,7 +57,7 @@ eventFlux::setEventFileRegistry(&patchEventList, "C");
 /////////////////////////// PHASE MODEL CREATION ////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-autoPtr<incompressiblePhase> phasetheta = incompressiblePhase::New(mesh,transportProperties,"theta");
+autoPtr<incompressiblePhase> phasetheta = incompressiblePhase::New(mesh, transportProperties, "theta");
 volVectorField& Utheta = phasetheta->U();
 const dimensionedScalar& rhotheta = phasetheta->rho();
 const dimensionedScalar& mutheta = phasetheta->mu();
@@ -143,6 +143,6 @@ volScalarField sourceTerm
 ///////////////////////////////////////////////////////////////////////
 
 Info<< "Reading composition" << endl;
-autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New("theta", porousModel);
+autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New("theta", meshT, transportProperties);
 multiscalarMixture& composition = pmTransportModel->composition();
 List<sourceEventFile*>& tracerSourceEventList = pmTransportModel->sourceEventList();
