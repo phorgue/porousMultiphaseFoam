@@ -28,12 +28,20 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "simpleMesh.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
 defineTypeNameAndDebug(simpleMesh, 0);
+
+addToRunTimeSelectionTable
+(
+    multiMesh,
+    simpleMesh,
+    dictionary
+);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

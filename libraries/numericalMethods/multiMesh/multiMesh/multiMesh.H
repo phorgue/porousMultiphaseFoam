@@ -70,7 +70,7 @@ public:
         multiMesh,
         dictionary,
         (
-        const fvMesh& mesh
+        dynamicFvMesh& mesh
         ),
     (mesh)
     );
