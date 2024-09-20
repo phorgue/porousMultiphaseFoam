@@ -40,6 +40,7 @@ SourceFiles
 #define dualMesh_H
 
 #include "multiMesh.H"
+#include "volFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -59,6 +60,10 @@ protected:
     // Protected data
     //- Reference to secondary mesh
     autoPtr<dynamicFvMesh> fineMeshPtr_;
+
+    //- List of tuple_field
+    List<Tuple2<const volScalarField*, volScalarField*>> scalarFields_;
+    List<Tuple2<const volVectorField*, volVectorField*>> vectorFields_;
 
     //- Disallow copy construct
     dualMesh(const dualMesh&);
@@ -80,6 +85,9 @@ public:
     //- Return mesh
     dynamicFvMesh& fineMesh() {return fineMeshPtr_.ref();}
 
+    //- Increment list of dual-mesh fields
+    void addDualFields(const volScalarField&, volScalarField&);
+    void addDualFields(const volVectorField&, volVectorField&);
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
