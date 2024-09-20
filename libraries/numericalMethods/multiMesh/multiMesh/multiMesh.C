@@ -28,6 +28,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "multiMesh.H"
+#include "dynamicRefineFvMesh.H"
+#include "processorPolyPatch.H"
+#include "symmetryPlanePolyPatch.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -42,6 +45,21 @@ namespace Foam
 Foam::multiMesh::multiMesh (dynamicFvMesh& coarseMesh)
 :
     coarseMesh_(coarseMesh)
-{}
+{
+    //- Protect patch cells from refinement
+    if (coarseMesh_.dynamic()) {
+        if (isA<dynamicRefineFvMesh>(coarseMesh_)) {
+            DynamicList<label> boundary_protected_cells(0);
+            const polyBoundaryMesh& patches = coarseMesh_.boundaryMesh();
+            forAll(patches, patchi) {
+                if (not(isA<processorPolyPatch>(patches[patchi])) &&
+                    not(isA<symmetryPlanePolyPatch>(patches[patchi])) ){
+                    boundary_protected_cells.append(coarseMesh_.boundary()[patchi].faceCells());
+                }
+            }
+            refCast<dynamicRefineFvMesh>(coarseMesh_).protectedCell() = bitSet(boundary_protected_cells);
+        }
+    }
+}
 
 // ************************************************************************* //
