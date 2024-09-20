@@ -9,5 +9,6 @@ JacobianMatrix/JacobianMatrix.C
 multiMesh/multiMesh/multiMesh.C
 multiMesh/multiMesh/multiMeshNew.C
 multiMesh/simpleMesh/simpleMesh.C
+multiMesh/dualMesh/dualMesh.C
 
 LIB = $(FOAM_USER_LIBBIN)/libPMFnumericalMethods
