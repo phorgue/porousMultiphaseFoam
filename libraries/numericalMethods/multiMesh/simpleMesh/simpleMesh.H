@@ -74,6 +74,10 @@ public:
 
     //- Return the unique mesh (coarse one)s
     dynamicFvMesh& fineMesh() {return coarseMesh_;};
+
+    //- Dumb functions, no dual fields for simple meshes
+    void addDualFields(const volScalarField&, volScalarField&) {};
+    void addDualFields(const volVectorField&, volVectorField&) {};
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

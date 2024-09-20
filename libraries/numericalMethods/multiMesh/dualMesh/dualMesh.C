@@ -55,7 +55,9 @@ Foam::dualMesh::dualMesh
 )
     :
     multiMesh(mesh),
-    fineMeshPtr_(nullptr)
+    fineMeshPtr_(nullptr),
+    scalarFields_(0),
+    vectorFields_(0)
 {
     //- Read the dual mesh
     fineMeshPtr_ = dynamicFvMesh::New
@@ -84,6 +86,32 @@ Foam::dualMesh::dualMesh
             refCast<dynamicRefineFvMesh>(fineMesh).protectedCell() = bitSet(boundary_protected_cells);
         }
     }
+}
+
+// * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
+
+void Foam::dualMesh::addDualFields
+(
+    const volScalarField& coarseField,
+    volScalarField& fineField
+)
+{
+    const volScalarField* coarsePointer = &coarseField;
+    volScalarField* finePointer = &fineField;
+    Tuple2<const volScalarField*, volScalarField*> tfields(coarsePointer, finePointer);
+    scalarFields_.append(tfields);
+}
+
+void Foam::dualMesh::addDualFields
+(
+    const volVectorField& coarseField,
+    volVectorField& fineField
+)
+{
+    const volVectorField* coarsePointer = &coarseField;
+    volVectorField* finePointer = &fineField;
+    Tuple2<const volVectorField*, volVectorField*> tfields(coarsePointer, finePointer);
+    vectorFields_.append(tfields);
 }
 
 // ************************************************************************* //
