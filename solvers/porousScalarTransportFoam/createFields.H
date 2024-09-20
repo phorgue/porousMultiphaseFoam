@@ -32,8 +32,9 @@ eventFlux::setEventFileRegistry(&patchEventList, "C");
 porousMediumModel pmModel(mesh, transportProperties, "");
 pmModel.check_eps();
 const volScalarField& eps = pmModel.eps();
-autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New(phaseName, pmModel);
+autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New(phaseName, mesh, transportProperties);
 multiscalarMixture& composition = pmTransportModel->composition();
+composition.initRetardCoef(eps);
 List<sourceEventFile*>& tracerSourceEventList = pmTransportModel->sourceEventList();
 
 
