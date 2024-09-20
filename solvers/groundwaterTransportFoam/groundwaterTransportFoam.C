@@ -37,7 +37,7 @@ Description
 
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
-#include "dynamicRefineFvMesh.H"
+#include "multiMesh.H"
 #include "processorPolyPatch.H"
 #include "symmetryPlanePolyPatch.H"
 #include "dynamicRefineFvMesh.H"
@@ -71,7 +71,11 @@ int main(int argc, char *argv[])
     Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);
 
-    #include "createDualMesh.H"
+    //- Create mesh (simple or dual)
+    autoPtr<dynamicFvMesh> meshPtrFluid(dynamicFvMesh::New(args, runTime));
+    dynamicFvMesh& mesh = meshPtrFluid.ref();
+    autoPtr<multiMesh> mMeshPtr(multiMesh::New(mesh, dualMesh));
+    dynamicFvMesh& meshT = mMeshPtr.ref().fineMesh();
 
     Info<< "\nReading g" << endl;
     const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
@@ -80,6 +84,7 @@ int main(int argc, char *argv[])
     bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
     #include "readForcing.H"
 
+    bool writeResiduals = false; //- stationary run not possible with transport
     #include "createthetaFields.H"
 
     autoPtr<sourceEventFile> waterSourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
@@ -96,13 +101,15 @@ int main(int argc, char *argv[])
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
 
     //-Output event
-    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
-    outputEvent->addField(h, phi);
-    outputEvent->addField(theta, phi, "waterMassBalance.csv", true);
+    autoPtr<outputEventFile> outputEventF = outputEventFile::New(runTime, mesh);
+    outputEventF->addField(h, phi);
+    outputEventF->addField(theta, phi, "waterMassBalance.csv", true);
+    autoPtr<outputEventFile> outputEventT = outputEventFile::New(runTime, meshT);
     forAll(composition.Y(), speciei) {
-        outputEvent->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+        outputEventT->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
     }
-    outputEvent->init();
+    outputEventF->init();
+    outputEventT->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -213,11 +220,12 @@ noConvergence :
         //- 3) scalar transport
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
-        pmTransportModel->solveTransport(Utheta, phi, theta);
+        pmTransportModel->solveTransport(Utheta, phi, theta, porousModel->exchangeTerm());
 
         //- C and water mass balance computation
         MDTM.updateAllDerivatives();
-        outputEvent->write();
+        outputEventF->write();
+        outputEventT->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
