@@ -98,6 +98,10 @@ public:
 
     //- Return transport properties
     virtual dynamicFvMesh& fineMesh() = 0;
+
+    //- Add base and dual mesh fields
+    virtual void addDualFields(const volScalarField&, volScalarField&) = 0;
+    virtual void addDualFields(const volVectorField&, volVectorField&) = 0;
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
