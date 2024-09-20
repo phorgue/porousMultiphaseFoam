@@ -29,6 +29,9 @@ License
 
 #include "dualMesh.H"
 #include "addToRunTimeSelectionTable.H"
+#include "dynamicRefineFvMesh.H"
+#include "processorPolyPatch.H"
+#include "symmetryPlanePolyPatch.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -54,6 +57,7 @@ Foam::dualMesh::dualMesh
     multiMesh(mesh),
     fineMeshPtr_(nullptr)
 {
+    //- Read the dual mesh
     fineMeshPtr_ = dynamicFvMesh::New
     (
         IOobject
@@ -64,6 +68,22 @@ Foam::dualMesh::dualMesh
             IOobject::MUST_READ
         )
     );
+
+    //- Protect patch dual-mesh cells from refinement
+    dynamicFvMesh& fineMesh = fineMeshPtr_.ref();
+    if (fineMesh.dynamic()) {
+        if (isA<dynamicRefineFvMesh>(fineMesh)) {
+            DynamicList<label> boundary_protected_cells(0);
+            const polyBoundaryMesh& patches = fineMesh.boundaryMesh();
+            forAll(patches, patchi) {
+                if (not(isA<processorPolyPatch>(patches[patchi])) &&
+                    not(isA<symmetryPlanePolyPatch>(patches[patchi])) ){
+                    boundary_protected_cells.append(fineMesh.boundary()[patchi].faceCells());
+                }
+            }
+            refCast<dynamicRefineFvMesh>(fineMesh).protectedCell() = bitSet(boundary_protected_cells);
+        }
+    }
 }
 
 // ************************************************************************* //
