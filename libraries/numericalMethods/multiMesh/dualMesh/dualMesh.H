@@ -62,8 +62,8 @@ protected:
     autoPtr<dynamicFvMesh> fineMeshPtr_;
 
     //- List of tuple_field
-    List<Tuple2<const volScalarField*, volScalarField*>> scalarFields_;
-    List<Tuple2<const volVectorField*, volVectorField*>> vectorFields_;
+    List<Tuple2<volScalarField*, volScalarField*>> scalarFields_;
+    List<Tuple2<volVectorField*, volVectorField*>> vectorFields_;
 
     //- Disallow copy construct
     dualMesh(const dualMesh&);
@@ -86,8 +86,9 @@ public:
     dynamicFvMesh& fineMesh() {return fineMeshPtr_.ref();}
 
     //- Increment list of dual-mesh fields
-    void addDualFields(const volScalarField&, volScalarField&);
-    void addDualFields(const volVectorField&, volVectorField&);
+    void addDualFields(volScalarField&, volScalarField&);
+    void addDualFields(volVectorField&, volVectorField&);
+    void update();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
