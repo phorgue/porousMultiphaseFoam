@@ -65,6 +65,13 @@ protected:
     List<Tuple2<volScalarField*, volScalarField*>> scalarFields_;
     List<Tuple2<volVectorField*, volVectorField*>> vectorFields_;
 
+    //- Function to map fields between dual meshes
+    template<class Type, template<class> class PatchField>
+        void mapFieldCoarseToFine(
+            GeometricField<Type, PatchField, volMesh>& field1,
+            GeometricField<Type, PatchField, volMesh>& field2
+            );
+
     //- Disallow copy construct
     dualMesh(const dualMesh&);
 
