@@ -81,6 +81,10 @@ int main(int argc, char *argv[])
     const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
 
     #include "createFields.H"
+    volScalarField& thetaT = mMeshPtr->addField(theta);
+    volVectorField& UthetaT = mMeshPtr->addField(Utheta);
+    surfaceScalarField& phiT = mMeshPtr->addField(phi);;
+
     bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
     #include "readForcing.H"
 
@@ -220,7 +224,8 @@ noConvergence :
         //- 3) scalar transport
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
-        pmTransportModel->solveTransport(Utheta, phi, theta, porousModel->exchangeTerm());
+        mMeshPtr->update();
+        pmTransportModel->solveTransport(UthetaT, phiT, thetaT, porousModel->exchangeTerm());
 
         //- C and water mass balance computation
         MDTM.updateAllDerivatives();
