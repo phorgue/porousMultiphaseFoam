@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     outputEventF->addField(theta, phi, "waterMassBalance.csv", true);
     autoPtr<outputEventFile> outputEventT = outputEventFile::New(runTime, meshT);
     forAll(composition.Y(), speciei) {
-        outputEventT->addField(composition.Y()[speciei], phi, theta, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+        outputEventT->addField(composition.Y()[speciei], phiT, thetaT, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
     }
     outputEventF->init();
     outputEventT->init();
@@ -225,6 +225,7 @@ noConvergence :
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
         mMeshPtr->update();
+        if (meshT.changing()) forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->onMeshChanged();
         pmTransportModel->solveTransport(UthetaT, phiT, thetaT, porousModel->exchangeTerm());
 
         //- C and water mass balance computation
