@@ -80,8 +80,7 @@ Foam::dualMesh::dualMesh
             DynamicList<label> boundary_protected_cells(0);
             const polyBoundaryMesh& patches = fineMesh.boundaryMesh();
             forAll(patches, patchi) {
-                if (not(isA<processorPolyPatch>(patches[patchi])) &&
-                    not(isA<symmetryPlanePolyPatch>(patches[patchi])) ){
+                if (not(isA<processorPolyPatch>(patches[patchi]))){
                     boundary_protected_cells.append(fineMesh.boundary()[patchi].faceCells());
                 }
             }
@@ -106,7 +105,6 @@ void Foam::dualMesh::mapFieldCoarseToFine(
     List<Type> savedValues(list_size, Foam::Zero);
     List<Type> savedValuesOld(list_size, Foam::Zero);
 
-    label cell0 = 0;
     for(label celli=0;celli<coarseMesh_.nCells();celli++)
     {
         field2[celli] = field1[celli];
@@ -115,7 +113,8 @@ void Foam::dualMesh::mapFieldCoarseToFine(
         // propagation of value
         if (cell_level[celli] > 0)
         {
-            for(label iter=0;iter<cell_level[celli];iter++)
+            label cell0 = ref_hist.splitCells()[ref_hist.visibleCells()[celli]].parent_;
+            for(label iter=1;iter<cell_level[celli];iter++)
             {
                 cell0 = ref_hist.splitCells()[cell0].parent_;
             }
@@ -130,7 +129,8 @@ void Foam::dualMesh::mapFieldCoarseToFine(
         // labels of all new cells created by the remeshing
         for(label celli=coarseMesh_.nCells();celli<fineMesh.nCells();celli++)
         {
-            for(label iter=0;iter<cell_level[celli];iter++)
+            label cell0 = ref_hist.splitCells()[ref_hist.visibleCells()[celli]].parent_;
+            for(label iter=1;iter<cell_level[celli];iter++)
             {
                 cell0 = ref_hist.splitCells()[cell0].parent_;
             }
@@ -170,7 +170,7 @@ Foam::volScalarField& Foam::dualMesh::addField
     scalarFields_.second().append(new volScalarField(
             IOobject
             (
-                coarseField.name()+"fine",
+                coarseField.name()+"_dual",
                 coarseField.time().timeName(),
                 fineMeshPtr_,
                 IOobject::NO_READ,
@@ -197,7 +197,7 @@ Foam::volVectorField& Foam::dualMesh::addField
     vectorFields_.second().append(new volVectorField(
             IOobject
             (
-                coarseField.name()+"fine",
+                coarseField.name()+"_dual",
                 coarseField.time().timeName(),
                 fineMeshPtr_,
                 IOobject::NO_READ,
@@ -219,36 +219,37 @@ Foam::surfaceScalarField& Foam::dualMesh::addField
                 surfaceScalarField& coarseField
         )
 {
-    volVectorField& vField = vectorFields_.first().back();
+    volVectorField& vField = vectorFields_.second().back();
     phiFields_.append(new surfaceScalarField
+    (
+        IOobject
             (
-                    IOobject
-                            (
-                                    vField.name()+"_phi",
-                                    vField.time().timeName(),
-                                    vField.mesh(),
-                                    IOobject::NO_READ,
-                                    IOobject::AUTO_WRITE
-                            ),
-                    linearInterpolate(vField) & vField.mesh().Sf()
-            )
+                coarseField.name()+"_dual",
+                vField.time().timeName(),
+                vField.mesh(),
+                IOobject::NO_READ,
+                IOobject::AUTO_WRITE
+            ),
+        linearInterpolate(vField) & vField.mesh().Sf()
+    )
     );
-    Info << nl << "create dual flux field " << vField.name()+"_phi"<< endl;
+    Info << nl << "create dual flux field " << coarseField.name()+"_dual"<< endl;
     return phiFields_.back();
 }
 
 
 void Foam::dualMesh::update()
 {
-    fineMeshPtr_->update();
     for(label i=0;i<scalarFields_.first().size();i++) {
         mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
     }
     for(label i=0;i<vectorFields_.first().size();i++) {
         mapFieldCoarseToFine(vectorFields_.first().at(i), vectorFields_.second().at(i));
     }
-    forAll(phiFields_, fieldi) {
-        volVectorField& vField = vectorFields_.first().at(fieldi);
+    fineMeshPtr_->update();
+    forAll(phiFields_, fieldi)
+    {
+        volVectorField& vField = vectorFields_.second().at(fieldi);
         phiFields_.at(fieldi) = linearInterpolate(vField) & vField.mesh().Sf();
     }
 }
