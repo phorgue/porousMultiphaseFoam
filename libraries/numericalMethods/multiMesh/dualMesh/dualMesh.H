@@ -62,8 +62,9 @@ protected:
     autoPtr<dynamicFvMesh> fineMeshPtr_;
 
     //- List of tuple_field
-    List<Tuple2<volScalarField*, volScalarField*>> scalarFields_;
-    List<Tuple2<volVectorField*, volVectorField*>> vectorFields_;
+    Tuple2<PtrList<volScalarField>, PtrList<volScalarField>> scalarFields_;
+    Tuple2<PtrList<volVectorField>, PtrList<volVectorField>> vectorFields_;
+    PtrList<surfaceScalarField> phiFields_;
 
     //- Function to map fields between dual meshes
     template<class Type, template<class> class PatchField>
@@ -93,8 +94,10 @@ public:
     dynamicFvMesh& fineMesh() {return fineMeshPtr_.ref();}
 
     //- Increment list of dual-mesh fields
-    void addDualFields(volScalarField&, volScalarField&);
-    void addDualFields(volVectorField&, volVectorField&);
+    volScalarField& addField(volScalarField&);
+    volVectorField& addField(volVectorField&);
+    surfaceScalarField& addField(surfaceScalarField&);
+
     void update();
 };
 

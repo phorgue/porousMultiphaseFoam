@@ -100,8 +100,9 @@ public:
     virtual dynamicFvMesh& fineMesh() = 0;
 
     //- Add base and dual mesh fields
-    virtual void addDualFields(volScalarField&, volScalarField&) = 0;
-    virtual void addDualFields(volVectorField&, volVectorField&) = 0;
+    virtual volScalarField& addField(volScalarField&) = 0;
+    virtual volVectorField& addField(volVectorField&) = 0;
+    virtual surfaceScalarField& addField(surfaceScalarField&) = 0;
     virtual void update() = 0;
 };
 
