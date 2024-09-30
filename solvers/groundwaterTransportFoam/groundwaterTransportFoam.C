@@ -60,11 +60,10 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    argList::addBoolOption("dualMesh", "to run steady flow simulation");
+    argList::addBoolOption("dualDynamicMesh", "to run steady flow simulation");
 
     Foam::argList args(argc, argv);
     bool steady = false;
-    bool dualMesh = args.found("dualMesh");
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
 
     #include "../headerPMF.H"
@@ -74,10 +73,23 @@ int main(int argc, char *argv[])
     //- Create mesh (simple or dual)
     autoPtr<dynamicFvMesh> meshPtrFluid(dynamicFvMesh::New(args, runTime));
     dynamicFvMesh& mesh = meshPtrFluid.ref();
-    autoPtr<multiMesh> mMeshPtr(multiMesh::New(mesh, dualMesh));
+
+    Info<< "Reading transportProperties" << endl;
+    IOdictionary transportProperties
+    (
+        IOobject
+            (
+                "transportProperties",
+                runTime.constant(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::NO_WRITE
+            )
+    );
+    autoPtr<multiMesh> mMeshPtr(multiMesh::New(mesh, transportProperties));
     dynamicFvMesh& meshT = mMeshPtr.ref().fineMesh();
 
-    Info<< "\nReading g" << endl;
+    Info << "\nReading g" << endl;
     const meshObjects::gravity& g = meshObjects::gravity::New(runTime);
 
     #include "createFields.H"

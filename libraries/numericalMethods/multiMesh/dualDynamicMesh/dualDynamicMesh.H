@@ -26,18 +26,18 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
  Class
-    Foam::dualMesh
+    Foam::dualDynamicMesh
 
 Description
     A class for handling fields transfert between dual meshes.
 
 SourceFiles
-    dualMesh.C
+    dualDynamicMesh.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef dualMesh_H
-#define dualMesh_H
+#ifndef dualDynamicMesh_H
+#define dualDynamicMesh_H
 
 #include "multiMesh.H"
 #include "volFields.H"
@@ -51,7 +51,7 @@ namespace Foam
              Class porousMediumModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class dualMesh
+class dualDynamicMesh
 :
     public multiMesh
 {
@@ -74,21 +74,21 @@ protected:
             );
 
     //- Disallow copy construct
-    dualMesh(const dualMesh&);
+    dualDynamicMesh(const dualDynamicMesh&);
 
     //- Disallow default bitwise assignment
-    void operator=(const dualMesh&);
+    void operator=(const dualDynamicMesh&);
 
 public:
 
     //- Runtime type information
-    TypeName("dualMesh");
+    TypeName("dualDynamicMesh");
 
     //- Construct from components
-    dualMesh(dynamicFvMesh& mesh);
+    dualDynamicMesh(dynamicFvMesh& mesh);
 
     //- Destructor
-    virtual ~dualMesh() {}
+    virtual ~dualDynamicMesh() {}
 
     //- Return mesh
     dynamicFvMesh& fineMesh() {return fineMeshPtr_.ref();}
