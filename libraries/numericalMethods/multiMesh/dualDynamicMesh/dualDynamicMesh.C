@@ -27,7 +27,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "dualMesh.H"
+#include "dualDynamicMesh.H"
 #include "addToRunTimeSelectionTable.H"
 #include "dynamicRefineFvMesh.H"
 #include "processorPolyPatch.H"
@@ -38,19 +38,19 @@ License
 
 namespace Foam
 {
-defineTypeNameAndDebug(dualMesh, 0);
+defineTypeNameAndDebug(dualDynamicMesh, 0);
 
 addToRunTimeSelectionTable
 (
-    multiMesh,
-    dualMesh,
-    dictionary
+        multiMesh,
+        dualDynamicMesh,
+        dictionary
 );
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::dualMesh::dualMesh
+Foam::dualDynamicMesh::dualDynamicMesh
 (
     dynamicFvMesh& mesh
 )
@@ -92,7 +92,7 @@ Foam::dualMesh::dualMesh
 // * * * * * * * * * * * * * * * Private Members  * * * * * * * * * * * * * * //
 
 template<class Type, template<class> class PatchField>
-void Foam::dualMesh::mapFieldCoarseToFine(
+void Foam::dualDynamicMesh::mapFieldCoarseToFine(
     Foam::GeometricField<Type, PatchField, Foam::volMesh>& field1,
     Foam::GeometricField<Type, PatchField, Foam::volMesh>& field2
 )
@@ -160,7 +160,7 @@ void Foam::dualMesh::mapFieldCoarseToFine(
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
 
-Foam::volScalarField& Foam::dualMesh::addField
+Foam::volScalarField& Foam::dualDynamicMesh::addField
 (
     volScalarField& coarseField
 )
@@ -187,7 +187,7 @@ Foam::volScalarField& Foam::dualMesh::addField
     return scalarFields_.second().back();
 }
 
-Foam::volVectorField& Foam::dualMesh::addField
+Foam::volVectorField& Foam::dualDynamicMesh::addField
     (
         volVectorField& coarseField
     )
@@ -214,7 +214,7 @@ Foam::volVectorField& Foam::dualMesh::addField
     return vectorFields_.second().back();
 }
 
-Foam::surfaceScalarField& Foam::dualMesh::addField
+Foam::surfaceScalarField& Foam::dualDynamicMesh::addField
         (
                 surfaceScalarField& coarseField
         )
@@ -238,7 +238,7 @@ Foam::surfaceScalarField& Foam::dualMesh::addField
 }
 
 
-void Foam::dualMesh::update()
+void Foam::dualDynamicMesh::update()
 {
     for(label i=0;i<scalarFields_.first().size();i++) {
         mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));

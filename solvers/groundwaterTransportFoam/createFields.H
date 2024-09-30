@@ -2,7 +2,7 @@
 ////////////////////// PRESSURE SATURATION ///////////////////////
 //////////////////////////////////////////////////////////////////
 
-Info << "Reading Pressure head h \n" << endl;
+Info << nl << "Reading Pressure head h" << endl;
 volScalarField h
 (
     IOobject
@@ -16,7 +16,7 @@ volScalarField h
     mesh
 );
 
-Info << "Creating deltah field (for Newton loop)" << endl;
+Info << nl << "Creating deltah field (for Newton loop)" << endl;
 volScalarField deltah
 (
     IOobject
@@ -35,18 +35,6 @@ deltah == dimensionedScalar("",dimLength,0);
 ////////////////////// TRANSPORT PROPERTIES //////////////////////
 //////////////////////////////////////////////////////////////////
 
-Info<< "Reading transportProperties" << endl;
-IOdictionary transportProperties
-(
-    IOobject
-    (
-        "transportProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::NO_WRITE
-    )
-);
 
 //- list that receives event files of event-based boundary conditions
 List<patchEventFile*> patchEventList;

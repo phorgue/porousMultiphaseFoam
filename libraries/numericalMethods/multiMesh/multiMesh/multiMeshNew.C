@@ -34,13 +34,11 @@ License
 Foam::autoPtr<Foam::multiMesh> Foam::multiMesh::New
 (
     dynamicFvMesh& mesh,
-    bool dualMesh
+    const dictionary& transportProperties
 )
 {
-    word meshType = "simpleMesh";
-    if (dualMesh) meshType = "dualMesh";
-
-    Info << nl << "Creating => " << meshType << "\n" << endl;
+    const word meshType(transportProperties.getOrDefault<word>("dualMesh", "simpleMesh"));
+    Info << nl << "Dual mesh option => " << meshType << "\n" << endl;
 
     auto cstrIter = dictionaryConstructorTablePtr_->find(meshType);
 

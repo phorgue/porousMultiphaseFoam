@@ -81,7 +81,7 @@ public:
     static autoPtr<multiMesh> New
     (
         dynamicFvMesh& mesh,
-        bool dualMesh
+        const dictionary& transportProperties
     );
 
     // Constructors
