@@ -156,7 +156,7 @@ void multiDtManager::updateDt()
 
 void multiDtManager::updateAllDerivatives()
 {
-    forAll(dtManagerT_, fieldi) dtManagerT_[fieldi].updateDerivatives();
+    forAll(dtManagerT_, fieldi) dtManagerT_[fieldi].updateDerivatives(dynamicMesh_);
 }
 
 

@@ -57,6 +57,7 @@ private:
     bool adjustTimeStep_;
     scalar maxDeltaT_;
     bool eventTimeTracking_;
+    bool dynamicMesh_;
 
     PtrList<timestepManagerTruncation> dtManagerT_;
     PtrList<timestepManagerIterative> dtManagerI_;
@@ -75,11 +76,12 @@ public:
     virtual ~multiDtManager();
 
     //- Access
-    timestepManagerTruncation& dtManagerT(label index){return dtManagerT_[index];};
-    timestepManagerIterative& dtManagerI(label index){return dtManagerI_[index];};
+    timestepManagerTruncation& dtManagerT(label index){return dtManagerT_[index];}
+    timestepManagerIterative& dtManagerI(label index){return dtManagerI_[index];}
     const bool& adjustTimeStep() {return adjustTimeStep_;};
     
     //- Functions
+    void setDynamicMesh(bool value = true) {dynamicMesh_ = value;}
     void addField(const volScalarField&, const labelList* dryCells = nullptr);
     void addField(const volScalarField&, const labelList& dryCells);
     void addIterativeAlgorithm(const volScalarField&, const word&, const bool& steady = false);

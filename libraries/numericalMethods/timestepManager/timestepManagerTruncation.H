@@ -84,9 +84,9 @@ private:
     scalar dVmax_, dV2max_, dV3max_;
     scalar Vmax_, V2max_, V3max_;
 
-    void update1stOrder();
-    void update2ndOrder();
-    void update3rdOrder();
+    void update1stOrder(bool);
+    void update2ndOrder(bool);
+    void update3rdOrder(bool);
     void dryCellsDerivativeUpdate(volScalarField&);
  
 public:
@@ -111,7 +111,7 @@ public:
     scalar dV3max(){return dV3max_;}
 
     //- Access functions
-    void updateDerivatives();
+    void updateDerivatives(bool dynamicMesh = false);
     scalar computeTimestep(const scalar&);
     scalar computeTimestep();
     
