@@ -112,9 +112,8 @@ int main(int argc, char *argv[])
     multiDtManager MDTM(runTime, tracerSourceEventList, patchEventList);
     MDTM.addIterativeAlgorithm(theta, "Picard");
     MDTM.addIterativeAlgorithm(theta, "Newton");
-    labelList* fixedPotentialIDListPtr  = &fixedPotentialIDList;
-    MDTM.addField(h, fixedPotentialIDListPtr);
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
+    if (meshT.dynamic()) MDTM.setDynamicMesh(true);
 
     //-Output event
     autoPtr<outputEventFile> outputEventF = outputEventFile::New(runTime, mesh);

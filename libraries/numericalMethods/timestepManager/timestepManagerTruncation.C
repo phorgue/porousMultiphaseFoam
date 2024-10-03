@@ -96,7 +96,7 @@ Foam::timestepManagerTruncation::~timestepManagerTruncation()
 
 // * * * * * * * * * * * * * * * * Private Functions * * * * * * * * * * * * //
 
-void timestepManagerTruncation::update1stOrder()
+void timestepManagerTruncation::update1stOrder(bool dynamicMesh)
 {
     volScalarField dVdT(vf_-vf_.oldTime());
     if (dryCells_) dryCellsDerivativeUpdate(dVdT);
@@ -110,12 +110,13 @@ void timestepManagerTruncation::update1stOrder()
             dVmax_ = mag(dVdT[celli]);
         }
     }
-    reduce(Vmax_, maxOp<scalar>());
+    if (dynamicMesh) Vmax_ = gMax(vf_);
+    else reduce(Vmax_, maxOp<scalar>());
     reduce(dVmax_, maxOp<scalar>());
-    if (Vmax_ == 0) Vmax_ = SMALL;
+    if (Vmax_ <= 0) Vmax_ = SMALL;
 }
 
-void timestepManagerTruncation::update2ndOrder()
+void timestepManagerTruncation::update2ndOrder(bool dynamicMesh)
 {
     volScalarField dV2dT2(d2dt2Operator_.fvcD2dt2(vf_));
     if (dryCells_) dryCellsDerivativeUpdate(dV2dT2);
@@ -129,12 +130,13 @@ void timestepManagerTruncation::update2ndOrder()
             dV2max_ = mag(dV2dT2[celli]);
         }
     }
-    reduce(V2max_, maxOp<scalar>());
+    if (dynamicMesh) V2max_ = gMax(vf_);
+    else reduce(V2max_, maxOp<scalar>());
     reduce(dV2max_, maxOp<scalar>());
-    if (V2max_ == 0) V2max_ = SMALL;
+    if (V2max_ <= 0) V2max_ = SMALL;
 }
 
-void timestepManagerTruncation::update3rdOrder()
+void timestepManagerTruncation::update3rdOrder(bool dynamicMesh)
 {
     volScalarField dV3dT3(d3dt3Operator_.fvcD3dt3(vf_));
     if (dryCells_) dryCellsDerivativeUpdate(dV3dT3);
@@ -148,9 +150,10 @@ void timestepManagerTruncation::update3rdOrder()
             dV3max_ = mag(dV3dT3[celli]);
         }
     }
-    reduce(V3max_, maxOp<scalar>());
+    if (dynamicMesh) V3max_ = gMax(vf_);
+    else reduce(V3max_, maxOp<scalar>());
     reduce(dV3max_, maxOp<scalar>());
-    if (V3max_ == 0) V3max_ = SMALL;
+    if (V3max_ <= 0) V3max_ = SMALL;
 }
 
 void timestepManagerTruncation::dryCellsDerivativeUpdate(volScalarField& field)
@@ -161,11 +164,11 @@ void timestepManagerTruncation::dryCellsDerivativeUpdate(volScalarField& field)
 
 // * * * * * * * * * * * * * * * * Public Functions  * * * * * * * * * * * * //
 
-void timestepManagerTruncation::updateDerivatives()
+void timestepManagerTruncation::updateDerivatives(bool dynamicMesh)
 {
-    update1stOrder();
-    if (timeScheme_ == "Euler") update2ndOrder();
-    else update3rdOrder();
+    update1stOrder(dynamicMesh);
+    if (timeScheme_ == "Euler") update2ndOrder(dynamicMesh);
+    else update3rdOrder(dynamicMesh);
 }
   
 
