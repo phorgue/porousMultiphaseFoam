@@ -62,7 +62,8 @@ private:
     const bool saturation_;
     const bool CSVoutput_;
     const scalar zscale_;
-    OFstream fileOutput_;
+    const word filename_;
+    autoPtr<OFstream> fileStream_;
     bool hasSourceTerm_;
     List<word> sourceNames_;
     List<const scalar*> sourceValues_;
