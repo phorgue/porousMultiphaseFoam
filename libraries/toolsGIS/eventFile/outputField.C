@@ -54,7 +54,8 @@ Foam::outputField::outputField
     saturation_(saturation),
     CSVoutput_(CSVoutput),
     zscale_(zscale),
-    fileOutput_(fileName),
+    filename_(fileName),
+    fileStream_(),
     hasSourceTerm_(false),
     sourceNames_(),
     sourceValues_(),
@@ -64,21 +65,22 @@ Foam::outputField::outputField
 void Foam::outputField::writeHeader() {
     //- Writing header if CSVoutput is active
     if (CSVoutput_ && Pstream::master()) {
+        fileStream_.reset(new OFstream(filename_));
         if (saturation_) {
-            fileOutput_ << "#Time";
+            fileStream_() << "#Time";
         } else {
-            fileOutput_ << "#Time Total";
+            fileStream_() << "#Time Total";
         }
         const fvMesh &mesh = field_.mesh();
         forAll(mesh.boundaryMesh(), patchi) {
             if (mesh.boundaryMesh()[patchi].type() == "patch") {
-                fileOutput_ << " flux(" << phi_.boundaryField()[patchi].patch().name() << ")";
+                fileStream_() << " flux(" << phi_.boundaryField()[patchi].patch().name() << ")";
             }
         }
         if (hasSourceTerm_) {
-            forAll(sourceNames_, sourcei) fileOutput_ << " flux(" << sourceNames_[sourcei] << ")";
+            forAll(sourceNames_, sourcei) fileStream_() << " flux(" << sourceNames_[sourcei] << ")";
         }
-        fileOutput_ << endl;
+        fileStream_() << endl;
     }
 }
 
@@ -117,40 +119,48 @@ void Foam::outputField::addSourceTerm(const word& name, const scalar& value) {
 }
 
 void Foam::outputField::write(const scalar& timeValue) {
-    if (CSVoutput_ && Pstream::master())  {
-        fileOutput_ << timeValue;
+    scalar tmp_val;
+    if (CSVoutput_)  {
+        if (Pstream::master()) fileStream_() << timeValue;
         if (saturation_) {
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
-                    fileOutput_ << " " << gSum(phi_.boundaryField()[patchi]);
+                    tmp_val =  gSum(phi_.boundaryField()[patchi]);
+                    if (Pstream::master()) fileStream_() << " " << tmp_val;
                 }
             }
         }
         else {
-            fileOutput_ << " " << fvc::domainIntegrate(field_ * coef1_ *  coef2_ * coef3_).value()/zscale_;
+            tmp_val = fvc::domainIntegrate(field_ * coef1_ *  coef2_ * coef3_).value()/zscale_;
+            if (Pstream::master()) fileStream_() << " " << tmp_val;
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
-                    fileOutput_ << " " << gSum(field_.boundaryField()[patchi] * phi_.boundaryField()[patchi])/zscale_;
+                    tmp_val =  gSum(field_.boundaryField()[patchi] * phi_.boundaryField()[patchi])/zscale_;
+                    if (Pstream::master()) fileStream_() << " " << tmp_val;
                 }
             }
         }
         if (hasSourceTerm_) {
-            forAll(sourceValues_, sourcei) fileOutput_ << " " << *sourceValues_[sourcei];
+            forAll(sourceValues_, sourcei) {
+                tmp_val = *sourceValues_[sourcei];
+                 if (Pstream::master()) fileStream_() << " " << tmp_val;
+            }
         }
-        fileOutput_ << endl;
+        if (Pstream::master()) fileStream_() << endl;
     }
 }
 
 void Foam::outputField::write(const word& timeName, const scalar& timeValue, scalar ifactor) {
-
+    scalar tmp_val;
     volScalarField fInter = timeInterpolate(field_, timeName, ifactor, true);
     surfaceScalarField phiInter =  timeInterpolate(phi_, timeName, ifactor, true);
     if (CSVoutput_ && Pstream::master()) {
-        fileOutput_ << timeValue;
+        if (Pstream::master()) fileStream_() << timeValue;
         if (saturation_) {
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
-                    fileOutput_ << " " << gSum(phiInter.boundaryField()[patchi]);
+                    tmp_val = gSum(phiInter.boundaryField()[patchi]);
+                    if (Pstream::master()) fileStream_() << " " << tmp_val;
                 }
             }
         }
@@ -158,21 +168,23 @@ void Foam::outputField::write(const word& timeName, const scalar& timeValue, sca
             volScalarField cInter1 = timeInterpolate(coef1_, timeName, ifactor, false);
             volScalarField cInter2 = timeInterpolate(coef2_, timeName, ifactor, false);
             volScalarField cInter3 = timeInterpolate(coef3_, timeName, ifactor, false);
-            fileOutput_ << " " << fvc::domainIntegrate(fInter * cInter1 *  cInter2 * cInter3).value()/zscale_;
+            tmp_val = fvc::domainIntegrate(fInter * cInter1 *  cInter2 * cInter3).value()/zscale_;
+            if (Pstream::master()) fileStream_() << " " << tmp_val;
             forAll(mesh_.boundaryMesh(), patchi) {
                 if (mesh_.boundaryMesh()[patchi].type() == "patch") {
-                    fileOutput_ << " " << gSum(fInter.boundaryField()[patchi] * phiInter.boundaryField()[patchi])/zscale_;
+                    tmp_val = gSum(fInter.boundaryField()[patchi] * phiInter.boundaryField()[patchi])/zscale_;
+                    if (Pstream::master()) fileStream_() << " " << tmp_val;
                 }
             }
         }
         if (hasSourceTerm_) {
             forAll(sourceValues_, sourcei) {
                 scalar interpolatedSource = ifactor * *sourceValues_[sourcei] + (1.0-ifactor) * sourceOldValues_[sourcei];
-                fileOutput_ << " " << interpolatedSource;
+                if (Pstream::master()) fileStream_() << " " << interpolatedSource;
                 sourceOldValues_[sourcei] = *sourceValues_[sourcei];
             }
         }
-        fileOutput_ << endl;
+        if (Pstream::master()) fileStream_() << endl;
     }
 
 }
