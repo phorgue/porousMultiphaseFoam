@@ -167,13 +167,14 @@ Foam::volScalarField& Foam::dualDynamicMesh::addField
 {
     volScalarField* coarsePointer = &coarseField;
     scalarFields_.first().append(coarsePointer);
+    Info << nl << "create dual field for " << coarseField.name() << "...";
     scalarFields_.second().append(new volScalarField(
             IOobject
             (
                 coarseField.name()+"_dual",
                 coarseField.time().timeName(),
                 fineMeshPtr_,
-                IOobject::NO_READ,
+                IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
             ),
             fineMeshPtr_,
@@ -182,8 +183,7 @@ Foam::volScalarField& Foam::dualDynamicMesh::addField
         )
     );
     mapFieldCoarseToFine(coarseField, scalarFields_.second().back());
-    Info << nl << "create dual field for " << coarseField.name() << endl;
-    scalarFields_.second().back().write();
+    Info << "ok" << endl;
     return scalarFields_.second().back();
 }
 
@@ -194,13 +194,14 @@ Foam::volVectorField& Foam::dualDynamicMesh::addField
 {
     volVectorField* coarsePointer = &coarseField;
     vectorFields_.first().append(coarsePointer);
+    Info << nl << "create dual field for " << coarseField.name() << "...";
     vectorFields_.second().append(new volVectorField(
             IOobject
             (
                 coarseField.name()+"_dual",
                 coarseField.time().timeName(),
                 fineMeshPtr_,
-                IOobject::NO_READ,
+                IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
             ),
             fineMeshPtr_,
@@ -209,8 +210,7 @@ Foam::volVectorField& Foam::dualDynamicMesh::addField
         )
     );
     mapFieldCoarseToFine(coarseField, vectorFields_.second().back());
-    Info << nl << "create dual field for " << coarseField.name() << endl;
-    vectorFields_.second().back().write();
+    Info << "ok" << endl;
     return vectorFields_.second().back();
 }
 
@@ -220,6 +220,7 @@ Foam::surfaceScalarField& Foam::dualDynamicMesh::addField
         )
 {
     volVectorField& vField = vectorFields_.second().back();
+    Info << nl << "create dual flux field for " << coarseField.name() << "...";
     phiFields_.append(new surfaceScalarField
     (
         IOobject
@@ -227,13 +228,13 @@ Foam::surfaceScalarField& Foam::dualDynamicMesh::addField
                 coarseField.name()+"_dual",
                 vField.time().timeName(),
                 vField.mesh(),
-                IOobject::NO_READ,
+                IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
             ),
         linearInterpolate(vField) & vField.mesh().Sf()
     )
     );
-    Info << nl << "create dual flux field " << coarseField.name()+"_dual"<< endl;
+    Info << "ok" << endl;
     return phiFields_.back();
 }
 
