@@ -103,6 +103,7 @@ public:
     virtual volScalarField& addField(volScalarField&) = 0;
     virtual volVectorField& addField(volVectorField&) = 0;
     virtual surfaceScalarField& addField(surfaceScalarField&) = 0;
+    virtual bool dynamic() = 0;
     virtual void update() = 0;
 };
 

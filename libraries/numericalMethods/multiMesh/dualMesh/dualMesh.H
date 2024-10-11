@@ -103,6 +103,7 @@ public:
     volVectorField& addField(volVectorField&);
     surfaceScalarField& addField(surfaceScalarField&);
 
+    bool dynamic() { return false;}
     void update();
 };
 
