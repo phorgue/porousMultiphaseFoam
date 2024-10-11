@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        openfoam_version: [ v2206]
+        openfoam_version: [v2406]
 
     container: 'ghcr.io/phorgue/porousmultiphasefoam:openfoam-${{matrix.openfoam_version}}-opensuse-mingw'
 

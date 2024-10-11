@@ -1,6 +1,6 @@
 FROM opensuse/leap
 
-ARG OPENFOAM_BRANCH=maintenance-v2106
+ARG OPENFOAM_BRANCH=OpenFOAM-v2406
 
 RUN zypper install -y mingw64-cross-binutils
 RUN zypper install -y mingw64-cross-cpp mingw64-cross-gcc mingw64-cross-gcc-c++
