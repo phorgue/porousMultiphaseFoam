@@ -28,6 +28,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "multiscalarMixture.H"
+#include "fvcGrad.H"
 
 // * * * * * * * * * * * * * Static Member Functions * * * * * * * * * * * * //
 
@@ -147,27 +148,24 @@ Foam::multiscalarMixture::multiscalarMixture
         else//- otherwise, create a zero source term of the appropiate dimensions
         {
             sourceTerms_.set
+                (
+                    speciesi,
+                    new volScalarField
                     (
-                            speciesi,
-                            new volScalarField
-                                    (
-                                            IOobject
-                                                    (
-                                                            "zeroSourceTerm",
-                                                            mesh.time().timeName(),
-                                                            mesh,
-                                                            IOobject::NO_READ,
-                                                            IOobject::NO_WRITE
-                                                    ),
-                                            mesh,
-                                            dimensionedScalar("zero", dimSourceTerm, 0)
-                                    )
-
-                    );
+                        IOobject
+                            (
+                                    "zeroSourceTerm",
+                                    mesh.time().timeName(),
+                                    mesh,
+                                    IOobject::NO_READ,
+                                    IOobject::NO_WRITE
+                            ),
+                        mesh,
+                        dimensionedScalar("zero", dimSourceTerm, 0)
+                    )
+                );
         }
-
     }
-
 }
 
 // * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * * //
@@ -227,6 +225,39 @@ bool Foam::multiscalarMixture::initRetardCoef(const volScalarField& eps)
         }
     return false;
 
+}
+
+void Foam::multiscalarMixture::updateNormalizedGradY() {
+    //- create field if not present
+    if (!normalizedGradY_.good()) {
+        const fvMesh& mesh = Y_[0].mesh();
+        normalizedGradY_ = autoPtr<volScalarField>::New(
+            IOobject
+                (
+                    "normalizedGradC",
+                    mesh.time().timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+            mesh,
+            dimensionedScalar("zero", dimless, 0),
+            "zeroGradient"
+        );
+    }
+
+    //- Compute normalized gradient
+    volScalarField& gradY = normalizedGradY_.ref();
+    gradY = 0.0;
+    forAll(Y(), speciei) {
+        tmp<volScalarField> tmagGradY = mag(fvc::grad(Y()[speciei]));
+        const scalar maxGradY = gMax(tmagGradY());
+        if (maxGradY > 1e-18) {
+            forAll(gradY, celli) {
+                gradY[celli] = max(0.0, tmagGradY()[celli] / maxGradY);
+            }
+        }
+    }
 }
 
 // ************************************************************************* //

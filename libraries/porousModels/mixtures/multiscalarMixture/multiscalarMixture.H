@@ -117,10 +117,17 @@ public:
     //- Source term [Y(speciesi).dimensions()*sourceTermDimFactor/s]
     inline const volScalarField& sourceTerm(const label speciesi) const;
 
+    //- List to the source event
     const PtrList<sourceEventFile>& sourceEvents() const;
+
+    //- Source term [Y(speciesi).dimensions()*sourceTermDimFactor/s]
+    inline const volScalarField& normalizedGradY() const;
 
     //- Compute retard coefficient and check eps
     bool initRetardCoef(const volScalarField& eps);
+
+    //- Compute normalized maximal gradient
+    void updateNormalizedGradY();
 
 private:
     PtrList<volScalarField> R_;
@@ -131,6 +138,7 @@ private:
     List<dimensionedScalar> Kd_;
     List<dimensionedScalar> rs_;
     List<dimensionedScalar> epsTotal_;
+    autoPtr<volScalarField> normalizedGradY_;
 
 };
 

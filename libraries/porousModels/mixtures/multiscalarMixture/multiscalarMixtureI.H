@@ -61,4 +61,9 @@ inline const Foam::PtrList<Foam::sourceEventFile>& Foam::multiscalarMixture::sou
     return sourceEvents_;
 }
 
+inline const Foam::volScalarField& Foam::multiscalarMixture::normalizedGradY() const
+{
+    return normalizedGradY_();
+}
+
 // ************************************************************************* //

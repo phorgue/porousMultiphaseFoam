@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     #include "createFields.H"
     volScalarField& thetaT = mMeshPtr->addField(theta);
     volVectorField& UthetaT = mMeshPtr->addField(Utheta);
-    surfaceScalarField& phiT = mMeshPtr->addField(phi);;
+    surfaceScalarField& phiT = mMeshPtr->addField(phi);
 
     bool massConservative = transportProperties.lookupOrDefault<bool>("massConservative",true);
     #include "readForcing.H"
@@ -235,6 +235,8 @@ noConvergence :
         //- 3) scalar transport
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
+
+        if (mMeshPtr->dynamic()) composition.updateNormalizedGradY();
         mMeshPtr->update();
         if (meshT.changing()) forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->onMeshChanged();
         pmTransportModel->solveTransport(UthetaT, phiT, thetaT, porousModel->exchangeTerm());
