@@ -56,7 +56,7 @@ Foam::dualMesh::dualMesh
     :
     multiMesh(mesh),
     fineMeshPtr_(nullptr),
-    mapping_(nullptr),
+    mapping_(),
     scalarFields_(),
     vectorFields_(),
     phiFields_()
@@ -73,7 +73,23 @@ Foam::dualMesh::dualMesh
         )
     );
 
-    mapping_.reset(new meshToMesh(mesh, fineMeshPtr_, "mapNearest", "nearestFaceAMI"));
+    const dynamicFvMesh& fineMesh_ = fineMeshPtr_.ref();
+    mapping_.resize(fineMesh_.nCells(), -1);
+    //- Contruct cell mapping
+    Info << "Construct mapping between coarse and fine mesh...";
+    forAll(fineMesh_.cells(), tgtCelli) {
+        const point& tgtPos = fineMesh_.cellCentres()[tgtCelli];
+        label foundCell = coarseMesh_.findCell(tgtPos);
+        if (foundCell != -1){
+            mapping_[tgtCelli] = foundCell;
+        }
+        else
+        {
+            FatalErrorIn("dualMesh.C") << "dual mesh addressing error, decomposition of"
+                                          "coarse and fine mesh should be the same" << abort(FatalError);
+        }
+    }
+    Info << "ok" << endl;
 }
 
 // * * * * * * * * * * * * * * * Private Members  * * * * * * * * * * * * * * //
@@ -84,7 +100,10 @@ void Foam::dualMesh::mapFieldCoarseToFine(
     Foam::GeometricField<Type, PatchField, Foam::volMesh>& field2
 )
 {
-    field2 = mapping_.ref().mapSrcToTgt(field1);
+    forAll(field2, celli) {
+        field2[celli] = field1[mapping_[celli]];
+    }
+    field2.correctBoundaryConditions();
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
@@ -96,6 +115,7 @@ Foam::volScalarField& Foam::dualMesh::addField
 {
     volScalarField* coarsePointer = &coarseField;
     scalarFields_.first().append(coarsePointer);
+    Info << nl << "Create dual field for " << coarseField.name() << "...";
     scalarFields_.second().append(new volScalarField(
             IOobject
             (
@@ -107,11 +127,12 @@ Foam::volScalarField& Foam::dualMesh::addField
             ),
             fineMeshPtr_,
             0,
-            coarseField.dimensions()
+            coarseField.dimensions(),
+            "zeroGradient"
         )
     );
     mapFieldCoarseToFine(coarseField, scalarFields_.second().back());
-    Info << nl << "create dual field for " << coarseField.name() << endl;
+    Info << "ok" << endl;
     scalarFields_.second().back().write();
     return scalarFields_.second().back();
 }
@@ -123,6 +144,7 @@ Foam::volVectorField& Foam::dualMesh::addField
 {
     volVectorField* coarsePointer = &coarseField;
     vectorFields_.first().append(coarsePointer);
+    Info << nl << "create dual field for " << coarseField.name() << "...";
     vectorFields_.second().append(new volVectorField(
             IOobject
             (
@@ -134,11 +156,12 @@ Foam::volVectorField& Foam::dualMesh::addField
             ),
             fineMeshPtr_,
             Vector<scalar>(0,0,0),
-            coarseField.dimensions()
+            coarseField.dimensions(),
+            "zeroGradient"
         )
     );
     mapFieldCoarseToFine(coarseField, vectorFields_.second().back());
-    Info << nl << "create dual field for " << coarseField.name() << endl;
+    Info << "ok" << endl;
     vectorFields_.second().back().write();
     return vectorFields_.second().back();
 }
@@ -149,6 +172,7 @@ Foam::surfaceScalarField& Foam::dualMesh::addField
         )
 {
     volVectorField& vField = vectorFields_.second().back();
+    Info << nl << "Create dual flux field for " << coarseField.name() << endl;
     phiFields_.append(new surfaceScalarField
     (
         IOobject
@@ -162,7 +186,7 @@ Foam::surfaceScalarField& Foam::dualMesh::addField
         linearInterpolate(vField) & vField.mesh().Sf()
     )
     );
-    Info << nl << "create dual flux field " << coarseField.name()+"_dual"<< endl;
+    Info << "ok" << endl;
     return phiFields_.back();
 }
 

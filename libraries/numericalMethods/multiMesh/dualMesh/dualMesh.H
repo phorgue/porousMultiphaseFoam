@@ -42,7 +42,6 @@ SourceFiles
 
 #include "multiMesh.H"
 #include "volFields.H"
-#include "meshToMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,7 +63,7 @@ protected:
     autoPtr<dynamicFvMesh> fineMeshPtr_;
 
     //- Pointer to the cell mapping between two meshes
-    autoPtr<meshToMesh> mapping_;
+    labelList mapping_;
 
     //- List of tuple_field
     Tuple2<PtrList<volScalarField>, PtrList<volScalarField>> scalarFields_;
