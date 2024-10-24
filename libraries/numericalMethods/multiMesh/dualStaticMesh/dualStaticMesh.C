@@ -27,7 +27,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "dualMesh.H"
+#include "dualStaticMesh.H"
 #include "addToRunTimeSelectionTable.H"
 #include "processorPolyPatch.H"
 #include "symmetryPlanePolyPatch.H"
@@ -37,19 +37,19 @@ License
 
 namespace Foam
 {
-defineTypeNameAndDebug(dualMesh, 0);
+defineTypeNameAndDebug(dualStaticMesh, 0);
 
 addToRunTimeSelectionTable
 (
-        multiMesh,
-        dualMesh,
-        dictionary
+    multiMesh,
+    dualStaticMesh,
+    dictionary
 );
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::dualMesh::dualMesh
+Foam::dualStaticMesh::dualStaticMesh
 (
     Time& runTime,
     dynamicFvMesh& mesh
@@ -80,7 +80,7 @@ Foam::dualMesh::dualMesh
 
 // * * * * * * * * * * * * * * * Private Members  * * * * * * * * * * * * * * //
 
-void Foam::dualMesh::initialRefinement()
+void Foam::dualStaticMesh::initialRefinement()
 {
     //- Refining mesh
     Info << nl << "**** Initialization of static dual mesh *****" << endl;
@@ -88,7 +88,11 @@ void Foam::dualMesh::initialRefinement()
     label timeIndex = runTime_.timeIndex();
     runTime_.setTime(runTime_.timeOutputValue(), timeIndex+1);
     fineMesh.movePoints(fineMesh.points());
-    fineMesh.update();
+    label ncells = 0;
+    while (fineMesh.nCells() != ncells) {
+        ncells = fineMesh.nCells();
+        fineMesh.update();
+    }
     runTime_.setTime(runTime_.timeOutputValue(), timeIndex);
 
     //- Contruct cell mapping
@@ -102,7 +106,7 @@ void Foam::dualMesh::initialRefinement()
         }
         else
         {
-            FatalErrorIn("dualMesh.C") << "dual mesh addressing error, decomposition of"
+            FatalErrorIn("dualStaticMesh.C") << "dual mesh addressing error, decomposition of"
             "coarse and fine mesh should be the same" << abort(FatalError);
         }
     }
@@ -111,7 +115,7 @@ void Foam::dualMesh::initialRefinement()
 }
 
 template<class Type, template<class> class PatchField>
-void Foam::dualMesh::mapFieldCoarseToFine(
+void Foam::dualStaticMesh::mapFieldCoarseToFine(
     Foam::GeometricField<Type, PatchField, Foam::volMesh>& field1,
     Foam::GeometricField<Type, PatchField, Foam::volMesh>& field2
 )
@@ -124,7 +128,7 @@ void Foam::dualMesh::mapFieldCoarseToFine(
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
 
-Foam::volScalarField& Foam::dualMesh::addField
+Foam::volScalarField& Foam::dualStaticMesh::addField
 (
     volScalarField& coarseField
 )
@@ -154,7 +158,7 @@ Foam::volScalarField& Foam::dualMesh::addField
     return scalarFields_.second().back();
 }
 
-Foam::volVectorField& Foam::dualMesh::addField
+Foam::volVectorField& Foam::dualStaticMesh::addField
     (
         volVectorField& coarseField
     )
@@ -184,7 +188,7 @@ Foam::volVectorField& Foam::dualMesh::addField
     return vectorFields_.second().back();
 }
 
-Foam::surfaceScalarField& Foam::dualMesh::addField
+Foam::surfaceScalarField& Foam::dualStaticMesh::addField
         (
                 surfaceScalarField& coarseField
         )
@@ -208,7 +212,7 @@ Foam::surfaceScalarField& Foam::dualMesh::addField
     return phiFields_.back();
 }
 
-void Foam::dualMesh::update()
+void Foam::dualStaticMesh::update()
 {
     if (!refined_)
     {
