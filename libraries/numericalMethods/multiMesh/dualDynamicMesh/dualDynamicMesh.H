@@ -85,7 +85,7 @@ public:
     TypeName("dualDynamicMesh");
 
     //- Construct from components
-    dualDynamicMesh(dynamicFvMesh& mesh);
+    dualDynamicMesh(Time& runTime, dynamicFvMesh& mesh);
 
     //- Destructor
     virtual ~dualDynamicMesh() {}

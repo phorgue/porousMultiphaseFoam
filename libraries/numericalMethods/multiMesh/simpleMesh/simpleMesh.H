@@ -67,7 +67,7 @@ public:
     TypeName("simpleMesh");
 
     //- Construct from components
-    simpleMesh(dynamicFvMesh& mesh);
+    simpleMesh(Time& runTime, dynamicFvMesh& mesh);
 
     //- Destructor
     virtual ~simpleMesh() {}

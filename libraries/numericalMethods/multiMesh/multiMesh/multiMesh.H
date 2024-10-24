@@ -70,9 +70,10 @@ public:
         multiMesh,
         dictionary,
         (
-        dynamicFvMesh& mesh
+            Time& runTime,
+            dynamicFvMesh& mesh
         ),
-    (mesh)
+    (runTime, mesh)
     );
 
     // Selectors
@@ -80,6 +81,7 @@ public:
     //- Return a reference to the selected multi mash model
     static autoPtr<multiMesh> New
     (
+        Time& runTime,
         dynamicFvMesh& mesh,
         const dictionary& transportProperties
     );
@@ -87,7 +89,7 @@ public:
     // Constructors
 
     //- Construct from components
-    multiMesh(dynamicFvMesh& mesh);
+    multiMesh(Time& runTime, dynamicFvMesh& mesh);
 
     //- Destructor
     virtual ~multiMesh()

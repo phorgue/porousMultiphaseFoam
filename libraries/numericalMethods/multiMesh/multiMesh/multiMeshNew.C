@@ -33,6 +33,7 @@ License
 
 Foam::autoPtr<Foam::multiMesh> Foam::multiMesh::New
 (
+    Time& runTime,
     dynamicFvMesh& mesh,
     const dictionary& transportProperties
 )
@@ -55,7 +56,7 @@ Foam::autoPtr<Foam::multiMesh> Foam::multiMesh::New
     }
 
     return autoPtr<multiMesh>
-        (cstrIter()(mesh));
+        (cstrIter()(runTime, mesh));
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

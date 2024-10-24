@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
                 IOobject::NO_WRITE
             )
     );
-    autoPtr<multiMesh> mMeshPtr(multiMesh::New(mesh, transportProperties));
+    autoPtr<multiMesh> mMeshPtr(multiMesh::New(runTime, mesh, transportProperties));
     dynamicFvMesh& meshT = mMeshPtr.ref().fineMesh();
 
     Info << "\nReading g" << endl;

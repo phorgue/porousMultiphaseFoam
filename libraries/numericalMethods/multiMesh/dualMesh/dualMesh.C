@@ -51,12 +51,15 @@ addToRunTimeSelectionTable
 
 Foam::dualMesh::dualMesh
 (
+    Time& runTime,
     dynamicFvMesh& mesh
 )
     :
-    multiMesh(mesh),
+    multiMesh(runTime, mesh),
     fineMeshPtr_(nullptr),
-    mapping_(),
+    runTime_(runTime),
+    mapping_(mesh.nCells()),
+    refined_(false),
     scalarFields_(),
     vectorFields_(),
     phiFields_()
@@ -67,18 +70,32 @@ Foam::dualMesh::dualMesh
         IOobject
         (
             "dualMesh",
-            mesh.time().timeName(),
+            mesh.time().constant(),
             mesh.time(),
-            IOobject::MUST_READ
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
         )
     );
+}
 
-    const dynamicFvMesh& fineMesh_ = fineMeshPtr_.ref();
-    mapping_.resize(fineMesh_.nCells(), -1);
+// * * * * * * * * * * * * * * * Private Members  * * * * * * * * * * * * * * //
+
+void Foam::dualMesh::initialRefinement()
+{
+    //- Refining mesh
+    Info << nl << "**** Initialization of static dual mesh *****" << endl;
+    dynamicFvMesh& fineMesh = fineMeshPtr_();
+    label timeIndex = runTime_.timeIndex();
+    runTime_.setTime(runTime_.timeOutputValue(), timeIndex+1);
+    fineMesh.movePoints(fineMesh.points());
+    fineMesh.update();
+    runTime_.setTime(runTime_.timeOutputValue(), timeIndex);
+
     //- Contruct cell mapping
+    mapping_.resize(fineMesh.nCells(), -1);
     Info << "Construct mapping between coarse and fine mesh...";
-    forAll(fineMesh_.cells(), tgtCelli) {
-        const point& tgtPos = fineMesh_.cellCentres()[tgtCelli];
+    forAll(fineMesh.cells(), tgtCelli) {
+        const point& tgtPos = fineMesh.cellCentres()[tgtCelli];
         label foundCell = coarseMesh_.findCell(tgtPos);
         if (foundCell != -1){
             mapping_[tgtCelli] = foundCell;
@@ -86,13 +103,12 @@ Foam::dualMesh::dualMesh
         else
         {
             FatalErrorIn("dualMesh.C") << "dual mesh addressing error, decomposition of"
-                                          "coarse and fine mesh should be the same" << abort(FatalError);
+            "coarse and fine mesh should be the same" << abort(FatalError);
         }
     }
     Info << "ok" << endl;
+    Info << "*********************************************" << endl << endl;
 }
-
-// * * * * * * * * * * * * * * * Private Members  * * * * * * * * * * * * * * //
 
 template<class Type, template<class> class PatchField>
 void Foam::dualMesh::mapFieldCoarseToFine(
@@ -131,7 +147,8 @@ Foam::volScalarField& Foam::dualMesh::addField
             "zeroGradient"
         )
     );
-    mapFieldCoarseToFine(coarseField, scalarFields_.second().back());
+    scalarFields_.second().back().primitiveFieldRef() = coarseField.primitiveField();
+    scalarFields_.second().back().correctBoundaryConditions();
     Info << "ok" << endl;
     scalarFields_.second().back().write();
     return scalarFields_.second().back();
@@ -160,7 +177,8 @@ Foam::volVectorField& Foam::dualMesh::addField
             "zeroGradient"
         )
     );
-    mapFieldCoarseToFine(coarseField, vectorFields_.second().back());
+    vectorFields_.second().back().primitiveFieldRef() = coarseField.primitiveField();
+    vectorFields_.second().back().correctBoundaryConditions();
     Info << "ok" << endl;
     vectorFields_.second().back().write();
     return vectorFields_.second().back();
@@ -172,7 +190,7 @@ Foam::surfaceScalarField& Foam::dualMesh::addField
         )
 {
     volVectorField& vField = vectorFields_.second().back();
-    Info << nl << "Create dual flux field for " << coarseField.name() << endl;
+    Info << nl << "Create dual flux field for " << coarseField.name() << "...";
     phiFields_.append(new surfaceScalarField
     (
         IOobject
@@ -190,9 +208,13 @@ Foam::surfaceScalarField& Foam::dualMesh::addField
     return phiFields_.back();
 }
 
-
 void Foam::dualMesh::update()
 {
+    if (!refined_)
+    {
+        initialRefinement();
+        refined_ = true;
+    }
     for(label i=0;i<scalarFields_.first().size();i++) {
         mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
     }

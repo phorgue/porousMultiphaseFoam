@@ -56,19 +56,28 @@ class dualMesh
 :
     public multiMesh
 {
-protected:
+private:
 
     // Protected data
     //- Secondary mesh
     autoPtr<dynamicFvMesh> fineMeshPtr_;
 
+    //- Time reference required for initial refinement
+    Time& runTime_;
+
     //- Pointer to the cell mapping between two meshes
     labelList mapping_;
+
+    //- If mesh has already be refined
+    bool refined_;
 
     //- List of tuple_field
     Tuple2<PtrList<volScalarField>, PtrList<volScalarField>> scalarFields_;
     Tuple2<PtrList<volVectorField>, PtrList<volVectorField>> vectorFields_;
     PtrList<surfaceScalarField> phiFields_;
+
+    //- Initial refinement of the mesh and mapping computation
+    void initialRefinement();
 
     //- Function to map fields between dual meshes
     template<class Type, template<class> class PatchField>
@@ -89,7 +98,7 @@ public:
     TypeName("dualMesh");
 
     //- Construct from components
-    dualMesh(dynamicFvMesh& mesh);
+    dualMesh(Time& runTime, dynamicFvMesh& mesh);
 
     //- Destructor
     virtual ~dualMesh() {}

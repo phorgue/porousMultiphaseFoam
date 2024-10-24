@@ -42,7 +42,7 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::multiMesh::multiMesh (dynamicFvMesh& coarseMesh)
+Foam::multiMesh::multiMesh (Time& runTime, dynamicFvMesh& coarseMesh)
 :
     coarseMesh_(coarseMesh)
 {

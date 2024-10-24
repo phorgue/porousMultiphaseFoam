@@ -52,10 +52,11 @@ addToRunTimeSelectionTable
 
 Foam::dualDynamicMesh::dualDynamicMesh
 (
+    Time& runTime,
     dynamicFvMesh& mesh
 )
     :
-    multiMesh(mesh),
+    multiMesh(runTime, mesh),
     fineMeshPtr_(nullptr),
     scalarFields_(),
     vectorFields_(),

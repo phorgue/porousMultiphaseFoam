@@ -48,10 +48,11 @@ addToRunTimeSelectionTable
 
 Foam::simpleMesh::simpleMesh
 (
+    Time& runTime,
     dynamicFvMesh& mesh
 )
     :
-    multiMesh(mesh)
+    multiMesh(runTime, mesh)
 {}
 
 // ************************************************************************* //
