@@ -61,10 +61,11 @@ Foam::multiscalarMixture::multiscalarMixture
     rs_(speciesNames.size()),
     epsTotal_(speciesNames.size())
 {
+    Info<< nl << "******** Initializing mixture properties for region  " << porousRegion << " ********" << endl;
     forAll(speciesNames, speciesi)
     {
 
-        Info<< nl << "******** Specie " << speciesNames[speciesi] << porousRegion << " ********" << endl;
+        Info<< nl << "***** Specie " << speciesNames[speciesi] << porousRegion << " *****" << endl;
 
         dictionary specieDict(dict.optionalSubDict(speciesNames[speciesi]));
         specieDict = specieDict.optionalSubDict(porousRegion);
@@ -151,21 +152,22 @@ Foam::multiscalarMixture::multiscalarMixture
                 (
                     speciesi,
                     new volScalarField
-                    (
-                        IOobject
-                            (
+                        (
+                            IOobject
+                                (
                                     "zeroSourceTerm",
                                     mesh.time().timeName(),
                                     mesh,
                                     IOobject::NO_READ,
                                     IOobject::NO_WRITE
-                            ),
-                        mesh,
-                        dimensionedScalar("zero", dimSourceTerm, 0)
-                    )
+                                ),
+                            mesh,
+                            dimensionedScalar("zero", dimSourceTerm, 0)
+                        )
                 );
         }
     }
+    Info<< nl << "******** End of mixture properties for region  " << porousRegion << " ********" << endl;
 }
 
 // * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * * //
