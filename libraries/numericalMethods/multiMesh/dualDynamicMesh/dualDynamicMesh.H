@@ -99,7 +99,7 @@ public:
     surfaceScalarField& addField(surfaceScalarField&);
 
     bool dynamic() { return true;}
-    void update();
+    bool update();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

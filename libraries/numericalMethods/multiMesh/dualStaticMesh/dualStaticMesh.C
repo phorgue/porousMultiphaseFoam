@@ -212,12 +212,14 @@ Foam::surfaceScalarField& Foam::dualStaticMesh::addField
     return phiFields_.back();
 }
 
-void Foam::dualStaticMesh::update()
+bool Foam::dualStaticMesh::update()
 {
+    bool meshChanged = false;
     if (!refined_)
     {
         initialRefinement();
         refined_ = true;
+        meshChanged = true;
     }
     for(label i=0;i<scalarFields_.first().size();i++) {
         mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
@@ -230,6 +232,7 @@ void Foam::dualStaticMesh::update()
         volVectorField& vField = vectorFields_.second().at(fieldi);
         phiFields_.at(fieldi) = linearInterpolate(vField) & vField.mesh().Sf();
     }
+    return meshChanged;
 }
 
 // ************************************************************************* //

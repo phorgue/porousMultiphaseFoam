@@ -80,7 +80,7 @@ public:
     volVectorField& addField(volVectorField& vField) {return vField;};
     surfaceScalarField& addField(surfaceScalarField& sField) {return sField;};
     bool dynamic() { return false;}
-    void update() {};
+    bool update() { return false;};
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

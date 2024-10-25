@@ -235,10 +235,9 @@ noConvergence :
         //- 3) scalar transport
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
-
         if (mMeshPtr->dynamic()) composition.updateNormalizedGradY();
-        mMeshPtr->update();
-        if (meshT.changing()) forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->onMeshChanged();
+        bool hasChanged = mMeshPtr->update();
+        if (hasChanged) forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->onMeshChanged();
         pmTransportModel->solveTransport(UthetaT, phiT, thetaT, porousModel->exchangeTerm());
 
         //- C and water mass balance computation

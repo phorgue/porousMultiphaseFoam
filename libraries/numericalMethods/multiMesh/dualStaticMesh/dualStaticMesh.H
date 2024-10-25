@@ -112,7 +112,7 @@ public:
     surfaceScalarField& addField(surfaceScalarField&);
 
     bool dynamic() { return false;}
-    void update();
+    bool update();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

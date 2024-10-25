@@ -240,7 +240,7 @@ Foam::surfaceScalarField& Foam::dualDynamicMesh::addField
 }
 
 
-void Foam::dualDynamicMesh::update()
+bool Foam::dualDynamicMesh::update()
 {
     for(label i=0;i<scalarFields_.first().size();i++) {
         mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
@@ -254,6 +254,8 @@ void Foam::dualDynamicMesh::update()
         volVectorField& vField = vectorFields_.second().at(fieldi);
         phiFields_.at(fieldi) = linearInterpolate(vField) & vField.mesh().Sf();
     }
+    if (fineMeshPtr_->changing()) return true;
+    else return false;
 }
 
 // ************************************************************************* //
