@@ -124,7 +124,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
     //- fracture part
     composition_.correct(U, theta);
 
-    dictionary solverDict = pmModel_.mesh().solution().solverDict("C");
+    dictionary solverDict = pmModel_.mesh().solverDict("C");
     forAll(composition_.Y(), speciesi)
     {
         auto& C = composition_.Y(speciesi);
@@ -178,7 +178,7 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
                 + alphaS_ * thetaMatrix_ * (Cfracture - C)
             );
 
-        CMatrixEqn.solve(pmModel_.mesh().solution().solverDict("C"));
+        CMatrixEqn.solve(pmModel_.mesh().solverDict("C"));
 
         Info<< "Concentration: Min(" << speciesName << ") = " << gMin(C.internalField())
             << " Max(" << speciesName << ") = " << gMax(C.internalField())

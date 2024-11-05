@@ -201,7 +201,7 @@ void Foam::eventFile::setTimeScheme(const word& dtFieldName, const fvMesh& mesh)
     ddtScheme_ = fv::ddtScheme<scalar>::New
     ( 
         mesh,
-        mesh.schemes().ddt("ddt(" + dtFieldName + ")")
+        mesh.ddtScheme("ddt(" + dtFieldName + ")")
     );
 
     mesh_ = &mesh;
