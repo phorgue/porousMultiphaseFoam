@@ -1,7 +1,7 @@
 //- write using event file
 if (outputEventIsPresent)
 {
-    if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
+    if (outputEvent.currentEventEndTime() <= runTime.value())
     {
         forAll(composition.Y(), speciesi)
         {
@@ -28,7 +28,7 @@ if (outputEventIsPresent)
             }
         }
 
-        outputEvent.updateIndex(runTime.timeOutputValue());
+        outputEvent.updateIndex(runTime.value());
     }
 }
 //- write using openfoam usual runTime

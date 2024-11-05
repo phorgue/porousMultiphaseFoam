@@ -1,7 +1,7 @@
 //- write using event file
 if (outputEventIsPresent)
 {
-    if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
+    if (outputEvent.currentEventEndTime() <= runTime.value())
     {
         //- compute and write time interpolated fields
         volScalarField potential_interpolated = outputEvent.timeInterpolate(potential, runTime);
@@ -70,7 +70,7 @@ if (outputEventIsPresent)
             }
         }
 
-        outputEvent.updateIndex(runTime.timeOutputValue());
+        outputEvent.updateIndex(runTime.value());
     }
 }
 //- write using openfoam usual runTime

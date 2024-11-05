@@ -28,7 +28,7 @@ forAll(composition.Y(), speciesi)
             - fvm::Sp(seepageTerm,C)
         );
 
-    CEqn.solve(mesh.solver("C"));
+    CEqn.solve(mesh.solution().solverDict("C"));
 
     dtManagerC[speciesi].updateDerivatives();
 

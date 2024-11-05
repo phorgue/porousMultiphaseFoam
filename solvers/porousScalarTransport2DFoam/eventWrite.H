@@ -1,7 +1,7 @@
 //- write using event file
 if (outputEventIsPresent)
 {
-    if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
+    if (outputEvent.currentEventEndTime() <= runTime.value())
     {
         volScalarField hwater_interpolated = outputEvent.timeInterpolate(hwater, runTime);
         surfaceScalarField phihwater_interpolated =  outputEvent.timeInterpolate(phihwater, runTime);
@@ -34,7 +34,7 @@ if (outputEventIsPresent)
             }
         }
 
-        outputEvent.updateIndex(runTime.timeOutputValue());
+        outputEvent.updateIndex(runTime.value());
     }
 }
 //- write using openfoam usual runTime

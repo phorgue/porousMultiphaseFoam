@@ -71,12 +71,12 @@ if(adjustTimeStep)
         if (eventIsPresent_water) timeOfNextEvent = min(timeOfNextEvent,event_water.currentEventEndTime());
         forAll(tracerSourceEventList,tracerSourceEventi) timeOfNextEvent = min(timeOfNextEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime());
 
-        scalar timeToNextEvent = timeOfNextEvent-runTime.timeOutputValue();
+        scalar timeToNextEvent = timeOfNextEvent-runTime.value();
         scalar nSteps =  timeToNextEvent/runTime.deltaTValue();
         if ((nSteps < labelMax) && (nSteps != 0))
         {
             const label nStepsToNextEvent = label(max(nSteps, 1) + 0.99);
-            runTime.setDeltaT(timeToNextEvent/nStepsToNextEvent,false);
+            runTime.setDeltaTNoAdjust(timeToNextEvent/nStepsToNextEvent);
         }
 
         //- To handle close event times (inferior to current timestep)
@@ -85,26 +85,26 @@ if(adjustTimeStep)
             scalar timeToCloseEvent = GREAT;
             if (eventIsPresent_water)
             {
-                if (event_water.currentEventEndTime() != runTime.timeOutputValue())
+                if (event_water.currentEventEndTime() != runTime.value())
                 {
-                    timeToCloseEvent = min(timeToCloseEvent,event_water.currentEventEndTime()-runTime.timeOutputValue());
+                    timeToCloseEvent = min(timeToCloseEvent,event_water.currentEventEndTime()-runTime.value());
                 }
             }
             forAll(tracerSourceEventList,tracerSourceEventi)
             {
-                if (tracerSourceEventList[tracerSourceEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                if (tracerSourceEventList[tracerSourceEventi]->currentEventEndTime() != runTime.value())
                 {
-                    timeToCloseEvent = min(timeToCloseEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                    timeToCloseEvent = min(timeToCloseEvent,tracerSourceEventList[tracerSourceEventi]->currentEventEndTime()-runTime.value());
                 }
             }
             forAll(patchEventList,patchEventi)
             {
-                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.timeOutputValue())
+                if (patchEventList[patchEventi]->currentEventEndTime() != runTime.value())
                 {
-                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.timeOutputValue());
+                    timeToCloseEvent = min(timeToCloseEvent,patchEventList[patchEventi]->currentEventEndTime()-runTime.value());
                 }
             }
-            runTime.setDeltaT(min(runTime.deltaTValue(),timeToCloseEvent),false);
+            runTime.setDeltaTNoAdjust(min(runTime.deltaTValue(),timeToCloseEvent));
         }
     }
 

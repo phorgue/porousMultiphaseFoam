@@ -1,7 +1,7 @@
 //- write using event file
 if (outputEventIsPresent)
 {
-    if (outputEvent.currentEventEndTime() <= runTime.timeOutputValue())
+    if (outputEvent.currentEventEndTime() <= runTime.value())
     {
         //- compute and write time interpolated fields
         volScalarField p_interpolated = outputEvent.timeInterpolate(p, runTime);
@@ -11,7 +11,7 @@ if (outputEventIsPresent)
         surfaceScalarField phia_interpolated = outputEvent.timeInterpolate(phia, runTime);
         surfaceScalarField phib_interpolated = outputEvent.timeInterpolate(phib, runTime);
 
-        outputEvent.updateIndex(runTime.timeOutputValue());
+        outputEvent.updateIndex(runTime.value());
     }
 }
 else

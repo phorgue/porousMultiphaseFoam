@@ -20,8 +20,8 @@ List<patchEventFile*> patchEventList;
 eventInfiltration::setEventFileRegistry(&patchEventList, "potential");
 eventFlux::setEventFileRegistry(&patchEventList, "C");
 
-const dimensionedScalar rho("rho",transportProperties);
-const dimensionedScalar mu("mu",transportProperties);
+const dimensionedScalar rho(transportProperties.lookup("rho"));
+const dimensionedScalar mu(transportProperties.lookup("mu"));
 
 /////////////////////////////////////////////////////////////////
 ////////////////////// HEIGHT - POTENTIAL ///////////////////////

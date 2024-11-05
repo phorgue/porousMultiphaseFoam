@@ -65,10 +65,10 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.timeOutputValue());
-        if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.timeOutputValue());
-        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateIndex(runTime.timeOutputValue());
-        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
+        if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.value());
+        if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.value());
+        forAll(sourceEventList,sourceEventi) sourceEventList[sourceEventi]->updateIndex(runTime.value());
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.value());
         #include "setDeltaT.H"
 
         runTime++;

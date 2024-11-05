@@ -16,8 +16,8 @@ IOdictionary transportProperties
     )
 );
 
-const dimensionedScalar rho("rho",transportProperties);
-const dimensionedScalar mu("mu",transportProperties);
+const dimensionedScalar rho(transportProperties.lookup("rho"));
+const dimensionedScalar mu(transportProperties.lookup("mu"));
 
 /////////////////////////////////////////////////////////////////
 ////////////////////// HEIGHT - POTENTIAL ///////////////////////

@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 ;
     #include "setRootCase.H"
     #include "../headerPMF.H"
-    bool steady = args.found("steady");
+    bool steady = args.optionFound("steady");
     #include "createTime.H"
     #include "createMesh.H"
     #include "createFields.H"
@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
     {
         if (!steady)
         {
-            if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.timeOutputValue());
-            if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.timeOutputValue());
+            if (infiltrationEventIsPresent) infiltrationEvent.updateIndex(runTime.value());
+            if (waterSourceEventIsPresent) waterSourceEvent.updateIndex(runTime.value());
             #include "setDeltaT.H"
         }
 

@@ -1,5 +1,7 @@
 //- Fixed potential values
-if (fixedPotentialList.size() > 0) potentialEqn.setValues(fixedPotentialIDList,fixedPotentialValueList);
+const labelUList fp_ids(fixedPotentialIDList);
+const scalarList fp_values(fixedPotentialValueList);
+if (fixedPotentialList.size() > 0) potentialEqn.setValues<List>(fp_ids, fp_values);
 
 //- Seepage option
 if (seepageActive)

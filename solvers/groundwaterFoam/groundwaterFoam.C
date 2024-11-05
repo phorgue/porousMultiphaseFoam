@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
-    bool steady = args.found("steady");
+    bool steady = args.optionFound("steady");
     if (steady) maxIterPicard = 1;
     label iterPicard=0;
     label iterNewton=0;
@@ -79,8 +79,8 @@ int main(int argc, char *argv[])
     {
         if (!steady)
         {
-            if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.timeOutputValue());
-            forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
+            if (sourceEventIsPresent) sourceEvent.updateIndex(runTime.value());
+            forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.value());
             #include "setDeltaT.H"
         }
 
@@ -143,7 +143,7 @@ noConvergence :
             runTime.write();
             if (writeResiduals)
             {
-                OFstream residualFile("residuals.csv", IOstreamOption(), true);
+                OFstream residualFile("residuals.csv", IOstream::ASCII, IOstream::currentVersion, IOstream::UNCOMPRESSED, true);
                 residualFile << runTime.timeName() << " " << mag(hEqnResidual) << endl;
             }
             if (hEqnResidual < tolerancePicard) runTime.writeAndEnd();
