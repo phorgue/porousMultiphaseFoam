@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
     Foam::argList args(argc,argv); 
 
     word nameDEM = "default";
-    if (args.found("file"))
+    if (args.optionFound("file"))
     {
-        nameDEM = args.opt("file");
+        nameDEM = args.option("file");
     }
     else
     {
@@ -71,9 +71,9 @@ int main(int argc, char *argv[])
     }
 
     word nameField = "default";
-    if (args.found("field"))
+    if (args.optionFound("field"))
     {
-        nameField = args.opt("field");
+        nameField = args.option("field");
     }
     else
     {
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
             << exit(FatalError);
     }
     
-    scalar offset = args.opt("offset",0.);
+    scalar offset = args.optionLookupOrDefault("offset",0.);
 
     #include "createTime.H"
     #include "createMesh.H"
@@ -93,9 +93,9 @@ int main(int argc, char *argv[])
     DEMfile sourceFile(nameDEM);
 
     word fileDir = "constant";
-    if (args.found("folder"))
+    if (args.optionFound("folder"))
     {
-        fileDir = args.opt("folder");
+        fileDir = args.option("folder");
     }
 
     volScalarField outputFile

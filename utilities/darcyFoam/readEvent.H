@@ -1,4 +1,4 @@
-bool sourceEventIsPresent = transportProperties.found("eventFileWaterSource");
+bool sourceEventIsPresent = transportProperties.optionFound("eventFileWaterSource");
 word sourceEventFileName = transportProperties.lookupOrDefault<word>("eventFileWaterSource","");
 sourceEventFile sourceEvent(sourceEventFileName);
 if (sourceEventIsPresent)

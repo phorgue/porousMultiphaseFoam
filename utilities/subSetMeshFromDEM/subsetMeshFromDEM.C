@@ -47,8 +47,8 @@ Usage
 int main(int argc, char *argv[])
 {
 
-    argList::addArgument("DEMtop","DEM file (.xyz) for top patch");
-    argList::addArgument("DEMbottom","DEM file (.xyz) for bottom patch");
+    argList::validArgs.append("DEMtop"),
+    argList::validArgs.append("DEMbottom");
     
     Foam::argList args(argc,argv); 
 
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         scalar ztop = topFile.interpolate(mesh.C()[celli]);
         if (mesh.C()[celli].z() < ztop) topCells.insert(celli);
     } 
-    fvMeshSubset::exposedPatchName = "top";
+
     fvMeshSubset topMesh(mesh);
     topMesh.setCellSubset(topCells, -1, true);
     const fvMesh& interMesh = topMesh.subMesh();
@@ -82,13 +82,13 @@ int main(int argc, char *argv[])
         scalar zbottom = bottomFile.interpolate(interMesh.C()[celli]);
         if (interMesh.C()[celli].z() > zbottom) bottomCells.insert(celli);
     } 
-    fvMeshSubset::exposedPatchName = "bottom";
+
     fvMeshSubset finalMesh(topMesh.subMesh());
     finalMesh.setCellSubset(bottomCells, -1, true);
 
     //- write final mesh
     fvMesh& outMesh = finalMesh.subMesh();
-    fvMeshTools::removeEmptyPatches(outMesh, true);
+
     outMesh.setInstance(runTime.constant());
     outMesh.write();
         

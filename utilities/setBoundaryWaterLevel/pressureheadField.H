@@ -14,16 +14,16 @@
         );
 
     //-- Reading patch information
-    word patchName = args.opt("patch");
+    word patchName = args.option("patch");
     label patchID = mesh.boundaryMesh().findPatchID(patchName);
     fvPatchScalarField& hPatch = h.boundaryFieldRef()[patchID];
   
     //-- Compute and set up head pressure
-    if (args.found("DEM"))
+    if (args.optionFound("DEM"))
     {
         //- reading DEM informations
-        DEMfile fixedPotentialDEM(args.opt("DEM"));
-	scalar offseth = args.getOrDefault<scalar>("offset",0.);
+        DEMfile fixedPotentialDEM(args.option("DEM"));
+	scalar offseth = args.optionLookupOrDefault<scalar>("offset",0.);
 	if (offseth==0)
 	{
 	    Info << nl << "Potential fixed using DEM " << endl;
@@ -40,14 +40,14 @@
             hPatch[facei] = fixedPotentialDEM.interpolate(faces[facei]) - faces[facei].z() + offseth;
         }
     }
-    else if (args.found("STL"))
+    else if (args.optionFound("STL"))
     {
         //- reading STL informations
-        word STLfile = args.opt("STL");
+        word STLfile = args.option("STL");
         triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
         pointField pPoints( potentialSTL.points() );
-	scalar thresholdh = args.getOrDefault<scalar>("threshold",0.);
-	scalar offseth = args.getOrDefault<scalar>("offset",0.);
+	scalar thresholdh = args.optionLookupOrDefault<scalar>("threshold",0.);
+	scalar offseth = args.optionLookupOrDefault<scalar>("offset",0.);
 	Info << nl << "Potential fixed using points over " << thresholdh <<  " in STL = " << STLfile << " offseted by " << offseth << endl;
 	
         //- computing local potential
@@ -75,7 +75,7 @@
     {
         //- uniform potential
         const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
-        scalar potential = args.opt("value",0.);
+        scalar potential = args.optionLookupOrDefault("value",0.);
         Info << nl << "Uniform potential fixed = " << potential << " m " << endl;
         forAll(hPatch,facei)
         {

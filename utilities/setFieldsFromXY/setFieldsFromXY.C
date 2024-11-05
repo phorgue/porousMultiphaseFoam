@@ -64,9 +64,9 @@ int main(int argc, char *argv[])
     Foam::argList args(argc,argv); 
 
     word nameXY = "default";
-    if (args.found("file"))
+    if (args.optionFound("file"))
     {
-        nameXY = args.opt("file");
+        nameXY = args.option("file");
     }
     else
     {
@@ -76,9 +76,9 @@ int main(int argc, char *argv[])
     }
 
     word nameField = "default";
-    if (args.found("field"))
+    if (args.optionFound("field"))
     {
-        nameField = args.opt("field");
+        nameField = args.option("field");
     }
 
     else
@@ -88,8 +88,8 @@ int main(int argc, char *argv[])
             << exit(FatalError);
     }
 
-    scalar offset = args.opt("offset",0.);
-    label npoints = args.opt("npoints",3);
+    scalar offset = args.optionLookupOrDefault("offset",0.);
+    label npoints = args.optionLookupOrDefault("npoints",3);
 
     #include "createTime.H"
     #include "createMesh.H"
@@ -100,9 +100,9 @@ int main(int argc, char *argv[])
     XYfile sourceFile(nameXY, mesh, npoints);
 
     word fileDir = "constant";
-    if (args.found("folder"))
+    if (args.optionFound("folder"))
     {
-        fileDir = args.opt("folder");
+        fileDir = args.option("folder");
     }
 
     volScalarField outputFile

@@ -13,16 +13,16 @@
         );
  
     //-- Reading patch information
-    word patchName = args.opt("patch");
+    word patchName = args.option("patch");
     label patchID = mesh.boundaryMesh().findPatchID(patchName);
     fvPatchScalarField& potentialPatch = potential.boundaryFieldRef()[patchID];
 
     //-- Compute and set up head pressure
-    if (args.found("DEM"))
+    if (args.optionFound("DEM"))
     {
         //- reading DEM informations
-        DEMfile fixedPotentialDEM(args.opt("DEM"));
-	scalar offsetPotential = args.getOrDefault<scalar>("offset",0.);
+        DEMfile fixedPotentialDEM(args.option("DEM"));
+	scalar offsetPotential = args.optionLookupOrDefault<scalar>("offset",0.);
 	if (offsetPotential==0)
 	{
 	    Info << nl << "Potential fixed using DEM" << endl;
@@ -39,14 +39,14 @@
             potentialPatch[facei] = fixedPotentialDEM.interpolate(faces[facei]) + offsetPotential;
         }
     }
-    else if (args.found("STL"))
+    else if (args.optionFound("STL"))
     {
         //- reading STL informations
-        word STLfile = args.opt("STL");
+        word STLfile = args.option("STL");
         triSurfaceMesh potentialSTL(IOobject(STLfile,mesh));
         pointField pPoints( potentialSTL.points() );
-	scalar thresholdPotential = args.getOrDefault<scalar>("threshold",0.);
-	scalar offsetPotential = args.getOrDefault<scalar>("offset",0.);
+	scalar thresholdPotential = args.optionLookupOrDefault<scalar>("threshold",0.);
+	scalar offsetPotential = args.optionLookupOrDefault<scalar>("offset",0.);
         Info << nl << "Potential fixed using points over " << thresholdPotential <<  " in STL = " << STLfile << " offseted by " << offsetPotential << endl;
         const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
 	
@@ -70,10 +70,10 @@
             potentialPatch[facei] = pPoints[id_point].z() + offsetPotential;    
         }
     }  
-    else if (args.found("value"))
+    else if (args.optionFound("value"))
     {
         //- uniform potential
-        scalar uniformPotential = args.getOrDefault<scalar>("value",0.);
+        scalar uniformPotential = args.optionLookupOrDefault<scalar>("value",0.);
         Info << nl << "Uniform potential fixed = " << uniformPotential << " m " << endl;
         //- computing and writing local potential
         forAll(potentialPatch,facei)
