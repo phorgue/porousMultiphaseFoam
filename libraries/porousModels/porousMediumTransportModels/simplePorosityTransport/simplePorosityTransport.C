@@ -71,7 +71,7 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
 {
     composition_.correct(U, theta);
 
-    dictionary solverDict = pmModel_.mesh().solver("C");
+    dictionary solverDict = pmModel_.mesh().solution().solverDict("C");
     forAll(composition_.Y(), speciesi)
     {
         auto& C = composition_.Y(speciesi);

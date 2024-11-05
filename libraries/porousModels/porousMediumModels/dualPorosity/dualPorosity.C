@@ -113,7 +113,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::NO_WRITE
         ),
         mesh,
-        transportProperties.get<dimensionedScalar>("Kmatrix")
+        transportProperties.lookup<dimensionedScalar>("Kmatrix")
     ),
     Kmatrixf_(fvc::interpolate(Kmatrix_, "K")),
     Kexchange_
@@ -127,11 +127,11 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::NO_WRITE
         ),
         mesh,
-        dualPorosityCoeffs_.get<dimensionedScalar>("Kexchange")
+        dualPorosityCoeffs_.lookup<dimensionedScalar>("Kexchange")
     ),
-    a_(dualPorosityCoeffs_.get<dimensionedScalar>("a")),
-    beta_(dualPorosityCoeffs_.get<dimensionedScalar>("beta")),
-    gammaW_(dualPorosityCoeffs_.get<dimensionedScalar>("gammaW")),
+    a_(dualPorosityCoeffs_.lookup<dimensionedScalar>("a")),
+    beta_(dualPorosityCoeffs_.lookup<dimensionedScalar>("beta")),
+    gammaW_(dualPorosityCoeffs_.lookup<dimensionedScalar>("gammaW")),
     geomFactor_(beta_/(a_*a_)*gammaW_),
     UMatrix_
     (
@@ -172,7 +172,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     if (Kexchange_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(Kexchange_).value() << endl;}
     Info << "} \n" << endl;
-    sourceTerm_.writeOpt(IOobject::AUTO_WRITE);
+    sourceTerm_.writeOpt() = IOobject::AUTO_WRITE;
     matrixPcModel_ = capillarityModel::New(mesh, transportProperties, Sname_, "Matrix");
     matrixKrModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname_, "Matrix");
     updateMatrixProperties();

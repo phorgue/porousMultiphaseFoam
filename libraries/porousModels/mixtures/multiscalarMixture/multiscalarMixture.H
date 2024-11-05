@@ -109,6 +109,18 @@ public:
         const volScalarField& eps
     );
 
+    //- Return species name list
+    inline const wordList& species();
+
+    //- Return specie name
+    inline const word& species(const label speciei);
+
+    //- Return the mass-fraction fields
+    inline PtrList<volScalarField>& Y();
+
+    //- Return one mass-fraction field
+    inline volScalarField& Y(const label i);
+
     //-  Molar diffusivity [m^2/s]
     inline const dimensionedScalar& Dm(const label speciesi) const;
 
@@ -124,6 +136,8 @@ public:
     bool check_eps();
 
 private:
+    wordList species_;
+    PtrList<volScalarField> Y_;
     PtrList<volScalarField> R_;
     List<dimensionedScalar> lambdas_;
     PtrList<dispersionModel> dispersionModels_;

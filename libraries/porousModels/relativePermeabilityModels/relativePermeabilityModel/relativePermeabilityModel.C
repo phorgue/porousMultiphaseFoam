@@ -113,7 +113,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
           IOobject::NO_WRITE
       ),
       mesh,
-      dimensionedScalar(dimless, modelProperties.getOrDefault<scalar>(Sname+porousRegion+"min", 0))
+      dimensionedScalar(dimless, modelProperties.lookupOrDefault<scalar>(Sname+porousRegion+"min", 0))
     ),
     Smax_
     (
@@ -126,7 +126,7 @@ Foam::relativePermeabilityModel::relativePermeabilityModel
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, modelProperties.getOrDefault<scalar>(Sname+porousRegion+"max", 1))
+        dimensionedScalar(dimless, modelProperties.lookupOrDefault<scalar>(Sname+porousRegion+"max", 1))
     ),
     Se_
     (

@@ -69,7 +69,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("m"+porousRegion,0))
+        dimensionedScalar(dimless, capillarityProperties_.lookupOrDefault<scalar>("m"+porousRegion,0))
     ),
     n_(1/(1-m_)),
     alpha_
@@ -83,7 +83,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("alpha"+porousRegion,GREAT))
+        dimensionedScalar(dimless, capillarityProperties_.lookupOrDefault<scalar>("alpha"+porousRegion,GREAT))
     ),
     tau_
     (
@@ -96,7 +96,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("tau"+porousRegion,1.))
+        dimensionedScalar(dimless, capillarityProperties_.lookupOrDefault<scalar>("tau"+porousRegion,1.))
     ),
     he_
     (
@@ -109,7 +109,7 @@ Foam::capillarityModels::pcIppisch::pcIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("he"+porousRegion,1.))
+        dimensionedScalar(dimless, capillarityProperties_.lookupOrDefault<scalar>("he"+porousRegion,1.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {

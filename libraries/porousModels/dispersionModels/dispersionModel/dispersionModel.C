@@ -49,7 +49,7 @@ Foam::dispersionModel::dispersionModel
     name_(name),
     transportProperties_(transportProperties),
     mesh_(mesh),
-    Dm_("Dm",transportProperties),
+    Dm_(transportProperties.lookup("Dm")),
     Deff_
     (
         IOobject

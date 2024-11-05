@@ -69,7 +69,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.getOrDefault<scalar>("pc0"+porousRegion,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.lookupOrDefault<scalar>("pc0"+porousRegion,0))
     ),
     hd_
     (
@@ -82,7 +82,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("hd",dimLength,capillarityProperties_.getOrDefault<scalar>("hd"+porousRegion,0))
+        dimensionedScalar("hd",dimLength,capillarityProperties_.lookupOrDefault<scalar>("hd"+porousRegion,0))
     ),
     alpha_
     (
@@ -95,7 +95,7 @@ Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("alpha",dimless,capillarityProperties_.getOrDefault<scalar>("alpha"+porousRegion,0))
+        dimensionedScalar("alpha",dimless,capillarityProperties_.lookupOrDefault<scalar>("alpha"+porousRegion,0))
     )
 {
     if (gMin(alpha_) == 0) FatalErrorIn("Foam::capillarityModels::pcBrooksAndCorey::pcBrooksAndCorey") << "alpha = 0 in pcBrooksAndCorey" << abort(FatalError);

@@ -69,7 +69,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("m"+porousRegion,0))
+        dimensionedScalar(dimless, modelProperties_.lookupOrDefault<scalar>("m"+porousRegion,0))
     ),
     n_(1/(1-m_)),
     alpha_
@@ -83,7 +83,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("alpha"+porousRegion,GREAT))
+        dimensionedScalar(dimless, modelProperties_.lookupOrDefault<scalar>("alpha"+porousRegion,GREAT))
     ),
     tau_
     (
@@ -96,7 +96,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("tau"+porousRegion,0.5))
+        dimensionedScalar(dimless, modelProperties_.lookupOrDefault<scalar>("tau"+porousRegion,0.5))
     ),
     he_
     (
@@ -109,7 +109,7 @@ Foam::relativePermeabilityModels::krIppisch::krIppisch
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, modelProperties_.getOrDefault<scalar>("he"+porousRegion,0.))
+        dimensionedScalar(dimless, modelProperties_.lookupOrDefault<scalar>("he"+porousRegion,0.))
     ),
     Sc_(pow(1+pow(alpha_*he_,n_),-m_))
 {

@@ -69,7 +69,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("m"+porousRegion, 0))
+        dimensionedScalar(dimless, capillarityProperties_.lookupOrDefault<scalar>("m"+porousRegion, 0))
     ),
     n_(1/(1-m_)),
     alpha_ // necessary for Richards solver
@@ -83,7 +83,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless, capillarityProperties_.getOrDefault<scalar>("alpha"+porousRegion, 0))
+        dimensionedScalar(dimless, capillarityProperties_.lookupOrDefault<scalar>("alpha"+porousRegion, 0))
     ),
     pc0_
     (
@@ -96,7 +96,7 @@ Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.getOrDefault<scalar>("pc0"+porousRegion,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.lookupOrDefault<scalar>("pc0"+porousRegion,0))
     )
 {
     if (gMin(m_) == 0) FatalErrorIn("Foam::capillarityModels::pcVanGenuchten::pcVanGenuchten") << "m" << porousRegion << "=0 in pcVanGenuchten" << abort(FatalError);

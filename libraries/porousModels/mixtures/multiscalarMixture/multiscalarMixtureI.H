@@ -78,19 +78,19 @@ inline Foam::multiscalarMixture::multiscalarMixture
             )
         );
 
-        dictionary specieDict(dict.optionalSubDict(speciesNames[speciesi]));
-        specieDict = specieDict.optionalSubDict(porousRegion);
+        dictionary specieDictTmp(dict.optionalSubDict(speciesNames[speciesi]));
+        dictionary specieDict = specieDictTmp.optionalSubDict(porousRegion);
         dictionary porousTransport(specieDict.subDict("porousTransport"));
 
-        dimensionedScalar Kd(porousTransport.getOrDefault("Kd", dimensionedScalar(dimensionSet(-1,3,0,0,0), 0)));
+        dimensionedScalar Kd(porousTransport.lookupOrDefault("Kd", dimensionedScalar(dimensionSet(-1,3,0,0,0), 0)));
         Kd_[speciesi] = Kd.value();
-        dimensionedScalar rs(porousTransport.getOrDefault("rs", dimensionedScalar(dimensionSet(1,-3,0,0,0), 0)));
+        dimensionedScalar rs(porousTransport.lookupOrDefault("rs", dimensionedScalar(dimensionSet(1,-3,0,0,0), 0)));
         rs_[speciesi] = rs.value();
-        dimensionedScalar epsTotal(porousTransport.getOrDefault("epsTotal", dimensionedScalar(dimless, 1)));
+        dimensionedScalar epsTotal(porousTransport.lookupOrDefault("epsTotal", dimensionedScalar(dimless, 1)));
         epsTotal_[speciesi] = epsTotal.value();
 
         lambdas_[speciesi].dimensions().reset(dimensionSet(0,0,-1,0,0));
-        lambdas_[speciesi] = porousTransport.getOrDefault("lambda", dimensionedScalar(dimensionSet(0,0,-1,0,0), 0));
+        lambdas_[speciesi] = porousTransport.lookupOrDefault("lambda", dimensionedScalar(dimensionSet(0,0,-1,0,0), 0));
 
         if (porousRegion != "")
         {
@@ -140,7 +140,7 @@ inline Foam::multiscalarMixture::multiscalarMixture
         //- read source event if present
         if(specieDict.found("sourceEventFileTracer"))
         {
-            word sourceEventFileName = specieDict.getOrDefault<word>("sourceEventFileTracer","");
+            word sourceEventFileName = specieDict.lookupOrDefault<word>("sourceEventFileTracer","");
             sourceEvents_.set(speciesi, new sourceEventFile(sourceEventFileName));
 
             const word& dtFieldName = 
@@ -191,12 +191,29 @@ inline Foam::multiscalarMixture::multiscalarMixture
 
 // * * * * * * * * * * * * * Member Functions * * * * * * * * * * * * //
 
+inline const Foam::wordList& Foam::multiscalarMixture::species()
+{
+    return species_;
+}
+inline const Foam::word& Foam::multiscalarMixture::species(const label i)
+{
+    return species_[i];
+}
+
+inline  Foam::PtrList<Foam::volScalarField>& Foam::multiscalarMixture::Y()
+{
+    return Y_;
+}
+
+ inline Foam::volScalarField& Foam::multiscalarMixture::Y(const label i)
+ {
+    return Y_[i];
+ }
 
 inline const Foam::volScalarField& Foam::multiscalarMixture::R(const label speciesi) const
 {
     return R_[speciesi];
 }
-
 
 inline const Foam::dimensionedScalar& Foam::multiscalarMixture::lambda(const label speciesi) const
 {

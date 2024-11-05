@@ -99,7 +99,7 @@ Foam::capillarityModel::capillarityModel
           IOobject::NO_WRITE
       ),
       mesh,
-      dimensionedScalar(dimless,capillarityProperties_.getOrDefault<scalar>(Sname+porousRegion+"min", 0))
+      dimensionedScalar(dimless,capillarityProperties_.lookupOrDefault<scalar>(Sname+porousRegion+"min", 0))
     ),
     Smax_
     (
@@ -112,7 +112,7 @@ Foam::capillarityModel::capillarityModel
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimless,capillarityProperties_.getOrDefault<scalar>(Sname+porousRegion+"max", 1))
+        dimensionedScalar(dimless,capillarityProperties_.lookupOrDefault<scalar>(Sname+porousRegion+"max", 1))
     ),
     Se_
     (

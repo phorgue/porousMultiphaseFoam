@@ -69,7 +69,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.getOrDefault<scalar>("pc0"+porousRegion,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.lookupOrDefault<scalar>("pc0"+porousRegion,0))
     ),
     pcMax_
     (
@@ -82,7 +82,7 @@ Foam::capillarityModels::pcLinear::pcLinear
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.getOrDefault<scalar>("pcMax"+porousRegion,0))
+        dimensionedScalar(dimensionSet(1,-1,-2,0,0), capillarityProperties_.lookupOrDefault<scalar>("pcMax"+porousRegion,0))
     )
 {
     Info << "Linear parameters for capillarity pressure model" << nl << "{" << endl;

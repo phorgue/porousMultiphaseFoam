@@ -97,7 +97,7 @@ public:
         {
             FatalErrorIn("volScalarField correctAndSb(volScalarField h) const")
                 << "Not implemented in pcLinear.H " << abort(FatalError);
-            return NULL;
+            return tmp<volScalarField>();
         };
 
     //- Compute capillarity capacity from head pressure and return moisture (Richards' model)
@@ -113,7 +113,7 @@ public:
         {
             FatalErrorIn("tmp<volScalarField> S(const volScalarField& h)")
                 << "Not implemented in pcLinear.H " << abort(FatalError);
-            return 0;
+            return tmp<volScalarField>();
         }
 };
 
