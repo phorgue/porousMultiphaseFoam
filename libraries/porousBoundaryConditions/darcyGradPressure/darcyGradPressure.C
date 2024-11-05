@@ -54,10 +54,10 @@ Foam::darcyGradPressure::darcyGradPressure
 )
     :
     fixedGradientFvPatchScalarField(p, iF),
-    MfName_(dict.getOrDefault<word>("Mf", "Mf")),
-    phiName_(dict.getOrDefault<word>("phi", "phi")),
-    phiGfName_(dict.getOrDefault<word>("phiG","phiG")),
-    phiPcName_(dict.getOrDefault<word>("phiPc","phiPc"))
+    MfName_(dict.lookupOrDefault<word>("Mf", "Mf")),
+    phiName_(dict.lookupOrDefault<word>("phi", "phi")),
+    phiGfName_(dict.lookupOrDefault<word>("phiG","phiG")),
+    phiPcName_(dict.lookupOrDefault<word>("phiPc","phiPc"))
 {
     fvPatchField<scalar>::operator=(patchInternalField());
     gradient() = 0.0;
@@ -72,18 +72,6 @@ Foam::darcyGradPressure::darcyGradPressure
 )
     :
     fixedGradientFvPatchScalarField(ptf, p, iF, mapper),
-    MfName_(ptf.MfName_),
-    phiName_(ptf.phiName_),
-    phiGfName_(ptf.phiGfName_),
-    phiPcName_(ptf.phiPcName_)
-{}
-
-Foam::darcyGradPressure::darcyGradPressure
-(
-    const darcyGradPressure& ptf
-)
-    :
-    fixedGradientFvPatchScalarField(ptf),
     MfName_(ptf.MfName_),
     phiName_(ptf.phiName_),
     phiGfName_(ptf.phiGfName_),
@@ -125,7 +113,7 @@ void Foam::darcyGradPressure::updateCoeffs()
         patch().lookupPatchField<surfaceScalarField, scalar>(phiPcName_);
 
     //Extract the dictionary from database
-    scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").getOrDefault<scalar>("activateCapillarity",0.));
+    scalar  activateCapillarity(db().lookupObject<dictionary>("transportProperties").lookupOrDefault<scalar>("activateCapillarity",0.));
 
     gradient() = - (phi-phiGf-phiPc*activateCapillarity)/(Mf+ROOTVSMALL)/(patch().magSf());
 
@@ -135,11 +123,11 @@ void Foam::darcyGradPressure::updateCoeffs()
 void Foam::darcyGradPressure::write(Ostream& os) const
 {
     fixedGradientFvPatchScalarField::write(os);
-    os.writeEntryIfDifferent<word>("Mf", "Mf", MfName_);
-    os.writeEntryIfDifferent<word>("phi", "phi", phiName_);
-    os.writeEntryIfDifferent<word>("phiG", "phiG", phiGfName_);
-    os.writeEntryIfDifferent<word>("phiPc", "phiPc", phiPcName_);
-    this->writeEntry("value", os);
+    writeEntryIfDifferent<word>(os, "Mf", "Mf", MfName_);
+    writeEntryIfDifferent<word>(os, "phi", "phi", phiName_);
+    writeEntryIfDifferent<word>(os, "phiG", "phiG", phiGfName_);
+    writeEntryIfDifferent<word>(os, "phiPc", "phiPc", phiPcName_);
+    writeEntry(os, "value", *this);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

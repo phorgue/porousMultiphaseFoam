@@ -70,11 +70,11 @@ eventInfiltration
 )
     :
     fixedValueFvPatchVectorField(h, iF, dict, false),
-    fixedInfiltrationValue_(dict.getOrDefault<scalar>("constantValue",0.)),
+    fixedInfiltrationValue_(dict.lookupOrDefault<scalar>("constantValue",0.)),
     patchEventID_(-1),
     eventFile_()
 {
-    word eventFileName = dict.getOrDefault<word>("eventFile","");
+    word eventFileName = dict.lookupOrDefault<word>("eventFile","");
     Info << nl << "eventFileName " << eventFileName << endl;
 
     if (eventFileName != "")
@@ -100,7 +100,7 @@ eventInfiltration
         eventFile_.setTimeScheme(dtFieldName, iF.mesh());
 
         //- Reading patch event file and adding intermediate time step
-        scalar eventTimeStep = this->db().time().controlDict().getOrDefault<scalar>("eventTimeStep",0);
+        scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",0);
         if (eventTimeStep > 0)
         {
             eventFile_.addIntermediateTimeSteps(eventTimeStep);
@@ -137,20 +137,6 @@ eventInfiltration
     patchEventID_(-1),
     eventFile_()
 {}
-
-
-Foam::eventInfiltration::
-eventInfiltration
-(
-    const eventInfiltration& ptf
-)
-:
-    fixedValueFvPatchVectorField(ptf),
-    fixedInfiltrationValue_(ptf.fixedInfiltrationValue_),
-    patchEventID_(-1),
-    eventFile_()
-{}
-
 
 Foam::eventInfiltration::
 eventInfiltration
@@ -193,7 +179,7 @@ void Foam::eventInfiltration::updateCoeffs()
 void Foam::eventInfiltration::write(Ostream& os) const
 {
     fvPatchVectorField::write(os);
-    this->writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -112,13 +112,13 @@ void Foam::eventFile::updateIndex(const scalar& currentTime)
 void Foam::eventFile::updateValue(const TimeState& runTime)
 {
     storeOldValues();
-    if (runTime.timeOutputValue() < dates_[0])
+    if (runTime.value() < dates_[0])
     {
         currentValues_ = 0.0;
     }
     else if (iterator_ == -1)
     {
-        scalar dt2 = runTime.timeOutputValue() - dates_[0];
+        scalar dt2 = runTime.value() - dates_[0];
         forAll(currentValues_,id)
         {
             scalar value2 = datas_[0][id] + dt2 * (datas_[1][id]-datas_[0][id])/(dates_[1]-dates_[0]);
@@ -127,10 +127,10 @@ void Foam::eventFile::updateValue(const TimeState& runTime)
     }
     else if (iterator_ < ndates_-1)
     {
-        if (runTime.timeOutputValue() <= dates_[iterator_+1])
+        if (runTime.value() <= dates_[iterator_+1])
         {
             //- T and T+deltaT in the same event
-            scalar interpolateFactor = (runTime.timeOutputValue() - runTime.deltaTValue()/2. - dates_[iterator_]) / (dates_[iterator_+1] - dates_[iterator_]);
+            scalar interpolateFactor = (runTime.value() - runTime.deltaTValue()/2. - dates_[iterator_]) / (dates_[iterator_+1] - dates_[iterator_]);
             forAll(currentValues_,id)
             {
                 currentValues_[id] = (1.0 - interpolateFactor) * datas_[iterator_][id] + interpolateFactor * datas_[iterator_+1][id];
@@ -139,7 +139,7 @@ void Foam::eventFile::updateValue(const TimeState& runTime)
         else
         {
             //- T and T+deltaT in different events
-            scalar dt1 = dates_[iterator_+1] - (runTime.timeOutputValue()-runTime.deltaTValue());
+            scalar dt1 = dates_[iterator_+1] - (runTime.value()-runTime.deltaTValue());
             scalarList value1(currentValues_.size(),0.);
             forAll(currentValues_,id) value1[id] = datas_[iterator_+1][id] - (dt1/2) * (datas_[iterator_+1][id]-datas_[iterator_][id])/(dates_[iterator_+1]-dates_[iterator_]);
             scalar dt2 = 0;
@@ -152,7 +152,7 @@ void Foam::eventFile::updateValue(const TimeState& runTime)
 
                 if (iteratorNext == ndates_-1) FatalErrorIn("eventFile.C") << "event file : " << this->name() << " finished by two same dates, remove the last one" << abort(FatalError);
 
-                dt2 = runTime.timeOutputValue() - dates_[iteratorNext];
+                dt2 = runTime.value() - dates_[iteratorNext];
                 forAll(currentValues_,id) value2[id] = datas_[iteratorNext][id] + (dt2/2) * (datas_[iteratorNext+1][id]-datas_[iteratorNext][id])/(dates_[iteratorNext+1]-dates_[iteratorNext]);
             }
             forAll(currentValues_,id)
@@ -201,7 +201,7 @@ void Foam::eventFile::setTimeScheme(const word& dtFieldName, const fvMesh& mesh)
     ddtScheme_ = fv::ddtScheme<scalar>::New
     ( 
         mesh,
-        mesh.ddtScheme("ddt(" + dtFieldName + ')')
+        mesh.schemes().ddt("ddt(" + dtFieldName + ")")
     );
 
     mesh_ = &mesh;
@@ -210,7 +210,7 @@ void Foam::eventFile::setTimeScheme(const word& dtFieldName, const fvMesh& mesh)
 
 Foam::scalar Foam::eventFile::dtValue(const label& id) const
 {
-    if(!ddtScheme_)
+    if(ddtScheme_.empty())
     {
         FatalErrorIn("eventFile.C")
             << "You must call setTimeScheme(...) before being able to use dtValue(s)()"

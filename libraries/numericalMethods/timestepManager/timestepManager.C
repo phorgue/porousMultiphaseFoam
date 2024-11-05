@@ -47,7 +47,7 @@ Foam::timestepManager::timestepManager(
     vf_(vf),
     truncationError_(truncationError),
     dryCells_(dryCells),
-    timeScheme_(vf.mesh().ddtScheme("ddt("+vf.name()+")")),
+    timeScheme_(vf.mesh().schemes().ddt("ddt("+vf.name()+")")),
     d3dt3Operator_(vf.mesh(),runTime.deltaTValue()),
     d2dt2Operator_(vf.mesh()),
     dVmax_(0),

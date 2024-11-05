@@ -72,15 +72,15 @@ eventFlux
 )
     :
     fixedValueFvPatchScalarField(h, iF, dict, false),
-    eventFluxValue_(dict.getOrDefault<scalar>("constantValue",0.)),
-    phiName_(dict.getOrDefault<word>("phiName","phi")),
+    eventFluxValue_(dict.lookupOrDefault<scalar>("constantValue",0.)),
+    phiName_(dict.lookupOrDefault<word>("phiName","phi")),
     isBackwardScheme_(false),
     patchEventID_(-1),
     eventFile_()
 {
-    word eventFileName = dict.getOrDefault<word>("eventFile","");
+    word eventFileName = dict.lookupOrDefault<word>("eventFile","");
     //- Read if backward time scheme is used
-    if (word(internalField().mesh().ddtScheme("source")) == "backward")
+    if (internalField().mesh().schemes().ddt("source") == "backward")
     {
         isBackwardScheme_ = true;
     }
@@ -108,7 +108,7 @@ eventFlux
         eventFile_.setTimeScheme(dtFieldName, iF.mesh());
 
         //- Reading patch event file and adding intermediate time step
-        scalar eventTimeStep = this->db().time().controlDict().getOrDefault<scalar>("eventTimeStep",0);
+        scalar eventTimeStep = this->db().time().controlDict().lookupOrDefault<scalar>("eventTimeStep",0);
         if (eventTimeStep > 0)
         {
             eventFile_.addIntermediateTimeSteps(eventTimeStep);
@@ -130,7 +130,7 @@ eventFlux
     }
 
     //- Read if backward time scheme is used
-    if (word(internalField().mesh().ddtScheme("source")) == "backward")
+    if (word(internalField().mesh().schemes().ddt("source")) == "backward")
     {
         isBackwardScheme_ = true;
     }
@@ -148,21 +148,6 @@ eventFlux
 )
 :
     fixedValueFvPatchScalarField(ptf, h, iF, mapper),
-    eventFluxValue_(ptf.eventFluxValue_),
-    phiName_(ptf.phiName_),
-    isBackwardScheme_(false),
-    patchEventID_(-1),
-    eventFile_()
-{}
-
-
-Foam::eventFlux::
-eventFlux
-(
-    const eventFlux& ptf
-)
-:
-    fixedValueFvPatchScalarField(ptf),
     eventFluxValue_(ptf.eventFluxValue_),
     phiName_(ptf.phiName_),
     isBackwardScheme_(false),
@@ -222,7 +207,7 @@ void Foam::eventFlux::updateCoeffs()
 void Foam::eventFlux::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
-    this->writeEntry("value", os);
+    writeEntry(os, "value", *this);
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

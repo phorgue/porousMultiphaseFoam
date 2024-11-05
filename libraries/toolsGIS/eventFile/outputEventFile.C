@@ -131,12 +131,12 @@ Foam::outputEventFile::~outputEventFile()
 
 Foam::scalar Foam::outputEventFile::computeInterpolationFactor(const Time& runTime)
 {
-    scalar ifactor = (runTime.timeOutputValue()-currentEventEndTime())/runTime.deltaTValue();
+    scalar ifactor = (runTime.value()-currentEventEndTime())/runTime.deltaTValue();
     if (ifactor < 0 || ifactor > 1)
     {
         FatalErrorIn("outputEventFile.C")
             << " Unconsistent value for time interpolation = " << ifactor
-            << " current time is " << runTime.timeOutputValue()
+            << " current time is " << runTime.value()
             << " and event end time is " << currentEventEndTime() << abort(FatalError);
     }
     return ifactor;
@@ -167,7 +167,7 @@ Foam::volScalarField Foam::outputEventFile::timeInterpolate
     scalar interpolateFactor = computeInterpolationFactor(runTime);
 
     //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
+    scalar timeOutputBackup = runTime.value();
     runTime.setTime(currentEventEndTime(), runTime.timeIndex());
 
     volScalarField ifield
@@ -200,7 +200,7 @@ Foam::volVectorField Foam::outputEventFile::timeInterpolate
     scalar interpolateFactor = computeInterpolationFactor(runTime);
 
     //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
+    scalar timeOutputBackup = runTime.value();
     runTime.setTime(currentEventEndTime(), runTime.timeIndex());
 
     volVectorField ifield
@@ -233,7 +233,7 @@ Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
     scalar interpolateFactor = computeInterpolationFactor(runTime);
 
     //- update time
-    scalar timeOutputBackup = runTime.timeOutputValue();
+    scalar timeOutputBackup = runTime.value();
     runTime.setTime(currentEventEndTime(), runTime.timeIndex());
 
     surfaceScalarField ifield
@@ -259,8 +259,8 @@ Foam::surfaceScalarField Foam::outputEventFile::timeInterpolate
 void Foam::outputEventFile::checkControlDict(const Time& runTime) const
 {
     const dictionary& cDict = runTime.controlDict();
-    scalar endTimeValue(cDict.get<scalar>("endTime"));
-    scalar writeIntervalValue(cDict.getOrDefault<scalar>("writeInterval",GREAT));
+    scalar endTimeValue(cDict.lookup<scalar>("endTime"));
+    scalar writeIntervalValue(cDict.lookupOrDefault<scalar>("writeInterval",GREAT));
     if (cDict.found("writeFrequency"))
     {
         FatalErrorIn("outputEventFile.C") << "Check controlDict: writeFrequency cannot be used when outputEventFile is specified"<< exit(FatalError);
