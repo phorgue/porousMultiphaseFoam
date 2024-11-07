@@ -72,12 +72,20 @@ Foam::fluidPhase::fluidPhase
                     IOobject::READ_IF_PRESENT,
                     IOobject::NO_WRITE
                 ),
-                Foam::linearInterpolate(U_) & mesh.Sf(),
-                phiTypes
+                mesh,
+                dimensioned<scalar>(dimVol/dimTime, 0)
             )
         );
-    if (phiPtr_->headerOk()) Info << nl << "Reading field phi" << phaseName << endl;
-    else Info<< nl << "Computing field phi" << phaseName << " from field U" << phaseName << endl;
+
+    if (phiPtr_->headerOk())
+    {
+        Info << nl << "Reading field phi" << phaseName << endl;
+    }
+    else
+    {
+        phiPtr_.ref() = Foam::linearInterpolate(U_) & mesh.Sf();
+        Info<< nl << "Computing field phi" << phaseName << " from field U" << phaseName << endl;
+    }
 }
 
 
