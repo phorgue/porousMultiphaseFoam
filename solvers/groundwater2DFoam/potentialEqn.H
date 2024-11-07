@@ -34,13 +34,17 @@
                 hwater[celli] = hwaterMin.value();
             }
         }
-        cumulativeWaterAdded += waterAdded;
-        Info << "Number of dry cells = " << dryCellIDList.size();
+        Info << "Number of dry cells = " << dryCellIDList.size() << ", water added = " << waterAdded << " m3";
         if (steady)
         {
-            Info << ", water added = " << waterAdded << " m3, cumulative water added = " << cumulativeWaterAdded << " m3 (" << cumulativeWaterAdded*zScale/gSum(mesh.V()) << " m)";
+            Info << endl;
         }
-        Info << endl;
+        else
+        {
+            cumulativeWaterAdded += waterAdded;
+            Info << ", cumulative water added = " << cumulativeWaterAdded << " m3 ("
+                 << cumulativeWaterAdded*zScale/gSum(mesh.V()) << " m)" << endl;
+        }
     }
 
     //- compute derivatives
@@ -80,7 +84,7 @@
         {
             label currentCell = seepageIDList[pointi];
             scalar area = mesh.V()[currentCell]/zScale;
-            seepageTerm[currentCell] -= cellFlux.internalField()[currentCell];
+            seepageTerm[currentCell] = - cellFlux.internalField()[currentCell];
             flowOutSeepage -= cellFlux.internalField()[currentCell]*area;
         }
     }
