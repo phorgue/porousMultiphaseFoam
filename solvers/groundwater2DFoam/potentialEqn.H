@@ -61,6 +61,10 @@
         }
     }
     U = fvc::reconstruct(phi);
+    forAll(dryCellIDList, celli)
+    {
+        U[dryCellIDList[celli]] = vector(0,0,0);
+    }
     U.correctBoundaryConditions();
     cellFlux = fvc::div(phi*fvc::interpolate(hwater)) + infiltration + zScale * waterSourceTerm;
 

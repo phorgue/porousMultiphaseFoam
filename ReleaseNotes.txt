@@ -1,3 +1,22 @@
+
+### Solvers
+
+- porousScalarTransportFoam
+
+  - dynamicRefineFvMesh can be now used by specifying options in constant/dynamicMeshDict
+
+### Libraries
+
+- toolsGIS/outputEventFile
+
+  - now handles dynamicMesh when output-times are specified
+
+### Bug fixes
+
+- groundwater2DFoam: fix seepageTerm computation
+- porousScalarTransport2DFoam: fix phi intialization (when 0/phi is supplied)
+- outputField: no more freeze with OFstream and parallel runs
+
 ************************
 *** PMF v2406
 *** Starting class-based dev for solvers/libraries + new dispersion model
