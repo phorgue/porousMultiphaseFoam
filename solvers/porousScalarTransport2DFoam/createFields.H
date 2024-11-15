@@ -93,17 +93,17 @@ else
 
     Info<< nl << "Reading field z0" << endl;
     volScalarField z0
+    (
+        IOobject
         (
-            IOobject
-            (
-                "z0",
-                runTime.constant(),
-                mesh,
-                IOobject::MUST_READ,
-                IOobject::AUTO_WRITE
-            ),
-            mesh
-        );
+            "z0",
+            runTime.constant(),
+            mesh,
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh
+    );
     Info << "min(z0) = " << gMin(z0.internalField()) << " ; max(z0) = " << gMax(z0.internalField()) << endl;
 
     hwater = potential - z0;
@@ -121,11 +121,60 @@ if (gMin(hwater.internalField()) < 0)
 ////////////////////////// VELOCITY - FLUXES ////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-Info<< "Creating fluidPhase" << endl;
+Info << "Creating fluidPhase" << endl;
 word phaseName(transportProperties.optionalSubDict("porousTransport").lookupOrDefault<word>("phaseName",""));
 autoPtr<fluidPhase> phase = fluidPhase::New(mesh, transportProperties, phaseName);
 volVectorField& U = phase->U();
 surfaceScalarField& phi = phase->phi();
+
+if (!exists(phi.objectPath()))
+{
+    Info << nl << "phi is not present, trying to recompute using potential and permeability...";
+    if (exists(runTime.timeName()/"potential") && exists(runTime.constant()/"K"))
+    {
+        volScalarField potential
+        (
+            IOobject
+            (
+                "potential",
+                runTime.timeName(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::AUTO_WRITE
+            ),
+            mesh
+            );
+        volScalarField K
+        (
+            IOobject
+                (
+                    "K",
+                    runTime.constant(),
+                    mesh,
+                    IOobject::MUST_READ,
+                    IOobject::AUTO_WRITE
+                ),
+            mesh
+        );
+        surfaceScalarField Kf = fvc::interpolate(K);
+        dimensionedScalar g("g",dimLength/(dimTime*dimTime),9.81);
+        const dimensionedScalar rho("rho",transportProperties);
+        const dimensionedScalar mu("mu",transportProperties);
+        phi = (-Kf*(g*rho/mu) * fvc::snGrad(potential)) * mesh.magSf();
+        phi.write();
+        Info << "OK" << endl;
+    }
+    else
+    {
+        phi = Foam::linearInterpolate(U) & mesh.Sf();
+        Info << nl << "* WARNING * "
+            << "flux field phi is computed using linear interpolation of U and should not be conservative"
+            << endl;
+        phi.write();
+    }
+
+}
+
 surfaceScalarField phihwater("phihwater", phi * fvc::interpolate(hwater));
 
 ///////////////////////////////////////////////////////////////////
