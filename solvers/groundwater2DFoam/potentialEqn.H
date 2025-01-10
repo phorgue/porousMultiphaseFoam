@@ -84,6 +84,7 @@
     flowOutSeepage = 0;
     if (seepageActive)
     {
+        seepageTerm.primitiveFieldRef() = 0;
         forAll(seepageIDList,pointi)
         {
             label currentCell = seepageIDList[pointi];
