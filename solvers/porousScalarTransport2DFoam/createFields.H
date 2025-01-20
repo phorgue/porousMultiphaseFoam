@@ -129,9 +129,13 @@ surfaceScalarField& phi = phase->phi();
 
 if (!exists(phi.objectPath()))
 {
-    Info << nl << "phi is not present, trying to recompute using potential and permeability...";
-    if (exists(runTime.timeName()/"potential") && exists(runTime.constant()/"K"))
+    bool phiReconstruction = transportProperties.getOrDefault<bool>("phiReconstruction", true);
+    Info << phiReconstruction << endl;
+    Info << nl << "*WARNING* phi is not present: ";
+    if (exists(runTime.timeName()/"potential") && exists(runTime.constant()/"K") &&
+        transportProperties.found("rho") && transportProperties.found("mu") && phiReconstruction)
     {
+        Info << "reconstructed using potential/permeability and fluid properties" << endl;
         volScalarField potential
         (
             IOobject
@@ -162,14 +166,11 @@ if (!exists(phi.objectPath()))
         const dimensionedScalar mu("mu",transportProperties);
         phi = (-Kf*(g*rho/mu) * fvc::snGrad(potential)) * mesh.magSf();
         phi.write();
-        Info << "OK" << endl;
     }
     else
     {
         phi = Foam::linearInterpolate(U) & mesh.Sf();
-        Info << nl << "* WARNING * "
-            << "flux field phi is computed using linear interpolation of U and should not be conservative"
-            << endl;
+        Info << "computed using linear interpolation from U (should not be conservative)" << endl;
         phi.write();
     }
 
