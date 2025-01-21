@@ -203,7 +203,6 @@ noConvergence :
         }
         Info << endl;
 
-        #include "waterMassBalance.H"
         if (steady)
         {
             runTime.write();
