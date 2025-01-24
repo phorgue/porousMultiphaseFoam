@@ -158,6 +158,7 @@ Foam::flowModels::RichardsEqn::RichardsEqn
             distanceToDEM_ = mag(mesh.boundary()[patchDEMID_].delta()().component(2));
         }
     }
+    updateProperties();
 }
 // * * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * //
 
