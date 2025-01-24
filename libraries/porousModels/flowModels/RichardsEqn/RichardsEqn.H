@@ -69,16 +69,21 @@ class RichardsEqn
     //- References
     //--- mesh
     const fvMesh& mesh_;
-    //--- permeability field
-    const volScalarField& K_;
-    //--- velocity field
-    volVectorField& U_;
     //--- porous medium models
     twophasePorousMediumModel& pmModel_;
     relativePermeabilityModel& krModel_;
     capillarityModel& pcModel_;
+    //--- water source term
+    const volScalarField& sourceTerm_;
+    //--- permeability field
+    const volScalarField& K_;
+    //--- velocity field
+    volVectorField& U_;
 
-    //- Internal scalar
+    //- Internal boolean
+    bool massConservative_;
+
+    //- Internal scalars
     const dimensionedScalar rho_, mu_, Ss_;
 
     //- Internal surface fields
@@ -103,6 +108,11 @@ public:
     //- Destructor
     virtual ~RichardsEqn()
         {}
+
+    //- Access functions
+    const volScalarField& h() {return h_;}
+    const volScalarField& theta() {return theta_;}
+    const surfaceScalarField& phi() {return phi_;}
 
     // Member Functions
     void updateProperties();
