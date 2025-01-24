@@ -89,6 +89,12 @@ class RichardsEqn
     //- Internal surface fields
     surfaceScalarField phi_, Kf_, krf_, Lf_, Mf_, phiG_, phiPc_;
 
+    //- Internal variables for seepage term
+    const word patchDEM_;
+    const label patchDEMID_;
+    labelList topCellID_, seepageIDList_;
+    scalarList distanceToDEM_, seepageValueList_;
+
 public:
 
     //- Runtime type information
@@ -113,9 +119,11 @@ public:
     const volScalarField& h() {return h_;}
     const volScalarField& theta() {return theta_;}
     const surfaceScalarField& phi() {return phi_;}
+    const labelList& seepageIDList() {return seepageIDList_;}
 
     // Member Functions
     void updateProperties();
+    void updateSeepage();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

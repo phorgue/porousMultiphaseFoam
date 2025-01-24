@@ -108,7 +108,13 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     Lf_("Lf",rho_*Kf_*krf_/mu_),
     Mf_("Mf",mag(g_)*Lf_),
     phiG_("phiG",(Lf_ * g_) & mesh.Sf()),
-    phiPc_("phiPc",0*phiG_)
+    phiPc_("phiPc",0*phiG_),
+    patchDEM_(transportProperties.lookupOrDefault<word>("patchDEM","none")),
+    patchDEMID_(mesh.boundaryMesh().findPatchID(patchDEM_)),
+    topCellID_(0),
+    seepageIDList_(0),
+    distanceToDEM_(0),
+    seepageValueList_(0)
 {
     //- initialization
     fluidPhase.phi().writeOpt()=IOobject::NO_WRITE;
@@ -127,6 +133,27 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     Info << nl << "Computing saturation field theta" << endl;
     theta_ = pcModel_.correctAndSb(h_);
     theta_.write();
+
+    //- Check Seepage condition
+    if (patchDEM_ == "none")
+    {
+        Info << nl << "no DEM patch (no seepage condition)" << endl;
+    }
+    else
+    {
+        if (patchDEMID_ == -1)
+        {
+            FatalErrorIn("RichardsEqn.C") << "patch for seepage : " << patchDEM_ << " not found" << abort(FatalError);
+        }
+        else
+        {
+            Info << nl << "DEM patch used for seepage = " << patchDEM_ << " (id=" << patchDEMID_ << ")" << endl;
+            topCellID_.resize(mesh.boundaryMesh()[patchDEMID_].size());
+            topCellID_ = mesh.boundaryMesh()[patchDEMID_].faceCells();
+            distanceToDEM_.resize(mesh.boundaryMesh()[patchDEMID_].size());
+            distanceToDEM_ = mag(mesh.boundary()[patchDEMID_].delta()().component(2));
+        }
+    }
 }
 // * * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * //
 
@@ -149,6 +176,35 @@ void Foam::flowModels::RichardsEqn::updateProperties()
         }
     }
     h_.correctBoundaryConditions();
+}
+
+
+void Foam::flowModels::RichardsEqn::updateSeepage()
+{
+    if (patchDEMID_ > -1)
+    {
+        seepageIDList_.clear();
+        seepageValueList_.clear();
+        volScalarField cellFlux(fvc::div(phi_));
+        forAll(topCellID_,celli)
+        {
+            label currentCell = topCellID_[celli];
+
+            if(h_[currentCell] >= distanceToDEM_[celli])
+            {
+                if (cellFlux[currentCell] < 0)
+                {
+                    seepageIDList_.append(currentCell);
+                    seepageValueList_.append(distanceToDEM_[celli]);
+                }
+            }
+        }
+
+        // Display number of seepage cells
+        label nSeepageCells = seepageIDList_.size();
+        reduce(nSeepageCells, sumOp<label>());
+        Info << "Number of seepage cells = " << nSeepageCells << endl;
+    }
 }
 
 // ************************************************************************* //
