@@ -41,8 +41,6 @@ SourceFiles
 
 #include "fvMatrix.H"
 #include "twophasePorousMediumModel.H"
-#include "relativePermeabilityModel.H"
-#include "capillarityModel.H"
 #include "gravityMeshObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -81,7 +79,8 @@ class RichardsEqn
     volVectorField& U_;
 
     //- Internal boolean
-    bool massConservative_;
+    const bool massConservative_;
+    const bool steady_;
 
     //- Internal scalars
     const dimensionedScalar rho_, mu_, Ss_;
@@ -108,7 +107,8 @@ public:
         const fvMesh& mesh,
         const IOdictionary& transportProperties,
         twophasePorousMediumModel& pmModel,
-        incompressiblePhase& fluidPhase
+        incompressiblePhase& fluidPhase,
+        const bool steady
     );
 
     //- Destructor
@@ -124,6 +124,8 @@ public:
     // Member Functions
     void updateProperties();
     void updateSeepage();
+    fvScalarMatrix buildEqn();
+    const Tuple2<scalar, scalar> solvePicard(const scalar tolerance);
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -28,6 +28,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "RichardsEqn.H"
+#include "fvm.H"
 #include "fvc.H"
 #include "fixedValueFvPatchField.H"
 
@@ -38,7 +39,8 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
     twophasePorousMediumModel& pmModel,
-    incompressiblePhase& fluidPhase
+    incompressiblePhase& fluidPhase,
+    const bool steady
 )
     :
     g_(meshObjects::gravity::New(mesh.time())),
@@ -88,6 +90,7 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     K_(pmModel_.K()),
     U_(fluidPhase.U()),
     massConservative_(transportProperties.lookupOrDefault<bool>("massConservative",true)),
+    steady_(steady),
     rho_(fluidPhase.rho()),
     mu_(fluidPhase.mu()),
     Ss_(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.))),
@@ -178,7 +181,6 @@ void Foam::flowModels::RichardsEqn::updateProperties()
     h_.correctBoundaryConditions();
 }
 
-
 void Foam::flowModels::RichardsEqn::updateSeepage()
 {
     if (patchDEMID_ > -1)
@@ -207,4 +209,53 @@ void Foam::flowModels::RichardsEqn::updateSeepage()
     }
 }
 
+Foam::fvScalarMatrix Foam::flowModels::RichardsEqn::buildEqn()
+{
+    pmModel_.correct(h_, steady_, massConservative_);
+
+    h_.storePrevIter();
+
+    fvScalarMatrix hEqn
+        (
+            //- transport terms
+            - fvm::laplacian(Mf_,h_)
+            + fvc::div(phiG_)
+            ==
+            - pmModel_.exchangeTerm()
+            - sourceTerm_
+        );
+
+    if (!steady_)
+    {
+        //- accumulation terms
+        hEqn += (Ss_*pcModel_.Se() + pcModel_.Ch()) * fvm::ddt(h_);
+
+        if (massConservative_)
+        {
+            //-mass conservative terms
+            hEqn += (pcModel_.Ch()*(h_.oldTime()-h_.prevIter())
+            + (theta_ - theta_.oldTime())) / h_.mesh().time().deltaT();
+        }
+    }
+
+    if (seepageIDList_.size() > 0)
+        hEqn.setValues(seepageIDList_,seepageValueList_);
+
+    return hEqn;
+}
+
+const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::solvePicard
+(
+    const scalar tolerance
+)
+{
+    Tuple2<scalar, scalar> res(0, 0);
+    fvScalarMatrix hEqnPicard = buildEqn();
+    res.first() = hEqnPicard.solve().initialResidual();
+    if (res.first() > tolerance) h_.relax();
+    scalarField deltah(h_-h_.prevIter());
+    forAll(seepageIDList_,celli) deltah[seepageIDList_[celli]] = 0;
+    res.second() = gMax(mag(deltah)());
+    return res;
+}
 // ************************************************************************* //
