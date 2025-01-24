@@ -41,6 +41,7 @@ SourceFiles
 
 #include "fvMatrix.H"
 #include "twophasePorousMediumModel.H"
+#include "multiDtManager.H"
 #include "gravityMeshObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -124,8 +125,10 @@ public:
     // Member Functions
     void updateProperties();
     void updateSeepage();
+    void noConvergence(multiDtManager& MDTM, Time& runTime, label algoID);
     fvScalarMatrix buildEqn();
     const Tuple2<scalar, scalar> solvePicard(const scalar tolerance);
+
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

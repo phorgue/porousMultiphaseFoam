@@ -209,6 +209,31 @@ void Foam::flowModels::RichardsEqn::updateSeepage()
     }
 }
 
+void Foam::flowModels::RichardsEqn::noConvergence
+(
+    multiDtManager& MDTM,
+    Time& runTime,
+    label algoID
+)
+{
+    //- Set h equal to old-time value
+    h_ = h_.oldTime();
+    pmModel_.rewindTime();
+
+    //- Rewind time
+    runTime.setTime(runTime.timeOutputValue()-runTime.deltaTValue(),runTime.timeIndex());
+
+    //- Reset iterator to indicate non-convergence and update timestep
+    MDTM.dtManagerI(algoID).reset(MDTM.dtManagerI(algoID).maxIter()+1);
+    MDTM.updateDt();
+
+    //- Update time output value
+    runTime.setTime(runTime.timeOutputValue()+runTime.deltaTValue(),runTime.timeIndex());
+
+    //- Update properties
+    updateProperties();
+}
+
 Foam::fvScalarMatrix Foam::flowModels::RichardsEqn::buildEqn()
 {
     pmModel_.correct(h_, steady_, massConservative_);
