@@ -271,6 +271,49 @@ Foam::fvScalarMatrix Foam::flowModels::RichardsEqn::buildEqn()
     return hEqn;
 }
 
+Foam::scalar Foam::flowModels::RichardsEqn::initResidual
+(
+    const fvScalarMatrix& hEqn
+) {
+    scalarField Ax(mesh_.nCells());
+    scalarField Axbar(mesh_.nCells());
+    scalar xbar(gAverage(h_));
+
+    const scalar *const __restrict__ diagPtr = hEqn.diag().begin();
+    const label *const __restrict__ uPtr = hEqn.lduAddr().upperAddr().begin();
+    const label *const __restrict__ lPtr = hEqn.lduAddr().lowerAddr().begin();
+    const scalar *const __restrict__ upperPtr = hEqn.upper().begin();
+    const label nCells = hEqn.diag().size();
+
+    for (label cell = 0; cell < nCells; cell++) {
+        Ax[cell] = diagPtr[cell] * h_[cell];
+        Axbar[cell] = diagPtr[cell] * xbar;
+    }
+    const label nFaces = hEqn.upper().size();
+    for (label face = 0; face < nFaces; face++) {
+        Ax[uPtr[face]] += upperPtr[face] * h_[lPtr[face]];
+        Ax[lPtr[face]] += upperPtr[face] * h_[uPtr[face]];
+        Axbar[uPtr[face]] += upperPtr[face] * xbar;
+        Axbar[lPtr[face]] += upperPtr[face] * xbar;
+    }
+
+    forAll(hEqn.internalCoeffs(), patchi)
+    {
+        forAll(hEqn.internalCoeffs()[patchi], facei)
+        {
+            label id_cell = h_.mesh().boundary()[patchi].faceCells()[facei];
+            Ax[id_cell] += hEqn.internalCoeffs()[patchi][facei] * h_[id_cell];
+            Ax[id_cell] -= hEqn.boundaryCoeffs()[patchi][facei];
+            Axbar[id_cell] += hEqn.internalCoeffs()[patchi][facei] * xbar;
+            Axbar[id_cell] -= hEqn.boundaryCoeffs()[patchi][facei];
+        }
+    }
+
+    scalar normFactor = gSumMag(Ax - Axbar) + gSumMag(hEqn.source() - Axbar);
+    return gSumMag(hEqn.source() - Ax) / normFactor;
+}
+
+
 const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::solvePicard
 (
     const scalar tolerance
@@ -286,13 +329,85 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     return res;
 }
 
+const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::solveNewton
+(
+    const scalar tolerance
+)
+{
+    //- Compute initial residual
+    Tuple2<scalar, scalar> res(0, 0);
+    fvScalarMatrix hEqnPicard = buildEqn();
+    res.first() = initResidual(hEqnPicard);
+    Info << "Initial residual = " << res.first() << endl;
+
+    //- Compute ResiduN
+    volScalarField ResiduN(
+        - fvc::laplacian(Mf_,h_) + fvc::div(phiG_) + pmModel_.exchangeTerm() + sourceTerm_);
+    if (!steady_)
+    {
+        ResiduN += Ss_ * pcModel_.Se() * fvc::ddt(h_);
+        if (massConservative_) ResiduN += fvc::ddt(theta_);
+        else ResiduN += pcModel_.Ch() * fvc::ddt(h_);
+    }
+
+    //- Construct and solve Newton system
+    const volScalarField& dkrdS = krModel_.dkrbdS();
+    volScalarField dLdS( pcModel_.Ch() * rho_ * K_ * dkrdS / mu_ );
+    volScalarField dMdS( mag(g_) * dLdS );
+
+    fvScalarMatrix deltahEqn_hGrad(dMdS  * fvm::div(fvc::snGrad(h_) * mesh_.magSf(), deltah_));
+    fvScalarMatrix deltahEqn_grav( dLdS * fvm::div(-g_ & mesh_.Sf(), deltah_));
+
+    deltahEqn_hGrad.diag() *= -1;
+    deltahEqn_grav.diag() *= -1;
+
+    fvScalarMatrix deltahEqn
+        (
+            fvm::Sp(
+                (
+                    (Ss_ * pcModel_.Ch()) * (h_ - h_.oldTime())
+                    + Ss_ * pcModel_.Se()
+                    + pcModel_.Ch()
+                ) / mesh_.time().deltaT()
+                , deltah_)
+            - fvm::laplacian(Mf_, deltah_)
+            + deltahEqn_hGrad
+            + deltahEqn_grav
+            ==
+            - ResiduN
+        );
+
+    scalarField forInversion = deltahEqn.upper();
+    deltahEqn.upper() = deltahEqn.lower();
+    deltahEqn.lower() = forInversion;
+
+    forAll(mesh_.boundary(),patchi)
+    {
+        if (deltah_.boundaryField().types()[patchi] == "darcyGradPressure")
+        {
+            deltahEqn.internalCoeffs()[patchi] = 0;
+            deltahEqn.boundaryCoeffs()[patchi] = 0;
+        }
+    }
+
+    deltahEqn.solve();
+    h_ = h_.prevIter() + deltah_;
+    h_.correctBoundaryConditions();
+
+    scalarField deltah(h_-h_.prevIter());
+    forAll(seepageIDList_,celli) deltah[seepageIDList_[celli]] = 0;
+    res.second() = gMax(mag(deltah)());
+    return res;
+}
+
+
 void Foam::flowModels::RichardsEqn::info()
 {
     scalarField dtheta_tmp = mag(theta_.internalField()-theta_.oldTime().internalField());
     scalar dtheta = gMax(dtheta_tmp);
 
     //- water mass balance terminal display
-    Info << "Saturation theta: min(theta) = " << gMin(theta_.internalField())
+    Info << nl << "Saturation theta: min(theta) = " << gMin(theta_.internalField())
                           << " max(theta) = " << gMax(theta_.internalField()) << " dthetamax = " << dtheta << endl;
     Info << "Head pressure h: min(h) = " << gMin(h_.internalField())
                          << " max(h) = " << gMax(h_.internalField()) << endl;
