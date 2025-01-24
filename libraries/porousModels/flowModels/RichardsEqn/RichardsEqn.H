@@ -96,10 +96,6 @@ class RichardsEqn
     scalarList distanceToDEM_, seepageValueList_;
 
 public:
-
-    //- Runtime type information
-    TypeName("BrooksAndCorey");
-
     // Constructors
 
     //- Construct from components
@@ -128,7 +124,7 @@ public:
     void noConvergence(multiDtManager& MDTM, Time& runTime, label algoID);
     fvScalarMatrix buildEqn();
     const Tuple2<scalar, scalar> solvePicard(const scalar tolerance);
-
+    void info();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

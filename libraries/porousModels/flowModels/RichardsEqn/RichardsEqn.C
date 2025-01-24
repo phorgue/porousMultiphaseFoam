@@ -30,6 +30,7 @@ License
 #include "RichardsEqn.H"
 #include "fvm.H"
 #include "fvc.H"
+#include "linear.H"
 #include "fixedValueFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -104,7 +105,7 @@ Foam::flowModels::RichardsEqn::RichardsEqn
             IOobject::NO_READ,
             IOobject::AUTO_WRITE
         ),
-        fvc::interpolate(U_) & mesh.Sf()
+        linearInterpolate(U_) & mesh.Sf()
     ),
     Kf_(fvc::interpolate(K_,"K")),
     krf_("krthetaf",fvc::interpolate(krModel_.krb(),"krtheta")),
@@ -283,4 +284,26 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     res.second() = gMax(mag(deltah)());
     return res;
 }
+
+void Foam::flowModels::RichardsEqn::info()
+{
+    scalarField dtheta_tmp = mag(theta_.internalField()-theta_.oldTime().internalField());
+    scalar dtheta = gMax(dtheta_tmp);
+
+    //- water mass balance terminal display
+    Info << "Saturation theta: min(theta) = " << gMin(theta_.internalField())
+                          << " max(theta) = " << gMax(theta_.internalField()) << " dthetamax = " << dtheta << endl;
+    Info << "Head pressure h: min(h) = " << gMin(h_.internalField())
+                         << " max(h) = " << gMax(h_.internalField()) << endl;
+    Info << "Water mass balance (m3/s) : sourceTerm = " << fvc::domainIntegrate(sourceTerm_).value() << " ; ";
+    forAll(phi_.boundaryField(),patchi)
+    {
+        if (mesh_.boundaryMesh()[patchi].type() == "patch")
+        {
+            Info << phi_.boundaryField()[patchi].patch().name() << " = " <<  gSum(phi_.boundaryField()[patchi]) << " ; ";
+        }
+    }
+    Info << endl;
+}
+
 // ************************************************************************* //
