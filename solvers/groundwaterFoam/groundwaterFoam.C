@@ -44,10 +44,9 @@ Description
 #include "fixedValueFvPatchField.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
-#include "patchEventFile.H"
-#include "eventInfiltration.H"
 #include "multiDtManager.H"
 #include "RichardsEqn.H"
+#include "eventInfiltration.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -79,6 +78,10 @@ int main(int argc, char *argv[])
                 IOobject::NO_WRITE
             )
     );
+
+    List<patchEventFile*> patchEventList;
+    eventInfiltration::setEventFileRegistry(&patchEventList, "h");
+
     //- fluid phase model
     autoPtr<incompressiblePhase> fluidPhase = incompressiblePhase::New(mesh, transportProperties, "theta");
     //- two-phase flow model
@@ -95,8 +98,7 @@ int main(int argc, char *argv[])
     const labelList* fixedPotentialIDListPtr  = &hEqn.seepageIDList();
     List<sourceEventFile*> sourceEventList;
     sourceEventList.append(sourceEvent.get());
-    List<patchEventFile*> patchEventList;
-    eventInfiltration::setEventFileRegistry(&patchEventList, hEqn.h().name());
+
     multiDtManager MDTM(runTime, sourceEventList, patchEventList);
     MDTM.addIterativeAlgorithm(hEqn.theta(), "Picard", steady);
     MDTM.addIterativeAlgorithm(hEqn.theta(), "Newton", steady);
