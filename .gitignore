@@ -10,3 +10,4 @@ lnInclude/
 darwin*
 *.bak
 docs/build
+*.csv
