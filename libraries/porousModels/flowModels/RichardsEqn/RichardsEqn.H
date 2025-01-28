@@ -114,8 +114,8 @@ public:
 
     //- Access functions
     const volScalarField& h() {return h_;}
-    const volScalarField& theta() {return theta_;}
-    const surfaceScalarField& phi() {return phi_;}
+    volScalarField& theta() {return theta_;}
+    surfaceScalarField& phi() {return phi_;}
     const labelList& seepageIDList() {return seepageIDList_;}
 
     // Member Functions

@@ -36,11 +36,8 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "harmonic.H"
 #include "incompressiblePhase.H"
 #include "twophasePorousMediumModel.H"
-#include "capillarityModel.H"
-#include "relativePermeabilityModel.H"
 #include "fixedValueFvPatchField.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
@@ -95,14 +92,12 @@ int main(int argc, char *argv[])
     sourceEvent->init(runTime, hEqn.h().name(), mesh, pmModel->sourceTerm().dimensions());
 
     //- create time managers
-    const labelList* fixedPotentialIDListPtr  = &hEqn.seepageIDList();
     List<sourceEventFile*> sourceEventList;
     sourceEventList.append(sourceEvent.get());
 
     multiDtManager MDTM(runTime, sourceEventList, patchEventList);
     MDTM.addIterativeAlgorithm(hEqn.theta(), "Picard", steady);
     MDTM.addIterativeAlgorithm(hEqn.theta(), "Newton", steady);
-    MDTM.addField(hEqn.h(), fixedPotentialIDListPtr);
 
     //- output event
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);
@@ -171,7 +166,7 @@ noConvergence :
         while (residualDelta.first() > Newton.tolerance() && Newton.iter() != Newton.maxIter())
         {
             Newton++;
-            Info << "*** Newton iteration : " << Newton.iter() << endl;
+            Info << "*** Newton iteration " << Newton.iter() << endl;
             residualDelta = hEqn.solveNewton(Newton.tolerance());
             hEqn.updateProperties();
             if (residualDelta.first() > 10)
