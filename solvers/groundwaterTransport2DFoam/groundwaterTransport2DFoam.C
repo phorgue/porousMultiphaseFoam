@@ -33,6 +33,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+#include "PMFversion.H"
 #include "fvCFD.H"
 #include "fixedValueFvPatchField.H"
 #include "DEMfile.H"
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
 {
     Foam::argList args(argc, argv);
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
-    #include "../headerPMF.H"
+    PMFversion solverV;
     bool steady = false;
 
     Info << "Create time\n" << Foam::endl;

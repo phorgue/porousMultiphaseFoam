@@ -95,6 +95,10 @@ class RichardsEqn
     labelList topCellID_, seepageIDList_;
     scalarList distanceToDEM_, seepageValueList_;
 
+    //- Internal functions
+    fvScalarMatrix buildEqn();
+    scalar initResidual(const fvScalarMatrix& hEqn);
+
 public:
     // Constructors
 
@@ -122,8 +126,6 @@ public:
     void updateProperties();
     void updateSeepage();
     void noConvergence(multiDtManager& MDTM, Time& runTime, label algoID);
-    fvScalarMatrix buildEqn();
-    scalar initResidual(const fvScalarMatrix& hEqn);
     const Tuple2<scalar, scalar> solvePicard(const scalar tolerance);
     const Tuple2<scalar, scalar> solveNewton(const scalar tolerance);
     void info();

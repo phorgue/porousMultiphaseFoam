@@ -26,7 +26,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    groundwaterFoam
+    groundwaterTransportFoam
 
 Description
     Transient solver for Richards equation coupled with scalar transport 
@@ -35,6 +35,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+#include "PMFversion.H"
 #include "fvCFD.H"
 #include "multiMesh.H"
 #include "dynamicRefineFvMesh.H"
@@ -57,13 +58,11 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    argList::addBoolOption("dualDynamicMesh", "to run steady flow simulation");
-
     Foam::argList args(argc, argv);
     bool steady = false;
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
+    PMFversion solverV;
 
-    #include "../headerPMF.H"
     Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);
 

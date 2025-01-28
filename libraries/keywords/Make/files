@@ -1,4 +1,0 @@
-keywords.C
-
-LIB = $(FOAM_USER_LIBBIN)/libPMFkeywords
-

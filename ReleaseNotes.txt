@@ -1,4 +1,3 @@
-
 ### Solvers
 
 - porousScalarTransportFoam
@@ -7,9 +6,20 @@
 
 ### Libraries
 
+- general/PMFversion
+
+  add new PMFversion class for display PMF version information in solvers (instead of headerPMF.H)
+
 - toolsGIS/outputEventFile
 
   - now handles dynamicMesh when output-times are specified
+
+- porousModels/flowModels/RichardsEqn
+
+  - new class added to handle Richards' equation and related fields. This reduces drastically the files
+  groundwaterFoam.C and groundwaterTransportFoam.C by removing many #include.
+  RichardsEqn gives access to internal fields (theta, h and phi) and has several functions to compute residuals
+  or solve equation using different algorithm (Picard or Newton).
 
 ### Bug fixes
 

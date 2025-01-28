@@ -5,6 +5,7 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
+    -I../../libraries/general/lnInclude \
     -I../../libraries/porousBoundaryConditions/lnInclude \
     -I../../libraries/porousModels/lnInclude \
     -I../../libraries/toolsGIS/lnInclude\
@@ -17,6 +18,7 @@ EXE_LIBS = \
     -lreactionThermophysicalModels \
     -ldynamicFvMesh \
     -L$(FOAM_USER_LIBBIN) \
+    -lPMFgeneral \
     -lPMFporousBoundaryConditions \
     -lPMFporousModels \
     -lPMFtoolsGIS \

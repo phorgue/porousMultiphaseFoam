@@ -35,6 +35,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+#include "PMFversion.H"
 #include "fvCFD.H"
 #include "incompressiblePhase.H"
 #include "twophasePorousMediumModel.H"
@@ -54,9 +55,10 @@ int main(int argc, char *argv[])
 
     Foam::argList args(argc, argv);
     bool steady = args.found("steady");
+    PMFversion solverV;
 
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
-    #include "../headerPMF.H"
+
 
     Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);

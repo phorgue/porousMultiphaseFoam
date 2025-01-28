@@ -35,6 +35,7 @@ Description
 
 \*---------------------------------------------------------------------------*/
 
+#include "PMFversion.H"
 #include "fvCFD.H"
 #include "harmonic.H"
 #include "incompressiblePhase.H"
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
 {
     Foam::argList args(argc, argv);
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
-    #include "../headerPMF.H"
+    PMFversion solverV;
 
     Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);

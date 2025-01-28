@@ -3,7 +3,7 @@
 import yaml
 
 yaml_file = open('../etc/keywords.yaml', 'r')
-dict_file = open('../libraries/keywords/keywords_map.H', 'w')
+dict_file = open('../libraries/general/keywords_map.H', 'w')
 
 data = yaml.load(yaml_file, Loader=yaml.FullLoader)
 
