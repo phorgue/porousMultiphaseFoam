@@ -118,6 +118,8 @@ int main(int argc, char *argv[])
     multiDtManager MDTM(runTime, tracerSourceEventList, patchEventList);
     MDTM.addIterativeAlgorithm(hEqn.theta(), "Picard");
     MDTM.addIterativeAlgorithm(hEqn.theta(), "Newton");
+    const labelList* fixedPotentialIDListPtr  = &hEqn.seepageIDList();
+    MDTM.addField(hEqn.h(), fixedPotentialIDListPtr);
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
     if (meshT.dynamic()) MDTM.setDynamicMesh(true);
 

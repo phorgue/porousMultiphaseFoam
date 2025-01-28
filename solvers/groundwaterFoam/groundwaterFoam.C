@@ -100,6 +100,8 @@ int main(int argc, char *argv[])
     multiDtManager MDTM(runTime, sourceEventList, patchEventList);
     MDTM.addIterativeAlgorithm(hEqn.theta(), "Picard", steady);
     MDTM.addIterativeAlgorithm(hEqn.theta(), "Newton", steady);
+    const labelList* fixedPotentialIDListPtr  = &hEqn.seepageIDList();
+    MDTM.addField(hEqn.h(), fixedPotentialIDListPtr);
 
     //- output event
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh);

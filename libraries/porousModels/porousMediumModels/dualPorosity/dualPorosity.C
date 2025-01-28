@@ -252,7 +252,6 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
     //- compute source term using update hMatrix field
     exchangeTerm_ = alphaW* (hFracture - hMatrix_);
 
-    Info  << "delta(hMatrix) = " << gMax((hMatrix_-hMatrix_.prevIter())().internalField()) << endl;
     //- update properties using new solution
     updateMatrixProperties();
 }
