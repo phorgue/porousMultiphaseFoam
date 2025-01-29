@@ -335,25 +335,20 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     const scalar tolerance
 )
 {
-    //- Compute ResiduN
-    volScalarField ResiduN(
-        - fvc::laplacian(Mf_,h_) + fvc::div(phiG_) + pmModel_.exchangeTerm() + sourceTerm_);
-    if (!steady_)
-    {
-        ResiduN += Ss_ * pcModel_.Se() * fvc::ddt(h_);
-        if (massConservative_) ResiduN += fvc::ddt(theta_);
-        else ResiduN += pcModel_.Ch() * fvc::ddt(h_);
-    }
-
     //- Compute initial residual
     Tuple2<scalar, scalar> res(0, 0);
     fvScalarMatrix hEqnPicard = buildEqn();
     res.first() = initResidual(hEqnPicard);
+    tmp<DimensionedField<scalar, volMesh>> ResiduN = DimensionedField<scalar, volMesh>::New(
+        "ResiduN",
+        mesh_,
+        dimless/dimTime,
+        (hEqnPicard.residual()/mesh_.V())()
+    );
     Info << "Richards' equation initial residual = " << res.first() << endl;
 
     //- Construct and solve Newton system
-    const volScalarField& dkrdS = krModel_.dkrbdS();
-    volScalarField dLdS( pcModel_.Ch() * rho_ * K_ * dkrdS / mu_ );
+    volScalarField dLdS( pcModel_.Ch() * rho_ * K_ * krModel_.dkrbdS() / mu_ );
     volScalarField dMdS( mag(g_) * dLdS );
 
     fvScalarMatrix deltahEqn_hGrad(dMdS  * fvm::div(fvc::snGrad(h_) * mesh_.magSf(), deltah_));
@@ -375,7 +370,7 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
             + deltahEqn_hGrad
             + deltahEqn_grav
             ==
-            - ResiduN
+            ResiduN
         );
 
     scalarField forInversion = deltahEqn.upper();
@@ -386,7 +381,6 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     {
         if (deltah_.boundaryField().types()[patchi] == "darcyGradPressure")
         {
-            deltahEqn.internalCoeffs()[patchi] = 0;
             deltahEqn.boundaryCoeffs()[patchi] = 0;
         }
     }
