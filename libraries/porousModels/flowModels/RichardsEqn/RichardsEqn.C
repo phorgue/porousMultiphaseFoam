@@ -200,6 +200,7 @@ void Foam::flowModels::RichardsEqn::updateSeepage()
                 {
                     seepageIDList_.append(currentCell);
                     seepageValueList_.append(distanceToDEM_[celli]);
+                    h_[currentCell] = distanceToDEM_[celli];
                 }
             }
         }
@@ -334,12 +335,6 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     const scalar tolerance
 )
 {
-    //- Compute initial residual
-    Tuple2<scalar, scalar> res(0, 0);
-    fvScalarMatrix hEqnPicard = buildEqn();
-    res.first() = initResidual(hEqnPicard);
-    Info << "Initial residual = " << res.first() << endl;
-
     //- Compute ResiduN
     volScalarField ResiduN(
         - fvc::laplacian(Mf_,h_) + fvc::div(phiG_) + pmModel_.exchangeTerm() + sourceTerm_);
@@ -349,6 +344,12 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
         if (massConservative_) ResiduN += fvc::ddt(theta_);
         else ResiduN += pcModel_.Ch() * fvc::ddt(h_);
     }
+
+    //- Compute initial residual
+    Tuple2<scalar, scalar> res(0, 0);
+    fvScalarMatrix hEqnPicard = buildEqn();
+    res.first() = initResidual(hEqnPicard);
+    Info << "Richards' equation initial residual = " << res.first() << endl;
 
     //- Construct and solve Newton system
     const volScalarField& dkrdS = krModel_.dkrbdS();
@@ -388,6 +389,11 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
             deltahEqn.internalCoeffs()[patchi] = 0;
             deltahEqn.boundaryCoeffs()[patchi] = 0;
         }
+    }
+    if (seepageIDList_.size() > 0) {
+
+        Info << seepageIDList_.size() << endl;
+        deltahEqn.setValues(seepageIDList_,0);
     }
 
     deltahEqn.solve();
