@@ -392,7 +392,6 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     }
     if (seepageIDList_.size() > 0) {
 
-        Info << seepageIDList_.size() << endl;
         deltahEqn.setValues(seepageIDList_,0);
     }
 
