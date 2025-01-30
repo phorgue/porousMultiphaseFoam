@@ -123,7 +123,7 @@ public:
     const labelList& seepageIDList() {return seepageIDList_;}
 
     // Member Functions
-    void updateProperties();
+    void updateProperties(bool derivative);
     void updateSeepage();
     void noConvergence(multiDtManager& MDTM, Time& runTime, label algoID);
     const Tuple2<scalar, scalar> solvePicard(const scalar tolerance);

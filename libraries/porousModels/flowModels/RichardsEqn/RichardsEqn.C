@@ -158,14 +158,14 @@ Foam::flowModels::RichardsEqn::RichardsEqn
             distanceToDEM_ = mag(mesh.boundary()[patchDEMID_].delta()().component(2));
         }
     }
-    updateProperties();
+    updateProperties(true);
 }
 // * * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * //
 
-void Foam::flowModels::RichardsEqn::updateProperties()
+void Foam::flowModels::RichardsEqn::updateProperties(bool derivative)
 {
     theta_ = pcModel_.correctAndSb(h_);
-    krModel_.correctkrb(theta_);
+    krModel_.correctkrb(theta_, derivative);
     krf_ = fvc::interpolate( krModel_.krb(),"krtheta");
     Lf_ = rho_ * Kf_ * krf_ / mu_;
     Mf_ = mag(g_) * Lf_;
@@ -234,7 +234,7 @@ void Foam::flowModels::RichardsEqn::noConvergence
     runTime.setTime(runTime.timeOutputValue()+runTime.deltaTValue(),runTime.timeIndex());
 
     //- Update properties
-    updateProperties();
+    updateProperties(true);
 }
 
 Foam::fvScalarMatrix Foam::flowModels::RichardsEqn::buildEqn()
@@ -393,9 +393,7 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     h_ = h_.prevIter() + deltah_;
     h_.correctBoundaryConditions();
 
-    scalarField deltah(h_-h_.prevIter());
-    forAll(seepageIDList_,celli) deltah[seepageIDList_[celli]] = 0;
-    res.second() = gMax(mag(deltah)());
+    res.second() = gMax(mag(deltah_)());
     return res;
 }
 

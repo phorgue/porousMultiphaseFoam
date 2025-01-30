@@ -57,7 +57,8 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
     const word porousRegion
 )
     :
-    relativePermeabilityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
+    relativePermeabilityModel(mesh, transportProperties.subDict(typeName + "Coeffs"),
+                              Sname, porousRegion),
     m_
     (
         IOobject
@@ -127,4 +128,61 @@ Foam::relativePermeabilityModels::krVanGenuchten::krVanGenuchten
     Info << "} \n" << endl;   
 }
 
+// * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * //
+
+void Foam::relativePermeabilityModels::krVanGenuchten::correct(const volScalarField& Sb, bool derivative)
+{
+    Se_= (Sb-Smin_)/(Smax_-Smin_);
+    kra_ = kramax_ * pow(1-Se_,0.5) * pow(1-pow(Se_,1/m_),2*m_);
+    krb_ = krbmax_ * pow(Se_,0.5) * pow(1-pow(1-pow(Se_,1/m_),m_),2);
+
+    if (derivative)
+    {
+        dkradS_ = - pow((1-pow(Se_,1/m_)+VSMALL),2*m_-1) * (-5*pow(Se_,1/m_+1)+4*pow(Se_,1/m_)+Se_);
+        dkradS_ *= 1/(2*pow((1-Se_),0.5)*Se_);
+        dkradS_ *=  1/(Smax_ - Smin_);
+        dkradS_ *= kramax_;
+        dkrbdS_ = 0.5 * (1-pow((1-pow(Se_,1/m_)),m_));
+        dkrbdS_ *= ( 4 * pow(Se_,1/m_-0.5) * pow( (1-pow(Se_,1/m_)+VSMALL) , m_-1))
+                        - ( pow((1-pow(Se_,1/m_)),m_) -1) / pow(Se_,0.5);
+        dkrbdS_ *= 1/(Smax_ - Smin_);
+        dkrbdS_ *= krbmax_;
+    }
+
+}
+void Foam::relativePermeabilityModels::krVanGenuchten::correctkra(const volScalarField& Sb, bool derivative)
+{
+    Se_= (Sb-Smin_)/(Smax_-Smin_);
+    kra_ = kramax_ * pow(1-Se_,0.5) * pow(1-pow(Se_,1/m_),2*m_);
+    if (derivative)
+    {
+        dkradS_ = - pow((1-pow(Se_,1/m_)+VSMALL),2*m_-1) * (-5*pow(Se_,1/m_+1)+4*pow(Se_,1/m_)+Se_);
+        dkradS_ *= 1/(2*pow((1-Se_),0.5)*Se_);
+        dkradS_ *=  1/(Smax_ - Smin_);
+        dkradS_ *= kramax_;
+    }
+}
+void Foam::relativePermeabilityModels::krVanGenuchten::correctkrb(const volScalarField& Sb, bool derivative)
+{
+    Se_= (Sb-Smin_)/(Smax_-Smin_);
+    krb_ = krbmax_ * pow(Se_,0.5) * pow(1-pow(1-pow(Se_,1/m_),m_),2);
+    if (derivative)
+    {
+        dkrbdS_ = 0.5 * (1-pow((1-pow(Se_,1/m_)),m_));
+        dkrbdS_ *= ( 4 * pow(Se_,1/m_-0.5) * pow( (1-pow(Se_,1/m_)+VSMALL) , m_-1))
+                        - ( pow((1-pow(Se_,1/m_)),m_) -1) / pow(Se_,0.5);
+        dkrbdS_ *= 1/(Smax_ - Smin_);
+        dkrbdS_ *= krbmax_;
+    }
+}
+void Foam::relativePermeabilityModels::krVanGenuchten::correctkrb(const volScalarField& Sb, const label& celli)
+{
+    scalar Se = (Sb[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
+    krb_[celli] = krbmax_[celli] * pow(Se,0.5) * pow(1-pow(1-pow(Se,1/m_[celli]),m_[celli]),2);
+}
+Foam::tmp<Foam::volScalarField> Foam::relativePermeabilityModels::krVanGenuchten::kr(const volScalarField& S)
+{
+    volScalarField Se((S-Smin_)/(Smax_-Smin_));
+    return krbmax_ * pow(Se,0.5) * pow(1-pow(1-pow(Se,1/m_),m_),2);
+}
 // ************************************************************************* //

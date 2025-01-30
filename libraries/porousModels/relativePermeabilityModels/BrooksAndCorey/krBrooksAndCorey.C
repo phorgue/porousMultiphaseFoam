@@ -57,7 +57,8 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
     const word porousRegion
 )
     :
-    relativePermeabilityModel(mesh, transportProperties.subDict(typeName + "Coeffs"), Sname, porousRegion),
+    relativePermeabilityModel(mesh, transportProperties.subDict(typeName + "Coeffs"),
+                              Sname, porousRegion),
     n_
     (
         IOobject
@@ -125,6 +126,49 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
     if (krbmax_.headerOk()) { Info << "read file" << endl;}
     else {Info << average(krbmax_).value() << endl;}
     Info << "} \n" << endl;
+}
+
+// * * * * * * * * * * * * * * * * Members  * * * * * * * * * * * * * * //
+
+void Foam::relativePermeabilityModels::krBrooksAndCorey::correct(const volScalarField& Sb, bool derivative)
+{
+    Se_= (Sb-Smin_)/(Smax_-Smin_);
+    kra_ = kramax_* pow((scalar(1)-Se_),n_);
+    krb_ = krbmax_ * pow(Se_,n_);
+    if (derivative)
+    {
+        dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
+        dkrbdS_ = krbmax_*n_*pow(Se_,n_-1)/(Smax_- Smin_);
+    }
+}
+void Foam::relativePermeabilityModels::krBrooksAndCorey::correctkra(const volScalarField& Sb, bool derivative)
+{
+    Se_= (Sb-Smin_)/(Smax_-Smin_);
+    kra_ = kramax_* pow((scalar(1)-Se_),n_);
+    if (derivative)
+    {
+        dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
+
+    }
+}
+void Foam::relativePermeabilityModels::krBrooksAndCorey::correctkrb(const volScalarField& Sb, bool derivative)
+{
+    Se_= (Sb-Smin_)/(Smax_-Smin_);
+    krb_ = krbmax_ * pow(Se_,n_);
+    if (derivative)
+    {
+        dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
+    }
+}
+void Foam::relativePermeabilityModels::krBrooksAndCorey::correctkrb(const volScalarField& Sb, const label& celli)
+{
+    scalar Se = (Sb[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
+    krb_[celli] = krbmax_[celli] * pow(Se,n_[celli]);
+}
+Foam::tmp<Foam::volScalarField> Foam::relativePermeabilityModels::krBrooksAndCorey::kr(const volScalarField& S)
+{
+    volScalarField Se((S-Smin_)/(Smax_-Smin_));
+    return krbmax_ * pow(Se,n_);
 }
 
 // ************************************************************************* //

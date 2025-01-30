@@ -149,7 +149,7 @@ noConvergence :
             Picard++;
             Info << "*** Picard iteration " << Picard.iter() << endl;
             residualDelta = hEqn.solvePicard(Picard.tolerance());
-            hEqn.updateProperties();
+            hEqn.updateProperties(false);
             if (residualDelta.first() > 10)
             {
                 Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
@@ -172,7 +172,7 @@ noConvergence :
             Newton++;
             Info << "*** Newton iteration " << Newton.iter() << endl;
             residualDelta = hEqn.solveNewton(Newton.tolerance());
-            hEqn.updateProperties();
+            hEqn.updateProperties(true);
             if (residualDelta.first() > 10)
             {
                 Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;

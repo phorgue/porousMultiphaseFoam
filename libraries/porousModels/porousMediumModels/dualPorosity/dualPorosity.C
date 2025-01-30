@@ -185,7 +185,7 @@ void Foam::porousMediumModels::dualPorosity::updateMatrixProperties()
 {
     //- update matrix properties
     Smatrix_ = matrixPcModel_->correctAndSb(hMatrix_);
-    matrixKrModel_->correctkrb(Smatrix_);
+    matrixKrModel_->correctkrb(Smatrix_, false);
     surfaceScalarField krthetaMatrixf(fvc::interpolate(matrixKrModel_->krb(), "krthetaMatrix"));
     LMatrixf_ = phase_->rho()*Kmatrixf_*krthetaMatrixf/phase_->mu();
     MMatrixf_ = mag(g)*LMatrixf_;

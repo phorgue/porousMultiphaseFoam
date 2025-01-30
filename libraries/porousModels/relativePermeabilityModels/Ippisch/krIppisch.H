@@ -85,38 +85,11 @@ public:
     // Member Functions
 
     //- Correct the relative permeabilities
-     void correct(const volScalarField& Sb)
-        {
-            FatalErrorIn("krIppisch.H") << " Ippisch model can be used only with groundwater solvers" << abort(FatalError);
-        }
-    void correctkra(const volScalarField& Sb)
-        {
-            FatalErrorIn("krIppisch.H") << " Ippisch model can be used only with groundwater solvers" << abort(FatalError);
-        }
-    void correctkrb(const volScalarField& Sb)
-        {
-            Se_= (Sb-Smin_)/(Smax_-Smin_);
-            krb_ = pow(Se_,tau_) * pow(
-                (1-pow(1-pow(Sc_*Se_,1/m_),m_)) /
-                (1-pow(1-pow(Sc_,1/m_),m_))
-                ,2);
-        }
-    void correctkrb(const volScalarField& Sb, const label& celli)
-        {
-            scalar Se = (Sb[celli]-Smin_[celli])/(Smax_[celli]-Smin_[celli]);
-            krb_[celli] = pow(Se_[celli],tau_[celli]) * pow(
-                (1-pow(1-pow(Sc_[celli]*Se,1/m_[celli]),m_[celli])) /
-                (1-pow(1-pow(Sc_[celli],1/m_[celli]),m_[celli]))
-                ,2);
-        }
-    tmp<volScalarField> kr(const volScalarField& S)
-        {
-            volScalarField Se((S-Smin_)/(Smax_-Smin_));
-            return pow(Se,tau_) * pow(
-                (1-pow(1-pow(Sc_*Se,1/m_),m_)) /
-                (1-pow(1-pow(Sc_,1/m_),m_))
-                ,2);
-        }
+    void correct(const volScalarField& Sb, bool derivative);
+    void correctkra(const volScalarField& Sb, bool derivative);
+    void correctkrb(const volScalarField& Sb, bool derivative);
+    void correctkrb(const volScalarField& Sb, const label& celli);
+    tmp<volScalarField> kr(const volScalarField& S);
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

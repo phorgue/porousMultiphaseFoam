@@ -1,5 +1,5 @@
 //- relative permeability (kr)
-krModel->correct(Sb);
+krModel->correct(Sb, true);
 const volScalarField& kra = krModel->kra();
 const volScalarField& krb = krModel->krb();
 const volScalarField& dkradS = krModel->dkradS();
@@ -10,7 +10,7 @@ surfaceScalarField krbf ("krbf",fvc::interpolate(krb,"krb"));
 surfaceScalarField dkrafdS ("dkrafdS",fvc::interpolate(dkradS,"kra"));
 surfaceScalarField dkrbfdS ("dkrbfdS",fvc::interpolate(dkrbdS,"krb"));
 
-//- mobility computation 
+//- mobility computation
 surfaceTensorField Maf ("Maf",Kf*kraf/mua);
 surfaceTensorField Laf ("Laf",rhoa*Kf*kraf/mua);	
 surfaceTensorField Mbf ("Mbf",Kf*krbf/mub);
