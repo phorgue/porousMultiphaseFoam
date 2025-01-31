@@ -200,7 +200,6 @@ void Foam::flowModels::RichardsEqn::updateSeepage()
                 {
                     seepageIDList_.append(currentCell);
                     seepageValueList_.append(distanceToDEM_[celli]);
-                    h_[currentCell] = distanceToDEM_[celli];
                 }
             }
         }
@@ -391,7 +390,6 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
         }
     }
     if (seepageIDList_.size() > 0) {
-
         deltahEqn.setValues(seepageIDList_,0);
     }
 
