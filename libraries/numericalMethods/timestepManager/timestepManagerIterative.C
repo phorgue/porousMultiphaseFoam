@@ -54,16 +54,16 @@ Foam::timestepManagerIterative::timestepManagerIterative(
     dTFactDecrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactDecrease", 0.8)),
     dTFactIncrease_(runTime_.controlDict().getOrDefault<scalar>("dTFactIncrease", 1.25))
 {
-    if (steady)
-    {
-        maxIter_ = 1;
-        if (algoName == "Newton") tolerance_ = 1e+9;
-    }
     Info << nl << algoName << " loop control" << nl << "{"
-    << nl << "    tolerance = " << tolerance_
-    << nl << "    maximum number of iteration = " << maxIter_ << endl;
+    << nl << "    tolerance = " << tolerance_ << endl;
 
-    if (nIterIncreasePresent_) Info << "    Number of iteration expected (for timestep increase) = " << nIterIncrease_ << endl;
+    if (steady) maxIter_ = 1;
+    else Info << "    maximum number of iteration = " << maxIter_ << endl;
+
+    if (nIterIncreasePresent_ && !steady)
+    {
+        Info << "    Number of iteration expected (for timestep increase) = " << nIterIncrease_ << endl;
+    }
 
     Info << "}" << endl;
 }

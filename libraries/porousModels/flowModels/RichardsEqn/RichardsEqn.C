@@ -359,19 +359,23 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
 
     fvScalarMatrix deltahEqn
         (
-            fvm::Sp(
-                (
-                    (Ss_ * pcModel_.Ch()) * (h_ - h_.oldTime())
-                    + Ss_ * pcModel_.Se()
-                    + pcModel_.Ch()
-                ) / mesh_.time().deltaT()
-                , deltah_)
             - fvm::laplacian(Mf_, deltah_)
             + deltahEqn_hGrad
             + deltahEqn_grav
             ==
             ResiduN
         );
+
+    if (!steady_)
+    {
+        deltahEqn += fvm::Sp(
+                (
+                    (Ss_ * pcModel_.Ch()) * (h_ - h_.oldTime())
+                    + Ss_ * pcModel_.Se()
+                    + pcModel_.Ch()
+                ) / mesh_.time().deltaT()
+                , deltah_);
+    }
 
     scalarField forInversion = deltahEqn.upper();
     deltahEqn.upper() = deltahEqn.lower();
@@ -418,5 +422,20 @@ void Foam::flowModels::RichardsEqn::info()
     }
     Info << endl;
 }
+
+void Foam::flowModels::RichardsEqn::checkSteadyConfig
+(
+    const scalar tol1,
+    const scalar tol2
+)
+{
+    if (steady_ && tol1 < 1.0 && tol2 < 1.0)
+    {
+        FatalErrorIn("RichardsEqn.C") << "Only one tolerance (Newton or Picard) should be defined in fvSolution "
+            << " for steady simulations" << abort(FatalError);
+    }
+
+
+};
 
 // ************************************************************************* //

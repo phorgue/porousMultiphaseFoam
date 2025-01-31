@@ -129,6 +129,7 @@ public:
     const Tuple2<scalar, scalar> solvePicard(const scalar tolerance);
     const Tuple2<scalar, scalar> solveNewton(const scalar tolerance);
     void info();
+    void checkSteadyConfig(const scalar tol1, const scalar tol2);
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

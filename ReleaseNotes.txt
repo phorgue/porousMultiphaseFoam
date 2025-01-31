@@ -1,8 +1,14 @@
 ### Solvers
 
+- groundwater2DFoam
+
+  - set U = 0 for dry cells to avoid random value leading to transport instabilities
+  - add fixed point outflow to seepageTerm field
+
 - porousScalarTransportFoam
 
   - dynamicRefineFvMesh can be now used by specifying options in constant/dynamicMeshDict
+  - possibility to automatically reconstruct phi if not present (using K/potential/rho/mu)
 
 ### Libraries
 
@@ -20,6 +26,10 @@
   groundwaterFoam.C and groundwaterTransportFoam.C by removing many #include.
   RichardsEqn gives access to internal fields (theta, h and phi) and has several functions to compute residuals
   or solve equation using different algorithm (Picard or Newton).
+
+- porousModels/relativePermeabilityModels
+
+  - make derivative computation optional to reduce cost (dkradS/dkrbdS)
 
 ### Bug fixes
 

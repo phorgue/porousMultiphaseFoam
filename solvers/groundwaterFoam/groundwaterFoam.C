@@ -117,6 +117,7 @@ int main(int argc, char *argv[])
 
     timestepManagerIterative& Picard = MDTM.dtManagerI(0);
     timestepManagerIterative& Newton = MDTM.dtManagerI(1);
+    hEqn.checkSteadyConfig(Picard.tolerance(), Newton.tolerance());
 
     while (runTime.run())
     {
@@ -199,7 +200,10 @@ noConvergence :
             runTime.write();
             if (writeResiduals)
                 if (Pstream::master()) residualFile << runTime.timeName() << " " << residualDelta.first() << endl;
-            if (residualDelta.first() < Picard.tolerance()) runTime.writeAndEnd();
+            if (residualDelta.first() < Picard.tolerance() && residualDelta.first() < Newton.tolerance())
+            {
+                runTime.writeAndEnd();
+            }
         }
         else
         {
