@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     Foam::argList args(argc, argv);
 
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
-    PMFversion solverV();
+    PMFversion solverV;
     bool steady = args.found("steady");
 
     Info << "Create time\n" << Foam::endl;

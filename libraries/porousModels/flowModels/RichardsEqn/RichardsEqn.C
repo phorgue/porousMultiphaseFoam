@@ -357,6 +357,8 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     deltahEqn_hGrad.diag() *= -1;
     deltahEqn_grav.diag() *= -1;
 
+    deltah_.storePrevIter();
+
     fvScalarMatrix deltahEqn
         (
             - fvm::laplacian(Mf_, deltah_)
@@ -394,6 +396,7 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     }
 
     deltahEqn.solve();
+    if (res.first() > tolerance) deltah_.relax();
     h_ = h_.prevIter() + deltah_;
     h_.correctBoundaryConditions();
 
@@ -434,8 +437,6 @@ void Foam::flowModels::RichardsEqn::checkSteadyConfig
         FatalErrorIn("RichardsEqn.C") << "Only one tolerance (Newton or Picard) should be defined in fvSolution "
             << " for steady simulations" << abort(FatalError);
     }
-
-
 };
 
 // ************************************************************************* //
