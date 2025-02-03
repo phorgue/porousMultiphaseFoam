@@ -33,7 +33,7 @@
 	}
 
         //- computing local potential
-        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
+        const vectorField faces = mesh.boundary()[patchID].patch().faceCentres();
         forAll(potentialPatch,facei)
         {
             potentialPatch[facei] = fixedPotentialDEM.interpolate(faces[facei]) + offsetPotential;

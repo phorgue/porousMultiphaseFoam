@@ -17,7 +17,7 @@
     word patchName = args.opt("patch");
     label patchID = mesh.boundaryMesh().findPatchID(patchName);
     fvPatchScalarField& hPatch = h.boundaryFieldRef()[patchID];
-  
+
     //-- Compute and set up head pressure
     if (args.found("DEM"))
     {
@@ -74,7 +74,7 @@
     else
     {
         //- uniform potential
-        const vectorField& faces = mesh.boundary()[patchID].patch().faceCentres();
+        const vectorField faces = mesh.boundary()[patchID].patch().faceCentres();
         scalar potential = args.opt("value",0.);
         Info << nl << "Uniform potential fixed = " << potential << " m " << endl;
         forAll(hPatch,facei)
