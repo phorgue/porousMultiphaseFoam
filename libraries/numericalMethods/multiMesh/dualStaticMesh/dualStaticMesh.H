@@ -66,7 +66,8 @@ private:
     Time& runTime_;
 
     //- Pointer to the cell mapping between two meshes
-    labelList mapping_;
+    labelList cellMapping_;
+    labelListList boundaryMapping_;
 
     //- If mesh has already be refined
     bool refined_;
@@ -74,7 +75,7 @@ private:
     //- List of tuple_field
     Tuple2<PtrList<volScalarField>, PtrList<volScalarField>> scalarFields_;
     Tuple2<PtrList<volVectorField>, PtrList<volVectorField>> vectorFields_;
-    PtrList<surfaceScalarField> phiFields_;
+    Tuple2<surfaceScalarField*, surfaceScalarField*> phiFields_;
 
     //- Initial refinement of the mesh and mapping computation
     void initialRefinement();

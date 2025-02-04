@@ -58,7 +58,8 @@ Foam::dualStaticMesh::dualStaticMesh
     multiMesh(runTime, mesh),
     fineMeshPtr_(nullptr),
     runTime_(runTime),
-    mapping_(mesh.nCells()),
+    cellMapping_(0),
+    boundaryMapping_(0),
     refined_(false),
     scalarFields_(),
     vectorFields_(),
@@ -96,13 +97,13 @@ void Foam::dualStaticMesh::initialRefinement()
     runTime_.setTime(runTime_.timeOutputValue(), timeIndex);
 
     //- Contruct cell mapping
-    mapping_.resize(fineMesh.nCells(), -1);
-    Info << "Construct mapping between coarse and fine mesh...";
+    cellMapping_.resize(fineMesh.nCells(), -1);
+    Info << "Construct cell mapping between coarse and fine mesh...";
     forAll(fineMesh.cells(), tgtCelli) {
         const point& tgtPos = fineMesh.cellCentres()[tgtCelli];
         label foundCell = coarseMesh_.findCell(tgtPos);
         if (foundCell != -1){
-            mapping_[tgtCelli] = foundCell;
+            cellMapping_[tgtCelli] = foundCell;
         }
         else
         {
@@ -111,6 +112,37 @@ void Foam::dualStaticMesh::initialRefinement()
         }
     }
     Info << "ok" << endl;
+
+    //-Construct boundary mapping
+    const polyBoundaryMesh& bCoarseMesh = coarseMesh_.boundaryMesh();
+    const polyBoundaryMesh& bFineMesh = fineMesh.boundaryMesh();
+    const surfaceVectorField& cSf = coarseMesh_.Sf();
+    const surfaceVectorField& fSf = fineMesh.Sf();
+
+    boundaryMapping_.resize(bFineMesh.size());
+    forAll(fSf.boundaryField(), patchi) {
+        boundaryMapping_[patchi].resize(fSf.boundaryField()[patchi].size());
+        forAll(fSf.boundaryField()[patchi], tgtFacei) {
+            label fCell = fineMesh.boundary().faceCells()[patchi][tgtFacei];
+            label cCell = cellMapping_[fCell];
+            forAll(coarseMesh_.cells()[cCell], facei) {
+                label b_face = coarseMesh_.cells()[cCell][facei] - bCoarseMesh.patchStarts()[patchi];
+                if (b_face > -1 && b_face < bCoarseMesh.patchSizes()[patchi]) {
+                    if ((fSf.boundaryField()[patchi][tgtFacei] & cSf.boundaryField()[patchi][b_face]) > 0 ) {
+                        boundaryMapping_[patchi][tgtFacei] = b_face;
+                    }
+                }
+            }
+        }
+
+    }
+
+    for(label i=0;i<scalarFields_.first().size();i++) {
+        mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
+    }
+    for(label i=0;i<vectorFields_.first().size();i++) {
+        mapFieldCoarseToFine(vectorFields_.first().at(i), vectorFields_.second().at(i));
+    }
     Info << "*********************************************" << endl << endl;
 }
 
@@ -121,9 +153,17 @@ void Foam::dualStaticMesh::mapFieldCoarseToFine(
 )
 {
     forAll(field2, celli) {
-        field2[celli] = field1[mapping_[celli]];
+        field2[celli] = field1[cellMapping_[celli]];
+        field2.oldTime()[celli] = field1.oldTime()[cellMapping_[celli]];
     }
-    field2.correctBoundaryConditions();
+    forAll(field2.boundaryField(), patchi) {
+        forAll(field2.boundaryField()[patchi], facei) {
+            field2.boundaryFieldRef()[patchi][facei] =
+                    field1.boundaryField()[patchi][boundaryMapping_[patchi][facei]];
+            field2.oldTime().boundaryFieldRef()[patchi][facei] =
+                    field1.oldTime().boundaryField()[patchi][boundaryMapping_[patchi][facei]];
+        }
+    }
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
@@ -148,11 +188,18 @@ Foam::volScalarField& Foam::dualStaticMesh::addField
             fineMeshPtr_,
             0,
             coarseField.dimensions(),
-            "zeroGradient"
+            coarseField.boundaryField().types()
         )
     );
     scalarFields_.second().back().primitiveFieldRef() = coarseField.primitiveField();
-    scalarFields_.second().back().correctBoundaryConditions();
+    forAll(coarseField.boundaryField(), patchi)
+    {
+        forAll(coarseField.boundaryField()[patchi], facei)
+        {
+            scalarFields_.second().back().boundaryFieldRef()[patchi][facei] =
+                coarseField.boundaryField()[patchi][facei];
+        }
+    }
     Info << "ok" << endl;
     scalarFields_.second().back().write();
     return scalarFields_.second().back();
@@ -178,7 +225,7 @@ Foam::volVectorField& Foam::dualStaticMesh::addField
             fineMeshPtr_,
             Vector<scalar>(0,0,0),
             coarseField.dimensions(),
-            "zeroGradient"
+            coarseField.boundaryField().types()
         )
     );
     vectorFields_.second().back().primitiveFieldRef() = coarseField.primitiveField();
@@ -189,27 +236,29 @@ Foam::volVectorField& Foam::dualStaticMesh::addField
 }
 
 Foam::surfaceScalarField& Foam::dualStaticMesh::addField
-        (
-                surfaceScalarField& coarseField
-        )
+    (
+        surfaceScalarField& coarsePhi
+    )
 {
-    volVectorField& vField = vectorFields_.second().back();
-    Info << nl << "Create dual flux field for " << coarseField.name() << "...";
-    phiFields_.append(new surfaceScalarField
+    Info << nl << "Set dual flux field...";
+    phiFields_.first() = &coarsePhi;
+    phiFields_.second() = new surfaceScalarField
     (
         IOobject
-            (
-                coarseField.name()+"_dual",
-                vField.time().timeName(),
-                vField.mesh(),
-                IOobject::NO_READ,
-                IOobject::AUTO_WRITE
-            ),
-        linearInterpolate(vField) & vField.mesh().Sf()
-    )
+        (
+            coarsePhi.name()+"_dual",
+            coarsePhi.time().timeName(),
+            fineMeshPtr_,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        fineMeshPtr_,
+        0,
+        coarsePhi.dimensions(),
+        coarsePhi.boundaryField().types()
     );
     Info << "ok" << endl;
-    return phiFields_.back();
+    return *phiFields_.second();
 }
 
 bool Foam::dualStaticMesh::update()
@@ -227,11 +276,10 @@ bool Foam::dualStaticMesh::update()
     for(label i=0;i<vectorFields_.first().size();i++) {
         mapFieldCoarseToFine(vectorFields_.first().at(i), vectorFields_.second().at(i));
     }
-    forAll(phiFields_, fieldi)
-    {
-        volVectorField& vField = vectorFields_.second().at(fieldi);
-        phiFields_.at(fieldi) = linearInterpolate(vField) & vField.mesh().Sf();
-    }
+
+    volVectorField& vField = vectorFields_.second().at(0);
+    *phiFields_.second() = linearInterpolate(vField) & vField.mesh().Sf();
+
     return meshChanged;
 }
 
