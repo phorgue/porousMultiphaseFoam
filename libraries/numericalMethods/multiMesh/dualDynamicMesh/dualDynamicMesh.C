@@ -31,7 +31,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "dynamicRefineFvMesh.H"
 #include "processorPolyPatch.H"
-#include "symmetryPlanePolyPatch.H"
+#include "symmetryPolyPatch.H"
 #include "linear.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -143,7 +143,8 @@ void Foam::dualDynamicMesh::mapFieldCoarseToFine(
 
     forAll(fineMesh.boundary(), patchi)
     {
-        if (isA<processorPolyPatch>(fineMesh.boundaryMesh()[patchi]))
+        if (isA<processorPolyPatch>(fineMesh.boundaryMesh()[patchi]) ||
+            isA<symmetryPolyPatch>(fineMesh.boundaryMesh()[patchi]) )
         {
             field2.boundaryFieldRef()[patchi].initEvaluate(Pstream::commsTypes::nonBlocking);
             field2.oldTime().boundaryFieldRef()[patchi].initEvaluate(Pstream::commsTypes::nonBlocking);
@@ -157,6 +158,7 @@ void Foam::dualDynamicMesh::mapFieldCoarseToFine(
             }
         }
     }
+    field2.correctBoundaryConditions();
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
