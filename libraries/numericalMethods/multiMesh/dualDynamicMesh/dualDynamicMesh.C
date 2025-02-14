@@ -219,43 +219,43 @@ Foam::volVectorField& Foam::dualDynamicMesh::addField
 
 Foam::surfaceScalarField& Foam::dualDynamicMesh::addField
         (
-                surfaceScalarField& coarseField
+                surfaceScalarField& coarsePhi
         )
 {
-    volVectorField& vField = vectorFields_.second().back();
-    Info << nl << "create dual flux field for " << coarseField.name() << "...";
-    phiFields_.append(new surfaceScalarField
+    Info << nl << "Set dual flux field...";
+    phiFields_.first() = &coarsePhi;
+    phiFields_.second() = new surfaceScalarField
     (
         IOobject
             (
-                coarseField.name()+"_dual",
-                vField.time().timeName(),
-                vField.mesh(),
+                coarsePhi.name()+"_dual",
+                coarsePhi.time().timeName(),
+                fineMeshPtr_,
                 IOobject::READ_IF_PRESENT,
                 IOobject::AUTO_WRITE
             ),
-        linearInterpolate(vField) & vField.mesh().Sf()
-    )
+        fineMeshPtr_,
+        0,
+        coarsePhi.dimensions(),
+        coarsePhi.boundaryField().types()
     );
     Info << "ok" << endl;
-    return phiFields_.back();
+    return *phiFields_.second();
 }
 
 
 bool Foam::dualDynamicMesh::update()
 {
+    fineMeshPtr_->update();
     for(label i=0;i<scalarFields_.first().size();i++) {
         mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
     }
     for(label i=0;i<vectorFields_.first().size();i++) {
         mapFieldCoarseToFine(vectorFields_.first().at(i), vectorFields_.second().at(i));
     }
-    fineMeshPtr_->update();
-    forAll(phiFields_, fieldi)
-    {
-        volVectorField& vField = vectorFields_.second().at(fieldi);
-        phiFields_.at(fieldi) = linearInterpolate(vField) & vField.mesh().Sf();
-    }
+    volVectorField& vField = vectorFields_.second().at(0);
+    *phiFields_.second() = linearInterpolate(vField) & vField.mesh().Sf();
+
     if (fineMeshPtr_->changing()) return true;
     else return false;
 }

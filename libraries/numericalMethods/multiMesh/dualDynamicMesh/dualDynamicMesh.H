@@ -64,7 +64,7 @@ protected:
     //- List of tuple_field
     Tuple2<PtrList<volScalarField>, PtrList<volScalarField>> scalarFields_;
     Tuple2<PtrList<volVectorField>, PtrList<volVectorField>> vectorFields_;
-    PtrList<surfaceScalarField> phiFields_;
+    Tuple2<surfaceScalarField*, surfaceScalarField*> phiFields_;
 
     //- Function to map fields between dual meshes
     template<class Type, template<class> class PatchField>
