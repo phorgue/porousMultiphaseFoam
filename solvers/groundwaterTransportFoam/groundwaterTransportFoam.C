@@ -155,6 +155,7 @@ noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         //- Update source term
+        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
         if (waterSourceEvent->isPresent())
         {
             waterSourceEvent->updateValue(runTime);
@@ -214,7 +215,6 @@ noConvergence :
         hEqn.info();
 
         //- 3) scalar transport
-        forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
         forAll(tracerSourceEventList,tracerSourceEventi) tracerSourceEventList[tracerSourceEventi]->updateValue(runTime);
         if (mMeshPtr->dynamic()) composition.updateNormalizedGradY();
         bool hasChanged = mMeshPtr->update();
