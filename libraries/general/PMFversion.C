@@ -28,13 +28,13 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "PMFversion.H"
-#include <iostream>
+#include "instantList.H"
 
 Foam::PMFversion::PMFversion()
 {
-    std::cout << "\n**********************************"
+    Info << "\n**********************************"
          << "\nCurrent version of PMF is " << version_ << "." << subversion_;
     if (beta_) std::cout << ".b";
-    std::cout << "\n**********************************\n\n";
+    Info << "\n**********************************\n\n";
 }
 

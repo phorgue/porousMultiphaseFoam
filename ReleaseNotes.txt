@@ -10,6 +10,10 @@
   - dynamicRefineFvMesh can be now used by specifying options in constant/dynamicMeshDict
   - possibility to automatically reconstruct phi if not present (using K/potential/rho/mu)
 
+- groundwaterTransportFoam
+
+  - dual-mesh methods added
+
 ### Libraries
 
 - general/PMFversion
@@ -30,6 +34,12 @@
 - porousModels/relativePermeabilityModels
 
   - make derivative computation optional to reduce cost (dkradS/dkrbdS)
+
+- numericalMethods/multiMesh
+
+  - new classes to handle dual mesh methods with simpleMesh/dualStaticMesh/dualDynamicMesh
+  - Dual-mesh approach solves flow equation (Richards) on a coarse mesh and tracer transport on fine mesh.
+  - usable only with groundwaterTransportFoam
 
 ### Bug fixes
 
