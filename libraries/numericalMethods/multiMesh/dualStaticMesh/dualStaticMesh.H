@@ -73,8 +73,8 @@ private:
     bool refined_;
 
     //- List of tuple_field
-    Tuple2<PtrList<volScalarField>, PtrList<volScalarField>> scalarFields_;
-    Tuple2<PtrList<volVectorField>, PtrList<volVectorField>> vectorFields_;
+    Tuple2<List<volScalarField*>, List<volScalarField*>> scalarFields_;
+    Tuple2<List<volVectorField*>, List<volVectorField*>> vectorFields_;
     Tuple2<surfaceScalarField*, surfaceScalarField*> phiFields_;
 
     //- Initial refinement of the mesh and mapping computation
@@ -102,7 +102,7 @@ public:
     dualStaticMesh(Time& runTime, dynamicFvMesh& mesh);
 
     //- Destructor
-    virtual ~dualStaticMesh() {}
+    ~dualStaticMesh() {}
 
     //- Return mesh
     dynamicFvMesh& fineMesh() {return fineMeshPtr_.ref();}

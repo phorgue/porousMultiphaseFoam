@@ -138,10 +138,10 @@ void Foam::dualStaticMesh::initialRefinement()
     }
 
     for(label i=0;i<scalarFields_.first().size();i++) {
-        mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
+        mapFieldCoarseToFine(*scalarFields_.first()[i], *scalarFields_.second()[i]);
     }
     for(label i=0;i<vectorFields_.first().size();i++) {
-        mapFieldCoarseToFine(vectorFields_.first().at(i), vectorFields_.second().at(i));
+        mapFieldCoarseToFine(*vectorFields_.first()[i], *vectorFields_.second()[i]);
     }
     Info << "*********************************************" << endl << endl;
 }
@@ -175,7 +175,8 @@ Foam::volScalarField& Foam::dualStaticMesh::addField
 {
     volScalarField* coarsePointer = &coarseField;
     scalarFields_.first().append(coarsePointer);
-    Info << nl << "Create dual field for " << coarseField.name() << "...";
+    label current_id = scalarFields_.first().size()-1;
+    Info << nl << "Create dual scalar field " << current_id << " for " << coarseField.name() << "...";
     scalarFields_.second().append(new volScalarField(
             IOobject
             (
@@ -191,18 +192,18 @@ Foam::volScalarField& Foam::dualStaticMesh::addField
             coarseField.boundaryField().types()
         )
     );
-    scalarFields_.second().back().primitiveFieldRef() = coarseField.primitiveField();
+    scalarFields_.second()[current_id]->primitiveFieldRef() = coarseField.primitiveField();
     forAll(coarseField.boundaryField(), patchi)
     {
         forAll(coarseField.boundaryField()[patchi], facei)
         {
-            scalarFields_.second().back().boundaryFieldRef()[patchi][facei] =
+            scalarFields_.second()[current_id]->boundaryFieldRef()[patchi][facei] =
                 coarseField.boundaryField()[patchi][facei];
         }
     }
     Info << "ok" << endl;
-    scalarFields_.second().back().write();
-    return scalarFields_.second().back();
+    scalarFields_.second()[current_id]->write();
+    return *scalarFields_.second()[current_id];
 }
 
 Foam::volVectorField& Foam::dualStaticMesh::addField
@@ -212,7 +213,8 @@ Foam::volVectorField& Foam::dualStaticMesh::addField
 {
     volVectorField* coarsePointer = &coarseField;
     vectorFields_.first().append(coarsePointer);
-    Info << nl << "create dual field for " << coarseField.name() << "...";
+    label current_id = vectorFields_.first().size()-1;
+    Info << nl << "create dual vector field " << current_id << " for " << coarseField.name() << "...";
     vectorFields_.second().append(new volVectorField(
             IOobject
             (
@@ -228,11 +230,11 @@ Foam::volVectorField& Foam::dualStaticMesh::addField
             coarseField.boundaryField().types()
         )
     );
-    vectorFields_.second().back().primitiveFieldRef() = coarseField.primitiveField();
-    vectorFields_.second().back().correctBoundaryConditions();
+    vectorFields_.second()[current_id]->primitiveFieldRef() = coarseField.primitiveField();
+    vectorFields_.second()[current_id]->correctBoundaryConditions();
     Info << "ok" << endl;
-    vectorFields_.second().back().write();
-    return vectorFields_.second().back();
+    vectorFields_.second()[current_id]->write();
+    return *vectorFields_.second()[current_id];
 }
 
 Foam::surfaceScalarField& Foam::dualStaticMesh::addField
@@ -271,13 +273,13 @@ bool Foam::dualStaticMesh::update()
         meshChanged = true;
     }
     for(label i=0;i<scalarFields_.first().size();i++) {
-        mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
+        mapFieldCoarseToFine(*scalarFields_.first()[i], *scalarFields_.second()[i]);
     }
     for(label i=0;i<vectorFields_.first().size();i++) {
-        mapFieldCoarseToFine(vectorFields_.first().at(i), vectorFields_.second().at(i));
+        mapFieldCoarseToFine(*vectorFields_.first()[i], *vectorFields_.second()[i]);
     }
 
-    volVectorField& vField = vectorFields_.second().at(0);
+    volVectorField& vField = *vectorFields_.second()[0];
     *phiFields_.second() = linearInterpolate(vField) & vField.mesh().Sf();
 
     return meshChanged;

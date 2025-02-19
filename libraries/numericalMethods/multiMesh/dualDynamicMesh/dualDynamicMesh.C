@@ -170,7 +170,8 @@ Foam::volScalarField& Foam::dualDynamicMesh::addField
 {
     volScalarField* coarsePointer = &coarseField;
     scalarFields_.first().append(coarsePointer);
-    Info << nl << "create dual field for " << coarseField.name() << "...";
+    label current_id = scalarFields_.first().size()-1;
+    Info << nl << "create dual scalar field " << current_id << "  for " << coarseField.name() << "...";
     scalarFields_.second().append(new volScalarField(
             IOobject
             (
@@ -185,9 +186,9 @@ Foam::volScalarField& Foam::dualDynamicMesh::addField
             coarseField.dimensions()
         )
     );
-    mapFieldCoarseToFine(coarseField, scalarFields_.second().back());
+    mapFieldCoarseToFine(coarseField, *scalarFields_.second()[current_id]);
     Info << "ok" << endl;
-    return scalarFields_.second().back();
+    return *scalarFields_.second()[current_id];
 }
 
 Foam::volVectorField& Foam::dualDynamicMesh::addField
@@ -197,7 +198,8 @@ Foam::volVectorField& Foam::dualDynamicMesh::addField
 {
     volVectorField* coarsePointer = &coarseField;
     vectorFields_.first().append(coarsePointer);
-    Info << nl << "create dual field for " << coarseField.name() << "...";
+    label current_id = vectorFields_.first().size()-1;
+    Info << nl << "create dual vector field " << current_id << "  for " << coarseField.name() << "...";
     vectorFields_.second().append(new volVectorField(
             IOobject
             (
@@ -212,9 +214,9 @@ Foam::volVectorField& Foam::dualDynamicMesh::addField
             coarseField.dimensions()
         )
     );
-    mapFieldCoarseToFine(coarseField, vectorFields_.second().back());
+    mapFieldCoarseToFine(coarseField, *vectorFields_.second()[current_id]);
     Info << "ok" << endl;
-    return vectorFields_.second().back();
+    return *vectorFields_.second()[current_id];
 }
 
 Foam::surfaceScalarField& Foam::dualDynamicMesh::addField
@@ -248,12 +250,12 @@ bool Foam::dualDynamicMesh::update()
 {
     fineMeshPtr_->update();
     for(label i=0;i<scalarFields_.first().size();i++) {
-        mapFieldCoarseToFine(scalarFields_.first().at(i), scalarFields_.second().at(i));
+        mapFieldCoarseToFine(*scalarFields_.first()[i], *scalarFields_.second()[i]);
     }
     for(label i=0;i<vectorFields_.first().size();i++) {
-        mapFieldCoarseToFine(vectorFields_.first().at(i), vectorFields_.second().at(i));
+        mapFieldCoarseToFine(*vectorFields_.first()[i], *vectorFields_.second()[i]);
     }
-    volVectorField& vField = vectorFields_.second().at(0);
+    volVectorField& vField = *vectorFields_.second()[0];
     *phiFields_.second() = linearInterpolate(vField) & vField.mesh().Sf();
 
     if (fineMeshPtr_->changing()) return true;

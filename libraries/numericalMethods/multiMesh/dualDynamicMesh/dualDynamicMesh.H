@@ -62,8 +62,8 @@ protected:
     autoPtr<dynamicFvMesh> fineMeshPtr_;
 
     //- List of tuple_field
-    Tuple2<PtrList<volScalarField>, PtrList<volScalarField>> scalarFields_;
-    Tuple2<PtrList<volVectorField>, PtrList<volVectorField>> vectorFields_;
+    Tuple2<List<volScalarField*>, List<volScalarField*>> scalarFields_;
+    Tuple2<List<volVectorField*>, List<volVectorField*>> vectorFields_;
     Tuple2<surfaceScalarField*, surfaceScalarField*> phiFields_;
 
     //- Function to map fields between dual meshes
@@ -88,7 +88,7 @@ public:
     dualDynamicMesh(Time& runTime, dynamicFvMesh& mesh);
 
     //- Destructor
-    virtual ~dualDynamicMesh() {}
+    ~dualDynamicMesh() {}
 
     //- Return mesh
     dynamicFvMesh& fineMesh() {return fineMeshPtr_.ref();}
