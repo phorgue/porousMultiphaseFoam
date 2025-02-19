@@ -81,7 +81,7 @@ Foam::dualDynamicMesh::dualDynamicMesh
             DynamicList<label> boundary_protected_cells(0);
             const polyBoundaryMesh& patches = fineMesh.boundaryMesh();
             forAll(patches, patchi) {
-                if (not(isA<processorPolyPatch>(patches[patchi]))){
+                if (not(isA<processorPolyPatch>(patches[patchi])) && not(isA<symmetryPolyPatch>(patches[patchi]))){
                     boundary_protected_cells.append(fineMesh.boundary()[patchi].faceCells());
                 }
             }
