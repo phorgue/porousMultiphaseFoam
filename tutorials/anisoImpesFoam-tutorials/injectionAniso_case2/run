@@ -9,3 +9,5 @@ cp constant/K.org constant/K
 cp constant/eps.org constant/eps
 runApplication setFields
 runApplication anisoImpesFoam 
+
+runApplication postProcess -func sampleDict
