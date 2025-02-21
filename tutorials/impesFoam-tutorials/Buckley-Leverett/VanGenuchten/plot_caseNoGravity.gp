@@ -1,6 +1,6 @@
 set terminal postscript
 set size square 0.65,0.65
-set output "BL_VanGenuchten_noGravity.eps"
+set output "BL_VanGenuchten_noGravity.pdf"
 set xrange [0 : 1]
 set xlabel "Position(m)"
 set ylabel "Saturation"

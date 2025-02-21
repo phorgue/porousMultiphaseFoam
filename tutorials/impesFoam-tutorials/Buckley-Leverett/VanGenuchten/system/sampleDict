@@ -22,7 +22,7 @@ libs ("libsampling.so");
 
 interpolationScheme cellPoint; 
 
-setFormat gnuplot;
+setFormat csv;
 
 surfaceFormat   vtk;
 

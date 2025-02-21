@@ -32,8 +32,8 @@ sets
     {
         type    midPoint;
         axis    y;
-        start   ( 0.05 1 0.05 );
-        end     ( 0.05 0 0.05 );
+        start   ( 5 10 0.5 );
+        end     ( 5 0 0.5 );
     }
 );
 

@@ -1,6 +1,6 @@
 set terminal postscript enhanced
 set size square 0.65,0.65
-set output "BL_Brooks_gravity.eps"
+set output "BL_Brooks_gravity.pdf"
 set xrange [0 : 1]
 set xlabel "Position (m)"
 set ylabel "Saturation"
