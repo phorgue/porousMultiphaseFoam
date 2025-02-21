@@ -1,0 +1,61 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                |
+  \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \    /   O peration     | Website:  https://openfoam.org
+    \  /    A nd           | Version:  7
+     \/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     porousScalarTransportFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         2.0e+8;
+
+deltaT          1.0;
+
+writeControl    adjustableRunTime;
+
+writeInterval   2.0e+8;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  10;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   8;
+
+adjustTimeStep yes;
+
+runTimeModifiable true;
+
+truncationError 0.01;
+
+maxDeltaT       1e+7;
+
+eventTimeStep   0;
+
+CSVoutput       true;
+
+eventTimeTracking false;
+
+// ************************************************************************* //
