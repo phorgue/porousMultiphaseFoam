@@ -1,0 +1,39 @@
+//- fluid properties
+fluid_density 1e+03;
+dynamic_viscosity 1e-03;
+molecular_diffusion 1e-09;
+
+//- porous medium properties
+tortuosity 1.0;
+kinematic_porosity 0.27;
+total_porosity 0.30 ;
+//intrinsic_permeability 1.546358e-11;
+intrinsic_permeability 7e-12;
+longitudinal_dispersivity 1.0;
+transversal_dispersivity 0.2;
+retention_coefficient 0.00005;
+specific_storage 0.001;
+density 1.850000e+03;
+radioactive_decay 1e-9;
+
+//- kr-pc parameters
+vangenuchten_thetamin 0.01485;
+vangenuchten_thetamax 0.243;
+vangenuchten_m 0.300699;
+vangenuchten_alpha 13.0;
+
+//- boundary/initial conditions
+param_Uinlet (0 0 -4.753213e-09) ;
+param_Uinit (0 0 0) ;
+param_houtlet 0.0;
+param_hinit 0.0;
+
+//- solver parameters
+h_tolerance 1e-12;
+h_relative_tolerance 0.10;
+h_residualControl 1e-10;
+h_relaxationFactor 0.1;
+picard_tolerance 1.000000e+01;
+picard_maxiter 20;
+newton_tolerance 1.000000e-10;
+newton_maxiter 20;
