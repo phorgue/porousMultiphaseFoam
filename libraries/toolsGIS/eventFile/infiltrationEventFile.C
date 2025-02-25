@@ -210,7 +210,7 @@ void Foam::infiltrationEventFile::init
     const Time& runTime,
     const word& fieldName,
     const fvMesh& mesh,
-    scalarField& infiltration
+    volScalarField& infiltration
 
 )
 {
@@ -229,10 +229,10 @@ void Foam::infiltrationEventFile::init
 void Foam::infiltrationEventFile::updateInfiltration
 (
     const Time& runTime,
-    scalarField& infiltration
+    volScalarField& infiltration
 )
 {
     this->updateValue(runTime);
     if (this->isUniform()) infiltration = this->dtValue(0);
-    else infiltration = this->dtValues();
+    else infiltration.primitiveFieldRef() = this->dtValues();
 }

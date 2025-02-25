@@ -104,9 +104,9 @@ public:
 
     //- Init functions
     void init(const Time&);
-    void init(const Time&, const word&, const fvMesh&, scalarField&);
+    void init(const Time&, const word&, const fvMesh&, volScalarField&);
 
-    void updateInfiltration(const Time&, scalarField&);
+    void updateInfiltration(const Time&, volScalarField&);
 
     //- reset infiltration as uniform if size does not correspond to mesh size
     void setInfiltrationAsUniform() {uniform_ = true;}
