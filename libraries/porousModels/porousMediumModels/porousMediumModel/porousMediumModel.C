@@ -42,6 +42,7 @@ Foam::porousMediumModel::porousMediumModel
 (
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
+    const dimensionSet& sourceDims,
     const word porousRegion
 )
     :
@@ -84,7 +85,7 @@ Foam::porousMediumModel::porousMediumModel
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("",dimless/dimTime,0)
+        dimensionedScalar("",sourceDims,0)
     ),
     exchangeTerm_
     (
@@ -97,7 +98,7 @@ Foam::porousMediumModel::porousMediumModel
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("",dimless/dimTime,0)
+        dimensionedScalar("",sourceDims,0)
     )
 {
     scalar Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));

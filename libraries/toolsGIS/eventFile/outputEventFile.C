@@ -236,7 +236,7 @@ void Foam::outputEventFile::addField(
 
 void Foam::outputEventFile::addSourceTerm(
     const word& name,
-    scalar& value,
+    const scalar& value,
     label index_field
 ) {
     if (index_field > -1) outputFields_[index_field].addSourceTerm(name, value);

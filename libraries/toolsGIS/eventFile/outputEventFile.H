@@ -156,7 +156,7 @@ public:
 
     void addSourceTerm(
         const word& name,
-        scalar& value,
+        const scalar& value,
         label index_field = -1
     );
 

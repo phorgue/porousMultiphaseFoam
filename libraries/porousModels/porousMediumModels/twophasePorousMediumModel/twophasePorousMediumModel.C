@@ -48,7 +48,7 @@ Foam::twophasePorousMediumModel::twophasePorousMediumModel
     const word porousRegion
 )
     :
-    porousMediumModel(mesh, transportProperties, porousRegion),
+    porousMediumModel(mesh, transportProperties, dimless/dimTime, porousRegion),
     Sname_(Sname)
 {
     pcModel_ = capillarityModel::New(mesh, transportProperties, Sname, porousRegion);
