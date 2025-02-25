@@ -35,13 +35,12 @@ Description
 
 #include "PMFversion.H"
 #include "fvCFD.H"
-#include "harmonic.H"
 #include "fixedValueFvPatchField.H"
-#include "DEMfile.H"
 #include "infiltrationEventFile.H"
 #include "sourceEventFile.H"
 #include "outputEventFile.H"
 #include "multiDtManager.H"
+#include "DupuitDarcyEqn.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 using namespace Foam;
@@ -59,11 +58,28 @@ int main(int argc, char *argv[])
     Time runTime(Time::controlDictName, args);
 
     #include "createMesh.H"
-    #include "createFields.H"
-    #include "readFixedPoints.H"
+    Info << "Reading transportProperties" << endl;
+    IOdictionary transportProperties
+    (
+        IOobject
+            (
+                "transportProperties",
+                runTime.constant(),
+                mesh,
+                IOobject::MUST_READ,
+                IOobject::NO_WRITE
+            )
+    );
+
+    //- fluid phase model
+    autoPtr<incompressiblePhase> fluidPhase = incompressiblePhase::New(mesh, transportProperties, "");
+    //- 2D porous medium model
+    porousMediumModel pmModel(mesh, transportProperties, dimLength/dimTime);
+    //- Richards' equation
+    flowModels::DupuitDarcyEqn ddEqn(mesh, transportProperties, pmModel, fluidPhase(), steady);
+
     const dictionary& residualControl = mesh.solutionDict().subOrEmptyDict("residualControl");
-    const scalar residualPotential = residualControl.lookupOrDefault<scalar>("potential", 0);
-    scalar maxResidual = GREAT;
+    const auto residualPotential = residualControl.lookupOrDefault<scalar>("potential", 0);
     if (steady && residualPotential ==0)
     {
         FatalErrorIn("readTimeControls.h") << "residualControl.potential should be specified in system/fvSolution" << abort(FatalError);
@@ -71,9 +87,9 @@ int main(int argc, char *argv[])
 
     //- create source/infiltration events
     autoPtr<infiltrationEventFile> infiltrationEvent = infiltrationEventFile::New("infiltrationEventFile", transportProperties);
-    infiltrationEvent->init(runTime, potential.name(), mesh, infiltration);
+    infiltrationEvent->init(runTime, ddEqn.potential().name(), mesh, ddEqn.infiltration());
     autoPtr<sourceEventFile> sourceEvent = sourceEventFile::New("sourceEventFileWater", transportProperties);
-    sourceEvent->init(runTime, potential.name(), mesh, waterSourceTerm.dimensions());
+    sourceEvent->init(runTime, ddEqn.potential().name(), mesh, dimLength/dimTime);
 
     //- create time manager
     List<sourceEventFile*> sourceEventList;
@@ -81,13 +97,13 @@ int main(int argc, char *argv[])
     List<infiltrationEventFile*> infiltrationEventList;
     infiltrationEventList.append(infiltrationEvent.get());
     multiDtManager MDTM(runTime, sourceEventList, infiltrationEventList);
-    MDTM.addField(potential, &dryCellIDList);
+    MDTM.addField(ddEqn.potential(), ddEqn.dryCellIDList());
 
-    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
-    outputEvent->addField(hwater, phi, eps, "waterMassBalance.csv");
-    outputEvent->addSourceTerm("fixedPoints", flowOutFixedPoints);
-    outputEvent->addSourceTerm("seepage", flowOutSeepage);
-    outputEvent->addField(potential, phi);
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, ddEqn.zScale());
+    outputEvent->addField(ddEqn.hwater(), ddEqn.phi(), pmModel.eps(), "waterMassBalance.csv");
+    outputEvent->addSourceTerm("fixedPoints", ddEqn.flowOutFixedPoints());
+    outputEvent->addSourceTerm("seepage", ddEqn.flowOutSeepage());
+    outputEvent->addField(ddEqn.potential(), ddEqn.phi());
     outputEvent->init();
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -110,31 +126,26 @@ int main(int argc, char *argv[])
         //- Update infiltration term
         if (!steady)
         {
-            if (infiltrationEvent->isPresent()) infiltrationEvent->updateInfiltration(runTime, infiltration.primitiveFieldRef());
+            if (infiltrationEvent->isPresent()) infiltrationEvent->updateInfiltration(runTime, ddEqn.infiltration());
 
            if (sourceEvent->isPresent()) {
                 sourceEvent->updateValue(runTime);
-                waterSourceTerm = sourceEvent->dtValuesAsField();
+                pmModel.sourceTerm() = sourceEvent->dtValuesAsField();
             }
         }
 
-        //- Solve potential equation
-        #include "potentialEqn.H"
+        //- Solve Dupuit-Darcy equation
+        scalar residual = ddEqn.solve();
 
         //- Residual computation
         if (steady)
         {
-            if (maxResidual < residualPotential)
-            {
-                runTime.writeAndEnd();
-            }
-            else
-            {
-                runTime.write();
-            }
+            if (residual < residualPotential) runTime.writeAndEnd();
+            else runTime.write();
         }
         else
         {
+            MDTM.updateAllDerivatives();
             outputEvent->write();
         }
 
@@ -143,7 +154,6 @@ int main(int argc, char *argv[])
             << nl << endl;
     }
 
-    if (cumulativeWaterAdded > 0) Info << "Cumulated water added = " << cumulativeWaterAdded << " m3, equivalent height = " << cumulativeWaterAdded*zScale/gSum(mesh.V()) << " m" << nl << endl;
     Info<< "End\n" << endl;
 
     return 0;
