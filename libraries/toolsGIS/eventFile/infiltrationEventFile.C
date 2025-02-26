@@ -233,6 +233,6 @@ void Foam::infiltrationEventFile::updateInfiltration
 )
 {
     this->updateValue(runTime);
-    if (this->isUniform()) infiltration = this->dtValue(0);
+    if (this->isUniform()) infiltration.primitiveFieldRef() = this->dtValue(0);
     else infiltration.primitiveFieldRef() = this->dtValues();
 }
