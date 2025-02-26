@@ -38,13 +38,11 @@ Description
 
 #include "PMFversion.H"
 #include "fvCFD.H"
-#include "fluidPhase.H"
-#include "multiscalarMixture.H"
-#include "sourceEventFile.H"
-#include "patchEventFile.H"
 #include "outputEventFile.H"
 #include "eventFlux.H"
 #include "multiDtManager.H"
+#include "frozenDupuitDarcyEqn.H"
+#include "porousMediumTransportModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -58,16 +56,47 @@ int main(int argc, char *argv[])
     Time runTime(Time::controlDictName, args);
 
     #include "createMesh.H"
-    #include "createFields.H"
+    IOdictionary transportProperties
+    (
+    IOobject
+        (
+            "transportProperties",
+            runTime.constant(),
+            mesh,
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        )
+    );
+
+    List<patchEventFile*> patchEventList;
+    eventFlux::setEventFileRegistry(&patchEventList, "C");
+
+    //- fluid phase model
+    autoPtr<fluidPhase> fluidPhase = fluidPhase::New(mesh, transportProperties, "");
+    //- Porous medium model
+    porousMediumModel pmModel(mesh, transportProperties, dimLength/dimTime);
+    //- Frozen flow-field (Dupuit-Darcy's equation)
+    flowModels::frozenDupuitDarcyEqn ddEqn(mesh, transportProperties, pmModel, fluidPhase.ref());
+    //- Transport model
+    Info << "Reading composition" << endl;
+    autoPtr<porousMediumTransportModel> pmTransportModel =
+            porousMediumTransportModel::New("", mesh, transportProperties);
+    multiscalarMixture& composition = pmTransportModel->composition();
+
+    //- create tracer-source events
+    List<sourceEventFile*>& tracerSourceEventList = pmTransportModel->sourceEventList();
+    forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
+    forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
+
+    //- Create timestep manager
     multiDtManager MDTM(runTime, tracerSourceEventList, patchEventList);
     forAll(composition.Y(), speciesi) MDTM.addField(composition.Y()[speciesi]);
 
-    forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->init(runTime);
-    forAll(patchEventList,patchEventi) patchEventList[patchEventi]->init(runTime);
-    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, zScale);
+    //- Output events
+    autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, ddEqn.zScale());
     forAll(composition.Y(), speciei) {
-        outputEvent->addField(composition.Y()[speciei], phihwater, eps, hwater, composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
-        outputEvent->addSourceTerm("seepage", outflowSeepageTracer[speciei]);
+        outputEvent->addField(composition.Y()[speciei], ddEqn.phihwater(), pmModel.eps(), ddEqn.hwater(), composition.R(speciei), composition.Y()[speciei].name()+"massBalance.csv");
+     //   outputEvent->addSourceTerm("seepage", outflowSeepageTracer[speciei]);
     }
     outputEvent->init();
 
@@ -77,14 +106,25 @@ int main(int argc, char *argv[])
     {
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateIndex(runTime.timeOutputValue());
         forAll(tracerSourceEventList,sourceEventi) tracerSourceEventList[sourceEventi]->updateIndex(runTime.timeOutputValue());
+
         MDTM.updateDt();
+
         runTime++;
 
         Info << "Time = " << runTime.timeName() << nl << endl;
 
-        //- Compute transport
-        #include "CEqn.H"
+        //- Solve transport equation
+        forAll(tracerSourceEventList, sourcei) tracerSourceEventList[sourcei]->updateValue(runTime);
+        pmTransportModel->solveTransport(fluidPhase->U(),
+                                         ddEqn.phihwater(),
+                                         pmModel.eps(),
+                                         ddEqn.hwater(),
+                                         ddEqn.seepage(),
+                                         ddEqn.zScale());
 
+        MDTM.updateAllDerivatives();
+
+        //- Write
         outputEvent->write();
 
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"

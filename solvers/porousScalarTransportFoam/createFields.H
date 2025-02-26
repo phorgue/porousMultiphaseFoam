@@ -29,7 +29,7 @@ surfaceScalarField& phi = phase->phi();
 List<patchEventFile*> patchEventList;
 eventFlux::setEventFileRegistry(&patchEventList, "C");
 
-porousMediumModel pmModel(mesh, transportProperties, "");
+porousMediumModel pmModel(mesh, transportProperties, dimless/dimTime, "");
 pmModel.check_eps();
 const volScalarField& eps = pmModel.eps();
 autoPtr<porousMediumTransportModel> pmTransportModel = porousMediumTransportModel::New(phaseName, mesh, transportProperties);

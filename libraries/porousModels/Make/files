@@ -35,6 +35,7 @@ dispersionModels/dualAlphaDispersion/dualAlphaDispersion.C
 
 flowModels/RichardsEqn/RichardsEqn.C
 flowModels/DupuitDarcyEqn/DupuitDarcyEqn.C
+flowModels/frozenDupuitDarcyEqn/frozenDupuitDarcyEqn.C
 
 LIB = $(FOAM_USER_LIBBIN)/libPMFporousModels
 
