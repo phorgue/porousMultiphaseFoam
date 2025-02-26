@@ -47,9 +47,8 @@ SourceFiles
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
-{
-namespace flowModels
+
+namespace Foam::flowModels
 {
 
 /*---------------------------------------------------------------------------*\
@@ -92,10 +91,10 @@ class DupuitDarcyEqn
     const scalar zScale_;
     const dimensionedScalar rho_, mu_;
     const dimensionedScalar hwaterMin_;
-    scalar cumulativeWaterAdded_, flowOutFixedPoints_, flowOutSeepage_;
+    scalar cumulativeWaterAdded_, flowInOutFixedPoints_, flowOutSeepage_;
 
     //- Internal surface fields
-    surfaceScalarField phi_, Kf_, Mf_, transmissivity_, phiG_, phiPc_;
+    surfaceScalarField phi_, Kf_, Mf_, transmissivity_, phiG_, phiPc_, phihwater_;
 
     //- Internal variables for seepage/dry/fixed potential cell term
     labelList seepageIDList_, dryCellIDList_, fixedPotentialIDList_;
@@ -103,7 +102,7 @@ class DupuitDarcyEqn
     volScalarField cellFlux_;
 
     //- Internal functions
-    void initFixedPotential(const List<Tuple2<point,scalar>>&, const bool);
+    void initFixedPotential(const List<Tuple2<point,scalar>>&, bool);
     void correctInitialPotential();
     void updateProperties();
     void updateSeepage();
@@ -119,20 +118,22 @@ public:
         const IOdictionary& transportProperties,
         porousMediumModel& pmModel,
         incompressiblePhase& fluidPhase,
-        const bool steady
+        bool steady
     );
 
     //- Destructor
-    ~DupuitDarcyEqn() {}
+    ~DupuitDarcyEqn() = default;
 
     //- Access functions
-    const volScalarField& potential() {return potential_;}
-    const volScalarField& hwater() {return hwater_;}
-    const surfaceScalarField& phi() {return phi_;}
+    const volScalarField& potential() const {return potential_;}
+    const volScalarField& hwater() const {return hwater_;}
+    const surfaceScalarField& phi() const {return phi_;}
+    const surfaceScalarField& phihwater() const {return phihwater_;}
     volScalarField& infiltration() {return infiltration_;}
-    const labelList& dryCellIDList() {return dryCellIDList_;}
+    const volScalarField& seepage() {return seepageTerm_;}
+    const labelList& dryCellIDList() const {return dryCellIDList_;}
     const scalar& zScale() {return zScale_;}
-    const scalar& flowOutFixedPoints() {return flowOutFixedPoints_;}
+    const scalar& flowInOutFixedPoints() {return flowInOutFixedPoints_;}
     const scalar& flowOutSeepage() {return flowOutSeepage_;}
 
     // Member Functions
@@ -144,7 +145,7 @@ public:
 
 } // End namespace capillarityModels
 
-} // End namespace Foam
+// End namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

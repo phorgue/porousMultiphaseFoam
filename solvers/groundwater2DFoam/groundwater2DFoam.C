@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
     autoPtr<outputEventFile> outputEvent = outputEventFile::New(runTime, mesh, ddEqn.zScale());
     outputEvent->addField(ddEqn.hwater(), ddEqn.phi(), pmModel.eps(), "waterMassBalance.csv");
-    outputEvent->addSourceTerm("fixedPoints", ddEqn.flowOutFixedPoints());
+    outputEvent->addSourceTerm("fixedPoints", ddEqn.flowInOutFixedPoints());
     outputEvent->addSourceTerm("seepage", ddEqn.flowOutSeepage());
     outputEvent->addField(ddEqn.potential(), ddEqn.phi());
     outputEvent->init();

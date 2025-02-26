@@ -134,7 +134,7 @@ Foam::flowModels::DupuitDarcyEqn::DupuitDarcyEqn
     mu_(fluidPhase.mu()),
     hwaterMin_(transportProperties.lookupOrDefault("hwaterMin",dimensionedScalar("hwaterMin",dimLength,0.01))),
     cumulativeWaterAdded_(0),
-    flowOutFixedPoints_(0),
+    flowInOutFixedPoints_(0),
     flowOutSeepage_(0),
     phi_
     (
@@ -153,6 +153,7 @@ Foam::flowModels::DupuitDarcyEqn::DupuitDarcyEqn
     transmissivity_("transmissivity",Mf_*fvc::interpolate(hwater_)),
     phiG_("phiG", 0*phi_),
     phiPc_("phiPc",0*phi_),
+    phihwater_(phi_ * fvc::interpolate(hwater_)),
     seepageIDList_(0),
     dryCellIDList_(0),
     fixedPotentialIDList_(0),
@@ -336,7 +337,36 @@ void Foam::flowModels::DupuitDarcyEqn::updateProperties()
         U_[dryCellIDList_[celli]] = vector(0,0,0);
     }
     U_.correctBoundaryConditions();
-    cellFlux_ = fvc::div(phi_ * fvc::interpolate(hwater_)) + infiltration_ + zScale_ * sourceTerm_;
+    phihwater_ = phi_ * fvc::interpolate(hwater_);
+    cellFlux_ = fvc::div(phihwater_) + infiltration_ + zScale_ * sourceTerm_;
+
+    //- Compute outflow and seepage terms
+    seepageTerm_.primitiveFieldRef() = 0;
+    flowInOutFixedPoints_ = 0;
+    if (fixedPotentialIDList_.size() > 0)
+    {
+        forAll(fixedPotentialIDList_, pointi)
+        {
+            label currentCell = fixedPotentialIDList_[pointi];
+            scalar area = mesh_.V()[currentCell]/zScale_;
+            if (cellFlux_.internalField()[currentCell] < 0) {
+                seepageTerm_[currentCell] = - cellFlux_.internalField()[currentCell];
+            }
+            flowInOutFixedPoints_ -= cellFlux_.internalField()[currentCell]*area;
+        }
+    }
+    flowOutSeepage_ = 0;
+    if (seepage_)
+    {
+        seepageTerm_.primitiveFieldRef() = 0;
+        forAll(seepageIDList_, pointi)
+        {
+            label currentCell = seepageIDList_[pointi];
+            scalar area = mesh_.V()[currentCell]/zScale_;
+            seepageTerm_[currentCell] = - cellFlux_.internalField()[currentCell];
+            flowOutSeepage_ -= cellFlux_.internalField()[currentCell]*area;
+        }
+    }
 
 }
 
