@@ -95,18 +95,7 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     rho_(fluidPhase.rho()),
     mu_(fluidPhase.mu()),
     Ss_(transportProperties.lookupOrDefault<dimensionedScalar>("Ss",dimensionedScalar("Ss",dimless/dimLength,0.))),
-    phi_
-    (
-        IOobject
-        (
-            "phi",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        linearInterpolate(U_) & mesh.Sf()
-    ),
+    phi_("phi", fluidPhase.phi()),
     Kf_(fvc::interpolate(K_,"K")),
     krf_("krthetaf",fvc::interpolate(krModel_.krb(),"krtheta")),
     Lf_("Lf",rho_*Kf_*krf_/mu_),
@@ -120,10 +109,6 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     distanceToDEM_(0),
     seepageValueList_(0)
 {
-    //- initialization
-    fluidPhase.phi().writeOpt()=IOobject::NO_WRITE;
-    deltah_ == dimensionedScalar("",dimLength,0);
-
     //- Checking permeability field
     pmModel_.check_K();
 

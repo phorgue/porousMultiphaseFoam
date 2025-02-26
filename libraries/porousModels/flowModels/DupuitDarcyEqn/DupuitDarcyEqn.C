@@ -136,18 +136,7 @@ Foam::flowModels::DupuitDarcyEqn::DupuitDarcyEqn
     cumulativeWaterAdded_(0),
     flowInOutFixedPoints_(0),
     flowOutSeepage_(0),
-    phi_
-    (
-        IOobject
-        (
-            "phi",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        linearInterpolate(U_) & mesh.Sf()
-    ),
+    phi_("phi", fluidPhase.phi()),
     Kf_(fvc::interpolate(K_,"K")),
     Mf_("Mf",Kf_*g_*rho_/mu_),
     transmissivity_("transmissivity",Mf_*fvc::interpolate(hwater_)),
