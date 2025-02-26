@@ -97,6 +97,45 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
     }
 }
 
+void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
+(
+    const volVectorField& U,
+    const surfaceScalarField& phi,
+    const volScalarField& eps,
+    const volScalarField& hwater,
+    const volScalarField& seepageTerm,
+    const scalar& zScale
+)
+{
+    composition_.correct(U, eps);
+
+    dictionary solverDict = composition_.Y(0).mesh().solver("C");
+    forAll(composition_.Y(), speciesi)
+    {
+        auto& C = composition_.Y(speciesi);
+        const auto& R = composition_.R(speciesi);
+        const auto& Deff = composition_.Deff(speciesi);
+        const auto& lambda = composition_.lambda(speciesi);
+        const auto& sourceTerm = composition_.sourceTerm(speciesi);
+
+        fvScalarMatrix CEqn
+                (
+                        R * fvm::ddt(hwater,C)
+                        + fvm::div(phi, C, "div(phi,C)")
+                        - fvm::laplacian(eps * hwater * Deff, C, "laplacian(Deff,C)")
+                        ==
+                        - sourceTerm * zScale
+                        - eps * R * hwater * fvm::Sp(lambda,C)
+                        - fvm::Sp(seepageTerm,C)
+                );
+
+        CEqn.solve(solverDict);
+//        info(speciesi, eps, hwater, phi);
+    }
+}
+
+
+
 void Foam::porousMediumTransportModels::simplePorosityTransport::info
 (
     const label& speciei,

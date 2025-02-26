@@ -202,6 +202,21 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
     }
 }
 
+
+void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
+        (
+                const volVectorField& U,
+                const surfaceScalarField& phi,
+                const volScalarField& eps,
+                const volScalarField& hwater,
+                const volScalarField& seepageTerm,
+                const scalar& zScale
+        )
+{
+    FatalErrorIn("dualPorosityTransport::solveTransport")
+        << "Dual porosity model is not available for 2D solvers" << abort(FatalError);
+}
+
 void Foam::porousMediumTransportModels::dualPorosityTransport::info
 (
     const label& speciei,

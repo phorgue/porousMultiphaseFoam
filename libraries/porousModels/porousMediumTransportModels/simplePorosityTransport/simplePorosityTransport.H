@@ -90,7 +90,7 @@ public:
     ~simplePorosityTransport()
         {}
 
-    //- Solve tracer tranport equation
+    //- Solve tracer transport equation (Richards' flow modeling)
     void solveTransport
     (
         const volVectorField& U,
@@ -99,13 +99,24 @@ public:
         const volScalarField& exchangeTerm
     );
 
-    //- Display informations to the terminal
+    //- Solve tracer transport equation (Dupuit-Darcy flow modeling)
+    void solveTransport
+    (
+        const volVectorField& U,
+        const surfaceScalarField& phi,
+        const volScalarField& eps,
+        const volScalarField& hwater,
+        const volScalarField& seepageTerm,
+        const scalar& zScale
+    );
+
+    //- Display information to the terminal
     void info
     (
         const label& speciei,
         const volScalarField& theta,
         const surfaceScalarField& phi
-    ) ;
+    );
 
 };
 

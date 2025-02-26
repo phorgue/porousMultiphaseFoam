@@ -111,13 +111,24 @@ public:
     ~dualPorosityTransport()
         {}
 
-    //- Solve tracer tranport equation
+    //- Solve tracer transport equation (Richards' flow modeling)
     void solveTransport
     (
         const volVectorField& U,
         const surfaceScalarField& phi,
         const volScalarField& theta,
         const volScalarField& exchangeTerm
+    );
+
+    //- Solve tracer transport equation (Dupuit-Darcy flow modeling)
+    void solveTransport
+    (
+        const volVectorField& U,
+        const surfaceScalarField& phi,
+        const volScalarField& eps,
+        const volScalarField& hwater,
+        const volScalarField& seepageTerm,
+        const scalar& zScale
     );
 
     //- Display mass balance information to the terminal

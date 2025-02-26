@@ -140,13 +140,24 @@ public:
     //- Access to composition
     multiscalarMixture& composition() {return composition_;}
 
-    //- Solve tracer transport equation
+    //- Solve tracer transport equation (Richards' flow modeling)
     virtual void solveTransport
     (
         const volVectorField& U,
         const surfaceScalarField& phi,
         const volScalarField& theta,
         const volScalarField& exchangeTerm
+    ) = 0;
+
+    //- Solve tracer transport equation (Dupuit-Darcy flow modeling)
+    virtual void solveTransport
+    (
+        const volVectorField& U,
+        const surfaceScalarField& phi,
+        const volScalarField& eps,
+        const volScalarField& hwater,
+        const volScalarField& seepageTerm,
+        const scalar& zScale
     ) = 0;
 
     //- Display mass balance information to the terminal
