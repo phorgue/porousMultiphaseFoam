@@ -120,11 +120,11 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
 
         fvScalarMatrix CEqn
                 (
-                        R * fvm::ddt(hwater,C)
+                        eps* R * fvm::ddt(hwater,C)
                         + fvm::div(phi, C, "div(phi,C)")
                         - fvm::laplacian(eps * hwater * Deff, C, "laplacian(Deff,C)")
                         ==
-                        - sourceTerm * zScale
+                        - sourceTerm * dimensionedScalar(dimLength, zScale)
                         - eps * R * hwater * fvm::Sp(lambda,C)
                         - fvm::Sp(seepageTerm,C)
                 );

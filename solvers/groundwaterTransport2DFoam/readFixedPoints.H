@@ -1,1 +1,0 @@
-../groundwater2DFoam/readFixedPoints.H
