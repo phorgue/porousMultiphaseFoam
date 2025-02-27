@@ -154,6 +154,8 @@ int main(int argc, char *argv[])
                                          ddEqn.seepage(),
                                          ddEqn.zScale());
 
+        MDTM.updateAllDerivatives();
+
         //- Write
         outputEvent->write();
 

@@ -1,13 +1,23 @@
+# compilation files
 *.o
 *.dep
-*~
 *.pyc
-\#*
 linux64GccDPOpt/
 linux64GccDPInt32Opt/
 linux64GccDPInt32Debug/
 lnInclude/
 darwin*
+
+# backup files
+*~
 *.bak
+\#*
+
+# doc files
 docs/build
+
+# results files
 *.csv
+*e+0*
+*[0-9][0-9][0-9]*
+log.*
