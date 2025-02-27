@@ -109,6 +109,9 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     distanceToDEM_(0),
     seepageValueList_(0)
 {
+    //- initialization
+    deltah_ == dimensionedScalar("",dimLength,0);
+
     //- Checking permeability field
     pmModel_.check_K();
 
