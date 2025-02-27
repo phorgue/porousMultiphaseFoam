@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ## \file cleanTutorials.py for python 3
-## Script for running all validations cases
+## Script for cleaning all validation cases
 ## \author Pierre Horgue (inspired from MARINE source code and K. Larnier)
 
 # import
@@ -8,39 +8,35 @@ from __future__ import with_statement
 import os, subprocess, sys
 
 # import list_cases
-from tutorialsList import tutorials as testCases
+from tutorialsList import tutorials as testGroups
 
 class testCase:
 
     #=============================================================================
-    # ROUTINE run
+    # ROUTINE __init__
     #=============================================================================
     def __init__(self, solver, case):
-
         self.solver = solver
         self.case = case
-        self.testDir = solver+"-tutorials/"+case
+        self.testDir = f"{solver}-tutorials/{case}"
 
     #=============================================================================
     # ROUTINE run
     #=============================================================================
     def run(self):
-
         print("")
-        print("Test : " + self.solver + " " + self.case)
+        print(f"Cleaning Test : {self.solver} {self.case}")
         print("")
 
-        refDir=os.getcwd()
-
+        refDir = os.getcwd()
         os.chdir(self.testDir)
 
-        ProcessPipe=subprocess.Popen("./clean", shell=True, \
-                                     stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-
+        ProcessPipe = subprocess.Popen(
+            "./clean", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         stdout, stderr = ProcessPipe.communicate()
 
         print("[ CLEAN ] ")
-
         os.chdir(refDir)
 
         return 0
@@ -50,14 +46,16 @@ class testCase:
 #===============================================================================
 
 if __name__ == '__main__':
-
     print("========================================================")
     print("                   CLEANING TEST CASES                  ")
     print("========================================================")
 
-    for case in testCases:
-        test = testCase(case["solver"],case["case"])
-        test.run()
+    for group in testGroups["tutorials"]:
+        solver = group["solver"]
+        for case_info in group["cases"]:
+            case = case_info["case"]
+            test = testCase(solver, case)
+            test.run()
 
     print(" ")
     print("========================================================")
