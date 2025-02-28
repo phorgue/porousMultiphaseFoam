@@ -5,4 +5,4 @@
 
 runApplication groundwater2DFoam -steady
 runApplication postProcess -func probes -latestTime
-tail -1 postProcessing/probes/*/potential > openfoam_results.dat
+tail -1 postProcessing/probes/*/potential > potential_probes.dat
