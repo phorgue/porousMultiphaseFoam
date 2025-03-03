@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Nov  5 14:53:43 2024
-
-@author: lfabregu
-"""
+## Script for plotting current results VS reference results
+## \author Léo Fabrègues & Pierre Horgue
 
 # Imports
 from __future__ import with_statement
@@ -118,12 +115,36 @@ if __name__ == '__main__':
     script_dir = path.dirname(path.abspath(__file__))
     tutorials_dir = path.dirname(script_dir)
     
+    # Extract current version information from file
+    pmf_dir = path.dirname(tutorials_dir)
+    header_file = path.join(pmf_dir, "libraries/general/PMFversion.H")
+    with open(header_file, 'r') as file:
+        content = file.read()
+    match = re.search('const int version_ = (\S+);', content)
+
+    if match:
+        current_version = match.group(1)
+    else:
+        current_version = "????"
+
+    reference_results = path.join(tutorials_dir, "referenceResults", "version.txt")
+    if path.exists(reference_results):
+        version_file = open(reference_results)
+        reference_version = version_file.readline()
+        reference_version = reference_version.replace("\n","")
+        version_file.close()
+    else:
+        reference_version = "????"
+
+
     # Initialize logger
     logfile = path.join(tutorials_dir, 'log.plotComparison')
     logger = Logger(logfile)
     
     logger.log("========================================================")
     logger.log("                    PROCESSING DATA                     ")
+    logger.log("   Reference version : " + reference_version)
+    logger.log("   Current   version : " + current_version)
     logger.log("========================================================\n")
 
     # Create directory for figures and clean if already exists
@@ -173,8 +194,8 @@ if __name__ == '__main__':
                         fig, ax = plt.subplots(figsize=(6,6), dpi=300)
                         x_max = max(xRef)
                         y_max = max(abs(y_columnsRef[i]))
-                        plt.plot(xRef/x_max, y_columnsRef[i]/y_max, label="reference results", ls='-')
-                        plt.plot(x/x_max, y/y_max, label="current results", ls='--')
+                        plt.plot(xRef/x_max, y_columnsRef[i]/y_max, label="PMF v"+reference_version, ls='-')
+                        plt.plot(x/x_max, y/y_max, label="PMF v"+current_version, ls='--')
                         plt.xlabel("Dimensionless (height or time)")
                         plt.ylabel(r"Dimensionless {}".format(labels[idx]))
                         plt.legend()
