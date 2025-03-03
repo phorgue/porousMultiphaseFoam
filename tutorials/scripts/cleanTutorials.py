@@ -6,19 +6,20 @@
 # import
 from __future__ import with_statement
 import os, subprocess, sys
+import shutil
 
-# import list_cases
-from tutorialsList import tutorials as testGroups
+# Import test case definitions
+from tutorialsList import tutorials
 
 class testCase:
 
     #=============================================================================
     # ROUTINE __init__
     #=============================================================================
-    def __init__(self, solver, case):
+    def __init__(self, tutorials_dir, solver, case):
         self.solver = solver
         self.case = case
-        self.testDir = f"{solver}-tutorials/{case}"
+        self.testDir = os.path.join(tutorials_dir, f"{solver}-tutorials/{case}")
 
     #=============================================================================
     # ROUTINE run
@@ -28,7 +29,6 @@ class testCase:
         print(f"Cleaning Test : {self.solver} {self.case}")
         print("")
 
-        refDir = os.getcwd()
         os.chdir(self.testDir)
 
         ProcessPipe = subprocess.Popen(
@@ -37,7 +37,6 @@ class testCase:
         stdout, stderr = ProcessPipe.communicate()
 
         print("[ CLEAN ] ")
-        os.chdir(refDir)
 
         return 0
 
@@ -46,17 +45,28 @@ class testCase:
 #===============================================================================
 
 if __name__ == '__main__':
+
+    # Construct paths
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    tutorials_dir = os.path.dirname(script_dir)
+
     print("========================================================")
     print("                   CLEANING TEST CASES                  ")
     print("========================================================")
 
-    for group in testGroups["tutorials"]:
-        solver = group["solver"]
-        for case_info in group["cases"]:
+    for cfg in tutorials:
+        solver = cfg["solver"]
+        for case_info in cfg["cases"]:
             case = case_info["case"]
-            test = testCase(solver, case)
+            test = testCase(tutorials_dir, solver, case)
             test.run()
 
+    # Create directory for figures and clean if already exists
+    figures_dir = os.path.join(tutorials_dir, "validationFigures")
+    if os.path.exists(figures_dir):
+        print("\nRemove validationFigures dir")
+        shutil.rmtree(figures_dir)
+        
     print(" ")
     print("========================================================")
     print("                        FINISHED                        ")
