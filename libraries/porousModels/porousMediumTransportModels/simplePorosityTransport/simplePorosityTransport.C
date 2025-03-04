@@ -130,10 +130,11 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
                 );
 
         CEqn.solve(solverDict);
-//        info(speciesi, eps, hwater, phi);
+        volScalarField waterContent(eps*hwater);
+        waterContent /= zScale;
+        info(speciesi, waterContent, phi);
     }
 }
-
 
 
 void Foam::porousMediumTransportModels::simplePorosityTransport::info

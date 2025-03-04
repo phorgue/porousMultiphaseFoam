@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     logger.log("\n========================================================")
     logger.log("      SAVING NEW REFERENCES FROM TUTORIALS       ")
-    logger.log("      PMF version is " + version)ll
+    logger.log("      PMF version is " + version)
     logger.log("========================================================\n")
 
     # Clean the saveDatas directory if it already exists
