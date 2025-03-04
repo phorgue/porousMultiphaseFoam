@@ -16,8 +16,5 @@ darwin*
 # doc files
 docs/build
 
-# results files
-*.csv
-*e+0*
-*[0-9][0-9][0-9]*
+# log files
 log.*
