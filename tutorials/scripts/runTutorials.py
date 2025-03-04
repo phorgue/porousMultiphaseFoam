@@ -8,7 +8,7 @@ from __future__ import with_statement
 import os, subprocess, sys, glob, time
 
 # import list_cases
-from tutorialsList import tutorials as testGroups
+from tutorialsList import tutorials
 
 class testCase:
 
@@ -105,9 +105,9 @@ if __name__ == '__main__':
     start_time = time.time()
     lap_time = start_time
 
-    for group in testGroups["tutorials"]:
-        solver = group["solver"]
-        for case_info in group["cases"]:
+    for cfg in tutorials:
+        solver = cfg["solver"]
+        for case_info in cfg["cases"]:
             case = case_info["case"]
             test = testCase(solver, case)
             test.run(parallel)
