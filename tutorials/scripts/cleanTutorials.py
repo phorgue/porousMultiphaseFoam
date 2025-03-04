@@ -5,8 +5,7 @@
 
 # import
 from __future__ import with_statement
-import os, subprocess, sys
-import shutil
+import os, subprocess, sys, glob, shutil
 
 # Import test case definitions
 from tutorialsList import tutorials
@@ -66,7 +65,11 @@ if __name__ == '__main__':
     if os.path.exists(figures_dir):
         print("\nRemove validationFigures dir")
         shutil.rmtree(figures_dir)
-        
+
+    os.chdir(tutorials_dir)
+    for f in glob.glob("log.*"):
+        os.remove(f) 
+
     print(" ")
     print("========================================================")
     print("                        FINISHED                        ")

@@ -44,9 +44,9 @@ namespace Foam
 
 class PMFversion {
 
-    const int version_ = 2502;
+    const int version_ = 2503;
     const int subversion_ = 0;
-    const bool beta_ = true;
+    const bool beta_ = false;
 
 public:
 
