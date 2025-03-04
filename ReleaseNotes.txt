@@ -1,4 +1,14 @@
+************************
+*** PMF v2503
+*** Dual-Mesh Methods + Modular solvers + New tutorials with validation scripts
+************************
+
 ### Solvers
+
+- groundwaterFoam/groundwaterTransportFoam
+
+  - Newton solver has been improved to be used in steady simulations.
+  - Normalized residual is now used for both Picard and Newton algorithm.
 
 - groundwater2DFoam
 
@@ -24,12 +34,15 @@
 
   - now handles dynamicMesh when output-times are specified
 
-- porousModels/flowModels/RichardsEqn
+- porousModels/flowModels
 
-  - new class added to handle Richards' equation and related fields. This reduces drastically the files
-  groundwaterFoam.C and groundwaterTransportFoam.C by removing many #include.
+  - RichardsEqn: new class added to handle Richards' equation and related fields. This reduces drastically
+  the files groundwaterFoam.C and groundwaterTransportFoam.C by removing many #include.
   RichardsEqn gives access to internal fields (theta, h and phi) and has several functions to compute residuals
   or solve equation using different algorithm (Picard or Newton).
+
+  - DupuitDarcyEqn: new class similar to RichardsEqn but for solving 2D groundwater flows.
+  Used by groundwater2DFoam and groundwaterTransport2DFoam.
 
 - porousModels/relativePermeabilityModels
 
@@ -40,6 +53,10 @@
   - new classes to handle dual mesh methods with simpleMesh/dualStaticMesh/dualDynamicMesh
   - Dual-mesh approach solves flow equation (Richards) on a coarse mesh and tracer transport on fine mesh.
   - usable only with groundwaterTransportFoam
+
+### Tutorials
+
+  - global reorganization + new scripts
 
 ### Bug fixes
 

@@ -126,7 +126,7 @@ Foam::flowModels::frozenDupuitDarcyEqn::frozenDupuitDarcyEqn
     if (!exists(phi.objectPath()))
     {
         bool phiReconstruction = transportProperties.getOrDefault<bool>("phiReconstruction", true);
-        Info << nl << "*WARNING* phi is not present: ";
+        Info << nl << "phi is not present: ";
         if (exists(mesh.time().timeName()/"potential") && exists(mesh.time().constant()/"K") &&
             transportProperties.found("rho") && transportProperties.found("mu") && phiReconstruction)
         {
@@ -165,7 +165,7 @@ Foam::flowModels::frozenDupuitDarcyEqn::frozenDupuitDarcyEqn
         else
         {
             phi = Foam::linearInterpolate(U) & mesh.Sf();
-            Info << "computed using linear interpolation from U (should not be conservative)" << endl;
+            Info << "computed using linear interpolation from U (*WARNING* should not be conservative)" << endl;
             phi.write();
         }
 
