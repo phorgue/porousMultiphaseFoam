@@ -7,6 +7,4 @@ runApplication blockMesh
 
 runApplication groundwaterTransportFoam
 
-./postProcess_dt.sh log.groundwaterTransportFoam
-
 runApplication postProcess -func sampleDict

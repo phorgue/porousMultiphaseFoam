@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        openfoam_version: [v2206]
+        openfoam_version: [v2406]
 
     steps:
 
