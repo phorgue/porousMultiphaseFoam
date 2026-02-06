@@ -126,10 +126,10 @@ public:
     void updateProperties(bool derivative);
     void updateSeepage();
     void noConvergence(multiDtManager& MDTM, Time& runTime, label algoID);
-    const Tuple2<scalar, scalar> solvePicard(const scalar tolerance);
-    const Tuple2<scalar, scalar> solveNewton(const scalar tolerance);
+    const Tuple2<scalar, scalar> solvePicard(scalar tolerance);
+    const Tuple2<scalar, scalar> solveNewton(scalar tolerance);
     void info();
-    void checkSteadyConfig(const scalar tol1, const scalar tol2);
+    void checkSteadyConfig( scalar tol1,  scalar tol2);
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -26,7 +26,7 @@ phase.theta
 porousMediumModel dualPorosity;
 
 KFracture [0 2 0 0 0 0 0] 1.1798e-12;
-Kmatrix [0 2 0 0 0 0 0] 1.1798e-14;
+KMatrix [0 2 0 0 0 0 0] 1.1798e-14;
 
 dualPorosityCoeffs
 {

@@ -75,21 +75,20 @@ public:
         const fvMesh& mesh,
         const dictionary& transportProperties,
         const word& Sname,
-        const word porousRegion = ""
+        const word& porousRegion = ""
     );
 
     //- Destructor
-    ~krBrooksAndCorey()
-        {}
+    ~krBrooksAndCorey() override {}
 
     // Member Functions
 
     //- Correct the relative permeabilities
-    void correct(const volScalarField& Sb, bool derivative);
-    void correctkra(const volScalarField& Sb, bool derivative);
-    void correctkrb(const volScalarField& Sb, bool derivative);
-    void correctkrb(const volScalarField& Sb, const label& celli);
-    tmp<volScalarField> kr(const volScalarField& S);
+    void correct(const volScalarField& Sb, bool derivative) override;
+    void correctkra(const volScalarField& Sb, bool derivative) override;
+    void correctkrb(const volScalarField& Sb, bool derivative) override;
+    void correctkrb(const volScalarField& Sb, const label& celli) override;
+    tmp<volScalarField> kr(const volScalarField& S) override;
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

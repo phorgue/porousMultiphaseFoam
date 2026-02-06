@@ -54,7 +54,7 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
     const fvMesh& mesh,
     const dictionary& transportProperties,
     const word& Sname,
-    const word porousRegion
+    const word& porousRegion
 )
     :
     relativePermeabilityModel(mesh, transportProperties.subDict(typeName + "Coeffs"),
@@ -133,21 +133,21 @@ Foam::relativePermeabilityModels::krBrooksAndCorey::krBrooksAndCorey
 void Foam::relativePermeabilityModels::krBrooksAndCorey::correct(const volScalarField& Sb, bool derivative)
 {
     Se_= (Sb-Smin_)/(Smax_-Smin_);
-    kra_ = kramax_* pow((scalar(1)-Se_),n_);
+    kra_ = kramax_* pow((1-Se_),n_);
     krb_ = krbmax_ * pow(Se_,n_);
     if (derivative)
     {
-        dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
+        dkradS_ = -kramax_*n_*pow((1-Se_),n_-1)/(Smax_- Smin_);
         dkrbdS_ = krbmax_*n_*pow(Se_,n_-1)/(Smax_- Smin_);
     }
 }
 void Foam::relativePermeabilityModels::krBrooksAndCorey::correctkra(const volScalarField& Sb, bool derivative)
 {
     Se_= (Sb-Smin_)/(Smax_-Smin_);
-    kra_ = kramax_* pow((scalar(1)-Se_),n_);
+    kra_ = kramax_* pow((1-Se_),n_);
     if (derivative)
     {
-        dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
+        dkradS_ = -kramax_*n_*pow(1-Se_,n_-1)/(Smax_- Smin_);
 
     }
 }

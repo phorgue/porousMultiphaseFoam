@@ -43,7 +43,7 @@ Foam::porousMediumModel::porousMediumModel
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
     const dimensionSet& sourceDims,
-    const word porousRegion
+    const word& porousRegion
 )
     :
     mesh_(mesh),
@@ -101,12 +101,16 @@ Foam::porousMediumModel::porousMediumModel
         dimensionedScalar("",sourceDims,0)
     )
 {
-    scalar Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
+    auto Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
     if (Kfactor != 1)
     {
         K_ *= Kfactor;
         Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
     }
+    Info << "Porous medium properties for " << porousRegion << nl << "{";
+    if (K_.headerOk()) {Info << nl << " Permeability is scalar field";}
+    else {Info << nl << "    Permeability is uniform = " << average(K_).value() << " m2";}
+    Info << nl << "}\n" << endl;
 }
 
 void Foam::porousMediumModel::check_eps() const

@@ -65,5 +65,4 @@ Foam::autoPtr<Foam::incompressiblePhase> Foam::incompressiblePhase::New
 Foam::incompressiblePhase::~incompressiblePhase()
 {}
 
-
 // ************************************************************************* //

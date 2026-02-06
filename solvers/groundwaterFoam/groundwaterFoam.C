@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
 
     if (!args.checkRootCase()) {  Foam::FatalError.exit(); }
 
-
     Info << "Create time\n" << Foam::endl;
     Time runTime(Time::controlDictName, args);
     bool writeResiduals(runTime.controlDict().getOrDefault<bool>("writeResiduals", false));
@@ -134,6 +133,7 @@ noConvergence :
         Info << "Time = " << runTime.timeName() << nl << endl;
 
         forAll(patchEventList,patchEventi) patchEventList[patchEventi]->updateValue(runTime);
+
         if (sourceEvent->isPresent())
         {
             sourceEvent->updateValue(runTime);

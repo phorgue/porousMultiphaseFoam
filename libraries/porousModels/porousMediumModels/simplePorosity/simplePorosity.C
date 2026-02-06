@@ -52,11 +52,11 @@ addToRunTimeSelectionTable
 
 Foam::porousMediumModels::simplePorosity::simplePorosity
 (
-    const word Sname,
+    const word& Sname,
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
     const autoPtr<incompressiblePhase>& phase,
-    const word porousRegion
+    const word& porousRegion
 )
     :
     twophasePorousMediumModel(Sname, mesh, transportProperties, phase, porousRegion)

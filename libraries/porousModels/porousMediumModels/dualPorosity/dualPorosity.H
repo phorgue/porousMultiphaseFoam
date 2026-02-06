@@ -43,7 +43,6 @@ SourceFiles
 #define dualPorosity_H
 
 #include "volFields.H"
-#include "surfaceFields.H"
 #include "twophasePorousMediumModel.H"
 #include "relativePermeabilityModel.H"
 #include "capillarityModel.H"
@@ -72,8 +71,8 @@ class dualPorosity
     const uniformDimensionedVectorField g;
     volScalarField hMatrix_;
     volScalarField Smatrix_;
-    volScalarField Kmatrix_;
-    surfaceScalarField Kmatrixf_;
+    volScalarField KMatrix_;
+    surfaceScalarField KMatrixf_;
     volScalarField Kexchange_;
     dimensionedScalar a_, beta_, gammaW_, geomFactor_;
     volVectorField UMatrix_;
@@ -105,7 +104,7 @@ public:
     //- Construct from components
     dualPorosity
     (
-        const word Sname,
+        const word& Sname,
         const fvMesh& mesh,
         const IOdictionary& transportProperties,
         const autoPtr<incompressiblePhase>& phase,
@@ -113,13 +112,12 @@ public:
     );
 
     //- Destructor
-    ~dualPorosity()
-        {}
+    ~dualPorosity() override = default;
 
     //- Correct the relative permeabilities
-    void rewindTime();
-    void correct();
-    void correct(volScalarField& h, const bool steady = false, const bool conservative = true);
+    void rewindTime() override;
+    void correct() override;
+    void correct(volScalarField& h, bool steady = false, bool conservative = true) override;
 
 };
 

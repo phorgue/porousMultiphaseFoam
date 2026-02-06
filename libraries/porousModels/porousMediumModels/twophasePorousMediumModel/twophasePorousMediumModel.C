@@ -41,11 +41,11 @@ defineRunTimeSelectionTable(twophasePorousMediumModel, dictionary);
 
 Foam::twophasePorousMediumModel::twophasePorousMediumModel
 (
-    const word Sname,
+    const word& Sname,
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
     const autoPtr<incompressiblePhase>& phase,
-    const word porousRegion
+    const word& porousRegion
 )
     :
     porousMediumModel(mesh, transportProperties, dimless/dimTime, porousRegion),

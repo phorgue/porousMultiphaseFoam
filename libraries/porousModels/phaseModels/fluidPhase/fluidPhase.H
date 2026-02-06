@@ -40,7 +40,6 @@ SourceFiles
     #define fluidPhase_H
 
     #include "phase.H"
-    #include "dimensionedScalar.H"
     #include "volFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -88,10 +87,9 @@ public:
     );
 
     //- Destructor
-    virtual ~fluidPhase();
+    ~fluidPhase() override;
 
     // Member Functions
-    const word& name() const {return name_;}
     const volVectorField& U() const {return U_;}
     volVectorField& U(){return U_;}
     const surfaceScalarField& phi() const {return phiPtr_();}

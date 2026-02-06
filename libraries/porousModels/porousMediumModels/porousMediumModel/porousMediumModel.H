@@ -100,7 +100,7 @@ public:
         const fvMesh& mesh,
         const IOdictionary& transportProperties,
         const dimensionSet& sourceDims,
-        const word porousRegion = ""
+        const word& porousRegion = ""
     );
 
     //- Destructor

@@ -92,7 +92,7 @@ public:
     // Member Functions
     const word& name() const {return name_;}
     const fvMesh& mesh() const {return mesh_;}
-    const dictionary& transportProperties() {return dict_;}
+    const dictionary& transportProperties() const {return dict_;}
 
 };
 

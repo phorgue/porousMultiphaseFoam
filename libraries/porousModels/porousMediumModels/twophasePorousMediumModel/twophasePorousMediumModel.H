@@ -95,11 +95,11 @@ public:
         twophasePorousMediumModel,
         dictionary,
         (
-            const word Sname,
+            const word& Sname,
             const fvMesh& mesh,
             const IOdictionary& transportProperties,
             const autoPtr<incompressiblePhase>& phase,
-            const word porousRegion
+            const word& porousRegion
         ),
         (Sname, mesh, transportProperties, phase, porousRegion)
     );
@@ -109,11 +109,11 @@ public:
     //- Return a reference to the selected twophasePorousMedium model
     static autoPtr<twophasePorousMediumModel> New
     (
-        const word Sname,
+        const word& Sname,
         const fvMesh& mesh,
         const IOdictionary& transportProperties,
         const autoPtr<incompressiblePhase>& phase,
-        const word porousRegion = ""
+        const word& porousRegion = ""
     );
 
     // Constructors
@@ -121,11 +121,11 @@ public:
     //- Construct from components
     twophasePorousMediumModel
     (
-        const word Sname,
+        const word& Sname,
         const fvMesh& mesh,
         const IOdictionary& transportProperties,
         const autoPtr<incompressiblePhase>& phase,
-        const word porousRegion = ""
+        const word& porousRegion = ""
     );
 
     //- Destructor

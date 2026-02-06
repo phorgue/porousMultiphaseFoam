@@ -53,7 +53,7 @@ addToRunTimeSelectionTable
 
 Foam::porousMediumModels::dualPorosity::dualPorosity
 (
-    const word Sname,
+    const word& Sname,
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
     const autoPtr<incompressiblePhase>& phase,
@@ -102,20 +102,20 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         dimless,
         calculatedFvPatchScalarField::typeName
     ),
-    Kmatrix_
+    KMatrix_
     (
         IOobject
         (
-            "Kmatrix",
+            "KMatrix",
             mesh.time().constant(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        transportProperties.get<dimensionedScalar>("Kmatrix")
+        transportProperties.get<dimensionedScalar>("KMatrix")
     ),
-    Kmatrixf_(fvc::interpolate(Kmatrix_, "K")),
+    KMatrixf_(fvc::interpolate(KMatrix_, "K")),
     Kexchange_
     (
         IOobject
@@ -145,7 +145,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         ),
         mesh
     ),
-    LMatrixf_(phase_->rho()*Kmatrixf_/phase_->mu()),
+    LMatrixf_(phase_->rho()*KMatrixf_/phase_->mu()),
     MMatrixf_(mag(g)*LMatrixf_),
     phiGMatrixf_((LMatrixf_ * g) & mesh_.Sf()),
     phiMatrix_
@@ -165,12 +165,12 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     Info << "    a " << a_.value() << endl;
     Info << "    beta " << beta_.value() << endl;
     Info << "    gammaW " << gammaW_.value() << endl;
-    Info << "    Kmatrix ";
-    if (Kmatrix_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Kmatrix_).value() << endl;}
+    Info << "    KMatrix ";
+    if (KMatrix_.headerOk()) { Info << "is a scalar field" << endl;}
+    else {Info << average(KMatrix_).value() << " m2" << endl;}
     Info << "    Kexchange ";
-    if (Kexchange_.headerOk()) { Info << "read file" << endl;}
-    else {Info << average(Kexchange_).value() << endl;}
+    if (Kexchange_.headerOk()) { Info << "is a scalar field" << endl;}
+    else {Info << average(Kexchange_).value() <<  " m2" << endl;}
     Info << "} \n" << endl;
     sourceTerm_.writeOpt(IOobject::AUTO_WRITE);
     matrixPcModel_ = capillarityModel::New(mesh, transportProperties, Sname_, "Matrix");
@@ -187,7 +187,7 @@ void Foam::porousMediumModels::dualPorosity::updateMatrixProperties()
     Smatrix_ = matrixPcModel_->correctAndSb(hMatrix_);
     matrixKrModel_->correctkrb(Smatrix_, false);
     surfaceScalarField krthetaMatrixf(fvc::interpolate(matrixKrModel_->krb(), "krthetaMatrix"));
-    LMatrixf_ = phase_->rho()*Kmatrixf_*krthetaMatrixf/phase_->mu();
+    LMatrixf_ = phase_->rho()*KMatrixf_*krthetaMatrixf/phase_->mu();
     MMatrixf_ = mag(g)*LMatrixf_;
     phiGMatrixf_ = (LMatrixf_ * g) & mesh_.Sf();
     phiMatrix_ = phiGMatrixf_-(MMatrixf_*fvc::snGrad(hMatrix_))*mesh_.magSf();
@@ -195,7 +195,7 @@ void Foam::porousMediumModels::dualPorosity::updateMatrixProperties()
     UMatrix_.correctBoundaryConditions();
     forAll(UMatrix_.boundaryField(),patchi)
     {
-        if (isA< fixedValueFvPatchField<vector> >(UMatrix_.boundaryField()[patchi]))
+        if (isA< fixedValueFvPatchField<Vector<scalar>> >(UMatrix_.boundaryField()[patchi]))
         {
             phiMatrix_.boundaryFieldRef()[patchi] = UMatrix_.boundaryField()[patchi] & mesh_.Sf().boundaryField()[patchi];
         }
@@ -245,9 +245,6 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
         }
     }
     hMEqn.solve();
-
-    //- relax if steady formulation
-    if (steady) hMatrix_.relax();
 
     //- compute source term using update hMatrix field
     exchangeTerm_ = alphaW* (hFracture - hMatrix_);

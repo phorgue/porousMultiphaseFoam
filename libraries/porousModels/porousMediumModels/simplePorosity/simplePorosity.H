@@ -44,8 +44,6 @@ SourceFiles
 
 #include "volFields.H"
 #include "twophasePorousMediumModel.H"
-#include "relativePermeabilityModel.H"
-#include "capillarityModel.H"
 #include "incompressiblePhase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -80,21 +78,20 @@ public:
     //- Construct from components
     simplePorosity
     (
-        const word Sname,
+        const word& Sname,
         const fvMesh& mesh,
         const IOdictionary& transportProperties,
         const autoPtr<incompressiblePhase>& phase,
-        const word porousRegion
+        const word& porousRegion
     );
 
     //- Destructor
-    ~simplePorosity()
-        {}
+    ~simplePorosity() override = default;
 
     //- Correct the relative permeabilities
-    void rewindTime();
-    void correct();
-    void correct(volScalarField& h, const bool steady = false, const bool conservative = true);
+    void rewindTime() override;
+    void correct() override;
+    void correct(volScalarField& h, bool steady = false, bool conservative = true) override;
 
 };
 

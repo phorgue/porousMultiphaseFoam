@@ -33,11 +33,11 @@ License
 
 Foam::autoPtr<Foam::twophasePorousMediumModel> Foam::twophasePorousMediumModel::New
 (
-    const word Sname,
+    const word& Sname,
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
     const autoPtr<incompressiblePhase>& phase,
-    const word porousRegion
+    const word& porousRegion
 )
 {
     const word modelType(transportProperties.lookupOrDefault<word>("porousMediumModel", "simplePorosity"));

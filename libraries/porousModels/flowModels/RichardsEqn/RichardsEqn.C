@@ -163,7 +163,7 @@ void Foam::flowModels::RichardsEqn::updateProperties(bool derivative)
     U_.correctBoundaryConditions();
     forAll(mesh_.boundary(),patchi)
     {
-        if (isA< fixedValueFvPatchField<vector> >(U_.boundaryField()[patchi]))
+        if (isA< fixedValueFvPatchField<Vector<scalar> > >(U_.boundaryField()[patchi]))
         {
             phi_.boundaryFieldRef()[patchi] = U_.boundaryField()[patchi] & mesh_.Sf().boundaryField()[patchi];
         }
@@ -299,6 +299,7 @@ Foam::scalar Foam::flowModels::RichardsEqn::initResidual
 
     scalar normFactor = gSumMag(Ax - Axbar) + gSumMag(hEqn.source() - Axbar);
     return gSumMag(hEqn.source() - Ax) / normFactor;
+
 }
 
 
@@ -382,8 +383,8 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     }
 
     deltahEqn.solve();
-    if (res.first() > tolerance) deltah_.relax();
     h_ = h_.prevIter() + deltah_;
+    if (res.first() > tolerance) h_.relax();
     h_.correctBoundaryConditions();
 
     res.second() = gMax(mag(deltah_)());
