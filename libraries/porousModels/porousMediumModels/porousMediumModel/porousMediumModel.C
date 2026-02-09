@@ -108,9 +108,8 @@ Foam::porousMediumModel::porousMediumModel
         Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
     }
     Info << "Porous medium properties for " << porousRegion << nl << "{";
-    if (K_.headerOk()) {Info << nl << " Permeability is scalar field";}
-    else {Info << nl << "    Permeability is uniform = " << average(K_).value() << " m2";}
-    Info << nl << "}\n" << endl;
+    this->check_K();
+    Info << "}\n" << endl;
 }
 
 void Foam::porousMediumModel::check_eps() const
@@ -122,12 +121,23 @@ void Foam::porousMediumModel::check_eps() const
     }
 }
 
-void Foam::porousMediumModel::check_K() const
+void Foam::porousMediumModel::check_K()
 {
-    if (gMax(K_) == 0)
-    {
+    check_K(K_, transportProperties_);
+}
+
+void Foam::porousMediumModel::check_K(volScalarField& Kfield, const dictionary& dict)
+{
+    if (gMax(Kfield) == 0) {
         FatalErrorIn("porousMediumModel.C") <<
-            "Field " << K_.name() << " is equal to zero. You should specify value in transportProperties or field in constant/" << abort(FatalError);
+            "Field " << Kfield.name() << " is equal to zero. You should specify value in " << dict.name()
+                <<" or field in constant/" << abort(FatalError);
+    }
+    else
+        {
+        if (Kfield.headerOk()) {Info << "    " << Kfield.name() << " permeability is scalar field" << endl;}
+        else {Info << "    " << Kfield.name() << " permeability is uniform = "
+                      << average(Kfield).value() << " m2"  << endl;}
     }
 }
 

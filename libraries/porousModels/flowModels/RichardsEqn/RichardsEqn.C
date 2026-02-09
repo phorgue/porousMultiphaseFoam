@@ -30,7 +30,6 @@ License
 #include "RichardsEqn.H"
 #include "fvm.H"
 #include "fvc.H"
-#include "linear.H"
 #include "fixedValueFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -113,7 +112,6 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     deltah_ == dimensionedScalar("",dimLength,0);
 
     //- Checking permeability field
-    pmModel_.check_K();
 
     //- Checking gravity
     if (mag(g_).value() == 0)

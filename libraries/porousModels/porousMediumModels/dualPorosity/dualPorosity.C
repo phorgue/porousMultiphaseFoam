@@ -113,21 +113,21 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
             IOobject::NO_WRITE
         ),
         mesh,
-        transportProperties.get<dimensionedScalar>("KMatrix")
+        dualPorosityCoeffs_.lookupOrDefault("KMatrix", dimensionedScalar(dimArea, 0))
     ),
     KMatrixf_(fvc::interpolate(KMatrix_, "K")),
-    Kexchange_
+    KExchange_
     (
         IOobject
         (
-            "Kexchange",
+            "KExchange",
             mesh.time().constant(),
             mesh,
             IOobject::READ_IF_PRESENT,
             IOobject::NO_WRITE
         ),
         mesh,
-        dualPorosityCoeffs_.get<dimensionedScalar>("Kexchange")
+        dualPorosityCoeffs_.lookupOrDefault("KExchange", dimensionedScalar(dimArea, 0))
     ),
     a_(dualPorosityCoeffs_.get<dimensionedScalar>("a")),
     beta_(dualPorosityCoeffs_.get<dimensionedScalar>("beta")),
@@ -165,12 +165,8 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     Info << "    a " << a_.value() << endl;
     Info << "    beta " << beta_.value() << endl;
     Info << "    gammaW " << gammaW_.value() << endl;
-    Info << "    KMatrix ";
-    if (KMatrix_.headerOk()) { Info << "is a scalar field" << endl;}
-    else {Info << average(KMatrix_).value() << " m2" << endl;}
-    Info << "    Kexchange ";
-    if (Kexchange_.headerOk()) { Info << "is a scalar field" << endl;}
-    else {Info << average(Kexchange_).value() <<  " m2" << endl;}
+    check_K(KMatrix_, dualPorosityCoeffs_);
+    check_K(KExchange_, dualPorosityCoeffs_);
     Info << "} \n" << endl;
     sourceTerm_.writeOpt(IOobject::AUTO_WRITE);
     matrixPcModel_ = capillarityModel::New(mesh, transportProperties, Sname_, "Matrix");
@@ -220,7 +216,7 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
 
     volScalarField SFracture(matrixPcModel_->S(hFracture));
     volScalarField krExchange((matrixKrModel_->kr(SFracture)+matrixKrModel_->krb())/2.0);
-    volScalarField alphaW(geomFactor_*phase_->rho()*mag(g)*Kexchange_*krExchange/phase_->mu());
+    volScalarField alphaW(geomFactor_*phase_->rho()*mag(g)*KExchange_*krExchange/phase_->mu());
     //- solve matrix equation
     fvScalarMatrix hMEqn
         (

@@ -127,7 +127,8 @@ public:
 
     //- Check functions
     void check_eps() const;
-    void check_K() const;
+    void check_K();
+    void check_K(volScalarField&, const dictionary&);
 };
 
 

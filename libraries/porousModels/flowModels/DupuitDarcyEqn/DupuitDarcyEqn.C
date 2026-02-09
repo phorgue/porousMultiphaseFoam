@@ -30,7 +30,6 @@ License
 #include "DupuitDarcyEqn.H"
 #include "fvm.H"
 #include "fvc.H"
-#include "linear.H"
 #include "fixedValueFvPatchField.H"
 #include "DEMfile.H"
 
