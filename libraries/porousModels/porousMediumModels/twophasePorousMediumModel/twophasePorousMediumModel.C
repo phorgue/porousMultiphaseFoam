@@ -55,4 +55,16 @@ Foam::twophasePorousMediumModel::twophasePorousMediumModel
     krModel_ = relativePermeabilityModel::New(mesh, transportProperties, Sname, porousRegion);
 }
 
+void Foam::twophasePorousMediumModel::setSeepage
+(
+    labelList& seepageIDList,
+    scalarList& seepageValueList,
+    labelList& topCellID,
+    scalarList& distanceToDEM)
+{
+    seepageIDList_ = &seepageIDList ;
+    seepageValueList_ = &seepageValueList ;
+    topCellID_ = &topCellID ;
+    distanceToDEM_ = &distanceToDEM ;
+}
 // ************************************************************************* //

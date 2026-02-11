@@ -76,6 +76,12 @@ protected:
     autoPtr<relativePermeabilityModel> krModel_;
     autoPtr<capillarityModel> pcModel_;
 
+    //- List for seepage
+    labelList* topCellID_;
+    labelList* seepageIDList_;
+    scalarList* distanceToDEM_;
+    scalarList* seepageValueList_;
+
     //- Disallow copy construct
     twophasePorousMediumModel(const twophasePorousMediumModel&);
 
@@ -139,6 +145,10 @@ public:
     autoPtr<relativePermeabilityModel>& krModel() {return krModel_;}
     //- Return capillary model
     autoPtr<capillarityModel>& pcModel() {return pcModel_;}
+
+    //- set seepage reference
+    void setSeepage(labelList& seepageIDList,  scalarList& seepageValueList,
+                    labelList& topCellID, scalarList& distanceToDEM);
 
     //- Correct
     virtual void rewindTime() = 0;

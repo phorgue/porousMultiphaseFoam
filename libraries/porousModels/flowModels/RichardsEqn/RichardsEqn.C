@@ -40,7 +40,7 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     const IOdictionary& transportProperties,
     twophasePorousMediumModel& pmModel,
     incompressiblePhase& fluidPhase,
-    const bool steady
+    bool steady
 )
     :
     g_(meshObjects::gravity::New(mesh.time())),
@@ -111,7 +111,8 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     //- initialization
     deltah_ == dimensionedScalar("",dimLength,0);
 
-    //- Checking permeability field
+    //- Set seepage cells
+    pmModel_.setSeepage(seepageIDList_, seepageValueList_, topCellID_, distanceToDEM_);
 
     //- Checking gravity
     if (mag(g_).value() == 0)
@@ -175,7 +176,7 @@ void Foam::flowModels::RichardsEqn::updateSeepage()
     {
         seepageIDList_.clear();
         seepageValueList_.clear();
-        volScalarField cellFlux(fvc::div(phi_));
+        volScalarField cellFlux(fvc::div(phi_) - pmModel_.exchangeTerm() - sourceTerm_);
         forAll(topCellID_,celli)
         {
             label currentCell = topCellID_[celli];

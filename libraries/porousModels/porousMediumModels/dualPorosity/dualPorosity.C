@@ -214,9 +214,11 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
 {
     hMatrix_.storePrevIter();
 
+    //- Update transfert coefficient
     volScalarField SFracture(matrixPcModel_->S(hFracture));
     volScalarField krExchange((matrixKrModel_->kr(SFracture)+matrixKrModel_->krb())/2.0);
     volScalarField alphaW(geomFactor_*phase_->rho()*mag(g)*KExchange_*krExchange/phase_->mu());
+
     //- solve matrix equation
     fvScalarMatrix hMEqn
         (
@@ -240,6 +242,9 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
                 + ( Smatrix_ - Smatrix_.oldTime())) / hMatrix_.time().deltaT();
         }
     }
+
+    if (seepageIDList_->size() > 0) hMEqn.setValues(*seepageIDList_,*seepageValueList_);
+
     hMEqn.solve();
 
     //- compute source term using update hMatrix field

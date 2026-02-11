@@ -109,7 +109,7 @@ public:
         const IOdictionary& transportProperties,
         twophasePorousMediumModel& pmModel,
         incompressiblePhase& fluidPhase,
-        const bool steady
+        bool steady
     );
 
     //- Destructor
