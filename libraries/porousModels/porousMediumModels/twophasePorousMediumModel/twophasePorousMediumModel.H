@@ -148,8 +148,9 @@ public:
     //- Return source term
     volScalarField& sourceTerm() {return sourceTerm_;}
 
-    //- Return exchange term
+    //- Return exchange term/coef
     const volScalarField& exchangeTerm() const {return exchangeTerm_;};
+    const volScalarField& exchangeCoef() const {return exchangeCoef_;};
 
     //- Return relative permeabilities model
     autoPtr<relativePermeabilityModel>& krModel() {return krModel_;}

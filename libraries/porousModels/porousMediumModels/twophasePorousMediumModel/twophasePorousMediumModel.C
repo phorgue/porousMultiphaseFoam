@@ -74,7 +74,7 @@ Foam::twophasePorousMediumModel::twophasePorousMediumModel
             IOobject::NO_WRITE
         ),
         mesh,
-        dimensionedScalar("", dimless/dimTime,0)
+        dimensionedScalar("", dimless/(dimLength*dimTime),0)
     )
 {
     pcModel_ = capillarityModel::New(mesh, transportProperties, Sname, porousRegion);
