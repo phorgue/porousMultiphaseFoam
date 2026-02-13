@@ -78,9 +78,6 @@ protected:
     //- injection/extraction source term
     volScalarField sourceTerm_;
 
-    //- injection/extraction source term
-    volScalarField exchangeTerm_;
-
     //- Disallow copy construct
     porousMediumModel(const porousMediumModel&);
 
@@ -100,7 +97,8 @@ public:
         const fvMesh& mesh,
         const IOdictionary& transportProperties,
         const dimensionSet& sourceDims,
-        const word& porousRegion = ""
+        const word& porousRegion = "",
+        bool check_K = true
     );
 
     //- Destructor
@@ -121,9 +119,6 @@ public:
 
     //- Return source term
     volScalarField& sourceTerm() {return sourceTerm_;}
-
-    //- Return exchange term
-    const volScalarField& exchangeTerm() const {return exchangeTerm_;}
 
     //- Check functions
     void check_eps() const;

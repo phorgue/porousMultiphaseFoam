@@ -114,6 +114,18 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
 (
     const volVectorField& U,
     const surfaceScalarField& phi,
+    const volScalarField& theta
+)
+{
+    FatalErrorIn("dualPorosityTransport.C") << " Cannot use dualPorosity transport with this solver"
+    << abort(FatalError);
+}
+
+
+void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
+(
+    const volVectorField& U,
+    const surfaceScalarField& phi,
     const volScalarField& theta,
     const volScalarField& exchangeTerm
 )

@@ -140,6 +140,14 @@ public:
     //- Access to composition
     multiscalarMixture& composition() {return composition_;}
 
+    //- Solve tracer transport equation without exchange term (saturated medium)
+    virtual void solveTransport
+    (
+        const volVectorField& U,
+        const surfaceScalarField& phi,
+        const volScalarField& theta
+    ) = 0;
+
     //- Solve tracer transport equation (Richards' flow modeling)
     virtual void solveTransport
     (

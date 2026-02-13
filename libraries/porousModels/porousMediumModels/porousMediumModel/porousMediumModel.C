@@ -43,7 +43,8 @@ Foam::porousMediumModel::porousMediumModel
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
     const dimensionSet& sourceDims,
-    const word& porousRegion
+    const word& porousRegion,
+    bool check_K
 )
     :
     mesh_(mesh),
@@ -86,19 +87,6 @@ Foam::porousMediumModel::porousMediumModel
         ),
         mesh,
         dimensionedScalar("",sourceDims,0)
-    ),
-    exchangeTerm_
-    (
-        IOobject
-        (
-            "exchangeTerm",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::READ_IF_PRESENT,
-            IOobject::NO_WRITE
-        ),
-        mesh,
-        dimensionedScalar("",sourceDims,0)
     )
 {
     auto Kfactor(transportProperties.getOrDefault<scalar>("Kfactor",1));
@@ -107,8 +95,9 @@ Foam::porousMediumModel::porousMediumModel
         K_ *= Kfactor;
         Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
     }
-    Info << "Porous medium properties for " << porousRegion << nl << "{";
+    Info << "Porous medium properties for " << porousRegion << nl << "{" << endl;
     this->check_K();
+    Info << "what the fuck" << endl;
     Info << "}\n" << endl;
 }
 
@@ -128,6 +117,7 @@ void Foam::porousMediumModel::check_K()
 
 void Foam::porousMediumModel::check_K(volScalarField& Kfield, const dictionary& dict)
 {
+
     if (gMax(Kfield) == 0) {
         FatalErrorIn("porousMediumModel.C") <<
             "Field " << Kfield.name() << " is equal to zero. You should specify value in " << dict.name()

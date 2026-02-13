@@ -111,6 +111,14 @@ public:
     ~dualPorosityTransport()
         {}
 
+    //- Solve tracer transport equation without exchange term (saturated medium)
+    void solveTransport
+    (
+        const volVectorField& U,
+        const surfaceScalarField& phi,
+        const volScalarField& theta
+    );
+
     //- Solve tracer transport equation (Richards' flow modeling)
     void solveTransport
     (

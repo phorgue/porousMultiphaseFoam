@@ -165,8 +165,8 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     Info << "    a " << a_.value() << endl;
     Info << "    beta " << beta_.value() << endl;
     Info << "    gammaW " << gammaW_.value() << endl;
-    check_K(KMatrix_, dualPorosityCoeffs_);
-    check_K(KExchange_, dualPorosityCoeffs_);
+    this->check_K(KMatrix_, dualPorosityCoeffs_);
+    this->check_K(KExchange_, dualPorosityCoeffs_);
     Info << "} \n" << endl;
     sourceTerm_.writeOpt(IOobject::AUTO_WRITE);
     matrixPcModel_ = capillarityModel::New(mesh, transportProperties, Sname_, "Matrix");
