@@ -198,6 +198,13 @@ void Foam::porousMediumModels::dualPorosity::updateMatrixProperties()
     }
 }
 
+void Foam::porousMediumModels::dualPorosity::updateExchangeCoef(volScalarField& hFracture)
+{
+    volScalarField SFracture(matrixPcModel_->S(hFracture));
+    volScalarField krExchange((matrixKrModel_->kr(SFracture)+matrixKrModel_->krb())/2.0);
+    exchangeCoef_ = geomFactor_*phase_->rho()*mag(g)*KExchange_*krExchange/phase_->mu();
+}
+
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
 
 void Foam::porousMediumModels::dualPorosity::rewindTime()
@@ -214,10 +221,8 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
 {
     hMatrix_.storePrevIter();
 
-    //- Update transfert coefficient
-    volScalarField SFracture(matrixPcModel_->S(hFracture));
-    volScalarField krExchange((matrixKrModel_->kr(SFracture)+matrixKrModel_->krb())/2.0);
-    volScalarField alphaW(geomFactor_*phase_->rho()*mag(g)*KExchange_*krExchange/phase_->mu());
+    //- Update exchange coefficient
+    updateExchangeCoef(hFracture);
 
     //- solve matrix equation
     fvScalarMatrix hMEqn
@@ -226,8 +231,8 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
             - fvm::laplacian(MMatrixf_,hMatrix_)
             + fvc::div(phiGMatrixf_)
             ==
-            alphaW * hFracture
-            - fvm::Sp(alphaW, hMatrix_)
+            exchangeCoef_ * hFracture
+            - fvm::Sp(exchangeCoef_, hMatrix_)
         );
 
     if (!steady)
@@ -248,7 +253,7 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
     hMEqn.solve();
 
     //- compute source term using update hMatrix field
-    exchangeTerm_ = alphaW* (hFracture - hMatrix_);
+    exchangeTerm_ = exchangeCoef_ * (hFracture - hMatrix_);
 
     //- update properties using new solution
     updateMatrixProperties();

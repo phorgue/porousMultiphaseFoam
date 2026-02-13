@@ -87,6 +87,7 @@ class dualPorosity
 
     //- Update properties of the matrix part
     void updateMatrixProperties();
+    void updateExchangeCoef(volScalarField& h);
 
     //- Disallow copy construct
     dualPorosity(const dualPorosity&);
