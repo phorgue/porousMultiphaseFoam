@@ -67,8 +67,7 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
 (
     const volVectorField& U,
     const surfaceScalarField& phi,
-    const volScalarField& theta,
-    const volScalarField& exchangeTerm
+    const volScalarField& theta
 )
 {
     composition_.correct(U, theta);
@@ -95,6 +94,17 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
         CEqn.solve(solverDict);
         info(speciesi, theta, phi);
     }
+}
+
+void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
+(
+    const volVectorField& U,
+    const surfaceScalarField& phi,
+    const volScalarField& theta,
+    const volScalarField& exchangeTerm
+)
+{
+    this->solveTransport(U, phi, theta);
 }
 
 void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport

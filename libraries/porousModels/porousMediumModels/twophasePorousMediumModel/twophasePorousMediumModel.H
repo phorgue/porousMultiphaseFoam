@@ -72,6 +72,10 @@ protected:
     //- Name of the main saturation field
     const word Sname_;
 
+    //- internal exchange term (dual porosity) for between phase1 and phase2
+    volScalarField exchangeTerm_;
+    volScalarField exchangeCoef_;
+
     //- kr/pc models
     autoPtr<relativePermeabilityModel> krModel_;
     autoPtr<capillarityModel> pcModel_;
@@ -140,6 +144,12 @@ public:
 
     // Member Functions
     const word& Sname() const {return Sname_;}
+
+    //- Return source term
+    volScalarField& sourceTerm() {return sourceTerm_;}
+
+    //- Return exchange term
+    const volScalarField& exchangeTerm() const {return exchangeTerm_;};
 
     //- Return relative permeabilities model
     autoPtr<relativePermeabilityModel>& krModel() {return krModel_;}

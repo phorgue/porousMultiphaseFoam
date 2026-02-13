@@ -33,7 +33,8 @@ dualPorosityCoeffs
     a [0 1 0 0 0 0 0] 0.01;
     beta [0 0 0 0 0 0 0] 3;
     gammaW [0 0 0 0 0 0 0] 0.4;
-    Kexchange [0 2 0 0 0 0 0] 1.17982e-16; // 0.01 cm/day
+    KExchange [0 2 0 0 0 0 0] 1.17982e-16; // 0.01 cm/day
+    KMatrix [0 2 0 0 0 0 0] 1.1798e-14;
 }
 
 relativePermeabilityModel  VanGenuchten;
