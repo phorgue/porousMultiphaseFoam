@@ -45,6 +45,7 @@ Foam::timestepManagerIterative::timestepManagerIterative(
 )
     :
     runTime_(runTime),
+    algoName_(algoName),
     iter_(0),
     iterIncrease_(-1),
     maxIter_(solutionDict.subOrEmptyDict(algoName).getOrDefault<label>("maxIter",10)),
@@ -101,6 +102,40 @@ scalar timestepManagerIterative::computeTimestep()
     }
     return dt;
 
+}
+
+bool timestepManagerIterative::solveEquation(nonLinearEqn& eqn, const bool steady, const label methodID)
+{
+    residualDelta_ = Tuple2<scalar, scalar>(1.00001, 0);
+    iter_ = 0;
+    while (residualDelta_.first() > tolerance_ && iter_ != maxIter_)
+    {
+        iter_++;
+        Info << "*** " << algoName_ << " iteration " << iter_ << endl;
+        residualDelta_ = eqn.solve(tolerance_, methodID);
+        eqn.updateProperties(methodID);
+        if (residualDelta_.first() > 10)
+        {
+            if (steady)
+            {
+                FatalErrorIn("solveEquation()") << " Non-physical values reached for steady equation, "
+                << " try to reduce relaxation factor" << abort(FatalError);
+            }
+            else
+            {
+                Warning() << "Non-physical values reached, stopping non-linear algorithm" << nl << endl;
+                return false;
+            }
+
+        }
+    }
+    if (!steady &&  residualDelta_.first() > tolerance_)
+    {
+        Warning() << " Max iteration reached in " << algoName_
+                  << " loop, reducing time step by factor dTFactDecrease" << nl << endl;
+        return false;
+    }
+    return true;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

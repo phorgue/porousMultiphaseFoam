@@ -215,6 +215,16 @@ void multiDtManager::adjustDeltaTUsingEvent()
     }
 }
 
+scalar multiDtManager::residual()
+{
+    scalar res = 0;
+    forAll(dtManagerI_, dtm)
+    {
+        if (dtManagerI_[dtm].residualDelta().first() < 1) res = max(res, dtManagerI_[dtm].residualDelta().first());
+    }
+    return res;
+}
+
 } // End namespace Foam
 
 // ************************************************************************* //
