@@ -40,6 +40,7 @@ SourceFiles
 #ifndef timestepManagerIterative_H
 #define timestepManagerIterative_H
 
+#include "nonLinearEqn.H"
 #include "fvMesh.H"
 #include "EulerD2dt2Scheme.H"
 #include "EulerD3dt3Scheme.H"
@@ -63,6 +64,8 @@ private:
     //- Reference to time
     const Time& runTime_;
 
+    const word algoName_;
+
     //- Solver iterator
     label iter_;
     label iterIncrease_;
@@ -74,6 +77,8 @@ private:
     const label nIterIncrease_;
     const scalar dTFactDecrease_;
     const scalar dTFactIncrease_;
+
+    Tuple2<scalar, scalar> residualDelta_;
 
 public:
 
@@ -90,14 +95,16 @@ public:
     virtual ~timestepManagerIterative();
 
     //- Access function
-    void reset(const label value = 0) {iter_ = value;};
-    const label& iter() {return iter_;};
-    const label& maxIter() {return maxIter_;};
-    const scalar& tolerance() {return tolerance_;};
+    void reset(const label value = 0) {iter_ = value;}
+    const label& iter() const {return iter_;}
+    const label& maxIter() const {return maxIter_;}
+    const scalar& tolerance() const {return tolerance_;}
+    const Tuple2<scalar, scalar>& residualDelta() const {return residualDelta_;}
 
     //- Member function
     void operator++(int) {iter_++;};
     scalar computeTimestep();
+    bool solveEquation(nonLinearEqn&, bool, label);
     
 
 };

@@ -88,6 +88,7 @@ public:
     void updateDt();
     void updateAllDerivatives();
     void adjustDeltaTUsingEvent();
+    scalar residual();
 };
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
