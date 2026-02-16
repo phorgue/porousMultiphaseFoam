@@ -67,6 +67,10 @@ class dualPorosity
     const fvMesh& mesh_;
     const autoPtr<incompressiblePhase>& phase_;
 
+    //- Solver parameters
+    const scalar tolerance_;
+    const label maxIter_;
+
     //- flow field
     const uniformDimensionedVectorField g;
     volScalarField hMatrix_;
