@@ -64,6 +64,8 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     dualPorosityCoeffs_(transportProperties.subDict(typeName + "Coeffs")),
     mesh_(mesh),
     phase_(phase),
+    tolerance_(dualPorosityCoeffs_.get<scalar>("tolerance")),
+    maxIter_(dualPorosityCoeffs_.get<scalar>("maxIter")),
     g
     (
         IOobject
@@ -219,44 +221,58 @@ void Foam::porousMediumModels::dualPorosity::correct()
 
 void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, const bool steady, const bool conservative)
 {
-    hMatrix_.storePrevIter();
 
-    //- Update exchange coefficient
-    updateExchangeCoef(hFracture);
-
-    //- solve matrix equation
-    fvScalarMatrix hMEqn
-        (
-            //- transport terms
-            - fvm::laplacian(MMatrixf_,hMatrix_)
-            + fvc::div(phiGMatrixf_)
-            ==
-            exchangeCoef_ * hFracture
-            - fvm::Sp(exchangeCoef_, hMatrix_)
-        );
-
-    if (!steady)
+    Info << "Dual porosity update - solving matrix pressure head" << endl;
+    scalar residual = GREAT;
+    label iter = 0;
+    while (residual > tolerance_ && iter < maxIter_)
     {
-        //- accumulation terms
-        hMEqn += matrixPcModel_->Ch() * fvm::ddt(hMatrix_);
+        iter++;
+        hMatrix_.storePrevIter();
 
-        if (conservative)
+        //- Update exchange coefficient
+        updateExchangeCoef(hFracture);
+
+        //- solve matrix equation
+        fvScalarMatrix hMEqn
+            (
+                //- transport terms
+                - fvm::laplacian(MMatrixf_,hMatrix_)
+                + fvc::div(phiGMatrixf_)
+                ==
+                exchangeCoef_ * hFracture
+                - fvm::Sp(exchangeCoef_, hMatrix_)
+            );
+
+        if (!steady)
         {
-            //-mass conservative terms
-            hMEqn += (matrixPcModel_->Ch()*(hMatrix_.oldTime()-hMatrix_.prevIter())
-                + ( Smatrix_ - Smatrix_.oldTime())) / hMatrix_.time().deltaT();
+            //- accumulation terms
+            hMEqn += matrixPcModel_->Ch() * fvm::ddt(hMatrix_);
+
+            if (conservative)
+            {
+                //-mass conservative terms
+                hMEqn += (matrixPcModel_->Ch()*(hMatrix_.oldTime()-hMatrix_.prevIter())
+                    + ( Smatrix_ - Smatrix_.oldTime())) / hMatrix_.time().deltaT();
+            }
         }
+
+        if (seepageIDList_->size() > 0) hMEqn.setValues(*seepageIDList_,*seepageValueList_);
+
+        residual = hMEqn.solve().initialResidual();
+
+        //- compute source term using update hMatrix field
+        exchangeTerm_ = exchangeCoef_ * (hFracture - hMatrix_);
+
+        //- update properties using new solution
+        updateMatrixProperties();
     }
 
-    if (seepageIDList_->size() > 0) hMEqn.setValues(*seepageIDList_,*seepageValueList_);
-
-    hMEqn.solve();
-
-    //- compute source term using update hMatrix field
-    exchangeTerm_ = exchangeCoef_ * (hFracture - hMatrix_);
-
-    //- update properties using new solution
-    updateMatrixProperties();
+    if (residual > tolerance_)
+    {
+        Warning() << "hMatrix has not converged on this iteration" << endl;
+    }
+    Info << endl;
 }
 
 // ************************************************************************* //
