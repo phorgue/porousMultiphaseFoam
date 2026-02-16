@@ -162,56 +162,24 @@ noConvergence :
             pmModel->sourceTerm() = waterSourceEvent->dtValuesAsField();
         }
         hEqn.updateSeepage();
-
-        Tuple2<scalar, scalar> residualDelta(1.00001, 0);
+        hEqn.updatePmModel();
 
         //- 1) Richard's equation (Picard loop)
-        Picard.reset();
-        while (residualDelta.first() > Picard.tolerance() && Picard.iter() != Picard.maxIter())
+        bool converged = Picard.solveEquation(hEqn, steady, 0);
+        if (!converged)
         {
-            Picard++;
-            Info << "*** Picard iteration " << Picard.iter() << endl;
-            residualDelta = hEqn.solvePicard(Picard.tolerance());
-            hEqn.updateProperties(false);
-            if (residualDelta.first() > 10)
-            {
-                Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
-                hEqn.noConvergence(MDTM, runTime, 0);
-                goto noConvergence;
-            }
-        }
-        if (residualDelta.first()  > Picard.tolerance())
-        {
-            Info << endl;
-            if (MDTM.adjustTimeStep()) Warning() << " Max iteration reached in Picard loop, reducing time step by factor dTFactDecrease" << nl << endl;
-            else FatalErrorIn("groundwaterTransportFoam.C") << "Non-convergence of Picard algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
             hEqn.noConvergence(MDTM, runTime, 0);
             goto noConvergence;
         }
 
         //--- 2) Newton loop
-        Newton.reset();
-        while (residualDelta.first() > Newton.tolerance() && Newton.iter() != Newton.maxIter())
+        converged = Newton.solveEquation(hEqn, steady, 1);
+        if (!converged)
         {
-            Newton++;
-            Info << "*** Newton iteration " << Newton.iter() << endl;
-            residualDelta = hEqn.solveNewton(Newton.tolerance());
-            hEqn.updateProperties(true);
-            if (residualDelta.first() > 10)
-            {
-                Warning() << "Non-physical values reached, reducing time step by factor dTFactDecrease" << nl << endl;
-                hEqn.noConvergence(MDTM, runTime, 1);
-                goto noConvergence;
-            }
-        }
-        if (residualDelta.first() > Newton.tolerance())
-        {
-            Info << endl;
-            if (MDTM.adjustTimeStep()) Warning() <<  " Max iteration reached in Newton loop, reducing time step by factor dTFactDecrease" << nl << endl;
-            else FatalErrorIn("groundwaterFoam.C") << "Non-convergence of Newton algorithm with fixed timestep => Decrease the time step or increase tolerance" << exit(FatalError);
             hEqn.noConvergence(MDTM, runTime, 1);
             goto noConvergence;
         }
+
         hEqn.info();
 
         //- 3) scalar transport

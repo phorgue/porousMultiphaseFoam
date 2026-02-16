@@ -55,7 +55,8 @@ namespace flowModels
     Class RichardsEqn Declaration
 \*---------------------------------------------------------------------------*/
 
-class RichardsEqn
+class RichardsEqn:
+    public nonLinearEqn
 {
     //- gravity
     const uniformDimensionedVectorField g_;
@@ -66,8 +67,6 @@ class RichardsEqn
     volScalarField theta_;
 
     //- References
-    //--- mesh
-    const fvMesh& mesh_;
     //--- porous medium models
     twophasePorousMediumModel& pmModel_;
     relativePermeabilityModel& krModel_;
@@ -98,6 +97,8 @@ class RichardsEqn
     //- Internal functions
     fvScalarMatrix buildEqn();
     scalar initResidual(const fvScalarMatrix& hEqn);
+    const Tuple2<scalar, scalar> solvePicard(scalar tolerance);
+    const Tuple2<scalar, scalar> solveNewton(scalar tolerance);
 
 public:
     // Constructors
@@ -121,13 +122,14 @@ public:
     volScalarField& theta() {return theta_;}
     surfaceScalarField& phi() {return phi_;}
     const labelList& seepageIDList() {return seepageIDList_;}
+    bool massConservative() const {return massConservative_;}
 
     // Member Functions
-    void updateProperties(bool derivative);
+    void updateProperties(label);
     void updateSeepage();
+    void updatePmModel();
     void noConvergence(multiDtManager& MDTM, Time& runTime, label algoID);
-    const Tuple2<scalar, scalar> solvePicard(scalar tolerance);
-    const Tuple2<scalar, scalar> solveNewton(scalar tolerance);
+    const Tuple2<scalar, scalar> solve(scalar tol, label methodID) override;
     void info();
     void checkSteadyConfig( scalar tol1,  scalar tol2);
 };

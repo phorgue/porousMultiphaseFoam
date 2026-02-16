@@ -3,7 +3,7 @@
  		 |_   __ \|_   \  /   _||_   __  | 
    		   | |__) | |   \/   |    | |_ \_| 
    		   |  ___/  | |\  /| |    |  _|    
-    		  _| |_    _| |_\/_| |_  _| |_     
+    	  _| |_    _| |_\/_| |_  _| |_
    		 |_____|  |_____||_____||_____|    
    	     Copyright (C) Toulouse INP, Pierre Horgue
 
@@ -43,6 +43,7 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     bool steady
 )
     :
+    nonLinearEqn(mesh),
     g_(meshObjects::gravity::New(mesh.time())),
     h_
     (
@@ -82,7 +83,6 @@ Foam::flowModels::RichardsEqn::RichardsEqn
         dimless,
         calculatedFvPatchScalarField::typeName
     ),
-    mesh_(mesh),
     pmModel_(pmModel),
     krModel_(pmModel.krModel().ref()),
     pcModel_(pmModel.pcModel().ref()),
@@ -149,10 +149,11 @@ Foam::flowModels::RichardsEqn::RichardsEqn
 }
 // * * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * //
 
-void Foam::flowModels::RichardsEqn::updateProperties(bool derivative)
+void Foam::flowModels::RichardsEqn::updateProperties(label methodID)
 {
     theta_ = pcModel_.correctAndSb(h_);
-    krModel_.correctkrb(theta_, derivative);
+    if (methodID == 1) krModel_.correctkrb(theta_, true);
+    else krModel_.correctkrb(theta_, false);
     krf_ = fvc::interpolate( krModel_.krb(),"krtheta");
     Lf_ = rho_ * Kf_ * krf_ / mu_;
     Mf_ = mag(g_) * Lf_;
@@ -198,6 +199,11 @@ void Foam::flowModels::RichardsEqn::updateSeepage()
     }
 }
 
+void Foam::flowModels::RichardsEqn::updatePmModel()
+{
+    pmModel_.correct(h_, steady_, massConservative_);
+}
+
 void Foam::flowModels::RichardsEqn::noConvergence
 (
     multiDtManager& MDTM,
@@ -225,8 +231,6 @@ void Foam::flowModels::RichardsEqn::noConvergence
 
 Foam::fvScalarMatrix Foam::flowModels::RichardsEqn::buildEqn()
 {
-    pmModel_.correct(h_, steady_, massConservative_);
-
     h_.storePrevIter();
 
     fvScalarMatrix hEqn
@@ -301,6 +305,15 @@ Foam::scalar Foam::flowModels::RichardsEqn::initResidual
 
 }
 
+const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::solve
+(
+    scalar tolerance,
+    label methodID
+)
+{
+    if (methodID == 0) return solvePicard(tolerance);
+    else return solveNewton(tolerance);
+}
 
 const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::solvePicard
 (
