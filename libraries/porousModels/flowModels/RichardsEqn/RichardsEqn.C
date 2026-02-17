@@ -305,7 +305,7 @@ Foam::scalar Foam::flowModels::RichardsEqn::initResidual
 
 }
 
-const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::solve
+Foam::Tuple2<Foam::scalar> Foam::flowModels::RichardsEqn::solve
 (
     scalar tolerance,
     label methodID
@@ -315,12 +315,12 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     else return solveNewton(tolerance);
 }
 
-const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::solvePicard
+Foam::Tuple2<Foam::scalar> Foam::flowModels::RichardsEqn::solvePicard
 (
     const scalar tolerance
 )
 {
-    Tuple2<scalar, scalar> res(0, 0);
+    Tuple2<scalar> res(0, 0);
     fvScalarMatrix hEqnPicard = buildEqn();
     res.first() = hEqnPicard.solve().initialResidual();
     if (res.first() > tolerance) h_.relax();
@@ -330,13 +330,13 @@ const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::so
     return res;
 }
 
-const Foam::Tuple2<Foam::scalar, Foam::scalar> Foam::flowModels::RichardsEqn::solveNewton
+Foam::Tuple2<Foam::scalar> Foam::flowModels::RichardsEqn::solveNewton
 (
     const scalar tolerance
 )
 {
     //- Compute initial residual
-    Tuple2<scalar, scalar> res(0, 0);
+    Tuple2<scalar> res(0, 0);
     fvScalarMatrix hEqnPicard = buildEqn();
     res.first() = initResidual(hEqnPicard);
     tmp<DimensionedField<scalar, volMesh>> ResiduN = DimensionedField<scalar, volMesh>::New(
