@@ -43,12 +43,13 @@ SourceFiles
 #include "porousMediumModel.H"
 #include "incompressiblePhase.H"
 #include "multiDtManager.H"
-#include "gravityMeshObject.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 
-namespace Foam::flowModels
+namespace Foam
+{
+namespace flowModels
 {
 
 /*---------------------------------------------------------------------------*\
@@ -56,6 +57,8 @@ namespace Foam::flowModels
 \*---------------------------------------------------------------------------*/
 
 class DupuitDarcyEqn
+    :
+    public nonLinearEqn
 {
     //- gravity
     const dimensionedScalar g_;
@@ -69,8 +72,6 @@ class DupuitDarcyEqn
     volScalarField seepageTerm_;
 
     //- References
-    //--- mesh
-    const fvMesh& mesh_;
     //--- porous medium models
     porousMediumModel& pmModel_;
     //--- water source term
@@ -104,7 +105,6 @@ class DupuitDarcyEqn
     //- Internal functions
     void initFixedPotential(const List<Tuple2<point,scalar>>&, bool);
     void correctInitialPotential();
-    void updateProperties();
     void updateSeepage();
     void updateDryCells();
 
@@ -122,7 +122,7 @@ public:
     );
 
     //- Destructor
-    ~DupuitDarcyEqn() = default;
+    ~DupuitDarcyEqn() override = default;
 
     //- Access functions
     const volScalarField& potential() const {return potential_;}
@@ -132,16 +132,23 @@ public:
     volScalarField& infiltration() {return infiltration_;}
     const volScalarField& seepage() {return seepageTerm_;}
     const labelList& dryCellIDList() const {return dryCellIDList_;}
-    const scalar& zScale() {return zScale_;}
-    const scalar& flowInOutFixedPoints() {return flowInOutFixedPoints_;}
-    const scalar& flowOutSeepage() {return flowOutSeepage_;}
+    const scalar& zScale() const {return zScale_;}
+    const scalar& flowInOutFixedPoints() const {return flowInOutFixedPoints_;}
+    const scalar& flowOutSeepage() const {return flowOutSeepage_;}
 
-    // Member Functions
-    scalar solve();
-    void info();
+    // Member functions
+    Tuple2<scalar> solve();
+    void updateProperties();
+
+    // nonLinearEqn Member Functions
+    void updateProperties(label methodID) override;
+    Tuple2<scalar> solve(scalar tol, label methodID) override;
+    void info() override;
 };
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+}
 
 } // End namespace capillarityModels
 

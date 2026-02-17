@@ -44,6 +44,7 @@ Foam::flowModels::DupuitDarcyEqn::DupuitDarcyEqn
     const bool steady
 )
     :
+    nonLinearEqn(mesh),
     g_("g",dimLength/(dimTime*dimTime),9.81),
     potential_
     (
@@ -119,7 +120,6 @@ Foam::flowModels::DupuitDarcyEqn::DupuitDarcyEqn
         mesh,
         dimensionedScalar("seepage_value",dimLength/dimTime,0.)
     ),
-    mesh_(mesh),
     pmModel_(pmModel),
     sourceTerm_(pmModel_.sourceTerm()),
     eps_(pmModel_.eps()),
@@ -168,7 +168,7 @@ Foam::flowModels::DupuitDarcyEqn::DupuitDarcyEqn
     if (DEM_.headerOk()) Info << nl << "Reading precomputed potentialDEM file in constant/" << endl;
     else
     {
-        if (DEMfileName_.size() > 0)
+        if (!DEMfileName_.empty())
         {
             Info << nl << "Reading DEM file to compute potentialDEM...";
             DEMfile potentialDEMfile(DEMfileName_);
@@ -210,7 +210,7 @@ Foam::flowModels::DupuitDarcyEqn::DupuitDarcyEqn
     //- reading fixed potential list if present
     List<Tuple2<point,scalar> > fixedPotentialList(transportProperties.lookupOrDefault("fixedPotentialList",List<Tuple2<point,scalar> >()));
     bool useDEMtoFixPotential(transportProperties.lookupOrDefault<bool>("useDEMtoFixPotential",false));
-    if (fixedPotentialList.size() > 0) {
+    if (!fixedPotentialList.empty()) {
         initFixedPotential(fixedPotentialList, useDEMtoFixPotential);
     }
 
@@ -309,6 +309,11 @@ void Foam::flowModels::DupuitDarcyEqn::correctInitialPotential()
 
 void Foam::flowModels::DupuitDarcyEqn::updateProperties()
 {
+    updateProperties(0);
+}
+
+void Foam::flowModels::DupuitDarcyEqn::updateProperties(label methodID)
+{
     //- updating flow properties
     transmissivity_ = Mf_*fvc::interpolate(hwater_);
     phi_ = (-Mf_ * fvc::snGrad(potential_)) * mesh_.magSf();
@@ -331,7 +336,7 @@ void Foam::flowModels::DupuitDarcyEqn::updateProperties()
     //- Compute outflow and seepage terms
     seepageTerm_.primitiveFieldRef() = 0;
     flowInOutFixedPoints_ = 0;
-    if (fixedPotentialIDList_.size() > 0)
+    if (!fixedPotentialIDList_.empty())
     {
         forAll(fixedPotentialIDList_, pointi)
         {
@@ -405,8 +410,16 @@ void Foam::flowModels::DupuitDarcyEqn::updateDryCells()
 
 }
 
-Foam::scalar Foam::flowModels::DupuitDarcyEqn::solve ()
+Foam::Tuple2<Foam::scalar> Foam::flowModels::DupuitDarcyEqn::solve()
 {
+    return solve(1, 0);
+}
+
+
+Foam::Tuple2<Foam::scalar> Foam::flowModels::DupuitDarcyEqn::solve(scalar tol, label methodID)
+{
+    Tuple2<scalar> res(0, 0);
+
     potential_.storePrevIter();
 
     fvScalarMatrix potentialEqn
@@ -420,7 +433,7 @@ Foam::scalar Foam::flowModels::DupuitDarcyEqn::solve ()
     if (!steady_) potentialEqn += eps_ * fvm::ddt(potential_);
 
     //- Fixed potential values
-    if (fixedPotentialIDList_.size() > 0)
+    if (!fixedPotentialIDList_.empty())
     {
         potentialEqn.setValues(fixedPotentialIDList_,fixedPotentialValueList_);
     }
@@ -429,11 +442,11 @@ Foam::scalar Foam::flowModels::DupuitDarcyEqn::solve ()
     if (seepage_)
     {
         updateSeepage();
-        if (seepageIDList_.size() > 0) potentialEqn.setValues(seepageIDList_, seepageValueList_);
+        if (!seepageIDList_.empty()) potentialEqn.setValues(seepageIDList_, seepageValueList_);
     }
 
     //- Solve equation
-    scalar maxResidual = potentialEqn.solve().initialResidual();
+    res.first() = potentialEqn.solve().initialResidual();
 
     if (steady_) potential_.relax();
 
@@ -442,7 +455,8 @@ Foam::scalar Foam::flowModels::DupuitDarcyEqn::solve ()
     updateDryCells();
     updateProperties();
 
-    return maxResidual;
+    res.second() = gMax(mag(potential_-potential_.prevIter()).ref());
+    return res;
 }
 
 

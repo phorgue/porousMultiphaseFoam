@@ -97,8 +97,8 @@ class RichardsEqn:
     //- Internal functions
     fvScalarMatrix buildEqn();
     scalar initResidual(const fvScalarMatrix& hEqn);
-    const Tuple2<scalar, scalar> solvePicard(scalar tolerance);
-    const Tuple2<scalar, scalar> solveNewton(scalar tolerance);
+    Tuple2<scalar, scalar> solvePicard(scalar tolerance);
+    Tuple2<scalar, scalar> solveNewton(scalar tolerance);
 
 public:
     // Constructors
@@ -124,13 +124,15 @@ public:
     const labelList& seepageIDList() {return seepageIDList_;}
     bool massConservative() const {return massConservative_;}
 
-    // Member Functions
-    void updateProperties(label);
+    //- nonLinearEqn Member Functions
+    void updateProperties(label methodID) override;
+    Tuple2<scalar> solve(scalar tol, label methodID) override;
+    void info() override;
+
+    //- Other member functions
     void updateSeepage();
     void updatePmModel();
     void noConvergence(multiDtManager& MDTM, Time& runTime, label algoID);
-    const Tuple2<scalar, scalar> solve(scalar tol, label methodID) override;
-    void info();
     void checkSteadyConfig( scalar tol1,  scalar tol2);
 };
 

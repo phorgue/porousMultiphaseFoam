@@ -135,12 +135,12 @@ int main(int argc, char *argv[])
         }
 
         //- Solve Dupuit-Darcy equation
-        scalar residual = ddEqn.solve();
+        Tuple2<scalar> residualDelta = ddEqn.solve();
 
         //- Residual computation
         if (steady)
         {
-            if (residual < residualPotential) runTime.writeAndEnd();
+            if (residualDelta.first() < residualPotential) runTime.writeAndEnd();
             else runTime.write();
         }
         else

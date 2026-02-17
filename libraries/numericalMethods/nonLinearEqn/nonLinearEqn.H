@@ -52,17 +52,18 @@ protected:
 public:
 
     //- Constructor
-    nonLinearEqn(const fvMesh &mesh);
+    explicit nonLinearEqn(const fvMesh &mesh);
 
     //- Destructor
-    virtual ~nonLinearEqn() {}
+    virtual ~nonLinearEqn() = default;
 
     //- Access function
     const fvMesh& mesh() const { return mesh_; }
 
-    //- Virtual functions defined in sub-class equations
+    //- Virtual functions
     virtual void updateProperties(label methodID) = 0;
-    virtual const Tuple2<scalar, scalar> solve(scalar tol, label methodID) = 0;
+    virtual Tuple2<scalar> solve(scalar tol, label methodID) = 0;
+    virtual void info() = 0;
 
 };
 
