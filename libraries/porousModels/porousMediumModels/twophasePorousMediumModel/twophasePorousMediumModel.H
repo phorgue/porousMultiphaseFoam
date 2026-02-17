@@ -145,9 +145,6 @@ public:
     // Member Functions
     const word& Sname() const {return Sname_;}
 
-    //- Return source term
-    volScalarField& sourceTerm() {return sourceTerm_;}
-
     //- Return exchange term/coef
     const volScalarField& exchangeTerm() const {return exchangeTerm_;};
     const volScalarField& exchangeCoef() const {return exchangeCoef_;};

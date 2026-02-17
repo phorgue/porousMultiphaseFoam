@@ -114,6 +114,9 @@ Foam::flowModels::RichardsEqn::RichardsEqn
     //- Set seepage cells
     pmModel_.setSeepage(seepageIDList_, seepageValueList_, topCellID_, distanceToDEM_);
 
+    //- Check porosity/permeability
+    pmModel_.check_K();
+
     //- Checking gravity
     if (mag(g_).value() == 0)
     {

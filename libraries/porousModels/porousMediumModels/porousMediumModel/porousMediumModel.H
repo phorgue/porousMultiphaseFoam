@@ -69,6 +69,9 @@ protected:
     //- Reference to the main dictionary
     const IOdictionary& transportProperties_;
 
+    //- Name of the porous region (optional)
+    const word porousRegion_;
+
     //- porosity field
     volScalarField eps_;
 
@@ -97,13 +100,11 @@ public:
         const fvMesh& mesh,
         const IOdictionary& transportProperties,
         const dimensionSet& sourceDims,
-        const word& porousRegion = "",
-        bool check_K = true
+        const word& porousRegion = ""
     );
 
     //- Destructor
-    virtual ~porousMediumModel()
-        {}
+    virtual ~porousMediumModel() = default;
 
     //- Return mesh
     const fvMesh& mesh() const {return mesh_;}

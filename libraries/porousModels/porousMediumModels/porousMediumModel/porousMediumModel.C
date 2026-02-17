@@ -43,12 +43,12 @@ Foam::porousMediumModel::porousMediumModel
     const fvMesh& mesh,
     const IOdictionary& transportProperties,
     const dimensionSet& sourceDims,
-    const word& porousRegion,
-    bool check_K
+    const word& porousRegion
 )
     :
     mesh_(mesh),
     transportProperties_(transportProperties),
+    porousRegion_(porousRegion),
     eps_
     (
         IOobject
@@ -95,10 +95,6 @@ Foam::porousMediumModel::porousMediumModel
         K_ *= Kfactor;
         Info  << nl << "Reading permeability field factor : Kfactor = " << Kfactor << endl;
     }
-    Info << "Porous medium properties for " << porousRegion << nl << "{" << endl;
-    this->check_K();
-    Info << "what the fuck" << endl;
-    Info << "}\n" << endl;
 }
 
 void Foam::porousMediumModel::check_eps() const
@@ -112,7 +108,9 @@ void Foam::porousMediumModel::check_eps() const
 
 void Foam::porousMediumModel::check_K()
 {
+    Info << "Porous medium properties for " << porousRegion_ << nl << "{" << endl;
     check_K(K_, transportProperties_);
+    Info << "}\n" << endl;
 }
 
 void Foam::porousMediumModel::check_K(volScalarField& Kfield, const dictionary& dict)
