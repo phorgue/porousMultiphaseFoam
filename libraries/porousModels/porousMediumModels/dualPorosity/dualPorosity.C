@@ -66,6 +66,7 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     phase_(phase),
     tolerance_(dualPorosityCoeffs_.get<scalar>("tolerance")),
     maxIter_(dualPorosityCoeffs_.get<scalar>("maxIter")),
+    coupled_(dualPorosityCoeffs_.getOrDefault<bool>("coupled", false)),
     g
     (
         IOobject
@@ -219,10 +220,15 @@ void Foam::porousMediumModels::dualPorosity::correct()
     FatalErrorIn("dualPorosity.C") << " dualPorosity cannot be used with impesFoam/anisoImpesFoam " << abort(FatalError);
 }
 
+bool Foam::porousMediumModels::dualPorosity::coupled()
+{
+    return coupled_;
+}
+
 void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, const bool steady, const bool conservative)
 {
 
-    Info << "Dual porosity update - solving matrix pressure head" << endl;
+    if (!coupled_) Info << nl << "Dual porosity update - solving matrix pressure head" << endl;
     scalar residual = GREAT;
     label iter = 0;
     while (residual > tolerance_ && iter < maxIter_)
@@ -266,6 +272,9 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
 
         //- update properties using new solution
         updateMatrixProperties();
+
+        //- Solve only once if fracture/matrix are coupled
+        if (coupled_) return;
     }
 
     if (residual > tolerance_)

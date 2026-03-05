@@ -234,6 +234,9 @@ void Foam::flowModels::RichardsEqn::noConvergence
 
 Foam::fvScalarMatrix Foam::flowModels::RichardsEqn::buildEqn()
 {
+    //- if fracture/matrix solvers are coupled
+    if (pmModel_.coupled()) pmModel_.correct(h_, steady_, massConservative_);
+
     h_.storePrevIter();
 
     fvScalarMatrix hEqn
@@ -315,7 +318,7 @@ Foam::Tuple2<Foam::scalar> Foam::flowModels::RichardsEqn::solve
 )
 {
     if (methodID == 0) return solvePicard(tolerance);
-    else return solveNewton(tolerance);
+    return solveNewton(tolerance);
 }
 
 Foam::Tuple2<Foam::scalar> Foam::flowModels::RichardsEqn::solvePicard

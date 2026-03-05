@@ -161,6 +161,7 @@ public:
     //- Correct
     virtual void rewindTime() = 0;
     virtual void correct() = 0;
+    virtual bool coupled() = 0;
     virtual void correct(volScalarField& h, const bool steady = false, const bool conservative = true) = 0;
 
 };

@@ -72,6 +72,12 @@ void Foam::porousMediumModels::simplePorosity::correct()
     //- nothing for simple porosity model
 }
 
+bool Foam::porousMediumModels::simplePorosity::coupled()
+{
+    return false;
+}
+
+
 void Foam::porousMediumModels::simplePorosity::correct(volScalarField& h, const bool steady, const bool conservative)
 {
     //- nothing for simple porosity model

@@ -101,7 +101,7 @@ public:
     // Member Functions
     
     //- Access function
-    const bool& isPresent() const {return isPresent_;}
+    bool isPresent() const {return isPresent_;}
     const label& ncoordinates() const {return ncoordinates_;}
     const List<point>& coordinates() const {return coordinates_;}
     tmp<volScalarField> dtValuesAsField() const;
