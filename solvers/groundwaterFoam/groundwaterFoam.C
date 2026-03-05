@@ -140,7 +140,7 @@ noConvergence :
             pmModel->sourceTerm() = sourceEvent->dtValuesAsField();
         }
         hEqn.updateSeepage();
-        hEqn.updatePmModel();
+        if (!pmModel->coupled()) hEqn.updatePmModel();
 
         //--- 1) Picard loop
         bool converged = Picard.solveEquation(hEqn, steady, 0);

@@ -91,6 +91,7 @@ public:
     //- Correct the relative permeabilities
     void rewindTime() override;
     void correct() override;
+    bool coupled() override;
     void correct(volScalarField& h, bool steady = false, bool conservative = true) override;
 
 };
