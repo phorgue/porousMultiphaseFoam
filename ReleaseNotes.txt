@@ -1,7 +1,13 @@
+
 ### Libraries
 
 - porousMediumModels/dualPorosity
 
+  - Matrix pressure head solver improvements
+  - Three methods are now available to solve hMatrix/hFracture coupling with
+    the keyword *couplingMethod* in **transportProperties.dualPorosityCoeffs**:
+        coupled/fractureMatrix/matrixFracture
+  - Default method is *matrixFracture* which solver sequentially hMatrix then hFracture
   - seepage cells are transfered to hMatrix to impose fixed values
   - relax() has been removed for hMatrixEqn (unable to converge with relaxation)
 

@@ -94,6 +94,12 @@ protected:
 
 public:
 
+    enum couplingMethod {
+        COUPLED,
+        MATRIX_FRACTURE,
+        FRACTURE_MATRIX
+    };
+
     //- Runtime type information
     TypeName("twophasePorousMediumModel");
 
@@ -147,6 +153,7 @@ public:
 
     //- Return exchange term/coef
     const volScalarField& exchangeTerm() const {return exchangeTerm_;};
+    volScalarField& exchangeTermRef() {return exchangeTerm_;};
     const volScalarField& exchangeCoef() const {return exchangeCoef_;};
 
     //- Return relative permeabilities model
@@ -160,9 +167,9 @@ public:
 
     //- Correct
     virtual void rewindTime() = 0;
-    virtual void correct() = 0;
-    virtual bool coupled() = 0;
-    virtual void correct(volScalarField& h, const bool steady = false, const bool conservative = true) = 0;
+    virtual void correct(volScalarField& h) = 0;
+    virtual label coupling() = 0;
+    virtual void solve(volScalarField& h, const bool steady = false, const bool conservative = true) = 0;
 
 };
 

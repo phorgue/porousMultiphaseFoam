@@ -202,9 +202,14 @@ void Foam::flowModels::RichardsEqn::updateSeepage()
     }
 }
 
-void Foam::flowModels::RichardsEqn::updatePmModel()
+void Foam::flowModels::RichardsEqn::solvePmModel(couplingStep cs)
 {
-    pmModel_.correct(h_, steady_, massConservative_);
+    if (cs == BEFORE && pmModel_.coupling() == twophasePorousMediumModel::MATRIX_FRACTURE) {
+        pmModel_.solve(h_, steady_, massConservative_);
+    }
+    else if (cs == AFTER && pmModel_.coupling() == twophasePorousMediumModel::FRACTURE_MATRIX) {
+        pmModel_.solve(h_, steady_, massConservative_);
+    }
 }
 
 void Foam::flowModels::RichardsEqn::noConvergence
@@ -234,10 +239,15 @@ void Foam::flowModels::RichardsEqn::noConvergence
 
 Foam::fvScalarMatrix Foam::flowModels::RichardsEqn::buildEqn()
 {
-    //- if fracture/matrix solvers are coupled
-    if (pmModel_.coupled()) pmModel_.correct(h_, steady_, massConservative_);
 
     h_.storePrevIter();
+
+    if (pmModel_.coupling() == twophasePorousMediumModel::COUPLED) {
+        pmModel_.solve(h_, steady_, massConservative_);
+    }
+    else if (pmModel_.coupling() == twophasePorousMediumModel::FRACTURE_MATRIX) {
+        pmModel_.correct(h_);
+    }
 
     fvScalarMatrix hEqn
         (
@@ -248,6 +258,10 @@ Foam::fvScalarMatrix Foam::flowModels::RichardsEqn::buildEqn()
             - pmModel_.exchangeTerm()
             - sourceTerm_
         );
+
+    if (pmModel_.coupling() == twophasePorousMediumModel::FRACTURE_MATRIX) {
+        hEqn += fvm::Sp(pmModel_.exchangeCoef(), h_) - pmModel_.exchangeCoef() * h_;
+    }
 
     if (!steady_)
     {
@@ -330,9 +344,12 @@ Foam::Tuple2<Foam::scalar> Foam::flowModels::RichardsEqn::solvePicard
     fvScalarMatrix hEqnPicard = buildEqn();
     res.first() = hEqnPicard.solve().initialResidual();
     if (res.first() > tolerance) h_.relax();
-    scalarField deltah(h_-h_.prevIter());
+    volScalarField deltah(h_-h_.prevIter());
+    if (pmModel_.coupling() == twophasePorousMediumModel::FRACTURE_MATRIX) {
+        pmModel_.exchangeTermRef() = pmModel_.exchangeTerm() + pmModel_.exchangeCoef() * deltah;
+    }
     forAll(seepageIDList_,celli) deltah[seepageIDList_[celli]] = 0;
-    res.second() = gMax(mag(deltah)());
+    res.second() = gMax(mag(deltah.internalField())());
     return res;
 }
 

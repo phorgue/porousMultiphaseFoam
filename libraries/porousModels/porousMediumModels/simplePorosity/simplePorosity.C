@@ -67,18 +67,18 @@ void Foam::porousMediumModels::simplePorosity::rewindTime()
     //- nothing for simple porosity model
 }
 
-void Foam::porousMediumModels::simplePorosity::correct()
+void Foam::porousMediumModels::simplePorosity::correct(volScalarField& h)
 {
     //- nothing for simple porosity model
 }
 
-bool Foam::porousMediumModels::simplePorosity::coupled()
+Foam::label Foam::porousMediumModels::simplePorosity::coupling()
 {
-    return false;
+    return -1;
 }
 
 
-void Foam::porousMediumModels::simplePorosity::correct(volScalarField& h, const bool steady, const bool conservative)
+void Foam::porousMediumModels::simplePorosity::solve(volScalarField& h, const bool steady, const bool conservative)
 {
     //- nothing for simple porosity model
 }

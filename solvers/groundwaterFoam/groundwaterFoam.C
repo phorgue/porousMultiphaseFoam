@@ -140,7 +140,8 @@ noConvergence :
             pmModel->sourceTerm() = sourceEvent->dtValuesAsField();
         }
         hEqn.updateSeepage();
-        if (!pmModel->coupled()) hEqn.updatePmModel();
+
+        hEqn.solvePmModel(flowModels::RichardsEqn::couplingStep::BEFORE);
 
         //--- 1) Picard loop
         bool converged = Picard.solveEquation(hEqn, steady, 0);
@@ -157,6 +158,8 @@ noConvergence :
             hEqn.noConvergence(MDTM, runTime, 1);
             goto noConvergence;
         }
+
+        hEqn.solvePmModel(flowModels::RichardsEqn::couplingStep::AFTER);
 
         //--- Compute variations
         if (!steady) MDTM.updateAllDerivatives();
