@@ -66,7 +66,6 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
     phase_(phase),
     tolerance_(dualPorosityCoeffs_.get<scalar>("tolerance")),
     maxIter_(dualPorosityCoeffs_.get<scalar>("maxIter")),
-    coupled_(dualPorosityCoeffs_.getOrDefault<bool>("coupled", false)),
     g
     (
         IOobject
@@ -164,6 +163,21 @@ Foam::porousMediumModels::dualPorosity::dualPorosity
         linearInterpolate(UMatrix_) & mesh.Sf()
     )
 {
+    word couplingMethod = dualPorosityCoeffs_.getOrDefault<word>("couplingMethod", "matrixFracture");
+    if (couplingMethod == "matrixFracture") {
+        cm_ = MATRIX_FRACTURE;
+    }
+    else if (couplingMethod == "fractureMatrix") {
+        cm_ = FRACTURE_MATRIX;
+    }
+    else if (couplingMethod == "coupled") {
+        cm_ = COUPLED;
+    }
+    else {
+        FatalErrorIn("dualPorosity.C") << " The coupling method " << couplingMethod
+        << " is unknown " << abort(FatalError);
+    }
+
     Info << "Dual porosity parameters for water flow " << nl << "{" << endl;
     Info << "    a " << a_.value() << endl;
     Info << "    beta " << beta_.value() << endl;
@@ -215,29 +229,26 @@ void Foam::porousMediumModels::dualPorosity::rewindTime()
     hMatrix_ = hMatrix_.oldTime();
 }
 
-void Foam::porousMediumModels::dualPorosity::correct()
+void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture)
 {
-    FatalErrorIn("dualPorosity.C") << " dualPorosity cannot be used with impesFoam/anisoImpesFoam " << abort(FatalError);
+    updateExchangeCoef(hFracture);
+    exchangeTerm_ = exchangeCoef_ * (hFracture - hMatrix_);
 }
 
-bool Foam::porousMediumModels::dualPorosity::coupled()
+Foam::label Foam::porousMediumModels::dualPorosity::coupling()
 {
-    return coupled_;
+        return cm_;
 }
 
-void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, const bool steady, const bool conservative)
+void Foam::porousMediumModels::dualPorosity::solve(volScalarField& hFracture, const bool steady, const bool conservative)
 {
-
-    if (!coupled_) Info << nl << "Dual porosity update - solving matrix pressure head" << endl;
     scalar residual = GREAT;
     label iter = 0;
     while (residual > tolerance_ && iter < maxIter_)
     {
         iter++;
+        if (cm_ != COUPLED) Info << "*** Picard iteration (matrix) " << iter << endl;
         hMatrix_.storePrevIter();
-
-        //- Update exchange coefficient
-        updateExchangeCoef(hFracture);
 
         //- solve matrix equation
         fvScalarMatrix hMEqn
@@ -245,10 +256,17 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
                 //- transport terms
                 - fvm::laplacian(MMatrixf_,hMatrix_)
                 + fvc::div(phiGMatrixf_)
-                ==
-                exchangeCoef_ * hFracture
-                - fvm::Sp(exchangeCoef_, hMatrix_)
             );
+
+        //- Exchange term
+        if (cm_ == FRACTURE_MATRIX) {
+            //- Explicit source term when FRACTURE is solved before MATRIX
+            hMEqn -= exchangeTerm_;
+        }
+        else {
+            updateExchangeCoef(hFracture);
+            hMEqn += fvm::Sp(exchangeCoef_, hMatrix_) - exchangeCoef_ * hFracture;
+        }
 
         if (!steady)
         {
@@ -268,13 +286,13 @@ void Foam::porousMediumModels::dualPorosity::correct(volScalarField& hFracture, 
         residual = hMEqn.solve().initialResidual();
 
         //- compute source term using update hMatrix field
-        exchangeTerm_ = exchangeCoef_ * (hFracture - hMatrix_);
+        if (cm_ != FRACTURE_MATRIX) exchangeTerm_ = exchangeCoef_ * (hFracture - hMatrix_);
 
         //- update properties using new solution
         updateMatrixProperties();
 
         //- Solve only once if fracture/matrix are coupled
-        if (coupled_) return;
+        if (cm_ == COUPLED) return;
     }
 
     if (residual > tolerance_)

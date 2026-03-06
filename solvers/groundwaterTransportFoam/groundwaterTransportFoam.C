@@ -162,7 +162,8 @@ noConvergence :
             pmModel->sourceTerm() = waterSourceEvent->dtValuesAsField();
         }
         hEqn.updateSeepage();
-        hEqn.updatePmModel();
+
+        hEqn.solvePmModel(flowModels::RichardsEqn::couplingStep::BEFORE);
 
         //- 1) Richard's equation (Picard loop)
         bool converged = Picard.solveEquation(hEqn, steady, 0);

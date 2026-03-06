@@ -101,6 +101,12 @@ class RichardsEqn:
     Tuple2<scalar, scalar> solveNewton(scalar tolerance);
 
 public:
+
+    enum couplingStep {
+        BEFORE,
+        AFTER
+    };
+
     // Constructors
 
     //- Construct from components
@@ -131,7 +137,7 @@ public:
 
     //- Other member functions
     void updateSeepage();
-    void updatePmModel();
+    void solvePmModel(couplingStep);
     void noConvergence(multiDtManager& MDTM, Time& runTime, label algoID);
     void checkSteadyConfig( scalar tol1,  scalar tol2);
 };

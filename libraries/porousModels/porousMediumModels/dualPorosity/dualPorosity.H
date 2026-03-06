@@ -70,7 +70,7 @@ class dualPorosity
     //- Solver parameters
     const scalar tolerance_;
     const label maxIter_;
-    const bool coupled_;
+    couplingMethod cm_;
 
     //- flow field
     const uniformDimensionedVectorField g;
@@ -122,9 +122,9 @@ public:
 
     //- Correct the relative permeabilities
     void rewindTime() override;
-    void correct() override;
-    bool coupled() override;
-    void correct(volScalarField& h, bool steady = false, bool conservative = true) override;
+    void correct(volScalarField& h) override;
+    label coupling() override;
+    void solve(volScalarField& h, bool steady = false, bool conservative = true) override;
 
 };
 
