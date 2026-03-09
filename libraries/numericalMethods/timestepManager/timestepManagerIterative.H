@@ -104,7 +104,7 @@ public:
     //- Member function
     void operator++(int) {iter_++;};
     scalar computeTimestep();
-    bool solveEquation(nonLinearEqn&, bool, label);
+    bool solveEquation(nonLinearEqn&, bool, label, scalar initResidual = 1.0001);
     
 
 };

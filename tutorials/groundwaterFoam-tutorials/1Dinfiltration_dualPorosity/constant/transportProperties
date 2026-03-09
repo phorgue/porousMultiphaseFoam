@@ -31,8 +31,8 @@ KMatrix [0 2 0 0 0 0 0] 1.1798e-14;
 dualPorosityCoeffs
 {
     couplingMethod matrixFracture;
-    tolerance 1e-10;
-    maxIter 3;
+    tolerance 1e-08;
+    maxIter 10;
     a [0 1 0 0 0 0 0] 0.01;
     beta [0 0 0 0 0 0 0] 3;
     gammaW [0 0 0 0 0 0 0] 0.4;

@@ -152,7 +152,7 @@ noConvergence :
         }
 
         //--- 2) Newton loop
-        converged = Newton.solveEquation(hEqn, steady, 1);
+        converged = Newton.solveEquation(hEqn, steady, 1, Picard.residualDelta().first());
         if (!converged)
         {
             hEqn.noConvergence(MDTM, runTime, 1);

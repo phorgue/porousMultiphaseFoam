@@ -104,9 +104,10 @@ scalar timestepManagerIterative::computeTimestep()
 
 }
 
-bool timestepManagerIterative::solveEquation(nonLinearEqn& eqn, const bool steady, const label methodID)
+bool timestepManagerIterative::solveEquation(nonLinearEqn& eqn, const bool steady,
+    const label methodID, const scalar initResidual)
 {
-    residualDelta_ = Tuple2<scalar, scalar>(1.00001, 0);
+    residualDelta_ = Tuple2<scalar>(initResidual, 0);
     iter_ = 0;
     while (residualDelta_.first() > tolerance_ && iter_ != maxIter_)
     {
