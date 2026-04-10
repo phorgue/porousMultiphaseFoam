@@ -16,13 +16,15 @@
   
     fvScalarMatrix SbEqn
         (
-            eps*fvm::ddt(Sb) + fvc::div(phib) 
+            // eps*fvm::ddt(Sb) + fvc::div(phib)
+            eps*fvm::ddt(Sb) + fvm::div(phib, Sb) 
             ==
             // event source terms
             - sourceTerm
         );
 
     SbEqn.solve();
+    Sb.correctBoundaryConditions();
 
     Info << "Saturation b: " << " Min(Sb) = " << gMin(Sb) << " Max(Sb) = " << gMax(Sb) << endl;
 

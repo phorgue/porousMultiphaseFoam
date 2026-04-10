@@ -157,7 +157,7 @@ void Foam::relativePermeabilityModels::krBrooksAndCorey::correctkrb(const volSca
     krb_ = krbmax_ * pow(Se_,n_);
     if (derivative)
     {
-        dkradS_ = -kramax_*n_*pow((scalar(1)-Se_),n_-1)/(Smax_- Smin_);
+        dkrbdS_ = krbmax_*n_*pow(Se_,n_-1)/(Smax_- Smin_);
     }
 }
 void Foam::relativePermeabilityModels::krBrooksAndCorey::correctkrb(const volScalarField& Sb, const label& celli)
