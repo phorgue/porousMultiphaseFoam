@@ -1,3 +1,14 @@
+### Libraries
+
+- porousMediumModels/dualPorosity
+
+  - seepage cells are transfered to hMatrix to impose fixed values
+  - relax() has been removed for hMatrixEqn (unable to converge with relaxation)
+
+### Bug fixes
+
+- error in dkrdb Brooks and Corey computation
+
 ************************
 *** PMF v2503
 *** Dual-Mesh Methods + Modular solvers + New tutorials with validation scripts
