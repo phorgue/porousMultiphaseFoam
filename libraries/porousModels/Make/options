@@ -5,7 +5,8 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
     -I../toolsGIS/lnInclude \
-    -I../numericalMethods/lnInclude
+    -I../numericalMethods/lnInclude \
+    -I../phreeqcRM/include
 
 LIB_LIBS = \
     -lfiniteVolume \
@@ -14,5 +15,6 @@ LIB_LIBS = \
     -lreactionThermophysicalModels \
     -L$(FOAM_USER_LIBBIN) \
     -lPMFtoolsGIS \
-    -lPMFnumericalMethods
+    -lPMFnumericalMethods \
+    -lPhreeqcRM
 

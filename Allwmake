@@ -1,11 +1,21 @@
-#!/bin/sh
+#!/bin/bash
+PMF_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 cd ${0%/*} || exit 1    # run from this directory
-set -x
 
 if [ -f $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments ]
 then  . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
 fi
 
+#
+echo "Checking phreeqcRM installation..."
+if [ ! -d $PMF_DIR/libraries/phreeqcRM ]; then
+    echo "Error: phreeqcRM does not seem to be installed, please run MakePhreeqc first"
+    exit 1
+fi
+echo "OK"
+
+# compiling PMF
 wmake libraries/general
 wmake libraries/toolsGIS
 wmake libraries/numericalMethods

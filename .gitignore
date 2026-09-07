@@ -18,3 +18,7 @@ docs/build
 
 # log files
 log.*
+
+# third party
+third-party
+libraries/phreeqcRM

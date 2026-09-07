@@ -28,10 +28,16 @@ then
     rm -f $FOAM_USER_APPBIN/setFieldsFromXY
     rm -f $FOAM_USER_APPBIN/subsetMeshFromDEM
     # clean dynamic libraries
-
     rm -f $FOAM_USER_LIBBIN/libPMFnumericalMethods.so
     rm -f $FOAM_USER_LIBBIN/libPMFporousBoundaryConditions.so
     rm -f $FOAM_USER_LIBBIN/libPMFporousModels.so
     rm -f $FOAM_USER_LIBBIN/libPMFtoolsGIS.so
     rm -f $FOAM_USER_LIBBIN/libPMFgeneral.so
+
+    # clean phreeqcRM
+    rm -f $FOAM_USER_LIBBIN/libPhreeqcRM.so
+    rm -rf $FOAM_USER_LIBBIN/cmake
+    rm -rf $FOAM_USER_LIBBIN/pkgconfig
+    rm -rf libraries/phreeqcRM
+    
 fi

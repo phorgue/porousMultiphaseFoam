@@ -1,0 +1,15 @@
+#!/bin/bash
+PMF_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# compiling phreeqcRM
+if [ ! -d $PMF_DIR/third-party/phreeqcrm ]; then
+    git clone https://github.com/phreeqc-dev/phreeqcrm.git third-party/phreeqcrm
+    cd third-party/phreeqcrm
+    git checkout v3.9.0
+else
+    cd third-party/phreeqcrm
+fi
+
+cmake -DCMAKE_INSTALL_PREFIX:PATH=$PMF_DIR/libraries/phreeqcRM -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_LIBDIR=$FOAM_USER_LIBBIN .
+
+make -j all install
