@@ -35,6 +35,7 @@ License
 namespace Foam
 {
     defineTypeNameAndDebug(multiscalarMixture, 0);
+    defineRunTimeSelectionTable(multiscalarMixture, dictionary);
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -171,42 +172,6 @@ Foam::multiscalarMixture::multiscalarMixture
 }
 
 // * * * * * * * * * * * * * * * * Members * * * * * * * * * * * * * * * * * //
-
-void Foam::multiscalarMixture::correct
-        (
-                const volVectorField& U,
-                const volScalarField& theta
-        )
-{
-    forAll(Y(), speciesi)
-    {
-        dispersionModels_[speciesi].correct(Y(speciesi), U, theta);
-        R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / theta;
-        if(auto event = sourceEvents_.get(speciesi))
-        {
-            sourceTerms_.set(speciesi, event->dtValuesAsField());
-        }
-    }
-}
-
-void Foam::multiscalarMixture::correct
-        (
-                const volVectorField& U,
-                const volScalarField& saturation,
-                const volScalarField& eps
-        )
-{
-
-    forAll(Y(), speciesi)
-    {
-        dispersionModels_[speciesi].correct(Y(speciesi), U, saturation, eps);
-        R_[speciesi].primitiveFieldRef() = 1 + (1-epsTotal_[speciesi]) * rs_[speciesi] * Kd_[speciesi] / (eps*saturation);
-        if(auto event = sourceEvents_.get(speciesi))
-        {
-            sourceTerms_.set(speciesi, event->dtValuesAsField());
-        }
-    }
-}
 
 bool Foam::multiscalarMixture::initRetardCoef(const volScalarField& eps)
 {

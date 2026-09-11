@@ -48,16 +48,16 @@ Foam::porousMediumTransportModel::porousMediumTransportModel
     :
     transportProperties_(transportProperties),
     phaseName_(phaseName),
-    speciesNames_(transportProperties_.lookupOrDefault("species", wordList(1, "C"))),
-    composition_(
-        transportProperties_,
-        speciesNames_,
-        mesh,
-        word::null,
-        &sourceEventList_,
-        "C"
-    )
-{}
+    speciesNames_(transportProperties_.lookupOrDefault("species", wordList(1, "C")))
+{
+    composition_= multiscalarMixture::New(
+            transportProperties_,
+            speciesNames_,
+            mesh,
+            word::null,
+            &sourceEventList_,
+            "C");
+}
 
 Foam::wordList Foam::porousMediumTransportModel::speciesNames(const Foam::word& porousRegion)
 {

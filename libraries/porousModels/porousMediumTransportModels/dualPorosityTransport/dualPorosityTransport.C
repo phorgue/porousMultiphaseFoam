@@ -73,7 +73,7 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
         mesh,
         transportProperties_.getOrDefault<dimensionedScalar>("epsMatrix", dimensionedScalar(dimless, 2))
     ),
-    matrixComposition_(
+    matrixComposition_(multiscalarMixture::New(
         transportProperties_,
         speciesNames("Matrix"),
         mesh,
@@ -81,12 +81,12 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
         &sourceEventList_,
         "C",
         dimless,
-        "Matrix"
+        "Matrix")
     ),
     a_(dualPorosityTransportCoeffs_.get<dimensionedScalar>("a")),
     beta_(dualPorosityTransportCoeffs_.get<dimensionedScalar>("beta")),
     gammaW_(dualPorosityTransportCoeffs_.get<dimensionedScalar>("gammaW")),
-    alphaS_(gammaW_*matrixComposition_.Dm(0)*beta_/(a_*a_)),
+    alphaS_(gammaW_*matrixComposition_->Dm(0)*beta_/(a_*a_)),
     exchangeTermFromFracture_
     (
         IOobject
@@ -105,7 +105,7 @@ Foam::porousMediumTransportModels::dualPorosityTransport::dualPorosityTransport
     phiMatrix_(transportProperties_.db().lookupObject<surfaceScalarField>("phiMatrix")),
     thetaMatrix_(transportProperties_.db().lookupObject<volScalarField>(phaseName_+"Matrix"))
 {
-    matrixComposition_.initRetardCoef(epsMatrix_);
+    matrixComposition_->initRetardCoef(epsMatrix_);
 }
 
 // * * * * * * * * * * * * * * * Public Members  * * * * * * * * * * * * * * //
@@ -146,17 +146,17 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
     }
 
     //- fracture part
-    composition_.correct(U, theta);
+    composition_->correct(U, theta);
 
-    dictionary solverDict = composition_.Y(0).mesh().solver("C");
-    forAll(composition_.Y(), speciesi)
+    dictionary solverDict = composition_->Y(0).mesh().solver("C");
+    forAll(composition_->Y(), speciesi)
     {
-        auto& C = composition_.Y(speciesi);
-        const auto& Cmatrix = matrixComposition_.Y(speciesi);
-        const auto& R = composition_.R(speciesi);
-        const auto& Deff = composition_.Deff(speciesi);
-        const auto& lambda = composition_.lambda(speciesi);
-        const auto& sourceTerm_tracer = composition_.sourceTerm(speciesi);
+        auto& C = composition_->Y(speciesi);
+        const auto& Cmatrix = matrixComposition_->Y(speciesi);
+        const auto& R = composition_->R(speciesi);
+        const auto& Deff = composition_->Deff(speciesi);
+        const auto& lambda = composition_->lambda(speciesi);
+        const auto& sourceTerm_tracer = composition_->sourceTerm(speciesi);
 
         fvScalarMatrix CEqn
             (
@@ -181,16 +181,16 @@ void Foam::porousMediumTransportModels::dualPorosityTransport::solveTransport
     }
 
     //- matrix part
-    matrixComposition_.correct(UMatrix_, thetaMatrix_);
+    matrixComposition_->correct(UMatrix_, thetaMatrix_);
 
-    forAll(matrixComposition_.Y(), speciesi)
+    forAll(matrixComposition_->Y(), speciesi)
     {
-        auto& C = matrixComposition_.Y(speciesi);
-        const auto& Cfracture = composition_.Y(speciesi);
-        const auto& R = matrixComposition_.R(speciesi);
-        const auto& Deff = matrixComposition_.Deff(speciesi);
-        const auto& lambda = matrixComposition_.lambda(speciesi);
-        const auto& sourceTerm_tracer = matrixComposition_.sourceTerm(speciesi);
+        auto& C = matrixComposition_->Y(speciesi);
+        const auto& Cfracture = composition_->Y(speciesi);
+        const auto& R = matrixComposition_->R(speciesi);
+        const auto& Deff = matrixComposition_->Deff(speciesi);
+        const auto& lambda = matrixComposition_->lambda(speciesi);
+        const auto& sourceTerm_tracer = matrixComposition_->sourceTerm(speciesi);
 
         fvScalarMatrix CMatrixEqn
             (

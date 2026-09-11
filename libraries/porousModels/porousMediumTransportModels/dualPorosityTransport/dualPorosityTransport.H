@@ -73,7 +73,7 @@ class dualPorosityTransport
     volScalarField epsMatrix_;
 
     //- Composition
-    multiscalarMixture matrixComposition_;
+    autoPtr<multiscalarMixture> matrixComposition_;
 
     //- Fracture/matrix echange coefficent
     dimensionedScalar a_, beta_, gammaW_, alphaS_;

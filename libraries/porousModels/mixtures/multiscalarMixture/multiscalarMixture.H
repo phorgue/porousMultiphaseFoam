@@ -69,14 +69,48 @@ public:
     TypeName("multiscalarMixture");
 
     //- The base class of the mixture
-    typedef multiscalarMixture basicMixtureType;
+    // typedef multiscalarMixture basicMixtureType;
 
+    // Declare run-time constructor selection table
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        multiscalarMixture,
+        dictionary,
+        (
+            const dictionary& tdict,
+            const wordList& speciesNames,
+            const fvMesh& mesh,
+            const word& phaseName,
+            List<sourceEventFile*>* sourceEventFileRegistry,
+            const word& sourceEventDtFieldNameOverride ,
+            const dimensionSet& sourceTermDimFactor,
+            const word& porousRegion
+        ),
+        (tdict, speciesNames, mesh, phaseName, sourceEventFileRegistry,
+        sourceEventDtFieldNameOverride, sourceTermDimFactor, porousRegion)
+    );
+
+    // Selectors
+
+    //- Return a reference to the selected twophasePorousMedium model
+    static autoPtr<multiscalarMixture> New
+    (
+        const dictionary& tdict,
+        const wordList& speciesNames,
+        const fvMesh& mesh,
+        const word& phaseName,
+        List<sourceEventFile*>* sourceEventFileRegistry = nullptr,
+        const word& sourceEventDtFieldNameOverride = "",
+        const dimensionSet& sourceTermDimFactor = dimless,
+        const word& porousRegion = ""
+    );
     // Constructors
 
     //- Construct from dictionary, species names, mesh and phase name
     multiscalarMixture
     (
-        const dictionary& dict,
+        const dictionary& tdict,
         const wordList& speciesNames,
         const fvMesh& mesh,
         const word& phaseName,
@@ -89,18 +123,18 @@ public:
     // Member Functions
 
     //- Update effective diffusivities and source terms
-    void correct
+    virtual void correct
     (
         const volVectorField& U,
         const volScalarField& theta
-    );
+    ) = 0;
 
-    void correct
+    virtual void correct
     (
         const volVectorField& U,
         const volScalarField& saturation,
         const volScalarField& eps
-    );
+    ) = 0 ;
 
     //- Retard coefficient [-]
     inline const volScalarField& R(const label speciesi) const;
@@ -129,7 +163,7 @@ public:
     //- Compute normalized maximal gradient
     void updateNormalizedGradY();
 
-private:
+protected:
     PtrList<volScalarField> R_;
     List<dimensionedScalar> lambdas_;
     PtrList<dispersionModel> dispersionModels_;

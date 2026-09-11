@@ -81,7 +81,7 @@ protected:
     List<sourceEventFile*> sourceEventList_;
 
     //- Composition
-    multiscalarMixture composition_;
+    autoPtr<multiscalarMixture> composition_;
 
 public:
 
@@ -138,7 +138,7 @@ public:
     List<sourceEventFile*>& sourceEventList() {return sourceEventList_;}
 
     //- Access to composition
-    multiscalarMixture& composition() {return composition_;}
+    multiscalarMixture& composition() {return composition_();}
 
     //- Solve tracer transport equation without exchange term (saturated medium)
     virtual void solveTransport

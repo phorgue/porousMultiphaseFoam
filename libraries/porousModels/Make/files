@@ -22,6 +22,8 @@ phaseModels/fluidPhase/fluidPhase.C
 phaseModels/incompressiblePhase/incompressiblePhase.C
 
 mixtures/multiscalarMixture/multiscalarMixture.C
+mixtures/multiscalarMixture/multiscalarMixtureNew.C
+mixtures/passiveMixture/passiveMixture.C
 
 porousMediumTransportModels/porousMediumTransportModel/porousMediumTransportModel.C
 porousMediumTransportModels/porousMediumTransportModel/porousMediumTransportModelNew.C

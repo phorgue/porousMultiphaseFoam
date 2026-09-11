@@ -70,16 +70,16 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
     const volScalarField& theta
 )
 {
-    composition_.correct(U, theta);
+    composition_->correct(U, theta);
 
-    dictionary solverDict = composition_.Y(0).mesh().solver("C");
-    forAll(composition_.Y(), speciesi)
+    dictionary solverDict = composition_->Y(0).mesh().solver("C");
+    forAll(composition_->Y(), speciesi)
     {
-        auto& C = composition_.Y(speciesi);
-        const auto& R = composition_.R(speciesi);
-        const auto& Deff = composition_.Deff(speciesi);
-        const auto& lambda = composition_.lambda(speciesi);
-        const auto& sourceTerm_tracer = composition_.sourceTerm(speciesi);
+        auto& C = composition_->Y(speciesi);
+        const auto& R = composition_->R(speciesi);
+        const auto& Deff = composition_->Deff(speciesi);
+        const auto& lambda = composition_->lambda(speciesi);
+        const auto& sourceTerm_tracer = composition_->sourceTerm(speciesi);
 
         fvScalarMatrix CEqn
             (
@@ -117,16 +117,16 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::solveTransport
     const scalar& zScale
 )
 {
-    composition_.correct(U, eps);
+    composition_->correct(U, eps);
 
-    dictionary solverDict = composition_.Y(0).mesh().solver("C");
-    forAll(composition_.Y(), speciesi)
+    dictionary solverDict = composition_->Y(0).mesh().solver("C");
+    forAll(composition_->Y(), speciesi)
     {
-        auto& C = composition_.Y(speciesi);
-        const auto& R = composition_.R(speciesi);
-        const auto& Deff = composition_.Deff(speciesi);
-        const auto& lambda = composition_.lambda(speciesi);
-        const auto& sourceTerm = composition_.sourceTerm(speciesi);
+        auto& C = composition_->Y(speciesi);
+        const auto& R = composition_->R(speciesi);
+        const auto& Deff = composition_->Deff(speciesi);
+        const auto& lambda = composition_->lambda(speciesi);
+        const auto& sourceTerm = composition_->sourceTerm(speciesi);
 
         fvScalarMatrix CEqn
                 (
@@ -154,10 +154,10 @@ void Foam::porousMediumTransportModels::simplePorosityTransport::info
     const surfaceScalarField& phi
 )
 {
-    const auto& C = composition_.Y(speciei);
-    const auto& R = composition_.R(speciei);
+    const auto& C = composition_->Y(speciei);
+    const auto& R = composition_->R(speciei);
     const auto& mesh = C.mesh();
-    const auto& sourceTerm = composition_.sourceTerm(speciei);
+    const auto& sourceTerm = composition_->sourceTerm(speciei);
 
     //- terminal display
     Info << "Concentration: Min(" << speciesNames_[speciei] << ") = " << gMin(C.internalField())
