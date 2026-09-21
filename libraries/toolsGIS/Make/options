@@ -7,5 +7,6 @@ EXE_LIBS = \
     -lfiniteVolume
 
 LIB_LIBS = \
-    -lfiniteVolume
+    -lfiniteVolume \
+    -ldynamicFvMesh
 
