@@ -18,3 +18,12 @@ docs/build
 
 # log files
 log.*
+
+# results files
+*.pdf
+*.png
+[0-9]*
+*.foam
+
+# IDE files
+.vscode/

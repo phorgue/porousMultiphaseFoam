@@ -82,9 +82,9 @@ class testCase:
                         break
 
             if error_found:
-                print("[ ERROR OpenFOAM ]")
+                print("[ ERROR OpenFOAM ]\n")
             else:
-                print("[ OK ]")
+                print("[ OK ]\n")
 
         os.chdir(refDir)
         return 0

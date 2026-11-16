@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     //- fluid phase model
     autoPtr<fluidPhase> fluidPhase = fluidPhase::New(mesh, transportProperties, "");
     //- Porous medium model
-    porousMediumModel pmModel(mesh, transportProperties, dimLength/dimTime);
+    porousMediumModel pmModel(mesh, transportProperties, dimLength/dimTime, "", false);
     //- Frozen flow-field (Dupuit-Darcy's equation)
     flowModels::frozenDupuitDarcyEqn ddEqn(mesh, transportProperties, pmModel, fluidPhase.ref());
     //- Transport model
